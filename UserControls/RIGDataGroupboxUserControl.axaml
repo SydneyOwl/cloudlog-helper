@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:converters="clr-namespace:CloudlogHelper.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CloudlogHelper.UserControls.RIGDataGroupboxUserControl"
+             x:DataType="userControls:RIGDataGroupboxViewModel">
+    <Design.DataContext>
+        <userControls:RIGDataGroupboxViewModel />
+    </Design.DataContext>
+    
+    <UserControl.Styles>
+        <Style Selector="Border.FreqBlock">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
+            <Setter Property="BoxShadow" Value="2 2 5 0 #888888"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <UserControl.Resources>
+        <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibility"/>
+    </UserControl.Resources>
+    
+    <StackPanel Orientation="Horizontal" Margin="10">
+        <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.rigdata}}">
+            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                  ShowGridLines="False" Margin="5"
+                  VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Border Classes="FreqBlock" Grid.Row="0" Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Padding="20,10,20,10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
+                            <TextBlock FontSize="10" Text="SPLIT-Rx"
+                                       FontWeight="Bold" Padding="2" Background="DarkOrange"
+                                       IsVisible="{Binding IsSplit}"
+                                       HorizontalAlignment="Left" />
+                            <TextBlock FontSize="10" Text="{Binding CurrentRxFrequencyInMeters}"
+                                       IsVisible="{Binding CurrentRxFrequencyInMeters, Converter={StaticResource StringToVisibility}}"
+                                       FontWeight="Bold" Padding="2" Background="LightBlue"
+                                       HorizontalAlignment="Left" />
+                            <TextBlock FontSize="10" Text="{Binding CurrentRxMode}" FontWeight="Bold" Padding="2" Background="Tan"
+                                       IsVisible="{Binding CurrentRxMode, Converter={StaticResource StringToVisibility}}"
+                                       HorizontalAlignment="Left" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="30"
+                                       Text="{Binding CurrentRxFrequency}"
+                                       FontFamily="{StaticResource SevenSegmentFont}" />
+                            <TextBlock FontSize="10"  Text="MHz" FontWeight="Bold"
+                                       FontFamily="{StaticResource SevenSegmentFont}"
+                                       VerticalAlignment="Bottom" 
+                                       Margin="10,0,0,5"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Classes="FreqBlock"
+                        Margin="0,20,0,10"
+                        Padding="20,10,20,10"
+                        IsVisible="{Binding IsSplit}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
+                            <TextBlock FontSize="10" Text="SPLIT-Tx"
+                                       FontWeight="Bold" Padding="2" Background="DarkOrange"
+                                       HorizontalAlignment="Left" />
+                            <TextBlock FontSize="10" Text="{Binding CurrentTxFrequencyInMeters}"
+                                       IsVisible="{Binding CurrentTxFrequencyInMeters, Converter={StaticResource StringToVisibility}}"
+                                       FontWeight="Bold" Padding="2" Background="LightBlue"
+                                       HorizontalAlignment="Left" />
+                            <TextBlock FontSize="10" Text="{Binding CurrentTxMode}" FontWeight="Bold" Padding="2" Background="Tan"
+                                       IsVisible="{Binding CurrentTxMode, Converter={StaticResource StringToVisibility}}"
+                                       HorizontalAlignment="Left" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="30"
+                                       Text="{Binding CurrentTxFrequency}"
+                                       FontFamily="{StaticResource SevenSegmentFont}" />
+                            <TextBlock FontSize="10"  Text="MHz" FontWeight="Bold"
+                                       FontFamily="{StaticResource SevenSegmentFont}"
+                                       VerticalAlignment="Bottom" 
+                                       Margin="10,0,0,5"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,5" Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" />
+                
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,5" Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" />
+            </Grid>
+        </HeaderedContentControl>
+    </StackPanel>
+</UserControl>

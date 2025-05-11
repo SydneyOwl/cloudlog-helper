@@ -1,0 +1,51 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CloudlogHelper.UserControls.TestButtonUserControl"
+             x:DataType="userControls:TestButtonViewModel">
+    <Design.DataContext>
+        <userControls:TestButtonViewModel />
+    </Design.DataContext>
+    <Grid>
+        <Button
+            IsVisible="{Binding !CheckPassed}"
+            Width="80"
+            Height="60"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Command="{Binding TestCommand}"
+            CornerRadius="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Image Width="20" Height="20" Source="avares://CloudlogHelper/Assets/Settings/Test.png"
+                       Margin="0,0,8,0" />
+                <TextBlock FontSize="14" FontWeight="Heavy"
+                           Text="{I18N {x:Static resources:LangKeys.testconn}}"
+                           IsVisible="{Binding !CheckExecuting}" VerticalAlignment="Center" />
+                <avaloniaProgressRing:ProgressRing Width="20" Height="20"
+                                                   IsActive="{Binding CheckExecuting}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" Foreground="Green"
+                                                   Margin="0,0,0,0" />
+
+            </StackPanel>
+        </Button>
+        <Button
+            IsVisible="{Binding CheckPassed}"
+            Width="80"
+            Height="60"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsEnabled="False"
+            CornerRadius="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Source="avares://CloudlogHelper/Assets/Settings/Passed.png" />
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

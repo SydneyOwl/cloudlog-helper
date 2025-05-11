@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CloudlogHelper.UserControls.ClosableErrorPanelUserControl"
+             x:DataType="userControls:ClosableErrorPanelViewModel">
+    <Design.DataContext>
+        <userControls:ClosableErrorPanelViewModel />
+    </Design.DataContext>
+    <Border Background="#FFAA00" CornerRadius="5"
+            IsVisible="{Binding  ShowErrorPanel }"
+            VerticalAlignment="Center">
+        <Grid RowDefinitions="Auto" ColumnDefinitions="Auto,*,Auto"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Source="avares://CloudlogHelper/Assets/Others/Error.png" Width="30" Margin="10,0,0,0" />
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Black"
+                       Grid.Column="1"
+                       FontSize="13"
+                       FontWeight="Medium"
+                       VerticalAlignment="Center"
+                       TextWrapping="NoWrap" />
+            <Button Grid.Column="2"
+                    Background="Transparent"
+                    Command="{Binding CloseErrorPanelCommand}">
+                <Image
+                    Source="avares://CloudlogHelper/Assets/Others/Close.png"
+                    Width="30" Margin="0,0,0,0" />
+            </Button>
+
+        </Grid>
+        <!-- <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"> -->
+        <!--     -->
+        <!-- </StackPanel> -->
+    </Border>
+</UserControl>

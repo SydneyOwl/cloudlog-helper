@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
+        xmlns:userControls="clr-namespace:CloudlogHelper.UserControls"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterScreen"
+        x:Class="CloudlogHelper.Views.MainWindow"
+        Icon="avares://CloudlogHelper/Assets/icon.png"
+        Title="CloudlogHelper"
+        Topmost="{Binding IsTopmost}"
+        x:DataType="viewModels:MainWindowViewModel">
+
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel />
+    </Design.DataContext>
+
+    <StackPanel>
+        <!-- menu -->
+        <StackPanel>
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ShowGridLines="False">
+                <Menu Grid.Row="0" Grid.Column="0">
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.settings}}">
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}"
+                                  Command="{Binding OpenSettingsWindow}">
+                            <MenuItem.Icon>
+                                <Image Width="32" Height="32"
+                                       Source="avares://CloudlogHelper/Assets/MenuImgs/Settings.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.themecolor}}">
+                            <MenuItem.Icon>
+                                <Image Width="32" Height="32"
+                                       Source="avares://CloudlogHelper/Assets/MenuImgs/Theme.png" />
+                            </MenuItem.Icon>
+                            <MenuItem Header="{I18N {x:Static resources:LangKeys.light}}"
+                                      Command="{Binding SwitchLightTheme}">
+                                <MenuItem.Icon>
+                                    <Image Width="32" Height="32"
+                                           Source="avares://CloudlogHelper/Assets/MenuImgs/Light.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{I18N {x:Static resources:LangKeys.dark}}"
+                                      Command="{Binding SwitchDarkTheme}">
+                                <MenuItem.Icon>
+                                    <Image Width="32" Height="32"
+                                           Source="avares://CloudlogHelper/Assets/MenuImgs/Dark.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.help}}">
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.about}}"
+                                  Command="{Binding OpenAboutWindow}">
+                            <MenuItem.Icon>
+                                <Image Width="32" Height="32"
+                                       Source="avares://CloudlogHelper/Assets/MenuImgs/About.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+                <ToggleButton Grid.Column="1" Grid.Row="0" IsChecked="{Binding IsTopmost}"
+                              Margin="2" >
+                   <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20"></Image>
+                </ToggleButton>
+                <!-- <StackPanel Grid.Column="1" Grid.Row="0" -->
+                <!--             Margin="0,0,10,0" VerticalAlignment="Center"> -->
+                <!--     <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto" ShowGridLines="True"> -->
+                <!--         <Image Grid.Column="0" Source="{Binding CurrentCat}" -->
+                <!--                Height="20" VerticalAlignment="Center"> -->
+                <!--         </Image> -->
+                <!--     </Grid> -->
+                <!-- </StackPanel> -->
+            </Grid>
+        </StackPanel>
+
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+            <userControls:ClosableErrorPanelUserControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+                                                        DataContext="{Binding CloudlogErrorPanelVM}" />
+            <userControls:ClosableErrorPanelUserControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                                                        DataContext="{Binding RigDataErrorPanelVM }" />
+            <userControls:ClosableErrorPanelUserControl Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"
+                                                        DataContext="{Binding UDPLogErrorPanelVM }" />
+
+            <userControls:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="3"
+                                                           DataContext="{Binding UserBasicDataGroupboxVM}" />
+            <userControls:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="4"
+                                                     DataContext="{Binding RigDataGroupboxVM}" />
+            <userControls:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="3" Grid.RowSpan="2"
+                                                        DataContext="{Binding UDPLogInfoGroupboxVm}" />
+        </Grid>
+        <!-- <StackPanel Orientation="Horizontal"> -->
+        <!--     <StackPanel> -->
+        <!--         <userControls:UserBasicDataGroupboxUserControl DataContext="{Binding UserBasicDataGroupboxVM}" /> -->
+        <!--         <userControls:RIGDataGroupboxUserControl DataContext="{Binding RigDataGroupboxVM}"/> -->
+        <!--     </StackPanel> -->
+        <!--     <userControls:UDPLogInfoGroupboxUserControl DataContext="{Binding UDPLogInfoGroupboxVm}"/> -->
+        <!-- </StackPanel> -->
+    </StackPanel>
+
+</Window>

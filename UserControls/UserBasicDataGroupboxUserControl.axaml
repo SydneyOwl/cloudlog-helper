@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CloudlogHelper.UserControls.UserBasicDataGroupboxUserControl"
+             x:DataType="userControls:UserBasicDataGroupboxViewModel">
+
+    <Design.DataContext>
+        <userControls:UserBasicDataGroupboxViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Horizontal" Margin="10">
+        <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}">
+            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                  ShowGridLines="False" Margin="5"
+                  VerticalAlignment="Center" HorizontalAlignment="Left">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.op}}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="50,0,0,5" Text="{Binding OP}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.grid}}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Margin="50,0,0,15" Text="{Binding GridSquare}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.dayqsos}}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Margin="50,0,0,5" Text="{Binding QsToday}" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.monthqsos}}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Margin="50,0,0,5" Text="{Binding QsMonth}" />
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.yearqsos}}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Margin="50,0,0,15" Text="{Binding QsYear}" />
+
+                <!-- <TextBlock Grid.Row="5" Grid.Column="0" Text="QSOs/min"/> -->
+                <!-- <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,5" Text="{Binding QsAvgMin}"/> -->
+                <!--      -->
+                <!-- <TextBlock Grid.Row="6" Grid.Column="0" Text="QSOs/h"/> -->
+                <!-- <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,5" Text="{Binding QsAvgHour}"/> -->
+            </Grid>
+        </HeaderedContentControl>
+    </StackPanel>
+</UserControl>

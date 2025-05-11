@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        Title="{I18N {x:Static resources:LangKeys.errorccurred}}"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        Width="600" Height="450"
+        xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
+        x:DataType="viewModels:ErrorReportWindowViewModel"
+        x:Class="CloudlogHelper.Views.ErrorReportWindow">
+    <Design.DataContext>
+        <viewModels:ErrorReportWindowViewModel />
+    </Design.DataContext>
+    <Canvas>
+        <Image Height="120" Canvas.Top="30" Canvas.Left="10"
+               Source="avares://CloudlogHelper/Assets/ErrReport/Alarm.png" />
+        <Label Canvas.Top="30" Canvas.Left="180" FontSize="25"
+               Content="{I18N {x:Static resources:LangKeys.errorccurred}}" />
+        <TextBlock TextWrapping="Wrap" Width="400" Canvas.Top="80" Canvas.Left="180" FontSize="20"
+                   Text="{I18N {x:Static resources:LangKeys.helpfeedback}}" />
+        <Button Content="{I18N {x:Static resources:LangKeys.savelog}}" Canvas.Top="405" Canvas.Left="120" FontSize="20"
+                Click="LogSaveButton_OnClick" />
+        <Button Content="{I18N {x:Static resources:LangKeys.close}}" Canvas.Top="405" Canvas.Left="350" FontSize="20"
+                Click="ExitWindowButton_OnClick" />
+        <SelectableTextBlock Height="230" Width="530" Canvas.Left="30" Canvas.Top="160" Background="LightGray"
+                             Foreground="Black" Name="ErrBlock" Text="(logs here)" TextWrapping="Wrap" />
+    </Canvas>
+</Window>

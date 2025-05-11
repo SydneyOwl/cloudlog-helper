@@ -1,0 +1,279 @@
+using System;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using CloudlogHelper.Messages;
+using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
+using CloudlogHelper.Utils;
+using NLog;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
+namespace CloudlogHelper.ViewModels.UserControls;
+
+public class RIGDataGroupboxViewModel : ViewModelBase
+{
+    /// <summary>
+    ///     Logger for the class.
+    /// </summary>
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    /// <summary>
+    ///     Command for polling data(mode and frequency)
+    /// </summary>
+    private readonly ReactiveCommand<Unit, Unit> _pollCommand;
+
+    /// <summary>
+    ///     observable sequence. Whether to cancel the timer or not.
+    /// </summary>
+    private Subject<Unit> _cancel;
+
+    /// <summary>
+    ///     Settings for cloudlog
+    /// </summary>
+    private CloudlogSettings _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
+
+    /// <summary>
+    ///     whether to call _restartRigctldStrict or not.
+    /// </summary>
+    private bool _holdRigUpdate;
+
+    /// <summary>
+    ///     Settings for hamlib.
+    /// </summary>
+    private HamlibSettings _settings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
+
+    public RIGDataGroupboxViewModel()
+    {
+        // 
+        // check if conf is available, then start rigctld
+        _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
+
+        //-------------------
+        // _ = _restartRigctldStrict(false);
+        this.WhenActivated(disposables =>
+        {
+            _cancel = new Subject<Unit>().DisposeWith(disposables);
+            MessageBus.Current.Listen<SettingsChanged>()
+                // .Where(x => x.Part == ChangedPart.Hamlib)
+                .SelectMany(async x =>
+                {
+                    ClassLogger.Trace("Setting changed; updating hamlib info");
+                    _settings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
+                    _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
+                    if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
+
+                    if (x.Part == ChangedPart.Hamlib)
+                    {
+                        SendMsgToParentVm("");
+                        _resetStatus();
+                        if (_settings is { PollAllowed: true, UseExternalRigctld: false })
+                        {
+                            await _restartRigctldStrict(false);
+                        }
+                        else
+                        {
+                            RigctldUtil.TerminateBackgroundProcess();
+                        }
+                    }
+
+                    if (x.Part == ChangedPart.NothingJustClosed) _holdRigUpdate = false;
+                    // else
+                    // {
+                    //     await _restartRigctldStrict(x.Part==ChangedPart.Hamlib);
+                    //     _holdRigUpdate = false;
+                    // }
+                    return Unit.Default;
+                })
+                .Subscribe(_ => { _createNewTimer().DisposeWith(disposables); })
+                .DisposeWith(disposables);
+            _pollCommand.ThrownExceptions.Subscribe(err => { _defaultExceptionHandler(err.Message); })
+                .DisposeWith(disposables);
+
+            _createNewTimer().DisposeWith(disposables);
+        });
+    }
+
+    [Reactive] public string? CurrentRxFrequency { get; set; } = "-------";
+    [Reactive] public string? CurrentRxFrequencyInMeters { get; set; } = string.Empty;
+    [Reactive] public string? CurrentRxMode { get; set; } = string.Empty;
+    
+    [Reactive] public string? CurrentTxFrequency { get; set; } = "-------";
+    [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
+    [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
+
+    [Reactive] public bool IsSplit { get; set; }
+    [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString("unknown");
+    [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString("unknown");
+
+    private void _resetStatus()
+    {
+        CurrentRxFrequency = "-------";
+        CurrentRxFrequencyInMeters = string.Empty;
+        CurrentRxMode = string.Empty;
+        
+        CurrentTxFrequency = "-------";
+        CurrentTxFrequencyInMeters = string.Empty;
+        CurrentTxMode = string.Empty;
+        
+        IsSplit = false;
+        UploadStatus = TranslationHelper.GetString("unknown");
+        NextUploadTime = TranslationHelper.GetString("unknown");
+    }
+
+    private void _defaultExceptionHandler(string exceptionMsg)
+    {
+        UploadStatus = TranslationHelper.GetString("failed");
+        CurrentRxFrequency = "ERROR";
+        CurrentRxFrequencyInMeters = string.Empty;
+        IsSplit = false;
+        CurrentRxMode = string.Empty;
+        SendMsgToParentVm(exceptionMsg);
+        ClassLogger.Error(exceptionMsg);
+    }
+
+    private async Task _refreshRigInfo()
+    {
+        ClassLogger.Trace("Refreshing hamlib data....");
+        
+        if (!_settings.PollAllowed)
+        {
+            ClassLogger.Trace("Poll disabled. ignore....");
+            return;
+        }
+
+        if (_settings.IsHamlibHasErrors())
+            throw new Exception(TranslationHelper.GetString("confhamlibfirst"));
+        
+        // check rigctld background
+        if (!_holdRigUpdate && !_settings.UseExternalRigctld) _ = await _restartRigctldStrict(true);
+
+        // parse addr
+        var ip = DefaultConfigs.RigctldDefaultHost;
+        var port = DefaultConfigs.RigctldDefaultPort;
+        
+        if (_settings.UseExternalRigctld)
+        {
+            var addr = _settings.ExternalRigctldHostAddress.Split(":");
+            if (addr.Length != 2 || !int.TryParse(addr[1], out port))
+            {
+                throw new Exception("Invalid address format");
+            }
+            ip = addr[0];
+        }
+
+        var allInfo = await RigctldUtil.GetAllRigInfo(ip, port,_settings.ReportRFPower,_settings.ReportSplitInfo);
+        ClassLogger.Debug(allInfo.ToString());
+        // var freq = _settings.UseExternalRigctld?await RigctldUtil.GetFreqFromExternalProcess(ip, port):await RigctldUtil.GetFreqFromBackgroundProcess();
+        // var mode = _settings.UseExternalRigctld?await RigctldUtil.GetModeFromExternalProcess(ip, port):await RigctldUtil.GetModeFromBackgroundProcess();
+        CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx,false);
+        CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
+        CurrentRxMode = allInfo.ModeRx;
+        
+        CurrentTxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyTx,false);
+        CurrentTxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyTx);
+        CurrentTxMode = allInfo.ModeTx;
+        
+        IsSplit = allInfo.IsSplit;
+
+        // freq read from hamlib is already in hz!
+        if (!_extraSettings.IsCloudlogHasErrors())
+        {
+            var result = await CloudlogUtil.UploadRigInfoAsync(_extraSettings.CloudlogUrl, _extraSettings.CloudlogApiKey,
+                _settings.SelectedRadio, allInfo);
+            if (result.Status == "success")
+            {
+                UploadStatus = TranslationHelper.GetString("success");
+            }
+            else
+            {
+                UploadStatus = TranslationHelper.GetString("failed");
+                ClassLogger.Warn($"Failed to update rig info: {result.Reason}");
+            }
+        }
+        else
+        {
+            UploadStatus = TranslationHelper.GetString("failed");
+            ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
+        }
+
+
+        // told parent vm cloudlog has no errors!
+        SendMsgToParentVm("");
+    }
+
+    private IDisposable _createNewTimer()
+    {
+        ClassLogger.Trace("Creating new rig timer...");
+        _cancel.OnNext(Unit.Default);
+
+        return Observable.Defer(() =>
+            {
+                var pollInterval = int.Parse(_settings.PollInterval);
+                return Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+                    .Select(x => pollInterval - (int)x - 1)
+                    .TakeWhile(sec => sec >= 0)
+                    .Do(sec =>
+                    {
+                        if (!_settings.PollAllowed) return;
+                        if (sec == 0)
+                        {
+                            NextUploadTime = TranslationHelper.GetString("gettinginfo");
+                            return;
+                        }
+
+                        NextUploadTime = sec.ToString();
+                    })
+                    .SelectMany(sec =>
+                        sec == 0
+                            ? _pollCommand.Execute().OnErrorResumeNext(Observable.Empty<Unit>())
+                            : Observable.Return(Unit.Default)
+                    )
+                    .Finally(() => ClassLogger.Trace("Reboot radio timer.."));
+            })
+            .Repeat()
+            .TakeUntil(_cancel)
+            .Finally(() => ClassLogger.Trace("Canceling radio timer..."))
+            .Subscribe();
+    }
+
+    private void _disposeAllTimers()
+    {
+        _cancel.OnNext(Unit.Default);
+    }
+
+    private async Task<bool> _restartRigctldStrict(bool ignoreIfRunning)
+    {
+        if (!_settings.IsHamlibHasErrors())
+        {
+            var myRig = _settings.SelectedRadio;
+            if (_settings.KnownModels.TryGetValue(myRig, out var id))
+            {
+                var defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(id, _settings.SelectedPort);
+
+                if (_settings.UseRigAdvanced)
+                {
+                    if (string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
+                    {
+                        defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(id, _settings.SelectedPort,
+                            _settings.DisablePTT,
+                            _settings.AllowExternalControl);
+                    }
+                    else
+                    {
+                        defaultArgs = _settings.OverrideCommandlineArg;
+                    }
+                }
+                
+                return (await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs, ignoreIfRunning)).Item1;
+            }
+        }
+
+        ClassLogger.Debug("Errors in hamlib confs. Shutting down rigctld and ignoring _restartRigctldStrict");
+        RigctldUtil.TerminateBackgroundProcess();
+        return false;
+    }
+}

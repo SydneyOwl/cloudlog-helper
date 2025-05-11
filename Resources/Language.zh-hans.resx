@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="about" xml:space="preserve">
+        <value>关于</value>
+    </data>
+    <data name="help" xml:space="preserve">
+        <value>帮助</value>
+    </data>
+    <data name="settings" xml:space="preserve">
+        <value>设置</value>
+    </data>
+    <data name="themecolor" xml:space="preserve">
+        <value>主题色</value>
+    </data>
+    <data name="savelogto" xml:space="preserve">
+        <value>保存日志到..</value>
+    </data>
+    <data name="errorccurred" xml:space="preserve">
+        <value>出错啦！</value>
+    </data>
+    <data name="savelog" xml:space="preserve">
+        <value>保存日志</value>
+    </data>
+    <data name="close" xml:space="preserve">
+        <value>关闭窗口</value>
+    </data>
+    <data name="helpfeedback" xml:space="preserve">
+        <value>希望您能将出错信息反馈到Github，帮助开发者修正此BUG！</value>
+    </data>
+    <data name="dark" xml:space="preserve">
+        <value>深色模式</value>
+    </data>
+    <data name="light" xml:space="preserve">
+        <value>浅色模式</value>
+    </data>
+    <data name="basicsettings" xml:space="preserve">
+        <value>基础设置</value>
+    </data>
+    <data name="testconn" xml:space="preserve">
+        <value>测试</value>
+    </data>
+    <data name="urlexample" xml:space="preserve">
+        <value>示例: http://cloudlog.com</value>
+    </data>
+    <data name="notnull" xml:space="preserve">
+        <value>此项不能为空！</value>
+    </data>
+    <data name="startwithhttp" xml:space="preserve">
+        <value>URL 必须以 http:// 或 https:// 开头！</value>
+    </data>
+    <data name="onlymaindomain" xml:space="preserve">
+        <value>只需输入主域名，不允许以/api/qso结尾！</value>
+    </data>
+    <data name="invalidurl" xml:space="preserve">
+        <value>URL无效！</value>
+    </data>
+    <data name="discard" xml:space="preserve">
+        <value>取消</value>
+    </data>
+    <data name="save" xml:space="preserve">
+        <value>应用更改</value>
+    </data>
+    <data name="cloudlogurlhelp" xml:space="preserve">
+        <value>只需填写域名，不需要包含index.php/api/qso，程序会自动填充。</value>
+    </data>
+    <data name="cloudlogapihelp" xml:space="preserve">
+        <value>填写您的apikey。这个key需要具备读/写权限。可在主页账号的下拉框中找到。</value>
+    </data>
+    <data name="urlformaterror" xml:space="preserve">
+        <value>URL格式有误！</value>
+    </data>
+    <data name="error" xml:space="preserve">
+        <value>错误</value>
+    </data>
+    <data name="testing" xml:space="preserve">
+        <value>测试中...</value>
+    </data>
+    <data name="unable2checkapi" xml:space="preserve">
+        <value>无法检查apikey的可用性；请检查输入的地址是否正确！</value>
+    </data>
+    <data name="invalidapikey" xml:space="preserve">
+        <value>此APIKEY无效！</value>
+    </data>
+    <data name="lackwriteaccess" xml:space="preserve">
+        <value>APIKEY需要读/写权限但提供的apikey只有读权限！</value>
+    </data>
+    <data name="inithamlibfailed" xml:space="preserve">
+        <value>Hamlib初始化失败!</value>
+    </data>
+    <data name="autoupdateriginfo" xml:space="preserve">
+        <value>电台数据自动上报</value>
+    </data>
+    <data name="rigmodel" xml:space="preserve">
+        <value>电台型号</value>
+    </data>
+    <data name="deviceport" xml:space="preserve">
+        <value>设备端口</value>
+    </data>
+    <data name="enableadvanced" xml:space="preserve">
+        <value>高级设置</value>
+    </data>
+    <data name="baudrate" xml:space="preserve">
+        <value>波特率</value>
+    </data>
+    <data name="databit" xml:space="preserve">
+        <value>数据位</value>
+    </data>
+    <data name="stopbit" xml:space="preserve">
+        <value>停止位</value>
+    </data>
+    <data name="rigctldcmdarg" xml:space="preserve">
+        <value>Rigctld命令行参数</value>
+    </data>
+    <data name="checkrigconn" xml:space="preserve">
+        <value>请检查电台连接！</value>
+    </data>
+    <data name="pollinterval" xml:space="preserve">
+        <value>轮询间隔（秒）</value>
+    </data>
+    <data name="reachminiumpollinterval" xml:space="preserve">
+        <value>轮询间隔应当大于一秒！</value>
+    </data>
+    <data name="pollintervalreq" xml:space="preserve">
+        <value>轮询间隔必须为整数且大于1！</value>
+    </data>
+    <data name="open" xml:space="preserve">
+        <value>打开</value>
+    </data>
+    <data name="exit" xml:space="preserve">
+        <value>退出</value>
+    </data>
+    <data name="notice" xml:space="preserve">
+        <value>注意</value>
+    </data>
+    <data name="closeormin" xml:space="preserve">
+        <value>您希望最小化到托盘还是关闭本程序？</value>
+    </data>
+    <data name="shutdown" xml:space="preserve">
+        <value>关闭程序</value>
+    </data>
+    <data name="totray" xml:space="preserve">
+        <value>最小化到托盘</value>
+    </data>
+    <data name="remembermychoice" xml:space="preserve">
+        <value>记住我的选择</value>
+    </data>
+    <data name="conflicthamlib" xml:space="preserve">
+        <value>检测到进程 {replace01} 正在运行，可能影响电台数据自动上报功能！</value>
+    </data>
+    <data name="stationid" xml:space="preserve">
+        <value>Cloudlog 站点ID</value>
+    </data>
+    <data name="cloudlogstationid" xml:space="preserve">
+        <value>可以在主页账号的下拉框中“站点地址”找到。</value>
+    </data>
+    <data name="failedstationinfo" xml:space="preserve">
+        <value>无法获取站点信息！</value>
+    </data>
+    <data name="basicinfo" xml:space="preserve">
+        <value>基本信息</value>
+    </data>
+    <data name="invalidconf" xml:space="preserve">
+        <value>配置无效！</value>
+    </data>
+    <data name="calculating" xml:space="preserve">
+        <value>计算中...</value>
+    </data>
+    <data name="unknown" xml:space="preserve">
+        <value>未知</value>
+    </data>
+    <data name="failedstationstat" xml:space="preserve">
+        <value>无法获取站点数据！</value>
+    </data>
+    <data name="op" xml:space="preserve">
+        <value>操作员</value>
+    </data>
+    <data name="grid" xml:space="preserve">
+        <value>坐标</value>
+    </data>
+    <data name="yearqsos" xml:space="preserve">
+        <value>年度QSO数</value>
+    </data>
+    <data name="monthqsos" xml:space="preserve">
+        <value>本月QSO数</value>
+    </data>
+    <data name="dayqsos" xml:space="preserve">
+        <value>今日QSO数</value>
+    </data>
+    <data name="failedriginfo" xml:space="preserve">
+        <value>无法获取电台数据！</value>
+    </data>
+    <data name="confcloudlogfirst" xml:space="preserve">
+        <value>Cloudlog配置无效，请在设置中修改！</value>
+    </data>
+    <data name="confhamlibfirst" xml:space="preserve">
+        <value>Hamlib配置无效，请在设置中修改！</value>
+    </data>
+    <data name="unsupportedrigmode" xml:space="preserve">
+        <value>不支持的电台模式:</value>
+    </data>
+    <data name="unsupportedrigfreq" xml:space="preserve">
+        <value>不支持的电台频率：</value>
+    </data>
+    <data name="rigtimeout" xml:space="preserve">
+        <value>与电台通信超时，请检查链接！</value>
+    </data>
+    <data name="rigctldnotstart" xml:space="preserve">
+        <value>Rigctld服务未启动，请检查设置！</value>
+    </data>
+    <data name="success" xml:space="preserve">
+        <value>成功！</value>
+    </data>
+    <data name="gettinginfo" xml:space="preserve">
+        <value>获取数据中...</value>
+    </data>
+    <data name="failed" xml:space="preserve">
+        <value>失败！</value>
+    </data>
+    <data name="polldisabled" xml:space="preserve">
+        <value>请在设置中打开“电台数组自动上报”</value>
+    </data>
+    <data name="rigdata" xml:space="preserve">
+        <value>电台数据</value>
+    </data>
+    <data name="currentfreq" xml:space="preserve">
+        <value>当前频率</value>
+    </data>
+    <data name="currrentmode" xml:space="preserve">
+        <value>当前模式</value>
+    </data>
+    <data name="uploadstatus" xml:space="preserve">
+        <value>上报状态</value>
+    </data>
+    <data name="nextuploadtime" xml:space="preserve">
+        <value>下次上报时间</value>
+    </data>
+    <data name="invalidport" xml:space="preserve">
+        <value>端口号无效</value>
+    </data>
+    <data name="port" xml:space="preserve">
+        <value>端口号</value>
+    </data>
+    <data name="udpporthelp" xml:space="preserve">
+        <value>端口号应与JTDX/wsjt-x中设置的一致.默认为2237</value>
+    </data>
+    <data name="enableudpserver" xml:space="preserve">
+        <value>启用UDP服务器</value>
+    </data>
+    <data name="enableoutsideconn" xml:space="preserve">
+        <value>允许外部连接</value>
+    </data>
+    <data name="invalidudpconf" xml:space="preserve">
+        <value>UDP服务器配置无效！</value>
+    </data>
+    <data name="uploading" xml:space="preserve">
+        <value>上传中...</value>
+    </data>
+    <data name="txing" xml:space="preserve">
+        <value>发射中...</value>
+    </data>
+    <data name="udptimeout" xml:space="preserve">
+        <value>UDP连接超时！</value>
+    </data>
+    <data name="waitconn" xml:space="preserve">
+        <value>等待连接..</value>
+    </data>
+    <data name="totaldivqso" xml:space="preserve">
+        <value>总解码数 / QSO数：</value>
+    </data>
+    <data name="recvqso" xml:space="preserve">
+        <value>已完成的QSO信息</value>
+    </data>
+    <data name="selall" xml:space="preserve">
+        <value>全选</value>
+    </data>
+    <data name="showfailonly" xml:space="preserve">
+        <value>仅显示上传失败项</value>
+    </data>
+    <data name="reuploadsel" xml:space="preserve">
+        <value>重传选中项</value>
+    </data>
+    <data name="delsel" xml:space="preserve">
+        <value>删除选中项</value>
+    </data>
+    <data name="within5min" xml:space="preserve">
+        <value>5分钟内取得的每分钟QSO平均值。</value>
+    </data>
+    <data name="qsorate" xml:space="preserve">
+        <value>QSO速率：</value>
+    </data>
+    <data name="export2adif" xml:space="preserve">
+        <value>导出为adi</value>
+    </data>
+    <data name="retrycountreq" xml:space="preserve">
+        <value>重试次数应为大于0的整数！</value>
+    </data>
+    <data name="qsouploaddisabled" xml:space="preserve">
+        <value>QSO自动上传功能未启用。</value>
+    </data>
+    <data name="t_Uploading" xml:space="preserve">
+        <value>上传中..</value>
+    </data>
+    <data name="t_Retrying" xml:space="preserve">
+        <value>重试中...</value>
+    </data>
+    <data name="t_Pending" xml:space="preserve">
+        <value>等待中...</value>
+    </data>
+    <data name="t_Success" xml:space="preserve">
+        <value>上传成功</value>
+    </data>
+    <data name="t_Fail" xml:space="preserve">
+        <value>上传失败</value>
+    </data>
+    <data name="t_ignored" xml:space="preserve">
+        <value>忽略上传</value>
+    </data>
+    <data name="useexternalrigctld" xml:space="preserve">
+        <value>使用外部rigctld服务</value>
+    </data>
+    <data name="externalrigctldhost" xml:space="preserve">
+        <value>Rigctld服务地址</value>
+    </data>
+    <data name="invalidaddr" xml:space="preserve">
+        <value>地址无效！</value>
+    </data>
+    <data name="autoqsoupload" xml:space="preserve">
+        <value>自动上传QSO</value>
+    </data>
+    <data name="qsoretrycount" xml:space="preserve">
+        <value>QSO上传失败重试次数</value>
+    </data>
+    <data name="reportpwr" xml:space="preserve">
+        <value>报告发射功率</value>
+    </data>
+    <data name="reportsplit" xml:space="preserve">
+        <value>报告异频信息</value>
+    </data>
+    <data name="rfpowerhelp" xml:space="preserve">
+        <value>部分电台不支持读取发射功率或读取的数据错误，因此本功能默认未开启。</value>
+    </data>
+    <data name="splithelp" xml:space="preserve">
+        <value>部分电台不支持读取异频信息或读取的数据错误，因此本功能默认未开启。</value>
+    </data>
+    <data name="spacenotallowed" xml:space="preserve">
+        <value>字符串前后不允许空格</value>
+    </data>
+    <data name="instanceuncompitable" xml:space="preserve">
+        <value>您使用的后端服务似乎是{replace01}而不是Cloudlog，因此软件部分功能可能不受支持。</value>
+    </data>
+    <data name="disableptt" xml:space="preserve">
+        <value>禁用PTT控制</value>
+    </data>
+    <data name="allowexternalcontrol" xml:space="preserve">
+        <value>允许外部控制</value>
+    </data>
+    <data name="cmdarghelp" xml:space="preserve">
+        <value>如果此字段不为空，软件将使用填写的内容作为启动rigctld的默认参数，其他所有配置将被忽略。</value>
+    </data>
+    <data name="disableptthelp" xml:space="preserve">
+        <value>部分Linux发行版中如果不禁用rts/dtr可能导致PTT无法正确初始化，表现为PTT始终处于触发状态。</value>
+    </data>
+</root>

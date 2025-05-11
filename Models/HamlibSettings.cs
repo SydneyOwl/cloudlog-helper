@@ -1,0 +1,153 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using CloudlogHelper.Resources;
+using CloudlogHelper.Utils;
+using Newtonsoft.Json;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
+
+namespace CloudlogHelper.Models;
+
+[JsonObject(MemberSerialization.OptIn)]
+public class HamlibSettings : ReactiveValidationObject
+{
+    public HamlibSettings()
+    {
+        this.ValidationRule(x => x.SelectedRadio,
+            st => !string.IsNullOrEmpty(st),
+            TranslationHelper.GetString("notnull")
+        );
+        this.ValidationRule(x => x.SelectedPort,
+            st => !string.IsNullOrEmpty(st),
+            TranslationHelper.GetString("notnull")
+        );
+        this.ValidationRule(x => x.ExternalRigctldHostAddress,
+            st =>
+            {
+                if (string.IsNullOrEmpty(st)) return false;
+                var addr = ExternalRigctldHostAddress.Split(":");
+                return addr.Length == 2 && int.TryParse(addr[1], out var port) && port is > 0 and < 65535;
+            },
+            TranslationHelper.GetString("invalidaddr")
+        );
+        this.ValidationRule(x => x.PollInterval,
+            st =>
+            {
+                if (!int.TryParse(st, out var res)) return false;
+                return !string.IsNullOrEmpty(st) && res >= 1;
+            },
+            TranslationHelper.GetString("pollintervalreq")
+        );
+    }
+
+    [Reactive] [JsonProperty] public string SelectedRadio { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public string SelectedPort { get; set; } = string.Empty;
+
+    [Reactive] [JsonProperty] public Dictionary<string, string> KnownModels { get; set; } = new();
+
+    [Reactive] [JsonProperty] public string PollInterval { get; set; } = "9";
+    [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
+    
+    [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }
+    
+    [Reactive] [JsonProperty] public bool ReportSplitInfo { get; set; }
+
+    [Reactive] [JsonProperty] public bool UseRigAdvanced { get; set; }
+    
+    [Reactive] [JsonProperty] public bool DisablePTT { get; set; }
+    
+    [Reactive] [JsonProperty] public bool AllowExternalControl { get; set; }
+
+    [Reactive] [JsonProperty] public string OverrideCommandlineArg { get; set; } = String.Empty;
+    
+    [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
+
+    [Reactive] [JsonProperty] public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
+
+    public IObservable<bool> IsHamlibValid => this.WhenAnyValue(
+        x => x.SelectedRadio,
+        x => x.SelectedPort,
+        x => x.PollInterval,
+        x=> x.ExternalRigctldHostAddress,
+        x => x.UseExternalRigctld,
+        x => x.OverrideCommandlineArg,
+        (url, key, interval,addr, externalRigctld, args) =>
+            !IsHamlibHasErrors()
+    );
+
+    private bool IsPropertyHasErrors(string propertyName)
+    {
+        return GetErrors(propertyName).Cast<string>().Any();
+    }
+
+    public bool IsHamlibOK()
+    {
+        return !IsHamlibHasErrors();
+    }
+
+    public bool IsHamlibHasErrors()
+    {
+        if (UseRigAdvanced)
+        {
+            if (!string.IsNullOrEmpty(OverrideCommandlineArg))
+            {
+                return IsPropertyHasErrors(nameof(SelectedRadio));
+            }
+        }
+
+        if (!UseExternalRigctld)
+        {
+            return IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort)) ||
+                   IsPropertyHasErrors(nameof(PollInterval));
+        }
+        else
+        {
+            return IsPropertyHasErrors(nameof(ExternalRigctldHostAddress));
+        }
+
+        return false;
+        // return (UseRigAdvanced && (string.IsNullOrEmpty(OverrideCommandlineArg) || IsPropertyHasErrors(nameof(SelectedRadio)))) || 
+        //        ((IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort)) || IsPropertyHasErrors(nameof(PollInterval))) && !UseExternalRigctld && !UseRigAdvanced) 
+        //        || (IsPropertyHasErrors(nameof(ExternalRigctldHostAddress)) && UseExternalRigctld) || IsPropertyHasErrors(nameof(SelectedRadio));
+    }
+
+
+    public HamlibSettings DeepClone()
+    {
+        return JsonConvert.DeserializeObject<HamlibSettings>(JsonConvert.SerializeObject(this))!;
+    }
+
+    protected bool Equals(HamlibSettings other)
+    {
+        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort && PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo && UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT && AllowExternalControl == other.AllowExternalControl && OverrideCommandlineArg == other.OverrideCommandlineArg && UseExternalRigctld == other.UseExternalRigctld && ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((HamlibSettings)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = new HashCode();
+        hashCode.Add(SelectedRadio);
+        hashCode.Add(SelectedPort);
+        hashCode.Add(PollInterval);
+        hashCode.Add(PollAllowed);
+        hashCode.Add(ReportRFPower);
+        hashCode.Add(ReportSplitInfo);
+        hashCode.Add(UseRigAdvanced);
+        hashCode.Add(DisablePTT);
+        hashCode.Add(AllowExternalControl);
+        hashCode.Add(OverrideCommandlineArg);
+        hashCode.Add(UseExternalRigctld);
+        hashCode.Add(ExternalRigctldHostAddress);
+        return hashCode.ToHashCode();
+    }
+}

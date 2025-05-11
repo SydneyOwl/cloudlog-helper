@@ -1,0 +1,1654 @@
+[
+    {
+        "id": 1,
+        "mode": "AM",
+        "submode": null,
+        "qrgmode": "SSB",
+        "active": 1
+    },
+    {
+        "id": 2,
+        "mode": "ARDOP",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 3,
+        "mode": "ATV",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 4,
+        "mode": "C4FM",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 5,
+        "mode": "CHIP",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 6,
+        "mode": "CHIP",
+        "submode": "CHIP128",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 7,
+        "mode": "CHIP",
+        "submode": "CHIP64",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 8,
+        "mode": "CLO",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 9,
+        "mode": "CONTESTI",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 10,
+        "mode": "CW",
+        "submode": null,
+        "qrgmode": "CW",
+        "active": 1
+    },
+    {
+        "id": 11,
+        "mode": "CW",
+        "submode": "PCW",
+        "qrgmode": "CW",
+        "active": 0
+    },
+    {
+        "id": 12,
+        "mode": "DIGITALVOICE",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 13,
+        "mode": "DOMINO",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 14,
+        "mode": "DOMINO",
+        "submode": "DOMINOEX",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 15,
+        "mode": "DOMINO",
+        "submode": "DOMINOF",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 16,
+        "mode": "DSTAR",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 17,
+        "mode": "FAX",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 18,
+        "mode": "FM",
+        "submode": null,
+        "qrgmode": "SSB",
+        "active": 1
+    },
+    {
+        "id": 19,
+        "mode": "FSK441",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 20,
+        "mode": "FT8",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 21,
+        "mode": "HELL",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 22,
+        "mode": "HELL",
+        "submode": "FMHELL",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 23,
+        "mode": "HELL",
+        "submode": "FSKHELL",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 24,
+        "mode": "HELL",
+        "submode": "HELL80",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 25,
+        "mode": "HELL",
+        "submode": "HFSK",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 26,
+        "mode": "HELL",
+        "submode": "PSKHELL",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 27,
+        "mode": "ISCAT",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 28,
+        "mode": "ISCAT",
+        "submode": "ISCAT-A",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 29,
+        "mode": "ISCAT",
+        "submode": "ISCAT-B",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 30,
+        "mode": "JT4",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 31,
+        "mode": "JT4",
+        "submode": "JT4A",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 32,
+        "mode": "JT4",
+        "submode": "JT4B",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 33,
+        "mode": "JT4",
+        "submode": "JT4C",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 34,
+        "mode": "JT4",
+        "submode": "JT4D",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 35,
+        "mode": "JT4",
+        "submode": "JT4E",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 36,
+        "mode": "JT4",
+        "submode": "JT4F",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 37,
+        "mode": "JT4",
+        "submode": "JT4G",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 38,
+        "mode": "JT44",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 39,
+        "mode": "JT65",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 40,
+        "mode": "JT65",
+        "submode": "JT65A",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 41,
+        "mode": "JT65",
+        "submode": "JT65B",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 42,
+        "mode": "JT65",
+        "submode": "JT65B2",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 43,
+        "mode": "JT65",
+        "submode": "JT65C",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 44,
+        "mode": "JT65",
+        "submode": "JT65C2",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 45,
+        "mode": "JT6C",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 46,
+        "mode": "JT6M",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 47,
+        "mode": "JT9",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 48,
+        "mode": "JT9",
+        "submode": "JT9-1",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 49,
+        "mode": "JT9",
+        "submode": "JT9-10",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 50,
+        "mode": "JT9",
+        "submode": "JT9-2",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 51,
+        "mode": "JT9",
+        "submode": "JT9-30",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 52,
+        "mode": "JT9",
+        "submode": "JT9-5",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 53,
+        "mode": "JT9",
+        "submode": "JT9A",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 54,
+        "mode": "JT9",
+        "submode": "JT9B",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 55,
+        "mode": "JT9",
+        "submode": "JT9C",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 56,
+        "mode": "JT9",
+        "submode": "JT9D",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 57,
+        "mode": "JT9",
+        "submode": "JT9E",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 58,
+        "mode": "JT9",
+        "submode": "JT9E FAST",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 59,
+        "mode": "JT9",
+        "submode": "JT9F",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 60,
+        "mode": "JT9",
+        "submode": "JT9F FAST",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 61,
+        "mode": "JT9",
+        "submode": "JT9G",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 62,
+        "mode": "JT9",
+        "submode": "JT9G FAST",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 63,
+        "mode": "JT9",
+        "submode": "JT9H",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 64,
+        "mode": "JT9",
+        "submode": "JT9H FAST",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 65,
+        "mode": "JTMS",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 66,
+        "mode": "JTMSK",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 67,
+        "mode": "MFSK",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 68,
+        "mode": "MFSK",
+        "submode": "FSQCALL",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 69,
+        "mode": "MFSK",
+        "submode": "FT4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 70,
+        "mode": "MFSK",
+        "submode": "JS8",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 71,
+        "mode": "MFSK",
+        "submode": "MFSK11",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 72,
+        "mode": "MFSK",
+        "submode": "MFSK128",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 73,
+        "mode": "MFSK",
+        "submode": "MFSK16",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 74,
+        "mode": "MFSK",
+        "submode": "MFSK22",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 75,
+        "mode": "MFSK",
+        "submode": "MFSK31",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 76,
+        "mode": "MFSK",
+        "submode": "MFSK32",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 77,
+        "mode": "MFSK",
+        "submode": "MFSK4",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 78,
+        "mode": "MFSK",
+        "submode": "MFSK64",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 79,
+        "mode": "MFSK",
+        "submode": "MFSK8",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 80,
+        "mode": "MSK144",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 81,
+        "mode": "MT63",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 82,
+        "mode": "OLIVIA",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 83,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 16/1000",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 84,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 16/500",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 85,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 32/1000",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 86,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 4/125",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 87,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 4/250",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 88,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 8/250",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 89,
+        "mode": "OLIVIA",
+        "submode": "OLIVIA 8/500",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 90,
+        "mode": "OPERA",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 91,
+        "mode": "OPERA",
+        "submode": "OPERA-BEACON",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 92,
+        "mode": "OPERA",
+        "submode": "OPERA-QSO",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 93,
+        "mode": "PAC",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 94,
+        "mode": "PAC",
+        "submode": "PAC2",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 95,
+        "mode": "PAC",
+        "submode": "PAC3",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 96,
+        "mode": "PAC",
+        "submode": "PAC4",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 97,
+        "mode": "PAX",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 98,
+        "mode": "PAX",
+        "submode": "PAX2",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 99,
+        "mode": "PKT",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 100,
+        "mode": "PSK",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 101,
+        "mode": "PSK",
+        "submode": "FSK31",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 102,
+        "mode": "PSK",
+        "submode": "PSK10",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 103,
+        "mode": "PSK",
+        "submode": "PSK1000",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 104,
+        "mode": "PSK",
+        "submode": "PSK125",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 105,
+        "mode": "PSK",
+        "submode": "PSK250",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 106,
+        "mode": "PSK",
+        "submode": "PSK31",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 107,
+        "mode": "PSK",
+        "submode": "PSK500",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 108,
+        "mode": "PSK",
+        "submode": "PSK63",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 109,
+        "mode": "PSK",
+        "submode": "PSK63F",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 110,
+        "mode": "PSK",
+        "submode": "PSKAM10",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 111,
+        "mode": "PSK",
+        "submode": "PSKAM31",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 112,
+        "mode": "PSK",
+        "submode": "PSKAM50",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 113,
+        "mode": "PSK",
+        "submode": "PSKFEC31",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 114,
+        "mode": "PSK",
+        "submode": "QPSK125",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 115,
+        "mode": "PSK",
+        "submode": "QPSK250",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 116,
+        "mode": "PSK",
+        "submode": "QPSK31",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 117,
+        "mode": "PSK",
+        "submode": "QPSK500",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 118,
+        "mode": "PSK",
+        "submode": "QPSK63",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 119,
+        "mode": "PSK",
+        "submode": "SIM31",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 120,
+        "mode": "PSK2K",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 121,
+        "mode": "Q15",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 122,
+        "mode": "QRA64",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 123,
+        "mode": "QRA64",
+        "submode": "QRA64A",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 124,
+        "mode": "QRA64",
+        "submode": "QRA64B",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 125,
+        "mode": "QRA64",
+        "submode": "QRA64C",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 126,
+        "mode": "QRA64",
+        "submode": "QRA64D",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 127,
+        "mode": "QRA64",
+        "submode": "QRA64E",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 128,
+        "mode": "ROS",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 129,
+        "mode": "ROS",
+        "submode": "ROS-EME",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 130,
+        "mode": "ROS",
+        "submode": "ROS-HF",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 131,
+        "mode": "ROS",
+        "submode": "ROS-MF",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 132,
+        "mode": "RTTY",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 133,
+        "mode": "RTTY",
+        "submode": "ASCI",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 134,
+        "mode": "RTTYM",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 135,
+        "mode": "SSB",
+        "submode": null,
+        "qrgmode": "SSB",
+        "active": 1
+    },
+    {
+        "id": 136,
+        "mode": "SSB",
+        "submode": "LSB",
+        "qrgmode": "SSB",
+        "active": 1
+    },
+    {
+        "id": 137,
+        "mode": "SSB",
+        "submode": "USB",
+        "qrgmode": "SSB",
+        "active": 1
+    },
+    {
+        "id": 138,
+        "mode": "SSTV",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 139,
+        "mode": "T10",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 140,
+        "mode": "THOR",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 141,
+        "mode": "THRB",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 142,
+        "mode": "THRB",
+        "submode": "THRBX",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 143,
+        "mode": "TOR",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 144,
+        "mode": "TOR",
+        "submode": "AMTORFEC",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 145,
+        "mode": "TOR",
+        "submode": "GTOR",
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 146,
+        "mode": "V4",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 147,
+        "mode": "VOI",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 148,
+        "mode": "WINMOR",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 149,
+        "mode": "WSPR",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 0
+    },
+    {
+        "id": 150,
+        "mode": "DIGITALVOICE",
+        "submode": "C4FM",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 151,
+        "mode": "DIGITALVOICE",
+        "submode": "DMR",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 152,
+        "mode": "DIGITALVOICE",
+        "submode": "DSTAR",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 153,
+        "mode": "DYNAMIC",
+        "submode": null,
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 154,
+        "mode": "DYNAMIC",
+        "submode": "VARA HF",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 155,
+        "mode": "DYNAMIC",
+        "submode": "VARA SATELLITE",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 156,
+        "mode": "DYNAMIC",
+        "submode": "VARA FM 1200",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 157,
+        "mode": "DYNAMIC",
+        "submode": "VARA FM 9600",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 158,
+        "mode": "DOMINO",
+        "submode": "DOM-M",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 159,
+        "mode": "DOMINO",
+        "submode": "DOM4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 160,
+        "mode": "DOMINO",
+        "submode": "DOM5",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 161,
+        "mode": "DOMINO",
+        "submode": "DOM8",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 162,
+        "mode": "DOMINO",
+        "submode": "DOM11",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 163,
+        "mode": "DOMINO",
+        "submode": "VARA FM 9600",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 164,
+        "mode": "DOMINO",
+        "submode": "DOM22",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 165,
+        "mode": "DOMINO",
+        "submode": "DOM44",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 166,
+        "mode": "DOMINO",
+        "submode": "DOM88",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 167,
+        "mode": "HELL",
+        "submode": "HELLX5",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 168,
+        "mode": "HELL",
+        "submode": "HELLX9",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 169,
+        "mode": "HELL",
+        "submode": "SLOWHELL",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 170,
+        "mode": "MFSK",
+        "submode": "FST4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 171,
+        "mode": "MFSK",
+        "submode": "FST4W",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 172,
+        "mode": "MFSK",
+        "submode": "JTMS",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 173,
+        "mode": "MFSK",
+        "submode": "Q65",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 174,
+        "mode": "PSK",
+        "submode": "8PSK125",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 175,
+        "mode": "PSK",
+        "submode": "8PSK125F",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 176,
+        "mode": "PSK",
+        "submode": "8PSK125FL",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 177,
+        "mode": "PSK",
+        "submode": "8PSK250",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 178,
+        "mode": "PSK",
+        "submode": "8PSK250F",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 179,
+        "mode": "PSK",
+        "submode": "8PSK250FL",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 180,
+        "mode": "PSK",
+        "submode": "8PSK500",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 181,
+        "mode": "PSK",
+        "submode": "8PSK500F",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 182,
+        "mode": "PSK",
+        "submode": "8PSK1000",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 183,
+        "mode": "PSK",
+        "submode": "8PSK1000F",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 184,
+        "mode": "PSK",
+        "submode": "8PSK1200F",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 185,
+        "mode": "PSK",
+        "submode": "PSK63F",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 186,
+        "mode": "PSK",
+        "submode": "PSK63RC4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 187,
+        "mode": "PSK",
+        "submode": "PSK63RC5",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 188,
+        "mode": "PSK",
+        "submode": "PSK63RC10",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 189,
+        "mode": "PSK",
+        "submode": "PSK63RC20",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 190,
+        "mode": "PSK",
+        "submode": "PSK63RC32",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 191,
+        "mode": "PSK",
+        "submode": "PSK125C12",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 192,
+        "mode": "PSK",
+        "submode": "PSK125R",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 193,
+        "mode": "PSK",
+        "submode": "PSK125RC10",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 194,
+        "mode": "PSK",
+        "submode": "PSK125RC12",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 195,
+        "mode": "PSK",
+        "submode": "PSK125RC16",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 196,
+        "mode": "PSK",
+        "submode": "PSK125RC4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 197,
+        "mode": "PSK",
+        "submode": "PSK125RC5",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 198,
+        "mode": "PSK",
+        "submode": "PSK250C6",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 199,
+        "mode": "PSK",
+        "submode": "PSK250R",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 200,
+        "mode": "PSK",
+        "submode": "PSK250RC2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 201,
+        "mode": "PSK",
+        "submode": "PSK250RC3",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 202,
+        "mode": "PSK",
+        "submode": "PSK250RC5",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 203,
+        "mode": "PSK",
+        "submode": "PSK250RC6",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 204,
+        "mode": "PSK",
+        "submode": "PSK250RC7",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 205,
+        "mode": "PSK",
+        "submode": "PSK500C2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 206,
+        "mode": "PSK",
+        "submode": "PSK500C4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 207,
+        "mode": "PSK",
+        "submode": "PSK500R",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 208,
+        "mode": "PSK",
+        "submode": "PSK500RC2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 209,
+        "mode": "PSK",
+        "submode": "PSK500RC3",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 210,
+        "mode": "PSK",
+        "submode": "PSK500RC4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 211,
+        "mode": "PSK",
+        "submode": "PSK800C2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 212,
+        "mode": "PSK",
+        "submode": "PSK800RC2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 213,
+        "mode": "PSK",
+        "submode": "PSK1000C2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 214,
+        "mode": "PSK",
+        "submode": "PSK1000R",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 215,
+        "mode": "PSK",
+        "submode": "PSK1000RC2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 216,
+        "mode": "THOR",
+        "submode": "THOR-M",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 217,
+        "mode": "THOR",
+        "submode": "THOR4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 218,
+        "mode": "THOR",
+        "submode": "THOR5",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 219,
+        "mode": "THOR",
+        "submode": "THOR8",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 220,
+        "mode": "THOR",
+        "submode": "THOR11",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 221,
+        "mode": "THOR",
+        "submode": "THOR16",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 222,
+        "mode": "THOR",
+        "submode": "THOR22",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 223,
+        "mode": "THOR",
+        "submode": "THOR25X4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 224,
+        "mode": "THOR",
+        "submode": "THOR50X1",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 225,
+        "mode": "THOR",
+        "submode": "THOR50X2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 226,
+        "mode": "THOR",
+        "submode": "THOR100",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 227,
+        "mode": "THRB",
+        "submode": "THRBX1",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 228,
+        "mode": "THRB",
+        "submode": "THRBX2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 229,
+        "mode": "THRB",
+        "submode": "THRBX4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 230,
+        "mode": "THRB",
+        "submode": "THROB1",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 231,
+        "mode": "THRB",
+        "submode": "THROB2",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 232,
+        "mode": "THRB",
+        "submode": "THROB4",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 233,
+        "mode": "TOR",
+        "submode": "NAVTEX",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 234,
+        "mode": "TOR",
+        "submode": "SITORB",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 235,
+        "mode": "DIGITALVOICE",
+        "submode": "FREEDV",
+        "qrgmode": "DATA",
+        "active": 1
+    },
+    {
+        "id": 236,
+        "mode": "DIGITALVOICE",
+        "submode": "M17",
+        "qrgmode": "DATA",
+        "active": 1
+    }
+]

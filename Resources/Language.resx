@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="settings" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="about" xml:space="preserve">
+        <value>About</value>
+    </data>
+    <data name="help" xml:space="preserve">
+        <value>Help</value>
+    </data>
+    <data name="themecolor" xml:space="preserve">
+        <value>Theme Color</value>
+    </data>
+    <data name="savelogto" xml:space="preserve">
+        <value>Save log to...</value>
+    </data>
+    <data name="errorccurred" xml:space="preserve">
+        <value>Error Occurred!</value>
+    </data>
+    <data name="savelog" xml:space="preserve">
+        <value>Save Log</value>
+    </data>
+    <data name="close" xml:space="preserve">
+        <value>Close</value>
+    </data>
+    <data name="helpfeedback" xml:space="preserve">
+        <value>Your feedback is valuable! Could you please share the error details on GitHub to assist in resolving this bug?</value>
+    </data>
+    <data name="light" xml:space="preserve">
+        <value>Light</value>
+    </data>
+    <data name="dark" xml:space="preserve">
+        <value>Dark</value>
+    </data>
+    <data name="basicsettings" xml:space="preserve">
+        <value>Basical Settings</value>
+    </data>
+    <data name="testconn" xml:space="preserve">
+        <value>Test </value>
+    </data>
+    <data name="urlexample" xml:space="preserve">
+        <value>e.g. http://cloudlog.com</value>
+    </data>
+    <data name="notnull" xml:space="preserve">
+        <value>This cannot be empty!</value>
+    </data>
+    <data name="startwithhttp" xml:space="preserve">
+        <value>URL must start with http:// or https://</value>
+    </data>
+    <data name="onlymaindomain" xml:space="preserve">
+        <value>Please input domain only; don't end with /api/qso!</value>
+    </data>
+    <data name="invalidurl" xml:space="preserve">
+        <value>URL is invalid!</value>
+    </data>
+    <data name="save" xml:space="preserve">
+        <value>Apply&amp;Save</value>
+    </data>
+    <data name="discard" xml:space="preserve">
+        <value>Discard</value>
+    </data>
+    <data name="cloudlogurlhelp" xml:space="preserve">
+        <value>Only enter the domain name. There is no need to include index.php/api/qso as the system will automatically complete the path.</value>
+    </data>
+    <data name="cloudlogapihelp" xml:space="preserve">
+        <value>Fill in your api key here. Require Read/Write access.You can find it under API Keys in the Cloudlog dropdown for your account.</value>
+    </data>
+    <data name="urlformaterror" xml:space="preserve">
+        <value>URL Format error!</value>
+    </data>
+    <data name="error" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="testing" xml:space="preserve">
+        <value>Testing...</value>
+    </data>
+    <data name="unable2checkapi" xml:space="preserve">
+        <value>Unable to check apikey availability; Please check whether the url is correct or not!</value>
+    </data>
+    <data name="invalidapikey" xml:space="preserve">
+        <value>This apikey is invalid!</value>
+    </data>
+    <data name="lackwriteaccess" xml:space="preserve">
+        <value>Apikey needs read/write access but only read is given here!</value>
+    </data>
+    <data name="inithamlibfailed" xml:space="preserve">
+        <value>Failed to init hamlib!</value>
+    </data>
+    <data name="autoupdateriginfo" xml:space="preserve">
+        <value>Auto upload rig status</value>
+    </data>
+    <data name="rigmodel" xml:space="preserve">
+        <value>Rig Model</value>
+    </data>
+    <data name="deviceport" xml:space="preserve">
+        <value>Device Port</value>
+    </data>
+    <data name="enableadvanced" xml:space="preserve">
+        <value>Advanced</value>
+    </data>
+    <data name="baudrate" xml:space="preserve">
+        <value>Baudrate</value>
+    </data>
+    <data name="stopbit" xml:space="preserve">
+        <value>Stop Bit</value>
+    </data>
+    <data name="databit" xml:space="preserve">
+        <value>Data Bit</value>
+    </data>
+    <data name="rigctldcmdarg" xml:space="preserve">
+        <value>Rigctld cmd args</value>
+    </data>
+    <data name="checkrigconn" xml:space="preserve">
+        <value>Please check RIG connection!</value>
+    </data>
+    <data name="pollinterval" xml:space="preserve">
+        <value>Poll interval (sec)</value>
+    </data>
+    <data name="reachminiumpollinterval" xml:space="preserve">
+        <value>Polling interval should be more than 1s!</value>
+    </data>
+    <data name="pollintervalreq" xml:space="preserve">
+        <value>The polling interval must be an integer and greater than 1</value>
+    </data>
+    <data name="open" xml:space="preserve">
+        <value>Open</value>
+    </data>
+    <data name="exit" xml:space="preserve">
+        <value>Exit</value>
+    </data>
+    <data name="notice" xml:space="preserve">
+        <value>Notice</value>
+    </data>
+    <data name="closeormin" xml:space="preserve">
+        <value>Would you like to minimize to the tray or close the application?</value>
+    </data>
+    <data name="totray" xml:space="preserve">
+        <value>Minimize to tray</value>
+    </data>
+    <data name="shutdown" xml:space="preserve">
+        <value>Close App</value>
+    </data>
+    <data name="remembermychoice" xml:space="preserve">
+        <value>Remember my choice</value>
+    </data>
+    <data name="conflicthamlib" xml:space="preserve">
+        <value>Process conflict: {replace01} may disrupt radio data auto-reporting.</value>
+    </data>
+    <data name="stationid" xml:space="preserve">
+        <value>Cloudlog Station ID</value>
+    </data>
+    <data name="cloudlogstationid" xml:space="preserve">
+        <value>You can find it under Station Location in the Cloudlog dropdown for your account.</value>
+    </data>
+    <data name="failedstationinfo" xml:space="preserve">
+        <value>Failed to fetch station info!</value>
+    </data>
+    <data name="basicinfo" xml:space="preserve">
+        <value>Basical Info</value>
+    </data>
+    <data name="invalidconf" xml:space="preserve">
+        <value>Invalid configuration!</value>
+    </data>
+    <data name="calculating" xml:space="preserve">
+        <value>Calcing..</value>
+    </data>
+    <data name="unknown" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
+    <data name="failedstationstat" xml:space="preserve">
+        <value>Failed to fetch station statistics!</value>
+    </data>
+    <data name="op" xml:space="preserve">
+        <value>Operator</value>
+    </data>
+    <data name="grid" xml:space="preserve">
+        <value>Grid Square</value>
+    </data>
+    <data name="yearqsos" xml:space="preserve">
+        <value>QSOs this year</value>
+    </data>
+    <data name="monthqsos" xml:space="preserve">
+        <value>QSOs this month</value>
+    </data>
+    <data name="dayqsos" xml:space="preserve">
+        <value>Qsos today</value>
+    </data>
+    <data name="failedriginfo" xml:space="preserve">
+        <value>Failed to fetch RIG info!</value>
+    </data>
+    <data name="confcloudlogfirst" xml:space="preserve">
+        <value>Invalid cloudlog configuration; Please check them in settings!</value>
+    </data>
+    <data name="confhamlibfirst" xml:space="preserve">
+        <value>Invalid hamlib configuration; Please check them in settings!</value>
+    </data>
+    <data name="unsupportedrigmode" xml:space="preserve">
+        <value>Unsupported rig mode:</value>
+    </data>
+    <data name="unsupportedrigfreq" xml:space="preserve">
+        <value>Unsupported rig freq:</value>
+    </data>
+    <data name="rigtimeout" xml:space="preserve">
+        <value>Rig communication time out, please check connection!</value>
+    </data>
+    <data name="rigctldnotstart" xml:space="preserve">
+        <value>Rigctld service not started; Please check your configuration!</value>
+    </data>
+    <data name="failed" xml:space="preserve">
+        <value>Failed!</value>
+    </data>
+    <data name="success" xml:space="preserve">
+        <value>success</value>
+    </data>
+    <data name="gettinginfo" xml:space="preserve">
+        <value>Getting info...</value>
+    </data>
+    <data name="polldisabled" xml:space="preserve">
+        <value>Rig data polling is not enabled！</value>
+    </data>
+    <data name="rigdata" xml:space="preserve">
+        <value>Rig Data</value>
+    </data>
+    <data name="currentfreq" xml:space="preserve">
+        <value>Current Frequency</value>
+    </data>
+    <data name="currrentmode" xml:space="preserve">
+        <value>Current Mode</value>
+    </data>
+    <data name="uploadstatus" xml:space="preserve">
+        <value>Upload Status</value>
+    </data>
+    <data name="nextuploadtime" xml:space="preserve">
+        <value>Next Upload Time</value>
+    </data>
+    <data name="invalidport" xml:space="preserve">
+        <value>Invalid port number.</value>
+    </data>
+    <data name="port" xml:space="preserve">
+        <value>Port</value>
+    </data>
+    <data name="udpporthelp" xml:space="preserve">
+        <value>The port number should be consistent with the settings in JTDX/wsjt-x. The default is 2237.</value>
+    </data>
+    <data name="enableudpserver" xml:space="preserve">
+        <value>Enable udp server</value>
+    </data>
+    <data name="enableoutsideconn" xml:space="preserve">
+        <value>Enable connection from outside</value>
+    </data>
+    <data name="invalidudpconf" xml:space="preserve">
+        <value>Invalid UDP Server config!</value>
+    </data>
+    <data name="uploading" xml:space="preserve">
+        <value>Uploading...</value>
+    </data>
+    <data name="txing" xml:space="preserve">
+        <value>Tx...</value>
+    </data>
+    <data name="udptimeout" xml:space="preserve">
+        <value>UDP Connection timeout!</value>
+    </data>
+    <data name="waitconn" xml:space="preserve">
+        <value>Waiting for connection...</value>
+    </data>
+    <data name="totaldivqso" xml:space="preserve">
+        <value>Decoded / Qsos: </value>
+    </data>
+    <data name="recvqso" xml:space="preserve">
+        <value>Received QSO Info</value>
+    </data>
+    <data name="selall" xml:space="preserve">
+        <value>Select All</value>
+    </data>
+    <data name="showfailonly" xml:space="preserve">
+        <value>Show failed only</value>
+    </data>
+    <data name="reuploadsel" xml:space="preserve">
+        <value>UP AGN</value>
+    </data>
+    <data name="delsel" xml:space="preserve">
+        <value>DEL SEL</value>
+    </data>
+    <data name="within5min" xml:space="preserve">
+        <value>The average number of QSOs per minute achieved within 5 minutes.</value>
+    </data>
+    <data name="qsorate" xml:space="preserve">
+        <value>QSO Rate: </value>
+    </data>
+    <data name="export2adif" xml:space="preserve">
+        <value>Export adi</value>
+    </data>
+    <data name="retrycountreq" xml:space="preserve">
+        <value>Retry count should be an integer and larger than 0!</value>
+    </data>
+    <data name="qsouploaddisabled" xml:space="preserve">
+        <value>QSO auto upload is disabled.</value>
+    </data>
+    <data name="t_Uploading" xml:space="preserve">
+        <value>Uploading...</value>
+    </data>
+    <data name="t_Retrying" xml:space="preserve">
+        <value>Retrying...</value>
+    </data>
+    <data name="t_Pending" xml:space="preserve">
+        <value>Pending...</value>
+    </data>
+    <data name="t_Success" xml:space="preserve">
+        <value>Success</value>
+    </data>
+    <data name="t_Fail" xml:space="preserve">
+        <value>Fail</value>
+    </data>
+    <data name="t_ignored" xml:space="preserve">
+        <value>Ignored</value>
+    </data>
+    <data name="useexternalrigctld" xml:space="preserve">
+        <value>Use external rigctld</value>
+    </data>
+    <data name="externalrigctldhost" xml:space="preserve">
+        <value>External rigctld host</value>
+    </data>
+    <data name="invalidaddr" xml:space="preserve">
+        <value>Invalid host address!</value>
+    </data>
+    <data name="autoqsoupload" xml:space="preserve">
+        <value>Auto upload qso</value>
+    </data>
+    <data name="qsoretrycount" xml:space="preserve">
+        <value>QSO upload failed retry count</value>
+    </data>
+    <data name="reportpwr" xml:space="preserve">
+        <value>Report rfpower</value>
+    </data>
+    <data name="reportsplit" xml:space="preserve">
+        <value>Report split info</value>
+    </data>
+    <data name="rfpowerhelp" xml:space="preserve">
+        <value>Some radios do not support reading the transmit power, or the data read may be incorrect. Therefore  this feature is disabled by default.</value>
+    </data>
+    <data name="splithelp" xml:space="preserve">
+        <value>Some radios do not support reading the split data, or the data read may be incorrect. Therefore, this feature is disabled by default.</value>
+    </data>
+    <data name="spacenotallowed" xml:space="preserve">
+        <value>The string must not have leading or trailing spaces.</value>
+    </data>
+    <data name="instanceuncompitable" xml:space="preserve">
+        <value>Seems like you're using {replace01} instead of Cloudlog as the backend service. Some features may not be fully supported.</value>
+    </data>
+    <data name="disableptt" xml:space="preserve">
+        <value>Disable PTT Control</value>
+    </data>
+    <data name="allowexternalcontrol" xml:space="preserve">
+        <value>Allow external control</value>
+    </data>
+    <data name="cmdarghelp" xml:space="preserve">
+        <value>If this field is not empty, the software will use the entered content as the default parameters for launching rigctld, and all other configurations will be ignored.</value>
+    </data>
+    <data name="disableptthelp" xml:space="preserve">
+        <value>In some Linux distributions, if rts/dtr is not disabled, it may prevent PTT from initializing correctly, manifesting as the PTT remaining in a triggered state.</value>
+    </data>
+</root>

@@ -1,0 +1,138 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:converters="clr-namespace:CloudlogHelper.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:Class="CloudlogHelper.UserControls.UDPLogInfoGroupboxUserControl"
+             x:DataType="userControls:UDPLogInfoGroupboxViewModel">
+    <Design.DataContext>
+        <userControls:UDPLogInfoGroupboxViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <converters:StringToColorConverter x:Key="StatusToColor"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibility"/>
+        <converters:UploadStatusToTranslatedString x:Key="StringToTranslatedString"/>
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal" Margin="10">
+        <HeaderedContentControl Header="UDP Logs">
+            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,*,Auto"
+                  ShowGridLines="False" Margin="5"
+                  VerticalAlignment="Center" HorizontalAlignment="Left">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.totaldivqso}}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0,0,15" Text="{Binding QsosCountData}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.qsorate}}"
+                           Margin="0,0,0,10" />
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Margin="10,0,0,15" Text="{Binding QsAvgMin}" />
+                    <Image Width="20"
+                           Height="20"
+                           Margin="5,-15,0,0"
+                           Source="avares://CloudlogHelper/Assets/Settings/Help.png"
+                           VerticalAlignment="Center"
+                           Cursor="Hand">
+                        <ToolTip.Tip>
+                            <TextBlock Text="{I18N {x:Static resources:LangKeys.within5min}}"
+                                       FontSize="14"
+                                       MaxWidth="300"
+                                       TextWrapping="Wrap" />
+                        </ToolTip.Tip>
+                    </Image>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <Button Content="{I18N {x:Static resources:LangKeys.selall}}" Command="{Binding SelectAllCommand}"
+                            Margin="5,0,5,10" />
+                    <CheckBox Content="{I18N {x:Static resources:LangKeys.showfailonly}}"
+                              IsChecked="{Binding ShowFailedOnly}" Margin="20,0,0,10" />
+                </StackPanel>
+
+                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                    <ListBox Grid.Row="0" Grid.Column="0" Height="280" Name="QsoBox" AutoScrollToSelectedItem="True"
+                             ItemsSource="{Binding FilteredQsos}"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="6" />
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                    <CheckBox IsChecked="{Binding Checked}" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17" MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                                        <TextBlock Text="{Binding LocalizedCountryName}" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Margin="0,0,20,0">
+                                        <StackPanel Orientation="Horizontal" Width="50">
+                                            <TextBlock Text="Tx:" Margin="0,0,10,0"/>
+                                            <TextBlock Text="{Binding ReportSent}" Margin="0,0,20,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Width="50">
+                                            <TextBlock Text="Rx:"  Margin="0,0,10,0"/>
+                                            <TextBlock Text="{Binding ReportReceived}" Margin="0,0,20,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="3" HorizontalAlignment="Right">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding TXFrequencyInMeters}" Padding="2" FontSize="10" FontWeight="Bold" VerticalAlignment="Center" Background="CornflowerBlue" Margin="0,0,5,0"/>
+                                            <TextBlock Text="{Binding Mode}" FontSize="10" FontWeight="Bold" Padding="2" VerticalAlignment="Center" Background="Goldenrod" Margin="0,0,5,0"/>
+                                            <TextBlock Text="{Binding ClientId}" FontSize="10" FontWeight="Bold" Padding="2" VerticalAlignment="Center" Background="LightGreen"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Foreground="{Binding UploadStatus, Converter={StaticResource StatusToColor}}" 
+                                                       Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}" 
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="Bold"/>
+                                            <Image Margin="5,0,0,0"
+                                                   Width="20"
+                                                   Height="20"
+                                                   Source="avares://CloudlogHelper/Assets/Settings/Help.png"
+                                                   VerticalAlignment="Center"
+                                                   IsVisible="{Binding FailReason, Converter={StaticResource StringToVisibility}}"
+                                                   Cursor="Hand">
+                                                <ToolTip.Tip>
+                                                    <TextBlock Text="{Binding FailReason}" FontSize="14" MaxWidth="300" TextWrapping="Wrap"/>
+                                                </ToolTip.Tip>
+                                            </Image>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
+                                Background="rgba(255, 147, 0, 0.7)" IsVisible="{Binding TxStatus}">
+                        <TextBlock Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                   Foreground="Azure" Text="{Binding MsgSending}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top" Background="OrangeRed"
+                                IsVisible="{Binding TimeoutStatus}">
+                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
+                                Background="CornflowerBlue" IsVisible="{Binding WaitFirstConn}">
+                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.waitconn}}" />
+                    </StackPanel>
+                </Grid>
+                <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10"
+                            Margin="0,10,0,0" HorizontalAlignment="Right">
+                    <Button Content="{I18N {x:Static resources:LangKeys.export2adif}}"
+                            Command="{Binding ExportSelectedToAdiCommand}" />
+                    <Button Content="{I18N {x:Static resources:LangKeys.reuploadsel}}"
+                            Command="{Binding ReuploadSelectedCommand}" />
+                    <Button Content="{I18N {x:Static resources:LangKeys.delsel}}"
+                            Command="{Binding DeleteSelectedCommand}" />
+                </StackPanel>
+            </Grid>
+        </HeaderedContentControl>
+    </StackPanel>
+</UserControl>

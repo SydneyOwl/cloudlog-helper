@@ -1,0 +1,112 @@
+﻿using System;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using NLog;
+using WsjtxUtils.WsjtxMessages.Messages;
+using WsjtxUtils.WsjtxUdpServer;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+
+namespace CloudlogHelper.Utils;
+
+public class UDPServerUtil
+{
+    private static WsjtxUdpServer? _udpServer;
+
+    private static readonly SemaphoreSlim _backgroundProcessSemaphore = new(1, 1);
+    private static readonly CancellationTokenSource _cts = new();
+
+    /// <summary>
+    ///     Logger for the class.
+    /// </summary>
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    public static async Task RestartUDPServerAsync(IPAddress ip, int port,
+        Action<WsjtxMessage> handler,
+        Action<LogLevel, string>? udpLogger = null,
+        bool ignoreIfRunning = false)
+    {
+        if (_udpServer is not null && _udpServer.IsRunning && ignoreIfRunning)
+        {
+            ClassLogger.Debug("udpserver online. ignored.");
+            return;
+        }
+
+        try
+        {
+            TerminateUDPServer();
+            ClassLogger.Debug("Asking udpserver to start.");
+            _udpServer = new WsjtxUdpServer(
+                DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler),
+                ip,
+                port,
+                logger: new UDPServerLogger(udpLogger));
+            _udpServer.Start(_cts);
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Error($"Exception here: {e.Message}");
+            udpLogger?.Invoke(LogLevel.Error, e.Message);
+        }
+        finally
+        {
+            // TerminateBackgroundProcess();
+            _backgroundProcessSemaphore.Release();
+        }
+    }
+
+    public static void TerminateUDPServer()
+    {
+        ClassLogger.Debug("Shutting down udp...");
+        if (_udpServer is null) return;
+        try
+        {
+            if (!_cts.IsCancellationRequested) _cts.Cancel();
+            if (_udpServer.IsRunning) _udpServer?.Stop();
+            if (_udpServer.IsDisposed) _udpServer?.Dispose();
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn($"Error occurred while shutting down udp server... {e.Message}");
+            // ignored...
+        }
+
+        _udpServer = null;
+    }
+
+
+    private sealed class UDPServerLogger : ILogger<WsjtxUdpServer>
+    {
+        private readonly Action<LogLevel, string>? _logIt;
+
+        public UDPServerLogger(Action<LogLevel, string>? callback)
+        {
+            _logIt = callback;
+        }
+
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull
+        {
+            return default!;
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            if (!IsEnabled(logLevel)) return;
+
+            var msg = formatter(state, exception);
+            ClassLogger.Log(NLog.LogLevel.FromOrdinal((int)logLevel), msg);
+            _logIt?.Invoke(logLevel, msg);
+        }
+    }
+}
