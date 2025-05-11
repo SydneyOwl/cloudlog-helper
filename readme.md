@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./md_assets/logo.png" alt="cloudlog_helper_logo" style="zoom:50%;" />
+<img src="./md_assets/logo.png" alt="cloudlog_helper_logo" width="25%" />
 
 # Cloudlog Helper
 
@@ -10,114 +10,110 @@
 ![linux](https://img.shields.io/badge/Ubuntu-20.04+-green?style=for-the-badge&logo=none)<br />
 ![stage](https://img.shields.io/badge/Stage-UNDER_TESTING-orange?style=for-the-badge&logo=none)
 
-[🌍点此阅读中文版本](./readme_cn.md)
+A lightweight companion utility for Cloudlog/Wavelog that automatically uploads current rig status and real-time QSO data. Supports most mainstream radios and seamless integration with JTDX/WSJT-X!
 
-A lightweight `Cloudlog`/`Wavelog` companion app that automatically uploads current radio status and real-time QSO data. Supports most mainstream radios and works seamlessly with `JTDX`/`WSJT-X` and similar software!
+If your computer struggles with performance or you simply need an automated QSO/rig data upload solution, give Cloudlog Helper a try!
 
-If your computer struggles with performance or you simply need an automated QSO/radio status upload tool, give `Cloudlog Helper` a try!
-
-<img src="./md_assets/img.png" alt="img.png" style="zoom: 40%;" />
+<img src="./md_assets/img.png" alt="interface_preview" width="60%" />
 </div>
 
 ## 💻 Supported Platforms
 
 + Windows 7 SP1+
-+ Ubuntu 20.04+ or other mainstream Linux distributions
-+ macOS support coming soon...
++ Ubuntu 20.04+ or other mainstream Linux distros
++ macOS adaptation in progress...
 
-## ⚡️ Quick Start!
+## ⚡️ Quick Start
 
 > [!TIP]
-> You can also compile from source – see the "Compilation" section below.
-+ Download the appropriate version for your system from `Releases`.
+> You may also compile from source - refer to the "Compilation" section below.
++ Download the appropriate build for your system from Releases. Linux users requiring rig data reporting should launch the app with sudo.
 
-+ Launch the app and navigate to `Settings` -> `Basic Settings`.
++ Launch the application and navigate to Settings → Basic Configuration.
 
-### 📌 Cloudlog Configuration
+### 📌 Cloudlog Setup
 
-+ Enter your Cloudlog/Wavelog server URL (referred to as Cloudlog) and corresponding API KEY. Follow these steps to obtain the URL and API KEY:
++ Enter your Cloudlog/Wavelog server URL and API KEY. Follow these steps to locate them:
 
-  <img src="./md_assets/image-20250510205625912.png" alt="image-20250510205625912" style="zoom:67%;" />
+<img src="./md_assets/image-20250510205625912.png" alt="api_configuration" width="80%" />
 
-+ Click "Test". If entered correctly, a dropdown for selecting Station ID will appear below the API key field. If you have multiple stations configured in Cloudlog/Wavelog, select the correct ID here – all subsequent QSOs will be uploaded to this ID.
++ Click "Test". Upon successful validation, a station ID dropdown will appear. Select the correct station ID if you maintain multiple stations in Cloudlog/Wavelog - all subsequent QSOs will be logged under this ID.
 
-  ![](./md_assets/image-20250510212652161.png)
+![](./md_assets/image-20250510212652161.png)
 
 ### 📌 Hamlib Configuration
 
 > [!NOTE]
-> Skip this step if you don't need automatic radio data upload.
+> Skip this section if you don't require automatic rig data reporting.
 
 > [!WARNING]
-> When JTDX (or WSJT-X, referred to as JTDX) is running, it will monopolize radio control. Without proper JTDX configuration, this feature cannot be used simultaneously with JTDX. See the "Working with JTDX" section for solutions.
+> When JTDX (or WSJT-X) is active, it acquires exclusive control of your radio. Refer to the "JTDX Integration" section for coexistence solutions.
 
-This app can periodically upload radio status (frequency, mode, etc.) to your Cloudlog server. When logging QSOs, Cloudlog will automatically fetch and populate these fields, reducing manual entry errors. Additionally, Cloudlog's main interface will display real-time radio status for reference.
+This feature periodically uploads rig parameters (frequency, mode, etc.) to your Cloudlog server. During QSO logging, Cloudlog automatically populates these fields while displaying real-time rig data on its interface for operational reference.
 
-+ Select your radio model from the dropdown.
-+ Choose the correct COM port for your device.
-+ Click "Test". After successful testing, check "Enable automatic radio data upload" and click "Confirm" to save.
++ Select your radio model from the dropdown
++ Specify the device port
++ Click "Test" before enabling "Automatic Rig Data Reporting". Save configurations with "Confirm".
 
-<img src="./md_assets/hamlib.png" style="zoom: 33%;" />
+<img src="./md_assets/hamlib.png" width="50%" />
 
-+ The main interface should now display radio information. Your Cloudlog homepage should show the radio status:
++ The main interface should now display rig parameters, which should also appear on your Cloudlog dashboard:
 
-<img src="./md_assets/image-20250510221517526.png" alt="image-20250510221517526" style="zoom:33%;" /> <img src="./md_assets/image-20250510220742569.png" alt="image-20250510220742569" style="zoom:33%;" />
+<img src="./md_assets/image-20250511120812425.png" alt="cloudlog_dashboard" width="50%" />
++ Under "Station", select your radio to enable automatic field population during QSO logging.
 
-+ Under "Station", select your radio. Cloudlog will now auto-fill frequency/mode when logging QSOs.
-
-<img src="./md_assets/image-20250510221120607.png" alt="image-20250510221120607" style="zoom:33%;" />
+<img src="./md_assets/image-20250510221120607.png" alt="qso_autofill" width="50%" />
 
 ### 📌 UDP Server Configuration
 
-This works similarly to `GridTracker`. JTDX broadcasts decoded callsigns, frequencies, and signal reports via UDP, which `CloudlogHelper` receives and uploads to your Cloudlog server.
+This GridTracker-like feature processes UDP broadcasts from JTDX containing decoded callsigns, frequencies, and signal reports, uploading QSO results to Cloudlog in real-time.
 
-+ Minimal configuration needed. If you change the port here, ensure JTDX's UDP settings match. **Note: If JTDX and Cloudlog Helper run on different machines, check "Allow external connections" and set JTDX's UDP server IP to Cloudlog Helper's host IP.**
++ Default settings usually suffice. If modifying the port, ensure JTDX's UDP settings match. **For cross-device operation, enable "Allow External Connections" and set JTDX's UDP server IP to Cloudlog Helper's host machine.**
 
-<img src="./md_assets/image-20250510222349765.png" alt="image-20250510222349765" style="zoom:33%;" />
+<img src="./md_assets/image-20250510222349765.png" alt="udp_settings" width="60%" />
 
-+ The main interface will now display JTDX transmission status or completed QSOs.
++ The interface will display transmission status and completed QSOs:
 
-<img src="./md_assets/image-20250510223010041.png" alt="image-20250510223010041" style="zoom:60%;" />
+<img src="./md_assets/image-20250510223010041.png" alt="qso_notification" width="30%" />
 
 ## 🚀 Advanced
-### 🎯 Working with JTDX
-To enable radio data upload while JTDX is running:
+### 🎯 JTDX Integration
+To maintain rig data reporting while using JTDX:
 
-When JTDX is active, it exclusively controls the radio, preventing this app from reading frequency data. However, both JTDX and Cloudlog Helper use Hamlib, and JTDX supports control via rigctld. We can run a rigctld instance for shared access:
+When JTDX is active, it monopolizes radio control. However, both applications use Hamlib, and JTDX supports rigctld control. We'll create a rigctld instance for shared access:
 
-(Windows 7 example):
+1. In Cloudlog Helper's settings:
+   - Configure radio parameters
+   - Enable "Automatic Rig Data Reporting"
+   - **Keep "Disable PTT Control" unchecked** (required by JTDX)
 
-+ In Cloudlog Helper's settings, configure your radio and enable "Automatic radio data upload". **Do not** check `Disable PTT control` – JTDX requires this for transmission.
+<img src="./md_assets/img1.png" alt="rig_settings" width="40%"/>
 
-  <img src="./md_assets/img1.png" alt="img.png" style="zoom: 40%;" />
+2. In JTDX:
+   - Set "Radio" to "Hamlib NET rigctl"
+   - Enter `127.0.0.1:4534` as CAT control server
+   - Maintain default PTT method
 
-+ Click "Apply Changes".
+<img src="./md_assets/img3.png" alt="jtdx_settings" width="40%" />
 
-+ In JTDX, go to `Settings` -> `Radio`, change `Radio Device` to `Hamlib NET rigctl`, set CAT control server to `127.0.0.1:4534`, and keep PTT method unchanged:
+3. Verify CAT/PTT functionality before finalizing.
 
-  <img src="./md_assets/img3.png" alt="img.png" style="zoom: 50%;" />
-
-+ Test CAT and PTT functionality, then confirm.
-
-+ CloudlogHelper and JTDX are now working together.
-
-  <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" style="zoom: 25%;" />
+<img src="./md_assets/image-20250510140025232.png" alt="integration_success" width="70%" />
 
 > [!WARNING]  
-> Occasional "Connection forcibly closed" errors are normal due to polling conflicts between JTDX and this app. Increase this app's polling interval (10-30s) to reduce frequency. Future updates may improve this.
+> Occasional "Connection forcibly closed" errors are normal due to request collisions. Increase the polling interval (10-30s) to mitigate. Future updates will optimize contention handling.
 
 ## 🛠️ Compilation
-Ensure your environment has `.NET 6.0+` and `gcc`. (Linux instructions)
+Prerequisites: `.NET 6.0+` and `gcc`. The following applies to Linux x64 - other platforms should reference `.github/workflows/build.yml`.
 
 Clone the repository:
 ```shell
 git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 ```
+### 🔨 Hamlib Compilation
+Skip if not needing rig data reporting.
 
-### 🔨 Compile Hamlib
-Skip if you don't need radio data functionality.
-
-We only need `rigctld` from Hamlib:
+We only require rigctld from Hamlib:
 ```shell
 # Dependencies
 sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev
@@ -125,7 +121,7 @@ sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev
 cd cloudlog-helper/hamlib
 ./bootstrap
 
-# Optimized build (similar to WSJT-X)
+# Optimized build configuration (referencing WSJT-X)
 ./configure --prefix=<INSTALL_DIR> --disable-shared --enable-static --without-cxx-binding \
 CFLAGS="-g -O2 -fPIC -fdata-sections -ffunction-sections" \
 LDFLAGS="-Wl,--gc-sections"
@@ -133,25 +129,32 @@ LDFLAGS="-Wl,--gc-sections"
 make -j4 all
 make install-strip DESTDIR=""
 ```
-Find `rigctld` in `/<INSTALL_DIR>/bin`.
+Locate rigctld at ./<INSTALL_DIR>/bin.
 
-### 🔨 Compile the Application
+### 🔨 Main Application
 ```shell
 cd cloudlog-helper
 dotnet restore -r linux-x64
 dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true --self-contained true
 ```
-The compiled app will be in `bin/Release/net6.0/linux-64`. Copy `rigctld` here if compiled.
+The build outputs to bin/Release/net6.0/linux-64. Copy rigctld here if compiled.
 
 ## ✨ Miscellaneous
-### 🐆 Performance
-Tested on low-end hardware (Windows 7 SP1 x64, i5-3337U, 8GB RAM) running `Rustdesk` + `JTDX` + `Cloudlog helper` + `NetTime v3.14`.
+### 🐆 Performance Metrics
+Tested on Windows 7 SP1 (x64) with i5-3337U/8GB RAM, running Rustdesk + JTDX + Cloudlog Helper + NetTime v3.14.
 
-After 1 hour of FT8 operation:(CPU spikes occur during decoding cycles.)
+After 1-hour FT8 operation:
 
-<img src="./md_assets/img_branchmark.png" style="zoom: 67%;"  alt="Branchmark"/>
+<img src="./md_assets/img_branchmark.png" width="30%" />
+
+##  🎉 Many thanks to...
++ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils), A class library and usage examples related to interacting with WSJT-X through the UDP interface in .NET and .NET Framework.
 
 ## 📝 License
-`Cloudlog Helper` is free and unencumbered software released into the public domain. Anyone may use, modify, distribute, or sell this software for any purpose without restrictions.
+Cloudlog Helper is a free and unencumbered software released into the public domain.
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
 
-Full license details in [Unlicense](./LICENSE).
+Complete license terms available in the [Unlicense](./LICENSE) file.
