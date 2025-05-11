@@ -9,6 +9,7 @@
 ![windows](https://img.shields.io/badge/Windows-7_SP1+-green?style=for-the-badge&logo=none)
 ![linux](https://img.shields.io/badge/Ubuntu-20.04+-green?style=for-the-badge&logo=none)<br />
 ![stage](https://img.shields.io/badge/Stage-UNDER_TESTING-orange?style=for-the-badge&logo=none)
+![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
 
 [🌍点此阅读中文版本](./readme_cn.md)
 
@@ -61,7 +62,7 @@ This app can periodically upload radio status (frequency, mode, etc.) to your Cl
 
 + The main interface should now display radio information. Your Cloudlog homepage should show the radio status:
 
-<img src="./md_assets/image-20250510221517526.png" alt="image-20250510221517526" style="zoom:33%;" /> <img src="./md_assets/image-20250510220742569.png" alt="image-20250510220742569" style="zoom:33%;" />
+![image-20250511120812425](./md_assets/image-20250511120812425.png)
 
 + Under "Station", select your radio. Cloudlog will now auto-fill frequency/mode when logging QSOs.
 
