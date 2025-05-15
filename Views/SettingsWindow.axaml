@@ -218,8 +218,12 @@
                             <CheckBox Content="{I18N {x:Static resources:LangKeys.allowexternalcontrol}}" IsChecked="{Binding Settings.HamlibSettings.AllowExternalControl}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Content="{I18N {x:Static resources:LangKeys.allowproxy}}" />
-                            <userControls:TipIconUserControl Margin="0,0,0,0" TooltipText="{I18N {x:Static resources:LangKeys.proxyhelp}}" />
+                            <CheckBox Content="{I18N {x:Static resources:LangKeys.allowproxy}}"
+                                      x:Name="allowProxy"
+                                      IsChecked="{Binding Settings.HamlibSettings.AllowProxyRequests}"/>
+                            <userControls:TipIconUserControl Margin="0,0,20,0" TooltipText="{I18N {x:Static resources:LangKeys.proxyhelp}}" />
+                            <TextBox Width="200" Text="{Binding Settings.HamlibSettings.ProxyBindAddress}"
+                                     FontSize="14" IsEnabled="{Binding #allowProxy.IsChecked}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

@@ -13,8 +13,6 @@ namespace CloudlogHelper.Utils;
 public class UDPServerUtil
 {
     private static WsjtxUdpServer? _udpServer;
-
-    private static readonly SemaphoreSlim _backgroundProcessSemaphore = new(1, 1);
     private static readonly CancellationTokenSource _cts = new();
 
     /// <summary>
@@ -24,15 +22,8 @@ public class UDPServerUtil
 
     public static async Task RestartUDPServerAsync(IPAddress ip, int port,
         Action<WsjtxMessage> handler,
-        Action<LogLevel, string>? udpLogger = null,
-        bool ignoreIfRunning = false)
+        Action<LogLevel, string>? udpLogger = null)
     {
-        if (_udpServer is not null && _udpServer.IsRunning && ignoreIfRunning)
-        {
-            ClassLogger.Debug("udpserver online. ignored.");
-            return;
-        }
-
         try
         {
             TerminateUDPServer();
@@ -48,11 +39,6 @@ public class UDPServerUtil
         {
             ClassLogger.Error($"Exception here: {e.Message}");
             udpLogger?.Invoke(LogLevel.Error, e.Message);
-        }
-        finally
-        {
-            // TerminateBackgroundProcess();
-            _backgroundProcessSemaphore.Release();
         }
     }
 

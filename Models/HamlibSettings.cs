@@ -33,6 +33,15 @@ public class HamlibSettings : ReactiveValidationObject
             },
             TranslationHelper.GetString("invalidaddr")
         );
+        this.ValidationRule(x => x.ProxyBindAddress,
+            st =>
+            {
+                if (string.IsNullOrEmpty(st)) return false;
+                var addr = ProxyBindAddress.Split(":");
+                return addr.Length == 2 && int.TryParse(addr[1], out var port) && port is > 0 and < 65535;
+            },
+            TranslationHelper.GetString("invalidaddr")
+        );
         this.ValidationRule(x => x.PollInterval,
             st =>
             {
@@ -64,6 +73,8 @@ public class HamlibSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public string OverrideCommandlineArg { get; set; } = String.Empty;
     
     [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
+    [Reactive] [JsonProperty] public bool AllowProxyRequests { get; set; }
+    [Reactive] [JsonProperty] public string ProxyBindAddress { get; set; } = String.Empty;
 
     [Reactive] [JsonProperty] public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
 
@@ -73,8 +84,11 @@ public class HamlibSettings : ReactiveValidationObject
         x => x.PollInterval,
         x=> x.ExternalRigctldHostAddress,
         x => x.UseExternalRigctld,
+        x => x.ProxyBindAddress,
         x => x.OverrideCommandlineArg,
-        (url, key, interval,addr, externalRigctld, args) =>
+        x=>x.UseRigAdvanced,
+        x=>x.AllowProxyRequests,
+        (a,b,c,d,e,f,g,h,i) =>
             !IsHamlibHasErrors()
     );
 
@@ -94,14 +108,20 @@ public class HamlibSettings : ReactiveValidationObject
         {
             if (!string.IsNullOrEmpty(OverrideCommandlineArg))
             {
-                return IsPropertyHasErrors(nameof(SelectedRadio));
+                if (IsPropertyHasErrors(nameof(SelectedRadio))) return true;
+            }
+
+            if (AllowProxyRequests)
+            {
+                if (IsPropertyHasErrors(nameof(ProxyBindAddress))) return true;
             }
         }
 
+        if (IsPropertyHasErrors(nameof(PollInterval))) return true;
+
         if (!UseExternalRigctld)
         {
-            return IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort)) ||
-                   IsPropertyHasErrors(nameof(PollInterval));
+            return IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort));
         }
         else
         {
@@ -122,7 +142,7 @@ public class HamlibSettings : ReactiveValidationObject
 
     protected bool Equals(HamlibSettings other)
     {
-        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort && PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo && UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT && AllowExternalControl == other.AllowExternalControl && OverrideCommandlineArg == other.OverrideCommandlineArg && UseExternalRigctld == other.UseExternalRigctld && ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
+        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort && PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo && UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT && AllowExternalControl == other.AllowExternalControl && OverrideCommandlineArg == other.OverrideCommandlineArg && UseExternalRigctld == other.UseExternalRigctld && AllowProxyRequests == other.AllowProxyRequests && ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
     }
 
     public override bool Equals(object? obj)
@@ -147,6 +167,7 @@ public class HamlibSettings : ReactiveValidationObject
         hashCode.Add(AllowExternalControl);
         hashCode.Add(OverrideCommandlineArg);
         hashCode.Add(UseExternalRigctld);
+        hashCode.Add(AllowProxyRequests);
         hashCode.Add(ExternalRigctldHostAddress);
         return hashCode.ToHashCode();
     }

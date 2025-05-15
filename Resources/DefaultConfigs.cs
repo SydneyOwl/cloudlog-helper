@@ -93,6 +93,12 @@ public class DefaultConfigs
     ///     Default port number for Rigctld.
     /// </summary>
     public static readonly int RigctldDefaultPort = 4534;
+    
+    
+    /// <summary>
+    /// Default port number of proxy server.
+    /// </summary>
+    public static readonly string CloudlogHelperProxyDefaultBindingAddress = "127.0.0.1:7584";
 
     /// <summary>
     ///     Socket timeout (in milliseconds) for Rigctld communication.

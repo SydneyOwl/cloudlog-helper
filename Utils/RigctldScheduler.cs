@@ -27,7 +27,7 @@ public class RigctldScheduler
     
     public RigctldScheduler()
     {
-        Console.WriteLine("Well now started..");
+        // Console.WriteLine("Well now started..");
         Task.Run(() => ProcessRequestsAsync(_cts.Token));
     }
     
@@ -56,7 +56,7 @@ public class RigctldScheduler
             try
             {
                 await _workAvailable.WaitAsync(ct);
-                Console.WriteLine("Okay new work for us now...");
+                // Console.WriteLine("Okay new work for us now...");
                 if (_highPriorityQueue.TryDequeue(out var highPriorityItem))
                 {
                     try

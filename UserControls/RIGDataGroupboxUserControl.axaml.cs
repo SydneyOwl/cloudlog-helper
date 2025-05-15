@@ -69,7 +69,7 @@ public partial class RIGDataGroupboxUserControl : ReactiveUserControl<RIGDataGro
                 }
             }
         
-            Console.WriteLine("Oops...");
+            // Console.WriteLine("Oops...");
             interaction.SetOutput("Cancel");
         });
     }
