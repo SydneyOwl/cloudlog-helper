@@ -121,6 +121,12 @@ public class DefaultConfigs
     ///     A list of processes that may conflict with Cloudlog Helper.
     /// </summary>
     public static readonly List<string> PossibleRigctldConfilcts = new() { "jtdx", "wsjt", "rigctl", "fldigi" };
+    
+    
+    /// <summary>
+    ///     Maximum error count of rigctld communication. A msgbox will popup If exceeded.
+    /// </summary>
+    public static readonly int MaxRigctldErrorCount  = 3;
 
     /// <summary>
     ///     Expiry time (in seconds) for UDP client connections.

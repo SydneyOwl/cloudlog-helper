@@ -37,6 +37,11 @@ public class RigctldUtil
     ///     Semaphore for controlling access to the one-time process.
     /// </summary>
     private static readonly SemaphoreSlim _onetimeSemaphore = new(1, 1);
+    
+    /// <summary>
+    /// Simple scheduler for rigctld requests.
+    /// </summary>
+    private static RigctldScheduler _scheduler;
 
     /// <summary>
     ///     Logger for the class.
@@ -149,8 +154,8 @@ public class RigctldUtil
             ClassLogger.Trace("Rigctld service is already running. Ignored.");
             return (true, "");
         }
-
         TerminateBackgroundProcess();
+        _scheduler = new RigctldScheduler();
         ClassLogger.Debug("tRigctld offline....Trying to restart Rigctld background process...");
         var readyTcs = new TaskCompletionSource<(bool, string)>();
         var timeoutCts = new CancellationTokenSource(timeoutMilliseconds);
@@ -229,6 +234,24 @@ public class RigctldUtil
 
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="host"></param>
+    /// <param name="port"></param>
+    /// <param name="cmd"></param>
+    /// <param name="highPriority"></param>
+    /// <returns></returns>
+    public static async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority)
+    {
+        if (highPriority)
+        {
+            return await _scheduler?.EnqueueHighPriorityRequest(()=>ExecuteCommand(host,port,cmd))!;
+        }
+
+        return await _scheduler?.EnqueueLowPriorityRequest(() => ExecuteCommand(host, port, cmd))!;
+    }
+    
+    /// <summary>
     ///     Execute command by specifying addr and port.
     /// </summary>
     /// <param name="host"></param>
@@ -236,7 +259,7 @@ public class RigctldUtil
     /// <param name="cmd"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public static async Task<string> ExecuteCommand(string host, int port, string cmd)
+    private static async Task<string> ExecuteCommand(string host, int port, string cmd)
     {
         try
         {
@@ -268,7 +291,7 @@ public class RigctldUtil
                 throw new Exception(des);
             }
 
-            await Task.Delay(100);
+            await Task.Delay(20);
             return response;
         }
         catch (OperationCanceledException e)
@@ -281,14 +304,14 @@ public class RigctldUtil
     public static async Task<RadioData> GetAllRigInfo(string ip, int port, bool reportRFPower, bool reportSplitInfo)
     {
         var testbk = new RadioData();
-        var raw = await ExecuteCommand(ip, port, "f");
+        var raw = await ExecuteCommandInScheduler(ip, port, "f",false);
         var freqStr = raw.Split("\n")[0];
         if (!long.TryParse(freqStr, out var freq))
             throw new Exception(TranslationHelper.GetString("unsupportedrigfreq") + freqStr);
         testbk.FrequencyRx = freq;
         testbk.FrequencyTx = freq;
 
-        raw = await ExecuteCommand(ip, port, "m");
+        raw = await ExecuteCommandInScheduler(ip, port, "m",false);
         var mode = raw.Split("\n")[0];
         if (!DefaultConfigs.AvailableRigModes.Contains(mode))
             throw new Exception(TranslationHelper.GetString("unsupportedrigmode") + mode);
@@ -302,7 +325,7 @@ public class RigctldUtil
             #region spilt
             if (reportSplitInfo)
             {
-                raw = await ExecuteCommand(ip, port, "s");
+                raw = await ExecuteCommandInScheduler(ip, port, "s",false);
                 var splitStatus = raw.Split("\n")[0];
                 if (splitStatus is "0" or "1")
                 {
@@ -316,14 +339,14 @@ public class RigctldUtil
                         ClassLogger.Trace("Spilt mode on.");
                         testbk.IsSplit = true;
                         // fetch spilt tx freq
-                        raw = await ExecuteCommand(ip, port, "i");
+                        raw = await ExecuteCommandInScheduler(ip, port, "i",false);
                         var txfreqStr = raw.Split("\n")[0];
                         if (!long.TryParse(txfreqStr, out var freqtx))
                             throw new Exception(TranslationHelper.GetString("unsupportedrigfreq") + freqStr);
                         testbk.FrequencyTx = freqtx;
 
                         // fetch spilt tx mode 
-                        raw = await ExecuteCommand(ip, port, "x");
+                        raw = await ExecuteCommandInScheduler(ip, port, "x",false);
                         var modetx = raw.Split("\n")[0];
                         if (!DefaultConfigs.AvailableRigModes.Contains(modetx))
                             throw new Exception(TranslationHelper.GetString("unsupportedrigmode") + mode);
@@ -342,7 +365,7 @@ public class RigctldUtil
             // add a "m" to make sure stream ends successfully.
             if (reportRFPower)
             {
-                raw = await ExecuteCommand(ip, port, "l RFPOWER");
+                raw = await ExecuteCommandInScheduler(ip, port, "l RFPOWER",false);
                 var pwrStr = raw.Split("\n")[0];
                 if (!float.TryParse(pwrStr, out var pwr))
                 {
@@ -357,7 +380,7 @@ public class RigctldUtil
                     return testbk;
                 }
 
-                raw = await ExecuteCommand(ip, port, $"\\power2mW {pwr} {testbk.FrequencyTx} {testbk.ModeTx}");
+                raw = await ExecuteCommandInScheduler(ip, port, $"\\power2mW {pwr} {testbk.FrequencyTx} {testbk.ModeTx}",false);
                 var pwrmWStr = raw.Split("\n")[0];
                 if (!float.TryParse(pwrmWStr, out var pwrmw))
                 {
@@ -493,6 +516,7 @@ public class RigctldUtil
         try
         {
             ClassLogger.Debug("Terminating BackgroundProcess...");
+            _scheduler?.Stop();
             _backgroundProcess?.Kill();
             _backgroundProcess?.Dispose();
             _backgroundProcess = null;

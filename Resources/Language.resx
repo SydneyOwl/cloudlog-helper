@@ -384,4 +384,10 @@
     <data name="disableptthelp" xml:space="preserve">
         <value>In some Linux distributions, if rts/dtr is not disabled, it may prevent PTT from initializing correctly, manifesting as the PTT remaining in a triggered state.</value>
     </data>
+    <data name="allowproxy" xml:space="preserve">
+        <value>Allow proxy requests</value>
+    </data>
+    <data name="proxyhelp" xml:space="preserve">
+        <value>Allow proxying requests sent by other applications. Used to prevent potential conflicts caused by simultaneous requests to rigctld.</value>
+    </data>
 </root>

@@ -24,9 +24,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                     Close();
                 })
                 .DisposeWith(disposables);
-        });
-        this.WhenActivated(disposables =>
-        {
+            
             ViewModel!.SaveAndApplyConf
                 .Subscribe(_ =>
                 {
@@ -34,9 +32,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                     Close();
                 })
                 .DisposeWith(disposables);
-        });
-        this.WhenActivated(disposables =>
-        {
+            
             Observable.FromEventPattern<EventHandler<WindowClosingEventArgs>, WindowClosingEventArgs>(
                     h => Closing += h,
                     h => Closing -= h)

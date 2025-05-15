@@ -384,4 +384,10 @@
     <data name="disableptthelp" xml:space="preserve">
         <value>部分Linux发行版中如果不禁用rts/dtr可能导致PTT无法正确初始化，表现为PTT始终处于触发状态。</value>
     </data>
+    <data name="allowproxy" xml:space="preserve">
+        <value>允许请求代理</value>
+    </data>
+    <data name="proxyhelp" xml:space="preserve">
+        <value>允许代理其他应用程序发送的请求。用于避免同时向rigctld发送请求时可能造成的冲突。</value>
+    </data>
 </root>

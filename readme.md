@@ -11,13 +11,14 @@
 ![stage](https://img.shields.io/badge/Stage-UNDER_TESTING-orange?style=for-the-badge&logo=none)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
 
+[**🌍阅读中文版本**](./readme_cn.md)
+
 A lightweight companion utility for Cloudlog/Wavelog that automatically uploads current rig status and real-time QSO data. Supports most mainstream radios and seamless integration with JTDX/WSJT-X!
 
 If your computer struggles with performance or you simply need an automated QSO/rig data upload solution, give Cloudlog Helper a try!
 
 <img src="./md_assets/img.png" alt="interface_preview" width="60%" />
 
-[🌍阅读中文版本](./readme_cn.md)
 </div>
 
 ## 💻 Supported Platforms

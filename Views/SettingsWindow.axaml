@@ -46,7 +46,7 @@
         <!-- Cloudlog 设置 -->
         <userControls:ErrorPanelUserControl DataContext="{Binding CloudlogErrorPanel}" />
         <Border Classes="SettingBlock">
-            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto" ShowGridLines="True">
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto" ShowGridLines="False">
                 <!-- URL 设置 -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
                     <TextBlock Text="Cloudlog URL"
@@ -216,6 +216,10 @@
                             <userControls:TipIconUserControl Margin="0,0,20,0" TooltipText="{I18N {x:Static resources:LangKeys.disableptthelp}}" />
 
                             <CheckBox Content="{I18N {x:Static resources:LangKeys.allowexternalcontrol}}" IsChecked="{Binding Settings.HamlibSettings.AllowExternalControl}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Content="{I18N {x:Static resources:LangKeys.allowproxy}}" />
+                            <userControls:TipIconUserControl Margin="0,0,0,0" TooltipText="{I18N {x:Static resources:LangKeys.proxyhelp}}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
