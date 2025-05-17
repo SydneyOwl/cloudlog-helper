@@ -241,11 +241,11 @@ public class RigctldUtil
     /// <param name="cmd"></param>
     /// <param name="highPriority"></param>
     /// <returns></returns>
-    public static async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority)
+    public static async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority, string readUntil = null)
     {
         if (highPriority)
         {
-            return await _scheduler?.EnqueueHighPriorityRequest(()=>ExecuteCommand(host,port,cmd, false))!;
+            return await _scheduler?.EnqueueHighPriorityRequest(()=>ExecuteCommand(host,port,cmd,readUntil,false))!;
         }
 
         return await _scheduler?.EnqueueLowPriorityRequest(() => ExecuteCommand(host, port, cmd))!;
@@ -259,7 +259,7 @@ public class RigctldUtil
     /// <param name="cmd"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    private static async Task<string> ExecuteCommand(string host, int port, string cmd, bool throwExpectionIfRprtError = true)
+    private static async Task<string> ExecuteCommand(string host, int port, string cmd, string readUntil = null, bool throwExpectionIfRprtError = true)
     {
         try
         {
@@ -273,18 +273,27 @@ public class RigctldUtil
             await stream.WriteAsync(data, 0, data.Length, cts.Token);
             ClassLogger.Trace($"Sent: {cmd}");
 
-            var buffer = new byte[4096];
-            var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
-            var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            ClassLogger.Trace($"Received raw: {response}");
+            var strData = new StringBuilder();
+            do
+            {
+                var buffer = new byte[4096];
+                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
+                var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                ClassLogger.Trace($"Received raw: {response}");
+                strData.Append(response);
+                if (string.IsNullOrEmpty(readUntil)) break;
+                if (response.Contains(readUntil))break;
+            } while (true);
+            
+            var sp = strData.ToString();
             // process it
-            var results = response.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+            var results = sp.Split("\n", StringSplitOptions.RemoveEmptyEntries);
             // for commands that may return an code
             var rprtCode = results.Last();
             if (rprtCode.Contains("RPRT") && throwExpectionIfRprtError)
             {
                 // execute successfully..
-                if (rprtCode == "RPRT 0") return response;
+                if (rprtCode == "RPRT 0") return sp;
 
                 var code = rprtCode.Split(" ").Last();
                 var des = GetDescriptionFromReturnCode(code.Replace("-", ""));
@@ -292,7 +301,7 @@ public class RigctldUtil
             }
 
             await Task.Delay(20);
-            return response;
+            return sp;
         }
         catch (OperationCanceledException e)
         {

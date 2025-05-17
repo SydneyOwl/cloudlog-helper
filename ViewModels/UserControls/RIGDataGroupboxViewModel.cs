@@ -162,7 +162,11 @@ public class RIGDataGroupboxViewModel : ViewModelBase
 
 
             _createNewTimer().DisposeWith(disposables);
-            // start tcp server at start.
+            // start tcp server and rigctld at start.
+            if (_settings is { PollAllowed: true, UseExternalRigctld: false })
+            { 
+                _restartRigctldStrict(false);
+            }
             if (_settings is { PollAllowed: true, UseRigAdvanced: true, AllowProxyRequests: true })
             {
                 Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
@@ -193,7 +197,11 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         
         return TcpProxyServerUtil.StartAsync(IPAddress.Parse(ip),
             port, 
-            (requestedString) => RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true));
+            (requestedString) =>
+            {
+                if (requestedString.Contains("dump_state")) return RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true,"done");
+                return RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true);
+            });
     }
 
     private (string,int) _getCurrentRigctldAddress()

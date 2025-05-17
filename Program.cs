@@ -68,6 +68,7 @@ Stack：{ex.StackTrace}");
             RigctldUtil.CleanUp();
             DatabaseUtil.Cleanup();
             UDPServerUtil.TerminateUDPServer();
+            TcpProxyServerUtil.Stop();
         }
     }
 
