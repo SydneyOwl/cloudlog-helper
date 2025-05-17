@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using Microsoft.Extensions.Caching.Memory;
 using NLog;
 
 namespace CloudlogHelper.Utils;
@@ -42,6 +43,16 @@ public class RigctldUtil
     /// Simple scheduler for rigctld requests.
     /// </summary>
     private static RigctldScheduler _scheduler;
+    
+    /// <summary>
+    ///     Semaphore for controlling access to ExecuteCommand.
+    /// </summary>
+    private static readonly SemaphoreSlim _schedulerSemaphore = new(1, 1);
+
+    /// <summary>
+    /// If external application sent a request and got a response, request and response will be cached here so that cloudlog helper can use it directly.
+    /// </summary>
+    private static MemoryCache _cachedRigData = new(new MemoryCacheOptions());
 
     /// <summary>
     ///     Logger for the class.
@@ -248,6 +259,14 @@ public class RigctldUtil
             return await _scheduler?.EnqueueHighPriorityRequest(()=>ExecuteCommand(host,port,cmd,readUntil,false))!;
         }
 
+        // find if there's any cached data?
+        if (_cachedRigData.TryGetValue<string>(cmd.Trim(), out var data))
+        {
+            ClassLogger.Trace($"Cache hit: {data}");
+            return data!;
+        }
+        
+        ClassLogger.Trace($"Cache not hit");
         return await _scheduler?.EnqueueLowPriorityRequest(() => ExecuteCommand(host, port, cmd))!;
     }
     
@@ -263,8 +282,9 @@ public class RigctldUtil
     {
         try
         {
-            using var client = new TcpClient();
             using var cts = new CancellationTokenSource(DefaultConfigs.RigctldSocketTimeout);
+            await _schedulerSemaphore.WaitAsync(cts.Token);
+            using var client = new TcpClient();
 
             await client.ConnectAsync(host, port, cts.Token);
 
@@ -282,9 +302,11 @@ public class RigctldUtil
                 ClassLogger.Trace($"Received raw: {response}");
                 strData.Append(response);
                 if (string.IsNullOrEmpty(readUntil)) break;
-                if (response.Contains(readUntil))break;
+                // sometimes the stream is reaching end but data is not fully sent;
+                // for example the dump_state message.
+                if (response.Contains(readUntil)) break;
             } while (true);
-            
+
             var sp = strData.ToString();
             // process it
             var results = sp.Split("\n", StringSplitOptions.RemoveEmptyEntries);
@@ -300,12 +322,16 @@ public class RigctldUtil
                 throw new Exception(des);
             }
 
-            await Task.Delay(20);
+            _cachedRigData.Set(cmd.Trim(), sp, TimeSpan.FromSeconds(DefaultConfigs.RigctldCacheExpirationTime));
             return sp;
         }
         catch (OperationCanceledException e)
         {
             throw new Exception(TranslationHelper.GetString("rigtimeout"));
+        }
+        finally
+        {
+            _schedulerSemaphore.Release();
         }
         
     }

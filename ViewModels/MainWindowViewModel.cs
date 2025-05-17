@@ -32,7 +32,10 @@ public class MainWindowViewModel : ViewModelBase
         var conflict = RigctldUtil.GetPossibleConflictProcess();
         
         // don't check conflict processes if UseExternalRigctld enabled.
-        if (!ApplicationSettings.GetInstance().HamlibSettings.UseExternalRigctld && !string.IsNullOrEmpty(conflict))
+        var tmpSettings = ApplicationSettings.GetInstance();
+        if (!tmpSettings.HamlibSettings.UseExternalRigctld
+            && tmpSettings.HamlibSettings is not { UseRigAdvanced: true, AllowProxyRequests: true }
+            && !string.IsNullOrEmpty(conflict))
             RigDataErrorPanelVM.ErrorMessage =
                 TranslationHelper.GetString("conflicthamlib").Replace("{replace01}", conflict);
 

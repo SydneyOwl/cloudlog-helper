@@ -28,7 +28,7 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
     {
         // poll it!
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshUserBasicData);
-        var interval = TimeSpan.FromSeconds(DefaultConfigs.CLoudlogInfoPollRequestTimeout);
+        var interval = TimeSpan.FromSeconds(DefaultConfigs.CloudlogInfoPollRequestTimeout);
 
         this.WhenActivated(disposables =>
         {

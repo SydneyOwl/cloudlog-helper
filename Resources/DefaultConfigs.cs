@@ -36,7 +36,7 @@ public class DefaultConfigs
     /// <summary>
     ///     Timeout (in seconds) for polling Cloudlog API (CloudlogKeyStationStatisticsAPIEndpoint).
     /// </summary>
-    public static readonly int CLoudlogInfoPollRequestTimeout = 30;
+    public static readonly int CloudlogInfoPollRequestTimeout = 30;
 
     /// <summary>
     ///     Duration (in minutes) for which QSO data is collected to calculate average QSO metrics.
@@ -104,6 +104,11 @@ public class DefaultConfigs
     ///     Socket timeout (in milliseconds) for Rigctld communication.
     /// </summary>
     public static readonly int RigctldSocketTimeout = 2500;
+    
+    /// <summary>
+    ///     The expiration time for the cached return values of the rigctld. In seconds.
+    /// </summary>
+    public static readonly int RigctldCacheExpirationTime = 8;
 
     /// <summary>
     ///     Default arguments passed to Rigctld when starting the process.
