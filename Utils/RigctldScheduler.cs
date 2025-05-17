@@ -105,7 +105,7 @@ public class RigctldScheduler
     
     public void Stop()
     {
-        Console.WriteLine("well now stopped...");
+        // Console.WriteLine("well now stopped...");
         _cts.Cancel();
     }
 }

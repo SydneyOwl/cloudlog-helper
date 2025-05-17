@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -26,6 +27,11 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     ///     Command for polling data(mode and frequency)
     /// </summary>
     private readonly ReactiveCommand<Unit, Unit> _pollCommand;
+    
+    /// <summary>
+    ///     Command for restarting tcp proxy server
+    /// </summary>
+    private readonly ReactiveCommand<Unit, Unit> _restartTcpProxyCommand;
 
     /// <summary>
     ///     observable sequence. Whether to cancel the timer or not.
@@ -67,7 +73,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     {
         // check if conf is available, then start rigctld
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
-
+        _restartTcpProxyCommand = ReactiveCommand.CreateFromTask(_restartTCPServer);
         this.WhenActivated(disposables =>
         {
             _cancel = new Subject<Unit>().DisposeWith(disposables);
@@ -83,6 +89,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                     {
                         SendMsgToParentVm("");
                         _resetStatus();
+                        // check if we can start rigctld
                         if (_settings is { PollAllowed: true, UseExternalRigctld: false })
                         {
                             await _restartRigctldStrict(false);
@@ -91,6 +98,16 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                         {
                             RigctldUtil.TerminateBackgroundProcess();
                         }
+                        
+                        // check if we can start tcp
+                        if (_settings is { PollAllowed: true, UseRigAdvanced: true, AllowProxyRequests: true })
+                        {
+                            Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
+                        }
+                        else
+                        {
+                            TcpProxyServerUtil.Stop();
+                        }
                     }
 
                     if (x.Part == ChangedPart.NothingJustClosed) _holdRigUpdate = false;
@@ -98,6 +115,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 })
                 .Subscribe(_ => { _createNewTimer().DisposeWith(disposables); })
                 .DisposeWith(disposables);
+            
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
                     try
@@ -135,7 +153,20 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 })
                 .DisposeWith(disposables);
 
+            _restartTcpProxyCommand.ThrownExceptions.Subscribe((err) =>
+            {
+                var exceptionMsg = err.Message;
+                SendMsgToParentVm(exceptionMsg);
+                ClassLogger.Error(exceptionMsg);
+            });
+
+
             _createNewTimer().DisposeWith(disposables);
+            // start tcp server at start.
+            if (_settings is { PollAllowed: true, UseRigAdvanced: true, AllowProxyRequests: true })
+            {
+                Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
+            }
         });
     }
 
@@ -151,6 +182,33 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString("unknown");
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString("unknown");
 
+    /// <summary>
+    /// restart tcp server. this is a proxy server.
+    /// </summary>
+    private Task _restartTCPServer()
+    {
+        var (ip,port) = IPAddrUtil.ParseAddress(_settings.ProxyBindAddress);
+        
+        var (rigctldIp,rigctldPort) = _getCurrentRigctldAddress();
+        
+        return TcpProxyServerUtil.StartAsync(IPAddress.Parse(ip),
+            port, 
+            (requestedString) => RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true));
+    }
+
+    private (string,int) _getCurrentRigctldAddress()
+    {
+        var ip = DefaultConfigs.RigctldDefaultHost;
+        var port = DefaultConfigs.RigctldDefaultPort;
+        
+        if (_settings.UseExternalRigctld)
+        {
+            (ip, port) = IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
+        }
+
+        return (ip, port);
+    }
+    
     private void _resetStatus()
     {
         CurrentRxFrequency = "-------";
@@ -198,19 +256,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         if (!_holdRigUpdate && !_settings.UseExternalRigctld) _ = await _restartRigctldStrict(true);
 
         // parse addr
-        var ip = DefaultConfigs.RigctldDefaultHost;
-        var port = DefaultConfigs.RigctldDefaultPort;
-        
-        if (_settings.UseExternalRigctld)
-        {
-            var addr = _settings.ExternalRigctldHostAddress.Split(":");
-            if (addr.Length != 2 || !int.TryParse(addr[1], out port))
-            {
-                throw new Exception("Invalid address format");
-            }
-            ip = addr[0];
-        }
-
+        var (ip, port) = _getCurrentRigctldAddress();
         var allInfo = await RigctldUtil.GetAllRigInfo(ip, port,_settings.ReportRFPower,_settings.ReportSplitInfo);
         ClassLogger.Debug(allInfo.ToString());
         CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx,false);
@@ -243,6 +289,9 @@ public class RIGDataGroupboxViewModel : ViewModelBase
             UploadStatus = TranslationHelper.GetString("failed");
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
         }
+        
+        // then, start tcp proxy server.
+        // await _restartTCPServer();
 
         _failedTimes = 0;
 
