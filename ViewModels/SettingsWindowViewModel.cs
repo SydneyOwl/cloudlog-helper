@@ -281,18 +281,21 @@ public class SettingsWindowViewModel : ViewModelBase
         Settings.WriteCurrentSettingsToFile();
         if (Settings.IsCloudlogConfChanged())
         {
+            ClassLogger.Trace("Cloudlog settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
             anythingChanged = true;
         }
 
         if (Settings.IsHamlibConfChanged())
         {
+            ClassLogger.Trace("hamlib settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
             anythingChanged = true;
         }
 
         if (Settings.IsUDPConfChanged())
         {
+            ClassLogger.Trace("udp settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged
                 { Part = ChangedPart.UDPServer }); // maybe user clickedTest
             anythingChanged = true;

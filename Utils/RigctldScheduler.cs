@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using NLog;
 
 namespace CloudlogHelper.Utils;
 
@@ -25,6 +26,7 @@ public class RigctldScheduler
     
     private readonly CancellationTokenSource _cts = new();
     
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     public RigctldScheduler()
     {
         // Console.WriteLine("Well now started..");
@@ -87,10 +89,15 @@ public class RigctldScheduler
             }
             catch (OperationCanceledException)
             {
+                ClassLogger.Debug("Exception caught: Operation cancelled");
                 break;
             }
         }
-        // cancel all unprocessed requests
+    }
+    
+    public void Stop()
+    {
+        _cts.Cancel(); // cancel all unprocessed requests
         while (!_highPriorityQueue.IsEmpty)
         {
             _highPriorityQueue.TryDequeue(out var item);
@@ -101,11 +108,5 @@ public class RigctldScheduler
             _lowPriorityQueue.TryDequeue(out var item);
             item.TaskCompletionSource.TrySetCanceled();
         }
-    }
-    
-    public void Stop()
-    {
-        // Console.WriteLine("well now stopped...");
-        _cts.Cancel();
     }
 }

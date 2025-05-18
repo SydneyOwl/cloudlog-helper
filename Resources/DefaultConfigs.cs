@@ -106,7 +106,8 @@ public class DefaultConfigs
     public static readonly int RigctldSocketTimeout = 2500;
     
     /// <summary>
-    ///     The expiration time for the cached return values of the rigctld. In seconds.
+    ///     The default expiration time for the cached return values of the rigctld In seconds.
+    ///     This is calculated dynamically when jtdx sending requests.
     /// </summary>
     public static readonly int RigctldCacheExpirationTime = 8;
 

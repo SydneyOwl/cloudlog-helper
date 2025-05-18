@@ -76,6 +76,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         _restartTcpProxyCommand = ReactiveCommand.CreateFromTask(_restartTCPServer);
         this.WhenActivated(disposables =>
         {
+            RigctldUtil.InitScheduler();
             _cancel = new Subject<Unit>().DisposeWith(disposables);
             MessageBus.Current.Listen<SettingsChanged>()
                 .SelectMany(async x =>
@@ -89,8 +90,15 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                     {
                         SendMsgToParentVm("");
                         _resetStatus();
+                        if (!_settings.PollAllowed)
+                        {
+                            // shut every service down
+                            RigctldUtil.CleanUp();
+                            TcpProxyServerUtil.Stop();
+                            return Unit.Default;
+                        }
                         // check if we can start rigctld
-                        if (_settings is { PollAllowed: true, UseExternalRigctld: false })
+                        if (_settings is { UseExternalRigctld: false })
                         {
                             await _restartRigctldStrict(false);
                         }
@@ -100,7 +108,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                         }
                         
                         // check if we can start tcp
-                        if (_settings is { PollAllowed: true, UseRigAdvanced: true, AllowProxyRequests: true })
+                        if (_settings is { UseRigAdvanced: true, AllowProxyRequests: true })
                         {
                             Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
                         }
@@ -162,12 +170,14 @@ public class RIGDataGroupboxViewModel : ViewModelBase
 
 
             _createNewTimer().DisposeWith(disposables);
-            // start tcp server and rigctld at start.
-            if (_settings is { PollAllowed: true, UseExternalRigctld: false })
+            
+            // do setup
+            if (!_settings.PollAllowed)return;
+            if (_settings is { UseExternalRigctld: false })
             { 
                 _restartRigctldStrict(false);
             }
-            if (_settings is { PollAllowed: true, UseRigAdvanced: true, AllowProxyRequests: true })
+            if (_settings is { UseRigAdvanced: true, AllowProxyRequests: true })
             {
                 Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
             }

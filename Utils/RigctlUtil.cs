@@ -52,12 +52,17 @@ public class RigctldUtil
     /// <summary>
     /// If external application sent a request and got a response, request and response will be cached here so that cloudlog helper can use it directly.
     /// </summary>
-    private static MemoryCache _cachedRigData = new(new MemoryCacheOptions());
+    // private static MemoryCache _cachedRigData = new(new MemoryCacheOptions());
 
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    public static void InitScheduler()
+    {
+        _scheduler = new RigctldScheduler();
+    }
 
     /// <summary>
     ///     Checks if any rigctld client is currently running, including _onetimeRigctldClient and _backgroundProcess.
@@ -166,7 +171,6 @@ public class RigctldUtil
             return (true, "");
         }
         TerminateBackgroundProcess();
-        _scheduler = new RigctldScheduler();
         ClassLogger.Debug("tRigctld offline....Trying to restart Rigctld background process...");
         var readyTcs = new TaskCompletionSource<(bool, string)>();
         var timeoutCts = new CancellationTokenSource(timeoutMilliseconds);
@@ -260,14 +264,18 @@ public class RigctldUtil
         }
 
         // find if there's any cached data?
-        if (_cachedRigData.TryGetValue<string>(cmd.Trim(), out var data))
-        {
-            ClassLogger.Trace($"Cache hit: {data}");
-            return data!;
-        }
+        // if (_cachedRigData.TryGetValue<string>(cmd.Trim(), out var data))
+        // {
+        //     ClassLogger.Trace($"Cache hit: {data}");
+        //     return data!;
+        // }
         
-        ClassLogger.Trace($"Cache not hit");
-        return await _scheduler?.EnqueueLowPriorityRequest(() => ExecuteCommand(host, port, cmd))!;
+        // ClassLogger.Trace($"Cache not hit");
+        return await _scheduler?.EnqueueLowPriorityRequest(() => Task.Run(async () =>
+        {
+            await Task.Delay(50);
+            return await ExecuteCommand(host, port, cmd + "\n");
+        }))!;
     }
     
     /// <summary>
@@ -288,7 +296,7 @@ public class RigctldUtil
 
             await client.ConnectAsync(host, port, cts.Token);
 
-            var data = Encoding.ASCII.GetBytes(cmd + "\n");
+            var data = Encoding.ASCII.GetBytes(cmd);
             await using var stream = client.GetStream();
             await stream.WriteAsync(data, 0, data.Length, cts.Token);
             ClassLogger.Trace($"Sent: {cmd}");
@@ -322,7 +330,7 @@ public class RigctldUtil
                 throw new Exception(des);
             }
 
-            _cachedRigData.Set(cmd.Trim(), sp, TimeSpan.FromSeconds(DefaultConfigs.RigctldCacheExpirationTime));
+            // _cachedRigData.Set(cmd.Trim(), sp, TimeSpan.FromSeconds(DefaultConfigs.RigctldCacheExpirationTime));
             return sp;
         }
         catch (OperationCanceledException e)
@@ -552,6 +560,7 @@ public class RigctldUtil
         {
             ClassLogger.Debug("Terminating BackgroundProcess...");
             _scheduler?.Stop();
+            InitScheduler();
             _backgroundProcess?.Kill();
             _backgroundProcess?.Dispose();
             _backgroundProcess = null;
