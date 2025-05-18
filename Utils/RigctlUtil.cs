@@ -196,7 +196,7 @@ public class RigctldUtil
 
         _backgroundProcess.Exited += (sender, eventArgs) =>
         {
-            ClassLogger.Info("Rigctld exited.");
+            ClassLogger.Info($"Rigctld exited with code {_backgroundProcess.ExitCode}.");
             var failReason = GetDescriptionFromReturnCode(_backgroundProcess.ExitCode.ToString());
             readyTcs.TrySetResult((false, failReason));
         };
@@ -256,11 +256,11 @@ public class RigctldUtil
     /// <param name="cmd"></param>
     /// <param name="highPriority"></param>
     /// <returns></returns>
-    public static async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority, string readUntil = null)
+    public static async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority)
     {
         if (highPriority)
         {
-            return await _scheduler?.EnqueueHighPriorityRequest(()=>ExecuteCommand(host,port,cmd,readUntil,false))!;
+            return await _scheduler?.EnqueueHighPriorityRequest(()=>ExecuteCommand(host,port,cmd,false))!;
         }
 
         // find if there's any cached data?
@@ -271,11 +271,7 @@ public class RigctldUtil
         // }
         
         // ClassLogger.Trace($"Cache not hit");
-        return await _scheduler?.EnqueueLowPriorityRequest(() => Task.Run(async () =>
-        {
-            await Task.Delay(50);
-            return await ExecuteCommand(host, port, cmd + "\n");
-        }))!;
+        return await _scheduler?.EnqueueLowPriorityRequest(() => ExecuteCommand(host, port, cmd + "\n"))!;
     }
     
     /// <summary>
@@ -286,33 +282,35 @@ public class RigctldUtil
     /// <param name="cmd"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    private static async Task<string> ExecuteCommand(string host, int port, string cmd, string readUntil = null, bool throwExpectionIfRprtError = true)
+    private static async Task<string> ExecuteCommand(string host, int port, string cmd, bool throwExpectionIfRprtError = true)
     {
+        using var cts = new CancellationTokenSource(DefaultConfigs.RigctldSocketTimeout);
+        await _schedulerSemaphore.WaitAsync(cts.Token);
         try
         {
-            using var cts = new CancellationTokenSource(DefaultConfigs.RigctldSocketTimeout);
-            await _schedulerSemaphore.WaitAsync(cts.Token);
             using var client = new TcpClient();
 
             await client.ConnectAsync(host, port, cts.Token);
 
+            if (!cmd.EndsWith("\n")) cmd += "\n";
             var data = Encoding.ASCII.GetBytes(cmd);
             await using var stream = client.GetStream();
             await stream.WriteAsync(data, 0, data.Length, cts.Token);
             ClassLogger.Trace($"Sent: {cmd}");
 
             var strData = new StringBuilder();
+            var buffer = new byte[4096];
             do
             {
-                var buffer = new byte[4096];
                 var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
+                if (bytesRead == 0)break;
                 var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                 ClassLogger.Trace($"Received raw: {response}");
                 strData.Append(response);
-                if (string.IsNullOrEmpty(readUntil)) break;
                 // sometimes the stream is reaching end but data is not fully sent;
                 // for example the dump_state message.
-                if (response.Contains(readUntil)) break;
+                // response always end with "\n"
+                if (response.EndsWith("\n")) break;
             } while (true);
 
             var sp = strData.ToString();

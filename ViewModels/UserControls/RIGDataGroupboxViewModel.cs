@@ -207,11 +207,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         
         return TcpProxyServerUtil.StartAsync(IPAddress.Parse(ip),
             port, 
-            (requestedString) =>
-            {
-                if (requestedString.Contains("dump_state")) return RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true,"done");
-                return RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true);
-            });
+            (requestedString) => RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true));
     }
 
     private (string,int) _getCurrentRigctldAddress()

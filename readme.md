@@ -21,6 +21,10 @@ The application interface fully supports both **English** and **中文 (Chinese)
 
 <img src="./md_assets/img.png" alt="interface_preview" width="60%" />
 
+**注意：此软件尚在开发中，不建议您使用。如果您需要试用，请在prerelease中下载。**
+
+**Note: This software is currently under construction and is not recommended to use. You can find it in prelease.**
+
 </div>
 
 ## 💻 Supported Platforms

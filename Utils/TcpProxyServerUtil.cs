@@ -82,7 +82,7 @@ namespace CloudlogHelper.Utils
                 using (client)
                 await using (var stream = client.GetStream())
                 {
-                    while (true)
+                    while (!ct.IsCancellationRequested)
                     {
                         var buffer = new byte[1024];
                         var bytesRead = await stream.ReadAsync(buffer, ct);
