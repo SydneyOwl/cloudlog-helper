@@ -24,9 +24,9 @@ documentation currently display the Chinese interface, you can easily switch lan
 
 <img src="./md_assets/img.png" alt="interface_preview" width="60%" />
 
-**注意：此软件尚在开发中，不建议您使用。如果您需要试用，请在prerelease中下载。**
+**注意：此软件尚在开发中，暂时不建议您使用。如果您需要试用请自行编译。**
 
-**Note: This software is currently under construction and is not recommended to use. You can find it in prelease.**
+**Note: This software is currently under construction and is not recommended to use. You may compile the software yourself if you want to try it.**
 
 </div>
 
@@ -104,62 +104,47 @@ CloudlogHelper captures and uploads to your Cloudlog server.
 ## 🚀 Advanced Features
 
 ### 🎯 JTDX/WSJT-X Integration
+If you wish to report radio data in real-time while using JTDX, please refer to the following instructions. The process for WSJT-X is similar.
 
-To enable concurrent radio data reporting while running JTDX:
-
-JTDX assumes exclusive radio control, preventing direct frequency reading from other applications. Cloudlog helper
-provides a proxy server which mediates requests, prioritizing and sequencing commands to prevent conflicts (see "
-Conflict Resolution" for details).
+When you start JTDX, the control of the radio will be exclusively held by JTDX, and you will no longer be able to read the radio frequency through this software. Fortunately, both JTDX and this software can use Rigctld as the backend for radio control. You only need to modify the network server address in JTDX so that this software and JTDX share the same Rigctld backend.
 
 > [!IMPORTANT]
-> Third-party apps (JTDX/WSJT-X) receive highest priority. "Radio Communication Timeout" warnings during their operation
-> may be safely ignored.
+>
+> Do not set the polling intervals for JTDX and this software too short. Excessive data requests may cause the radio to respond too slowly and result in errors. A recommended value is to set the interval to 8s in JTDX's Settings > Radio and the polling interval for this software to 15s. **Please note that the two intervals should not be integer multiples of each other.**
 
-**Implementation (Windows 7 example)**:
+The specific steps are as follows (using Windows 7 as an example):
 
-1. In Cloudlog Helper:
-    - Configure radio settings
-    - Enable "Automatic Radio Data Reporting"
-    - Enable "Request Proxy" (do **not** disable PTT control - required by JTDX)
-    - Apply changes
++ Open Cloudlog Helper, go to the "Settings" page, fill in the relevant radio information, and check "Automatic Radio Data Reporting." Note: **Do not** check `Disable PTT Control`. JTDX relies on this feature to control radio transmission.
 
-2. In JTDX:
-    - Set `Radio Device` to `Hamlib NET rigctl`
-    - Enter proxy server address (default: 127.0.0.1:7584) in CAT control
-    - Maintain original PTT settings
++ Click "Apply Changes."
 
-   <img src="./md_assets/image-20250517151541410.png" width="70%" />
++ Open `JTDX`, go to `Settings` > `Radio`, change `Radio Device` to `Hamlib NET rigctl`, and enter the rigctld backend address in the CAT control network server field (default is 127.0.0.1:4534). Keep the PTT method configuration unchanged.
 
-3. Verify CAT/PTT functionality before finalizing.
+  <img src="./md_assets/image-20250519212931093.png" alt="image-20250517151541410" width="60%" />
 
-4. Successful integration should appear as:
++ After verifying that both CAT and PTT are functional, click "OK."
 
-   <img src="./md_assets/image-20250510140025232.png" width="70%" />
++ You have now successfully enabled collaboration between Cloudlog Helper and JTDX.
 
-### 🎯 Conflict Resolution Architecture
-
-Multiple clients sharing a rigctld instance may cause processing conflict. Integrated proxy server sequences requests
-according to priority:
-
-<img src="./md_assets/img_udp.png" width="40%" />
+  <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" width="70%" />
 
 ### 🎯 Configuration Reference
 
 #### ⚙️ Hamlib Settings
 
-| Setting                         | Description                                                 |
-|---------------------------------|-------------------------------------------------------------|
-| Automatic Radio Data Reporting  | Enables periodic uploads of radio parameters to Cloudlog    |
-| Polling Interval                | Frequency of rigctld queries (default: 9s)                  |
-| Radio Model                     | Supported models mirror Hamlib's compatibility              |
-| COM Port                        | Device communication port                                   |
-| Report Split Frequency          | Requests transceiver split frequency data (radio-dependent) |
-| Report TX Power                 | Requests current transmission power (radio-dependent)       |
-| Advanced - rigctld Arguments    | Manual parameters (overrides other settings)                |
-| Advanced - Disable PTT Control  | Disables RTS/DTR control (Linux-specific)                   |
-| Advanced - Allow Remote Control | Enables non-localhost rigctld access                        |
-| Advanced - Enable Request Proxy | Activates priority-based command mediation                  |
-| Use External rigctld            | Connect to existing rigctld instance                        |
+| Setting                                       | Description                                                 |
+| --------------------------------------------- | ----------------------------------------------------------- |
+| Automatic Radio Data Reporting                | Enables periodic uploads of radio parameters to Cloudlog    |
+| Polling Interval                              | Frequency of rigctld queries (default: 9s)                  |
+| Radio Model                                   | Supported models mirror Hamlib's compatibility              |
+| COM Port                                      | Device communication port                                   |
+| Report Split Frequency                        | Requests transceiver split frequency data (radio-dependent) |
+| Report TX Power                               | Requests current transmission power (radio-dependent)       |
+| Advanced - rigctld Arguments                  | Manual parameters (overrides other settings)                |
+| Advanced - Disable PTT Control                | Disables RTS/DTR control (Linux-specific)                   |
+| Advanced - Allow Remote Control               | Enables non-localhost rigctld access                        |
+| 【deprecated】Advanced - Enable Request Proxy | Activates priority-based command mediation                  |
+| Use External rigctld                          | Connect to existing rigctld instance                        |
 
 #### ⚙️ UDP Server Settings
 
