@@ -10,6 +10,7 @@ public struct WorkItem
 {
     public Func<Task<string>> Work { get; }
     public TaskCompletionSource<string> TaskCompletionSource { get; }
+
     public WorkItem(Func<Task<string>> work, TaskCompletionSource<string> tcs)
     {
         Work = work;
@@ -17,22 +18,26 @@ public struct WorkItem
     }
 }
 
+/// <summary>
+///     Priority-based task scheduler for rigctld commands. Not very useful so far.
+/// </summary>
 public class RigctldScheduler
 {
-    private readonly ConcurrentQueue<WorkItem> _highPriorityQueue = new();
-    private readonly ConcurrentQueue<WorkItem> _lowPriorityQueue = new();
-    
-    private readonly SemaphoreSlim _workAvailable = new(0);
-    
-    private readonly CancellationTokenSource _cts = new();
-    
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    private readonly CancellationTokenSource _cts = new();
+    private readonly ConcurrentQueue<WorkItem> _highPriorityQueue = new();
+
+    private readonly ConcurrentQueue<WorkItem> _lowPriorityQueue = new();
+
+    private readonly SemaphoreSlim _workAvailable = new(0);
+
     public RigctldScheduler()
     {
         // Console.WriteLine("Well now started..");
         Task.Run(() => ProcessRequestsAsync(_cts.Token));
     }
-    
+
     public Task<string> EnqueueHighPriorityRequest(Func<Task<string>> work)
     {
         if (_cts.IsCancellationRequested) throw new OperationCanceledException();
@@ -41,7 +46,7 @@ public class RigctldScheduler
         _workAvailable.Release();
         return tcs.Task;
     }
-    
+
     public Task<string> EnqueueLowPriorityRequest(Func<Task<string>> work)
     {
         if (_cts.IsCancellationRequested) throw new OperationCanceledException();
@@ -50,11 +55,10 @@ public class RigctldScheduler
         _workAvailable.Release();
         return tcs.Task;
     }
-    
+
     private async Task ProcessRequestsAsync(CancellationToken ct)
     {
         while (!ct.IsCancellationRequested)
-        {
             try
             {
                 await _workAvailable.WaitAsync(ct);
@@ -75,7 +79,6 @@ public class RigctldScheduler
                 }
 
                 if (_lowPriorityQueue.TryDequeue(out var lowPriorityItem))
-                {
                     try
                     {
                         var result = await lowPriorityItem.Work();
@@ -85,16 +88,14 @@ public class RigctldScheduler
                     {
                         lowPriorityItem.TaskCompletionSource.TrySetException(ex);
                     }
-                }
             }
             catch (OperationCanceledException)
             {
                 ClassLogger.Debug("Exception caught: Operation cancelled");
                 break;
             }
-        }
     }
-    
+
     public void Stop()
     {
         _cts.Cancel(); // cancel all unprocessed requests
@@ -103,6 +104,7 @@ public class RigctldScheduler
             _highPriorityQueue.TryDequeue(out var item);
             item.TaskCompletionSource.TrySetCanceled();
         }
+
         while (!_lowPriorityQueue.IsEmpty)
         {
             _lowPriorityQueue.TryDequeue(out var item);

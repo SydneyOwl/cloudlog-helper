@@ -1,7 +1,6 @@
 <div align="center">
 <img src="./md_assets/logo.png" alt="cloudlog_helper_logo"  width="25%" />
 
-
 # Cloudlog Helper
 
 ![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=for-the-badge&logo=dotnet)
@@ -11,7 +10,6 @@
 ![linux](https://img.shields.io/badge/Ubuntu-20.04+-green?style=for-the-badge&logo=none)<br />
 ![stage](https://img.shields.io/badge/Stage-UNDER_TESTING-orange?style=for-the-badge&logo=none)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
-
 
 轻量级的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息以及实时QSO数据，支持大部分主流电台以及与`JTDX`/`WSJT-X`等软件协同工作！
 
@@ -30,6 +28,7 @@
 
 > [!TIP]
 > 您也可以选择自行编译，请参照下文的`编译`章节。
+
 + 从`Release`中下载对应系统版本的软件。如果您使用Linux且需要使用电台数据上报功能，请使用sudo启动软件。
 
 + 打开软件，点击`设置`->`基础设置`打开设置页面。
@@ -40,11 +39,10 @@
 
   <img src="./md_assets/image-20250510205625912.png" alt="image-20250510205625912"  width="80%" />
 
-+ 点击“测试”，如您输入正确，在apikey下方将出现选择站点ID的下拉框。如果您在Cloudlog / Wavelog设置了多个站点请在此选择正确的id，后续的QSO都将上传到此id中。
++ 点击“测试”，如您输入正确，在apikey下方将出现选择站点ID的下拉框。如果您在Cloudlog /
+  Wavelog设置了多个站点请在此选择正确的id，后续的QSO都将上传到此id中。
 
   ![](./md_assets/image-20250510212652161.png)
-
-
 
 ### 📌 Hamlib配置
 
@@ -54,9 +52,11 @@
 
 > [!WARNING]
 >
-> 由于在开启JTDX（或WSJT-X，下称JTDX）后，电台的控制权将被JTDX独占，因此在未设置JTDX前，此功能和JTDX不能同时启用。可查看`与JTDX协同工作`部分获取解决方法。
+> 由于在开启JTDX（或WSJT-X，下称JTDX）后，电台的控制权将被JTDX独占，因此在未设置JTDX前，此功能和JTDX不能同时启用。可查看
+`与JTDX协同工作`部分获取解决方法。
 
-本软件可以定时上传电台信息（频率、模式等）到您的Cloudlog服务器。当您需要记录QSO信息时，Cloudlog会自动获取当前的频率、模式等数据，并自动填充至对应输入框中，避免手动输入错误。同时， Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方便操作时参考。
+本软件可以定时上传电台信息（频率、模式等）到您的Cloudlog服务器。当您需要记录QSO信息时，Cloudlog会自动获取当前的频率、模式等数据，并自动填充至对应输入框中，避免手动输入错误。同时，
+Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方便操作时参考。
 
 + 在`电台型号`下拉框中选择您使用的电台的型号。
 + 在`设备端口`中选择您的设备所在的端口。
@@ -74,9 +74,12 @@
 
 ### 📌 UDP服务器配置
 
-此部分的工作原理类似`GridTracker`，`JTDX`会通过 UDP 协议 广播当前解码的呼号、频率、信号报告等信息，而`CloudlogHelper`将接收这些信息并解码，将通联结果实时上传至您的Cloudlog服务器。
+此部分的工作原理类似`GridTracker`，`JTDX`会通过 UDP 协议 广播当前解码的呼号、频率、信号报告等信息，而`CloudlogHelper`
+将接收这些信息并解码，将通联结果实时上传至您的Cloudlog服务器。
 
-+ 此部分不须过多配置，如果您更改了此部分的端口号，请同步更改JTDX中的UDP服务器配置。**注意，如果JTDX和Cloudlog Helper不在同一台机器上运行，您需要勾选“允许外部连接”选项，并更改JTDX中UDP服务器的ip地址部分为运行Cloudlog Helper机器的ip。**
++ 此部分不须过多配置，如果您更改了此部分的端口号，请同步更改JTDX中的UDP服务器配置。**注意，如果JTDX和Cloudlog
+  Helper不在同一台机器上运行，您需要勾选“允许外部连接”选项，并更改JTDX中UDP服务器的ip地址部分为运行Cloudlog Helper机器的ip。
+  **
 
 <img src="./md_assets/image-20250510222349765.png" alt="image-20250510222349765" width="60%" />
 
@@ -84,27 +87,24 @@
 
 <img src="./md_assets/image-20250510223010041.png" alt="image-20250510223010041" width="30%" />
 
-
-
-
 ## 🚀 高级
+
 ### 🎯 与JTDX/Wsjt-x协同工作
+
 如果您希望在开启JTDX的情况下实时上报电台数据，请参考以下内容。Wsjt-x的操作过程与此类似。
 
-当您开启JTDX后，电台的控制权将被JTDX独占，此时您将无法通过本软件读取电台频率。本软件提供一个请求代理服务器，能够将第三方软件发送的请求代理到本软件，在内部进行相应处理后按优先级发送至rigctld，避免了潜在的请求冲突。请查看“冲突避免原理”一节查看详情。
-
-> [!IMPORTANT]
->
-> 由于第三方应用（jtdx wsjtx等）的指令具有最高的优先级，Cloudlog helper自身产生的指令需要等待高优先级指令全部执行完毕才能继续执行，因此应用界面可能会显示“与电台通信超时”等警告，您可以按需忽略。
->
+当您开启JTDX后，电台的控制权将被JTDX独占，此时您将无法通过本软件读取电台频率。幸运的是，JTDX和本软件均可以使用Rigctld作为电台的控制后端，您只需修改一下JTDX中的网络服务器地址，使
+本软件和JTDX共享一个Rigctld后端即可。
 
 具体做法如下（以Windows7为例）：
 
-+ 打开Cloudlog Helper，进入“设置”页面，填写电台相关信息后勾选“电台信息自动上报”。之后勾选“高级设置”中的“允许请求代理”。注意，**不要**勾选`禁用PTT控制`。JTDX依赖此功能控制电台发射。
++ 打开Cloudlog Helper，进入“设置”页面，填写电台相关信息后勾选“电台信息自动上报”。注意，**不要**勾选`禁用PTT控制`
+  。JTDX依赖此功能控制电台发射。
 
 + 点击“应用更改”。
 
-+ 打开`JTDX`，进入`设置`-`电台`，将`无线电设备`更改为`Hamlib NET rigctl`，CAT控制中的网络服务器填写请求代理中的服务器地址（默认为127.0.0.1:7584），PTT方法保持原配置不变.
++ 打开`JTDX`，进入`设置`-`电台`，将`无线电设备`更改为`Hamlib NET rigctl`
+  ，CAT控制中的网络服务器填写请求代理中的服务器地址（默认为127.0.0.1:7584），PTT方法保持原配置不变.
 
   <img src="./md_assets/image-20250517151541410.png" alt="image-20250517151541410" width="70%" />
 
@@ -114,51 +114,41 @@
 
   <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" width="70%" />
 
-
-
-### 🎯 冲突避免原理
-
-如果多个客户端共享一个rigctld实例，在同时发送请求时，rigctld很可能因为处理不及时导致出现错误。因此软件提供一个代理服务器，将第三方软件发送的请求代理至本软件中，并按照优先级将第三方软件的请求与本软件自身产生的请求按序发送至rigctld中。
-
-<img src="./md_assets/img_udp.png" alt="image-20250510140025232" width="40%" />
-
-
-
 ### 🎯 各配置项说明
 
 #### ⚙️ Hamlib配置
 
-| 配置项                     | 说明                                                         |
-| -------------------------- | ------------------------------------------------------------ |
-| 电台数据自动上报           | 如此项被勾选，软件将自动上传获取到的电台信息到指定的cloudlog服务器。 |
-| 轮询间隔                   | 指定向rigctld后端获取电台数据的时间间隔。默认为9秒。         |
-| 电台型号                   | 目前使用电台的型号。型号列表从rigctld中读取，因此理论上只要hamlib支持的电台本软件均支持。 |
-| 设备端口                   | 电台所在的端口。                                             |
-| 报告异频信息               | 在轮询时向rigctld请求异频（在接收和发射时使用不同频率）信息。部分电台不支持此功能或读取的数据有误。 |
-| 报告发射功率               | 在轮询时向rigctld请求当前的发射功率。部分电台不支持此功能或读取的数据有误。 |
-| 高级设置-rigctld命令行参数 | 手动指定启动rigctld后端的命令行参数。此项具有最高的优先级，如果此项不为空，其他相关配置（禁用PTT控制/允许外部控制）均会被忽略。 |
-| 高级设置-禁用PTT控制       | 在启动时禁用rts和dtr控制（增加参数`--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" `）。仅在部分Lnux上需要启用。如需与JTDX等第三方软件协同工作，此选项不应该勾选。 |
-| 高级设置-允许外部控制      | 允许从localhost以外的设备与rigctld后端交互（增加参数 `-T 0.0.0.0` ）。 |
-| 高级设置-允许请求代理      | 启动一个代理服务器，可以将外部的请求代理至软件中，由软件按照优先级按顺序自动发送至rigctld。 |
-| 使用外部rigctld服务        | 使用外部的rigctld作为软件的rigctld后端。例如您手动启动了一个rigctld实例，就可以勾选此选项，配置软件使用您指定的rigctld后端。 |
+| 配置项               | 说明                                                                                                                          |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| 电台数据自动上报          | 如此项被勾选，软件将自动上传获取到的电台信息到指定的cloudlog服务器。                                                                                      |
+| 轮询间隔              | 指定向rigctld后端获取电台数据的时间间隔。默认为9秒。                                                                                              |
+| 电台型号              | 目前使用电台的型号。型号列表从rigctld中读取，因此理论上只要hamlib支持的电台本软件均支持。                                                                         |
+| 设备端口              | 电台所在的端口。                                                                                                                    |
+| 报告异频信息            | 在轮询时向rigctld请求异频（在接收和发射时使用不同频率）信息。部分电台不支持此功能或读取的数据有误。                                                                       |
+| 报告发射功率            | 在轮询时向rigctld请求当前的发射功率。部分电台不支持此功能或读取的数据有误。                                                                                   |
+| 高级设置-rigctld命令行参数 | 手动指定启动rigctld后端的命令行参数。此项具有最高的优先级，如果此项不为空，其他相关配置（禁用PTT控制/允许外部控制）均会被忽略。                                                       |
+| 高级设置-禁用PTT控制      | 在启动时禁用rts和dtr控制（增加参数`--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" `）。仅在部分Lnux上需要启用。如需与JTDX等第三方软件协同工作，此选项不应该勾选。 |
+| 高级设置-允许外部控制       | 允许从localhost以外的设备与rigctld后端交互（增加参数 `-T 0.0.0.0` ）。                                                                          |
+| ~~高级设置-允许请求代理~~   | ~~启动一个代理服务器，可以将外部的请求代理至软件中，由软件按照优先级按顺序自动发送至rigctld。~~                                                                       |
+| 使用外部rigctld服务     | 使用外部的rigctld作为软件的rigctld后端。例如您手动启动了一个rigctld实例，就可以勾选此选项，配置软件使用您指定的rigctld后端。                                                |
 
 #### ⚙️ UDP服务器配置
 
-| 配置项              | 说明                                                     |
-| ------------------- | -------------------------------------------------------- |
-| 启用UDP服务器       | 启动一个UDP服务器，用于接收来自第三方软件发送的QSO数据。 |
-| 端口号              | UDP服务器的端口号。                                      |
-| 允许外部连接        | 允许接收localhost以外的设备发来的请求。                  |
-| 自动上传QSO         | 自动上传接收到的QSO到指定的Cloudlog服务器。              |
-| QSO上传失败重试次数 | 指定QSO上传失败重试次数。                                |
-
-
+| 配置项         | 说明                              |
+|-------------|---------------------------------|
+| 启用UDP服务器    | 启动一个UDP服务器，用于接收来自第三方软件发送的QSO数据。 |
+| 端口号         | UDP服务器的端口号。                     |
+| 允许外部连接      | 允许接收localhost以外的设备发来的请求。        |
+| 自动上传QSO     | 自动上传接收到的QSO到指定的Cloudlog服务器。     |
+| QSO上传失败重试次数 | 指定QSO上传失败重试次数。                  |
 
 ## 🛠️ 编译
 
-请首先确保编译环境已具备`.net 6.0`(或以上) 以及`gcc`。以下步骤仅适用于Linux x64环境，其他系统环境可参考`.github/workflows/build.yml`。
+请首先确保编译环境已具备`.net 6.0`(或以上) 以及`gcc`。以下步骤仅适用于Linux x64环境，其他系统环境可参考
+`.github/workflows/build.yml`。
 
 首先，克隆本仓库：
+
 ```shell
 git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 ```
@@ -167,7 +157,8 @@ git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 
 如果您完全不需要读取和上传电台信息，可以直接忽略这一步，软件可以在没有hamlib的情况下工作。
 
-事实上我们只需要`rigctld`，它是`Hamlib`工具集中的一个无线电控制守护进程，允许通过TCP/IP网络远程控制无线电设备:
+事实上我们只需要`rigctld`，它是`Hamlib`工具集中的一个无线电控制守护进程，允许通过TCP长连接远程控制无线电设备:
+
 ```shell
 # 依赖安装
 sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev
@@ -183,20 +174,25 @@ LDFLAGS="-Wl,--gc-sections"
 make -j4 all
 make install-strip DESTDIR=""
 ```
+
 编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`。
 
 ### 🔨 编译软件本体
 
 请执行以下命令:
+
 ```shell
 cd cloudlog-helper
 dotnet restore -r linux-x64
 dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true --self-contained true
 ```
+
 编译完成后，您应该可以在`bin/Release/net6.0/linux-64`找到编译的软件.把上文提到的`rigctld`(如有)复制到此文件夹中，即完成软件的编译。
 
 ## ✨ 其他
+
 ### 🐆 性能分析
+
 此处简单模拟了一个远程挂机FT8的应用场景，在低端设备上测试，操作系统为64位的Windows 7 SP1, CPU为i5-3337u，内存8G。
 
 系统上运行`Rustdesk` + `JTDX` + `Cloudlog helper` + `NetTime v3.14`。

@@ -6,7 +6,7 @@ namespace CloudlogHelper.Utils;
 public class AdifUtil
 {
     /// <summary>
-    /// Generate adif format log
+    ///     Generate adif format log
     /// </summary>
     /// <param name="log"></param>
     /// <returns></returns>
@@ -16,10 +16,7 @@ public class AdifUtil
         adif.Append($"<call:{log.Call.Length}>{log.Call} ");
         adif.Append($"<gridsquare:{log.GridSquare.Length}>{log.GridSquare} ");
         adif.Append($"<mode:{log.Mode.Length}>{log.Mode} ");
-        if (!string.IsNullOrEmpty(log.SubMode))
-        {
-            adif.Append($"<submode:{log.SubMode.Length}>{log.SubMode} ");
-        }
+        if (!string.IsNullOrEmpty(log.SubMode)) adif.Append($"<submode:{log.SubMode.Length}>{log.SubMode} ");
         adif.Append($"<rst_sent:{log.RstSent.Length}>{log.RstSent} ");
         adif.Append($"<rst_rcvd:{log.RstRcvd.Length}>{log.RstRcvd} ");
         adif.Append($"<qso_date:{log.QsoDate.Length}>{log.QsoDate} ");
@@ -33,7 +30,7 @@ public class AdifUtil
         adif.Append($"<comment:{log.Comment.Length}>{log.Comment} ");
         adif.Append("<eor>");
         return adif.ToString();
-    } 
+    }
     // <call:6>****
 // <gridsquare:4>***
 // <mode:4>MFSK

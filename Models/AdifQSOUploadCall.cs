@@ -9,7 +9,7 @@ public struct AdifQSOUploadCall
     /// </summary>
     [JsonProperty("key")]
     public string Key { get; set; }
-    
+
     /// <summary>
     ///     Profile id of cloudlog.
     /// </summary>
@@ -21,7 +21,7 @@ public struct AdifQSOUploadCall
     /// </summary>
     [JsonProperty("type")]
     public string Type { get; set; }
-    
+
     /// <summary>
     ///     Log string.
     /// </summary>

@@ -39,16 +39,16 @@ public class UDPServerSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public bool EnableUDPServer { get; set; } = true;
     [Reactive] [JsonProperty] public bool EnableConnectionFromOutside { get; set; }
     [Reactive] [JsonProperty] public string UDPPort { get; set; } = "2237";
-    
-    
+
+
     [Reactive] [JsonProperty] public bool AutoUploadQSO { get; set; } = true;
-    
+
     [Reactive] [JsonProperty] public string RetryCount { get; set; } = "3";
-    
+
     public IObservable<bool> IsUDPConfigValid => this.WhenAnyValue(
         x => x.UDPPort,
         x => x.RetryCount,
-        (a,b) =>
+        (a, b) =>
             !IsUDPConfigHasErrors()
     );
 
@@ -69,7 +69,9 @@ public class UDPServerSettings : ReactiveValidationObject
 
     protected bool Equals(UDPServerSettings other)
     {
-        return EnableUDPServer == other.EnableUDPServer && EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort && AutoUploadQSO == other.AutoUploadQSO && RetryCount == other.RetryCount;
+        return EnableUDPServer == other.EnableUDPServer &&
+               EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort &&
+               AutoUploadQSO == other.AutoUploadQSO && RetryCount == other.RetryCount;
     }
 
     public override bool Equals(object? obj)

@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Flurl;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -35,7 +33,7 @@ public class CloudlogSettings : ReactiveValidationObject
                     };
                     return errs;
                 });
-        
+
         var cloudlogRulesKey =
             this.WhenAnyValue(
                 x => x.CloudlogApiKey,
@@ -97,7 +95,8 @@ public class CloudlogSettings : ReactiveValidationObject
 
     protected bool Equals(CloudlogSettings other)
     {
-        return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey && CloudlogStationId == other.CloudlogStationId;
+        return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
+               CloudlogStationId == other.CloudlogStationId;
     }
 
     public override bool Equals(object? obj)

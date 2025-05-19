@@ -13,11 +13,14 @@
 
 [**🌍阅读中文版本**](./readme_cn.md)
 
-A lightweight companion utility for Cloudlog/Wavelog that automatically uploads current rig status and real-time QSO data. Supports most mainstream radios and seamless integration with JTDX/WSJT-X!
+A lightweight companion utility for Cloudlog/Wavelog that automatically uploads current rig status and real-time QSO
+data. Supports most mainstream radios and seamless integration with JTDX/WSJT-X!
 
-If your computer struggles with performance or you simply need an automated QSO/rig data upload solution, give Cloudlog Helper a try!
+If your computer struggles with performance or you simply need an automated QSO/rig data upload solution, give Cloudlog
+Helper a try!
 
-The application interface fully supports both **English** and **中文 (Chinese)**, While most screenshots in this documentation currently display the Chinese interface, you can easily switch languages in settings!
+The application interface fully supports both **English** and **中文 (Chinese)**, While most screenshots in this
+documentation currently display the Chinese interface, you can easily switch languages in settings!
 
 <img src="./md_assets/img.png" alt="interface_preview" width="60%" />
 
@@ -38,7 +41,8 @@ The application interface fully supports both **English** and **中文 (Chinese)
 > [!TIP]
 > You may also choose to compile from source - refer to the "Compilation" section below.
 
-1. Download the appropriate version for your OS from Releases. **Linux users requiring radio data reporting should launch the software with `sudo`**.
+1. Download the appropriate version for your OS from Releases. **Linux users requiring radio data reporting should
+   launch the software with `sudo`**.
 
 2. Open the application and navigate to `Settings` → `Basic Settings`.
 
@@ -48,7 +52,9 @@ The application interface fully supports both **English** and **中文 (Chinese)
 
    <img src="./md_assets/image-20250510205625912.png" alt="API Key Retrieval" width="80%" />
 
-2. Click "Test". Upon successful validation, a station ID dropdown will appear below the API key field. Select the correct ID if you maintain multiple stations in Cloudlog/Wavelog - all subsequent QSOs will be uploaded to this station.
+2. Click "Test". Upon successful validation, a station ID dropdown will appear below the API key field. Select the
+   correct ID if you maintain multiple stations in Cloudlog/Wavelog - all subsequent QSOs will be uploaded to this
+   station.
 
    ![](./md_assets/image-20250510212652161.png)
 
@@ -60,7 +66,9 @@ The application interface fully supports both **English** and **中文 (Chinese)
 > [!WARNING]
 > Enabling JTDX/WSJT-X will grant it exclusive radio control. Refer to "Working with JTDX" for coexistence solutions.
 
-This feature periodically uploads radio parameters (frequency, mode, etc.) to your Cloudlog server. When logging QSOs, Cloudlog automatically populates these fields, eliminating manual entry errors. Your Cloudlog dashboard will also display real-time radio data.
+This feature periodically uploads radio parameters (frequency, mode, etc.) to your Cloudlog server. When logging QSOs,
+Cloudlog automatically populates these fields, eliminating manual entry errors. Your Cloudlog dashboard will also
+display real-time radio data.
 
 1. Select your radio model from the dropdown
 2. Choose the correct COM port
@@ -79,11 +87,13 @@ This feature periodically uploads radio parameters (frequency, mode, etc.) to yo
 
 ### 📌 UDP Server Configuration
 
-This functions similarly to GridTracker. JTDX broadcasts decoded callsigns/frequency/reports via UDP, which CloudlogHelper captures and uploads to your Cloudlog server.
+This functions similarly to GridTracker. JTDX broadcasts decoded callsigns/frequency/reports via UDP, which
+CloudlogHelper captures and uploads to your Cloudlog server.
 
 1. Default settings usually suffice. If modifying the port, ensure JTDX's UDP settings match.
-   
-   **Important**: For cross-device operation, enable "Allow External Connections" and set JTDX's UDP IP to Cloudlog Helper's host IP.
+
+   **Important**: For cross-device operation, enable "Allow External Connections" and set JTDX's UDP IP to Cloudlog
+   Helper's host IP.
 
 <img src="./md_assets/image-20250510222349765.png" width="60%" />
 
@@ -97,23 +107,26 @@ This functions similarly to GridTracker. JTDX broadcasts decoded callsigns/frequ
 
 To enable concurrent radio data reporting while running JTDX:
 
-JTDX assumes exclusive radio control, preventing direct frequency reading from other applications. Cloudlog helper provides a proxy server which mediates requests, prioritizing and sequencing commands to prevent conflicts (see "Conflict Resolution" for details).
+JTDX assumes exclusive radio control, preventing direct frequency reading from other applications. Cloudlog helper
+provides a proxy server which mediates requests, prioritizing and sequencing commands to prevent conflicts (see "
+Conflict Resolution" for details).
 
 > [!IMPORTANT]
-> Third-party apps (JTDX/WSJT-X) receive highest priority. "Radio Communication Timeout" warnings during their operation may be safely ignored.
+> Third-party apps (JTDX/WSJT-X) receive highest priority. "Radio Communication Timeout" warnings during their operation
+> may be safely ignored.
 
 **Implementation (Windows 7 example)**:
 
 1. In Cloudlog Helper:
-   - Configure radio settings
-   - Enable "Automatic Radio Data Reporting"
-   - Enable "Request Proxy" (do **not** disable PTT control - required by JTDX)
-   - Apply changes
+    - Configure radio settings
+    - Enable "Automatic Radio Data Reporting"
+    - Enable "Request Proxy" (do **not** disable PTT control - required by JTDX)
+    - Apply changes
 
 2. In JTDX:
-   - Set `Radio Device` to `Hamlib NET rigctl`
-   - Enter proxy server address (default: 127.0.0.1:7584) in CAT control
-   - Maintain original PTT settings
+    - Set `Radio Device` to `Hamlib NET rigctl`
+    - Enter proxy server address (default: 127.0.0.1:7584) in CAT control
+    - Maintain original PTT settings
 
    <img src="./md_assets/image-20250517151541410.png" width="70%" />
 
@@ -125,7 +138,8 @@ JTDX assumes exclusive radio control, preventing direct frequency reading from o
 
 ### 🎯 Conflict Resolution Architecture
 
-Multiple clients sharing a rigctld instance may cause processing conflict. Integrated proxy server sequences requests according to priority:
+Multiple clients sharing a rigctld instance may cause processing conflict. Integrated proxy server sequences requests
+according to priority:
 
 <img src="./md_assets/img_udp.png" width="40%" />
 
@@ -134,7 +148,7 @@ Multiple clients sharing a rigctld instance may cause processing conflict. Integ
 #### ⚙️ Hamlib Settings
 
 | Setting                         | Description                                                 |
-| ------------------------------- | ----------------------------------------------------------- |
+|---------------------------------|-------------------------------------------------------------|
 | Automatic Radio Data Reporting  | Enables periodic uploads of radio parameters to Cloudlog    |
 | Polling Interval                | Frequency of rigctld queries (default: 9s)                  |
 | Radio Model                     | Supported models mirror Hamlib's compatibility              |
@@ -150,7 +164,7 @@ Multiple clients sharing a rigctld instance may cause processing conflict. Integ
 #### ⚙️ UDP Server Settings
 
 | Setting                  | Description                     |
-| ------------------------ | ------------------------------- |
+|--------------------------|---------------------------------|
 | Enable UDP Server        | Listens for QSO data broadcasts |
 | Port                     | UDP listening port              |
 | Allow Remote Connections | Accepts non-localhost packets   |
@@ -202,6 +216,7 @@ The compiled output resides in `bin/Release/net6.0/linux-64`. Place `rigctld` (i
 ### 🐆 Performance Metrics
 
 Tested on Windows 7 SP1 (x64) with i5-3337U/8GB RAM, running:
+
 - Rustdesk
 - JTDX
 - Cloudlog Helper
@@ -212,6 +227,7 @@ CPU/memory usage after 1-hour FT8 operation (spikes occur during decode cycles):
 <img src="./md_assets/img_branchmark.png" width="30%" />
 
 ## 📝 License
+
 Cloudlog Helper is a free and unencumbered software released into the public domain.
 Anyone is free to copy, modify, publish, use, compile, sell, or
 distribute this software, either in source code form or as a compiled

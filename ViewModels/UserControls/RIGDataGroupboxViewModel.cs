@@ -1,10 +1,8 @@
 using System;
-using System.Net;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -27,11 +25,6 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     ///     Command for polling data(mode and frequency)
     /// </summary>
     private readonly ReactiveCommand<Unit, Unit> _pollCommand;
-    
-    /// <summary>
-    ///     Command for restarting tcp proxy server
-    /// </summary>
-    private readonly ReactiveCommand<Unit, Unit> _restartTcpProxyCommand;
 
     /// <summary>
     ///     observable sequence. Whether to cancel the timer or not.
@@ -44,6 +37,11 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     private CloudlogSettings _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
 
     /// <summary>
+    ///     Accumulative failed times.
+    /// </summary>
+    private int _failedTimes;
+
+    /// <summary>
     ///     whether to call _restartRigctldStrict or not.
     /// </summary>
     private bool _holdRigUpdate;
@@ -52,28 +50,11 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     ///     Settings for hamlib.
     /// </summary>
     private HamlibSettings _settings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
-    
-    /// <summary>
-    ///     Open messagebox in view.
-    /// </summary>
-    public Interaction<Unit, string> ShowAskForRetryMessageBox { get; } = new();
-    
-    
-    /// <summary>
-    ///     Open settings in view.
-    /// </summary>
-    public Interaction<Unit, Unit> OpenSettingsWindow { get; } = new();
-
-    /// <summary>
-    /// Accumulative failed times.
-    /// </summary>
-    private int _failedTimes;
 
     public RIGDataGroupboxViewModel()
     {
         // check if conf is available, then start rigctld
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
-        _restartTcpProxyCommand = ReactiveCommand.CreateFromTask(_restartTCPServer);
         this.WhenActivated(disposables =>
         {
             RigctldUtil.InitScheduler();
@@ -94,28 +75,14 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                         {
                             // shut every service down
                             RigctldUtil.CleanUp();
-                            TcpProxyServerUtil.Stop();
                             return Unit.Default;
                         }
+
                         // check if we can start rigctld
                         if (_settings is { UseExternalRigctld: false })
-                        {
                             await _restartRigctldStrict(false);
-                        }
                         else
-                        {
                             RigctldUtil.TerminateBackgroundProcess();
-                        }
-                        
-                        // check if we can start tcp
-                        if (_settings is { UseRigAdvanced: true, AllowProxyRequests: true })
-                        {
-                            Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
-                        }
-                        else
-                        {
-                            TcpProxyServerUtil.Stop();
-                        }
                     }
 
                     if (x.Part == ChangedPart.NothingJustClosed) _holdRigUpdate = false;
@@ -123,7 +90,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 })
                 .Subscribe(_ => { _createNewTimer().DisposeWith(disposables); })
                 .DisposeWith(disposables);
-            
+
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
                     try
@@ -157,37 +124,33 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                         // nested exception..
                         ClassLogger.Error(e.Message);
                     }
-                    
                 })
                 .DisposeWith(disposables);
 
-            _restartTcpProxyCommand.ThrownExceptions.Subscribe((err) =>
-            {
-                var exceptionMsg = err.Message;
-                SendMsgToParentVm(exceptionMsg);
-                ClassLogger.Error(exceptionMsg);
-            });
-
 
             _createNewTimer().DisposeWith(disposables);
-            
+
             // do setup
-            if (!_settings.PollAllowed)return;
-            if (_settings is { UseExternalRigctld: false })
-            { 
-                _restartRigctldStrict(false);
-            }
-            if (_settings is { UseRigAdvanced: true, AllowProxyRequests: true })
-            {
-                Observable.Return(Unit.Default).InvokeCommand(_restartTcpProxyCommand).DisposeWith(disposables);
-            }
+            if (!_settings.PollAllowed) return;
+            if (_settings is { UseExternalRigctld: false }) _restartRigctldStrict(false);
         });
     }
+
+    /// <summary>
+    ///     Open messagebox in view.
+    /// </summary>
+    public Interaction<Unit, string> ShowAskForRetryMessageBox { get; } = new();
+
+
+    /// <summary>
+    ///     Open settings in view.
+    /// </summary>
+    public Interaction<Unit, Unit> OpenSettingsWindow { get; } = new();
 
     [Reactive] public string? CurrentRxFrequency { get; set; } = "-------";
     [Reactive] public string? CurrentRxFrequencyInMeters { get; set; } = string.Empty;
     [Reactive] public string? CurrentRxMode { get; set; } = string.Empty;
-    
+
     [Reactive] public string? CurrentTxFrequency { get; set; } = "-------";
     [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
     [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
@@ -196,43 +159,26 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString("unknown");
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString("unknown");
 
-    /// <summary>
-    /// restart tcp server. this is a proxy server.
-    /// </summary>
-    private Task _restartTCPServer()
-    {
-        var (ip,port) = IPAddrUtil.ParseAddress(_settings.ProxyBindAddress);
-        
-        var (rigctldIp,rigctldPort) = _getCurrentRigctldAddress();
-        
-        return TcpProxyServerUtil.StartAsync(IPAddress.Parse(ip),
-            port, 
-            (requestedString) => RigctldUtil.ExecuteCommandInScheduler(rigctldIp, rigctldPort, requestedString, true));
-    }
-
-    private (string,int) _getCurrentRigctldAddress()
+    private (string, int) _getCurrentRigctldAddress()
     {
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
-        
-        if (_settings.UseExternalRigctld)
-        {
-            (ip, port) = IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
-        }
+
+        if (_settings.UseExternalRigctld) (ip, port) = IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
 
         return (ip, port);
     }
-    
+
     private void _resetStatus()
     {
         CurrentRxFrequency = "-------";
         CurrentRxFrequencyInMeters = string.Empty;
         CurrentRxMode = string.Empty;
-        
+
         CurrentTxFrequency = "-------";
         CurrentTxFrequencyInMeters = string.Empty;
         CurrentTxMode = string.Empty;
-        
+
         IsSplit = false;
         UploadStatus = TranslationHelper.GetString("unknown");
         NextUploadTime = TranslationHelper.GetString("unknown");
@@ -252,7 +198,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     private async Task _refreshRigInfo()
     {
         ClassLogger.Trace("Refreshing hamlib data....");
-        
+
         if (!_settings.PollAllowed)
         {
             _failedTimes = 0;
@@ -265,28 +211,29 @@ public class RIGDataGroupboxViewModel : ViewModelBase
             _failedTimes = 0;
             throw new Exception(TranslationHelper.GetString("confhamlibfirst"));
         }
-        
+
         // check rigctld background
         if (!_holdRigUpdate && !_settings.UseExternalRigctld) _ = await _restartRigctldStrict(true);
 
         // parse addr
         var (ip, port) = _getCurrentRigctldAddress();
-        var allInfo = await RigctldUtil.GetAllRigInfo(ip, port,_settings.ReportRFPower,_settings.ReportSplitInfo);
+        var allInfo = await RigctldUtil.GetAllRigInfo(ip, port, _settings.ReportRFPower, _settings.ReportSplitInfo);
         ClassLogger.Debug(allInfo.ToString());
-        CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx,false);
+        CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);
         CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
         CurrentRxMode = allInfo.ModeRx;
-        
-        CurrentTxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyTx,false);
+
+        CurrentTxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyTx, false);
         CurrentTxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyTx);
         CurrentTxMode = allInfo.ModeTx;
-        
+
         IsSplit = allInfo.IsSplit;
 
         // freq read from hamlib is already in hz!
         if (!_extraSettings.IsCloudlogHasErrors())
         {
-            var result = await CloudlogUtil.UploadRigInfoAsync(_extraSettings.CloudlogUrl, _extraSettings.CloudlogApiKey,
+            var result = await CloudlogUtil.UploadRigInfoAsync(_extraSettings.CloudlogUrl,
+                _extraSettings.CloudlogApiKey,
                 _settings.SelectedRadio, allInfo);
             if (result.Status == "success")
             {
@@ -303,7 +250,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
             UploadStatus = TranslationHelper.GetString("failed");
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
         }
-        
+
         // then, start tcp proxy server.
         // await _restartTCPServer();
 
@@ -365,17 +312,13 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 if (_settings.UseRigAdvanced)
                 {
                     if (string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
-                    {
                         defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(id, _settings.SelectedPort,
                             _settings.DisablePTT,
                             _settings.AllowExternalControl);
-                    }
                     else
-                    {
                         defaultArgs = _settings.OverrideCommandlineArg;
-                    }
                 }
-                
+
                 return (await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs, ignoreIfRunning)).Item1;
             }
         }

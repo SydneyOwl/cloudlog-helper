@@ -54,7 +54,6 @@ public class DatabaseUtil
         try
         {
             if (forceInitDatabase)
-            {
                 try
                 {
                     File.Delete(dbPath);
@@ -63,7 +62,7 @@ public class DatabaseUtil
                 {
                     // ignored...
                 }
-            }
+
             await _connSemaphore.WaitAsync();
             _conn = new SQLiteAsyncConnection(connectionString);
             ClassLogger.Info("Creating/Migrating database...");
@@ -78,10 +77,7 @@ public class DatabaseUtil
             var appVer = VersionInfo.Version;
 
             var appVersion = new Version("0.0.0.0");
-            if (!forceInitDatabase)
-            {
-                appVersion = new Version(appVer);
-            }
+            if (!forceInitDatabase) appVersion = new Version(appVer);
             ClassLogger.Trace($"DBVer:{dbVersion}");
             ClassLogger.Trace($"appVersion:{appVersion}");
 
@@ -129,7 +125,7 @@ public class DatabaseUtil
     }
 
     /// <summary>
-    /// Check if specified mode is a submode (e.g. one of MFSK's submodes is FT4), if so, returns the name of its parent.
+    ///     Check if specified mode is a submode (e.g. one of MFSK's submodes is FT4), if so, returns the name of its parent.
     /// </summary>
     /// <param name="mode"></param>
     /// <returns></returns>
@@ -138,8 +134,9 @@ public class DatabaseUtil
         try
         {
             await _connSemaphore.WaitAsync();
-            var quRes = await _conn!.QueryAsync<AdifModesDatabase>("SELECT * FROM adif_modes WHERE submode=? LIMIT 1", mode);
-            if (quRes is null || quRes.Count==0)return string.Empty;
+            var quRes = await _conn!.QueryAsync<AdifModesDatabase>("SELECT * FROM adif_modes WHERE submode=? LIMIT 1",
+                mode);
+            if (quRes is null || quRes.Count == 0) return string.Empty;
             var md = quRes[0].Mode;
             if (string.IsNullOrEmpty(md)) return string.Empty;
             return md;
@@ -149,7 +146,7 @@ public class DatabaseUtil
             _connSemaphore.Release();
         }
     }
-    
+
 
     /// <summary>
     ///     Query country info of specified callsign.
@@ -211,7 +208,7 @@ public class DatabaseUtil
     }
 
     /// <summary>
-    /// Init adif modes
+    ///     Init adif modes
     /// </summary>
     /// <param name="conn"></param>
     private static void InitAdifModesDatabase(SQLiteConnection conn)

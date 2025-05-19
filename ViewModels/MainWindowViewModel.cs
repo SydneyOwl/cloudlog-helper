@@ -3,7 +3,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Styling;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
@@ -20,8 +19,6 @@ public class MainWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
-    [Reactive] public bool IsTopmost { get; set; }
 
     public MainWindowViewModel()
     {
@@ -29,15 +26,15 @@ public class MainWindowViewModel : ViewModelBase
         OpenAboutWindow = ReactiveCommand.CreateFromTask(OpenWindow<AboutWindowViewModel>);
         SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
-        var conflict = RigctldUtil.GetPossibleConflictProcess();
-        
+        // var conflict = RigctldUtil.GetPossibleConflictProcess();
+
         // don't check conflict processes if UseExternalRigctld enabled.
-        var tmpSettings = ApplicationSettings.GetInstance();
-        if (!tmpSettings.HamlibSettings.UseExternalRigctld
-            && tmpSettings.HamlibSettings is not { UseRigAdvanced: true, AllowProxyRequests: true }
-            && !string.IsNullOrEmpty(conflict))
-            RigDataErrorPanelVM.ErrorMessage =
-                TranslationHelper.GetString("conflicthamlib").Replace("{replace01}", conflict);
+        // var tmpSettings = ApplicationSettings.GetInstance();
+        // if (!tmpSettings.HamlibSettings.UseExternalRigctld
+        //     && tmpSettings.HamlibSettings is not { UseRigAdvanced: true, AllowProxyRequests: true }
+        //     && !string.IsNullOrEmpty(conflict))
+        //     RigDataErrorPanelVM.ErrorMessage =
+        //         TranslationHelper.GetString("conflicthamlib").Replace("{replace01}", conflict);
 
         UserBasicDataGroupboxVM = new UserBasicDataGroupboxViewModel();
         RigDataGroupboxVM = new RIGDataGroupboxViewModel();
@@ -57,13 +54,15 @@ public class MainWindowViewModel : ViewModelBase
         });
     }
 
+    [Reactive] public bool IsTopmost { get; set; }
+
     public Interaction<ViewModelBase, Unit> ShowNewWindow { get; } = new();
     public ReactiveCommand<Unit, Unit> OpenSettingsWindow { get; }
 
     public ReactiveCommand<Unit, Unit> OpenAboutWindow { get; }
     public ReactiveCommand<Unit, Unit> SwitchLightTheme { get; }
     public ReactiveCommand<Unit, Unit> SwitchDarkTheme { get; }
-    
+
     public UserBasicDataGroupboxViewModel UserBasicDataGroupboxVM { get; set; }
     public RIGDataGroupboxViewModel RigDataGroupboxVM { get; set; }
     public UDPLogInfoGroupboxViewModel UDPLogInfoGroupboxVm { get; set; }

@@ -28,14 +28,10 @@ internal sealed class Program
 
             var verboseLevel = args.Contains("--verbose") ? LogLevel.Trace : LogLevel.Info;
             if (args.Contains("--log2file"))
-            {
                 _initializeLogger(verboseLevel, true);
-            }
             else
-            {
                 _initializeLogger(verboseLevel);
-            }
-            
+
             // To be honest, I don't know why but if this is initialized at OnFrameworkInitializationCompleted it would fail...
             _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: args.Contains("--reinit-db"));
 
@@ -68,7 +64,6 @@ Stack：{ex.StackTrace}");
             RigctldUtil.CleanUp();
             DatabaseUtil.Cleanup();
             UDPServerUtil.TerminateUDPServer();
-            TcpProxyServerUtil.Stop();
         }
     }
 
@@ -107,6 +102,7 @@ Stack：{ex.StackTrace}");
             config.AddTarget(fileTarget);
             config.AddRule(logLevel, LogLevel.Fatal, fileTarget);
         }
+
         LogManager.Configuration = config;
     }
 }

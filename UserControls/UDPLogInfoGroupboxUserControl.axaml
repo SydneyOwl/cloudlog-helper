@@ -12,9 +12,9 @@
         <userControls:UDPLogInfoGroupboxViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <converters:StringToColorConverter x:Key="StatusToColor"/>
-        <converters:StringToVisibilityConverter x:Key="StringToVisibility"/>
-        <converters:UploadStatusToTranslatedString x:Key="StringToTranslatedString"/>
+        <converters:StringToColorConverter x:Key="StatusToColor" />
+        <converters:StringToVisibilityConverter x:Key="StringToVisibility" />
+        <converters:UploadStatusToTranslatedString x:Key="StringToTranslatedString" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="10">
         <HeaderedContentControl Header="UDP Logs">
@@ -62,32 +62,40 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
-                                    <CheckBox IsChecked="{Binding Checked}" Grid.Column="0"/>
+                                    <CheckBox IsChecked="{Binding Checked}" Grid.Column="0" />
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17" MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                                        <TextBlock Text="{Binding LocalizedCountryName}" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17"
+                                                   MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0" />
+                                        <TextBlock Text="{Binding LocalizedCountryName}" FontSize="10"
+                                                   FontWeight="Bold" VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" Margin="0,0,20,0">
                                         <StackPanel Orientation="Horizontal" Width="50">
-                                            <TextBlock Text="Tx:" Margin="0,0,10,0"/>
-                                            <TextBlock Text="{Binding ReportSent}" Margin="0,0,20,0"/>
+                                            <TextBlock Text="Tx:" Margin="0,0,10,0" />
+                                            <TextBlock Text="{Binding ReportSent}" Margin="0,0,20,0" />
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Width="50">
-                                            <TextBlock Text="Rx:"  Margin="0,0,10,0"/>
-                                            <TextBlock Text="{Binding ReportReceived}" Margin="0,0,20,0"/>
+                                            <TextBlock Text="Rx:" Margin="0,0,10,0" />
+                                            <TextBlock Text="{Binding ReportReceived}" Margin="0,0,20,0" />
                                         </StackPanel>
                                     </StackPanel>
                                     <StackPanel Grid.Column="3" HorizontalAlignment="Right">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding TXFrequencyInMeters}" Padding="2" FontSize="10" FontWeight="Bold" VerticalAlignment="Center" Background="CornflowerBlue" Margin="0,0,5,0"/>
-                                            <TextBlock Text="{Binding Mode}" FontSize="10" FontWeight="Bold" Padding="2" VerticalAlignment="Center" Background="Goldenrod" Margin="0,0,5,0"/>
-                                            <TextBlock Text="{Binding ClientId}" FontSize="10" FontWeight="Bold" Padding="2" VerticalAlignment="Center" Background="LightGreen"/>
+                                            <TextBlock Text="{Binding TXFrequencyInMeters}" Padding="2" FontSize="10"
+                                                       FontWeight="Bold" VerticalAlignment="Center"
+                                                       Background="CornflowerBlue" Margin="0,0,5,0" />
+                                            <TextBlock Text="{Binding Mode}" FontSize="10" FontWeight="Bold"
+                                                       Padding="2" VerticalAlignment="Center" Background="Goldenrod"
+                                                       Margin="0,0,5,0" />
+                                            <TextBlock Text="{Binding ClientId}" FontSize="10" FontWeight="Bold"
+                                                       Padding="2" VerticalAlignment="Center" Background="LightGreen" />
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock Foreground="{Binding UploadStatus, Converter={StaticResource StatusToColor}}" 
-                                                       Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}" 
-                                                       VerticalAlignment="Center"
-                                                       FontWeight="Bold"/>
+                                            <TextBlock
+                                                Foreground="{Binding UploadStatus, Converter={StaticResource StatusToColor}}"
+                                                Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
+                                                VerticalAlignment="Center"
+                                                FontWeight="Bold" />
                                             <Image Margin="5,0,0,0"
                                                    Width="20"
                                                    Height="20"
@@ -96,7 +104,8 @@
                                                    IsVisible="{Binding FailReason, Converter={StaticResource StringToVisibility}}"
                                                    Cursor="Hand">
                                                 <ToolTip.Tip>
-                                                    <TextBlock Text="{Binding FailReason}" FontSize="14" MaxWidth="300" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding FailReason}" FontSize="14" MaxWidth="300"
+                                                               TextWrapping="Wrap" />
                                                 </ToolTip.Tip>
                                             </Image>
                                         </StackPanel>

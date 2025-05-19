@@ -28,7 +28,7 @@ public class HamlibSettings : ReactiveValidationObject
             IPAddrUtil.CheckAddress!,
             TranslationHelper.GetString("invalidaddr")
         );
-        this.ValidationRule(x => x.ProxyBindAddress,
+        this.ValidationRule(x => x.DebugServerAddress,
             IPAddrUtil.CheckAddress!,
             TranslationHelper.GetString("invalidaddr")
         );
@@ -49,36 +49,41 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public string PollInterval { get; set; } = "9";
     [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
-    
+
     [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }
-    
+
     [Reactive] [JsonProperty] public bool ReportSplitInfo { get; set; }
 
     [Reactive] [JsonProperty] public bool UseRigAdvanced { get; set; }
-    
+
     [Reactive] [JsonProperty] public bool DisablePTT { get; set; }
-    
+
     [Reactive] [JsonProperty] public bool AllowExternalControl { get; set; }
 
-    [Reactive] [JsonProperty] public string OverrideCommandlineArg { get; set; } = String.Empty;
-    
-    [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
-    [Reactive] [JsonProperty] public bool AllowProxyRequests { get; set; }
-    [Reactive] [JsonProperty] public string ProxyBindAddress { get; set; } = DefaultConfigs.CloudlogHelperProxyDefaultBindingAddress;
+    [Reactive] [JsonProperty] public string OverrideCommandlineArg { get; set; } = string.Empty;
 
-    [Reactive] [JsonProperty] public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
+    [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
+    [Reactive] [JsonProperty] public bool AllowDebugServer { get; set; }
+
+    [Reactive]
+    [JsonProperty]
+    public string DebugServerAddress { get; set; } = DefaultConfigs.DebugServerDefaultBindingAddress;
+
+    [Reactive]
+    [JsonProperty]
+    public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
 
     public IObservable<bool> IsHamlibValid => this.WhenAnyValue(
         x => x.SelectedRadio,
         x => x.SelectedPort,
         x => x.PollInterval,
-        x=> x.ExternalRigctldHostAddress,
+        x => x.ExternalRigctldHostAddress,
         x => x.UseExternalRigctld,
-        x => x.ProxyBindAddress,
+        x => x.DebugServerAddress,
         x => x.OverrideCommandlineArg,
-        x=>x.UseRigAdvanced,
-        x=>x.AllowProxyRequests,
-        (a,b,c,d,e,f,g,h,i) =>
+        x => x.UseRigAdvanced,
+        x => x.AllowDebugServer,
+        (a, b, c, d, e, f, g, h, i) =>
             !IsHamlibHasErrors()
     );
 
@@ -97,26 +102,20 @@ public class HamlibSettings : ReactiveValidationObject
         if (UseRigAdvanced)
         {
             if (!string.IsNullOrEmpty(OverrideCommandlineArg))
-            {
-                if (IsPropertyHasErrors(nameof(SelectedRadio))) return true;
-            }
+                if (IsPropertyHasErrors(nameof(SelectedRadio)))
+                    return true;
 
-            if (AllowProxyRequests)
-            {
-                if (IsPropertyHasErrors(nameof(ProxyBindAddress))) return true;
-            }
+            if (AllowDebugServer)
+                if (IsPropertyHasErrors(nameof(DebugServerAddress)))
+                    return true;
         }
 
         if (IsPropertyHasErrors(nameof(PollInterval))) return true;
 
         if (!UseExternalRigctld)
-        {
             return IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort));
-        }
-        else
-        {
-            return IsPropertyHasErrors(nameof(ExternalRigctldHostAddress));
-        }
+
+        return IsPropertyHasErrors(nameof(ExternalRigctldHostAddress));
 
         return false;
         // return (UseRigAdvanced && (string.IsNullOrEmpty(OverrideCommandlineArg) || IsPropertyHasErrors(nameof(SelectedRadio)))) || 
@@ -132,7 +131,15 @@ public class HamlibSettings : ReactiveValidationObject
 
     protected bool Equals(HamlibSettings other)
     {
-        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort && PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo && UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT && AllowExternalControl == other.AllowExternalControl && OverrideCommandlineArg == other.OverrideCommandlineArg && UseExternalRigctld == other.UseExternalRigctld && AllowProxyRequests == other.AllowProxyRequests && ProxyBindAddress == other.ProxyBindAddress && ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
+        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort &&
+               PollInterval == other.PollInterval && PollAllowed == other.PollAllowed &&
+               ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo &&
+               UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT &&
+               AllowExternalControl == other.AllowExternalControl &&
+               OverrideCommandlineArg == other.OverrideCommandlineArg &&
+               UseExternalRigctld == other.UseExternalRigctld && AllowDebugServer == other.AllowDebugServer &&
+               DebugServerAddress == other.DebugServerAddress &&
+               ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
     }
 
     public override bool Equals(object? obj)
@@ -157,8 +164,8 @@ public class HamlibSettings : ReactiveValidationObject
         hashCode.Add(AllowExternalControl);
         hashCode.Add(OverrideCommandlineArg);
         hashCode.Add(UseExternalRigctld);
-        hashCode.Add(AllowProxyRequests);
-        hashCode.Add(ProxyBindAddress);
+        hashCode.Add(AllowDebugServer);
+        hashCode.Add(DebugServerAddress);
         hashCode.Add(ExternalRigctldHostAddress);
         return hashCode.ToHashCode();
     }

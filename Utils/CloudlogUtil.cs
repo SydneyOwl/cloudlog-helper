@@ -21,9 +21,9 @@ public enum ServerInstanceType
 public class CloudlogUtil
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
+
     /// <summary>
-    /// Determinate whether this is a cloudlog server or not(wavelog)
+    ///     Determinate whether this is a cloudlog server or not(wavelog)
     /// </summary>
     /// <returns></returns>
     public static async Task<ServerInstanceType> GetCurrentServerInstanceTypeAsync(string url)
@@ -50,7 +50,7 @@ public class CloudlogUtil
             return ServerInstanceType.Unknown;
         }
     }
-    
+
     /// <summary>
     ///     Test whether cloudlog url is reachable, and the key is correct.
     /// </summary>
@@ -156,7 +156,8 @@ public class CloudlogUtil
     /// <param name="rigName"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public static async Task<CommonCloudlogResp> UploadRigInfoAsync(string url, string key, string rigName, RadioData data)
+    public static async Task<CommonCloudlogResp> UploadRigInfoAsync(string url, string key, string rigName,
+        RadioData data)
     {
         var payloadI = new RadioApiCallV2
         {
@@ -177,7 +178,8 @@ public class CloudlogUtil
         return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
     }
 
-    public static async Task<CommonCloudlogResp> UploadAdifLogAsync(string url, string key, string profileId, string adifLog)
+    public static async Task<CommonCloudlogResp> UploadAdifLogAsync(string url, string key, string profileId,
+        string adifLog)
     {
         // construct json
         var payloadI = new AdifQSOUploadCall

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CloudlogHelper.Resources;
@@ -12,7 +11,7 @@ public class DefaultConfigs
     ///     Repo address.
     /// </summary>
     public static readonly string RepoAddress = "https://github.com/SydneyOwl/cloudlog-helper";
-    
+
     /// <summary>
     ///     Embedded resource filename for the country code mapping (English to Chinese).
     /// </summary>
@@ -22,11 +21,11 @@ public class DefaultConfigs
     ///     Embedded resource filename for the CTY (Country) data file.
     /// </summary>
     public static readonly string EmbeddedCtyFilename = "CloudlogHelper.Resources.cty.dat";
-    
+
     /// <summary>
     ///     Embedded resource filename for the adif_modes data file. This file comes from sql of cloudlog.
     /// </summary>
-    public static readonly string EmbeddedeAdifModeFilename= "CloudlogHelper.Resources.adif_modes.dat";
+    public static readonly string EmbeddedeAdifModeFilename = "CloudlogHelper.Resources.adif_modes.dat";
 
     /// <summary>
     ///     Default timeout (in seconds) for HTTP(s) requests.
@@ -42,9 +41,9 @@ public class DefaultConfigs
     ///     Duration (in minutes) for which QSO data is collected to calculate average QSO metrics.
     /// </summary>
     public static int InitialQsoCalcWindowDuration = 5;
-    
+
     /// <summary>
-    ///     Duration (in minutes) for which QSO data is collected to calculate average QSO metrics.
+    ///     Default ua for our application.
     /// </summary>
     public static string DefaultHTTPUserAgent = $"CloudlogHelper/{VersionInfo.Version}";
 
@@ -83,7 +82,7 @@ public class DefaultConfigs
     ///     Default host address for Rigctld.
     /// </summary>
     public static readonly string RigctldDefaultHost = "127.0.0.1";
-    
+
     /// <summary>
     ///     Default host address for Outside Rigctld.
     /// </summary>
@@ -93,23 +92,32 @@ public class DefaultConfigs
     ///     Default port number for Rigctld.
     /// </summary>
     public static readonly int RigctldDefaultPort = 4534;
-    
-    
+
     /// <summary>
-    /// Default port number of proxy server.
+    ///     The maximum number of output lines to retain from rigctld.
+    ///     When rigctld exits, the most recent MaxRigctldOutputLines lines will be logged.
     /// </summary>
-    public static readonly string CloudlogHelperProxyDefaultBindingAddress = "127.0.0.1:7584";
+    /// <remarks>
+    ///     - Set to 0 to disable logging rigctld output.
+    ///     - Set to -1 to continuously rediect stdout and stderr of rigctld to console.
+    /// </remarks>
+    public static readonly int MaxRigctldOutputLineCount = 200;
+
+    /// <summary>
+    ///     Default port number of proxy server.
+    /// </summary>
+    public static readonly string DebugServerDefaultBindingAddress = "127.0.0.1:7584";
 
     /// <summary>
     ///     Socket timeout (in milliseconds) for Rigctld communication.
     /// </summary>
     public static readonly int RigctldSocketTimeout = 2500;
-    
+
     /// <summary>
     ///     The default expiration time for the cached return values of the rigctld In seconds.
     ///     This is calculated dynamically when jtdx sending requests.
     /// </summary>
-    public static readonly int RigctldCacheExpirationTime = 8;
+    // public static readonly int RigctldCacheExpirationTime = 8;
 
     /// <summary>
     ///     Default arguments passed to Rigctld when starting the process.
@@ -133,12 +141,12 @@ public class DefaultConfigs
     ///     A list of processes that may conflict with Cloudlog Helper.
     /// </summary>
     public static readonly List<string> PossibleRigctldConfilcts = new() { "jtdx", "wsjt", "rigctl", "fldigi" };
-    
-    
+
+
     /// <summary>
     ///     Maximum error count of rigctld communication. A msgbox will popup If exceeded.
     /// </summary>
-    public static readonly int MaxRigctldErrorCount  = 3;
+    public static readonly int MaxRigctldErrorCount = 3;
 
     /// <summary>
     ///     Expiry time (in seconds) for UDP client connections.

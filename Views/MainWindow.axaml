@@ -63,8 +63,8 @@
                     </MenuItem>
                 </Menu>
                 <ToggleButton Grid.Column="1" Grid.Row="0" IsChecked="{Binding IsTopmost}"
-                              Margin="2" >
-                   <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20"></Image>
+                              Margin="2">
+                    <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20" />
                 </ToggleButton>
                 <!-- <StackPanel Grid.Column="1" Grid.Row="0" -->
                 <!--             Margin="0,0,10,0" VerticalAlignment="Center"> -->

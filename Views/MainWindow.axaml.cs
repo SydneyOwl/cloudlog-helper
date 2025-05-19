@@ -23,7 +23,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             ViewModel!.ShowNewWindow
                 .RegisterHandler(DoShowDialogAsync)
                 .DisposeWith(disposables);
-            
+
             Observable.FromEventPattern<EventHandler<WindowClosingEventArgs>, WindowClosingEventArgs>(
                     h => Closing += h,
                     h => Closing -= h)

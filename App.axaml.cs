@@ -19,8 +19,8 @@ namespace CloudlogHelper;
 public class App : Application
 {
     private static TrayIcon? _trayIcon;
-    private static ReactiveCommand<Unit,Unit>? _exitCommand;
-    private static ReactiveCommand<Unit,Unit>? _openCommand;
+    private static ReactiveCommand<Unit, Unit>? _exitCommand;
+    private static ReactiveCommand<Unit, Unit>? _openCommand;
 
     public override void Initialize()
     {
@@ -43,18 +43,15 @@ public class App : Application
                             { ViewModel = new ErrorReportWindowViewModel() };
                         return;
                     }
-            
+
             var mainWindow = new MainWindow
             {
                 ViewModel = new MainWindowViewModel()
             };
             desktop.MainWindow = mainWindow;
 
-            _exitCommand = ReactiveCommand.Create(()=>
-            {
-                desktop.Shutdown();
-            });
-            _openCommand = ReactiveCommand.Create(()=>mainWindow.Show());
+            _exitCommand = ReactiveCommand.Create(() => { desktop.Shutdown(); });
+            _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
 
             var nmiExit = new NativeMenuItem
             {

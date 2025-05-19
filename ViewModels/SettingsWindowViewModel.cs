@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
-using Avalonia.Platform;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -37,16 +36,13 @@ public class SettingsWindowViewModel : ViewModelBase
             var screenWorkingArea = window.Screens.Primary!.WorkingArea;
             var aHeight = screenWorkingArea.Height;
             ClassLogger.Debug($"Work area height:{aHeight}");
-            if (aHeight < WindowHeight)
-            {
-                WindowHeight = aHeight - 10;
-            }
+            if (aHeight < WindowHeight) WindowHeight = aHeight - 10;
         }
         catch (Exception e)
         {
             ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
         }
-        
+
         Settings = ApplicationSettings.GetInstance();
         Settings.BackupSettings();
 
@@ -101,6 +97,8 @@ public class SettingsWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
     public ApplicationSettings Settings { get; set; }
+
+    [Reactive] public int WindowHeight { get; set; } = 800;
 
     private async Task _initializeHamlibAsync()
     {
@@ -179,15 +177,13 @@ public class SettingsWindowViewModel : ViewModelBase
             }
 
             CloudlogErrorPanel.ErrorMessage = string.Empty;
-            
+
             var instType = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(Settings.CloudlogSettings.CloudlogUrl);
             // instanceuncompitable
             if (instType != ServerInstanceType.Cloudlog)
-            {
                 CloudlogInfoPanel.InfoMessage = TranslationHelper.GetString("instanceuncompitable")
                     .Replace("{replace01}", instType.ToString());
-            }
-            
+
             return true;
         }
         catch (Exception e)
@@ -203,35 +199,29 @@ public class SettingsWindowViewModel : ViewModelBase
         // parse addr
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
-        
+
         if (Settings.HamlibSettings.UseExternalRigctld)
         {
             var addr = Settings.HamlibSettings.ExternalRigctldHostAddress.Split(":");
-            if (addr.Length != 2 || !int.TryParse(addr[1], out port))
-            {
-                throw new Exception("Invalid address format");
-            }
+            if (addr.Length != 2 || !int.TryParse(addr[1], out port)) throw new Exception("Invalid address format");
             ip = addr[0];
         }
 
-        if (!Settings.HamlibSettings.UseExternalRigctld && _supportedModels.TryGetValue(Settings.HamlibSettings.SelectedRadio!, out var radioId))
+        if (!Settings.HamlibSettings.UseExternalRigctld &&
+            _supportedModels.TryGetValue(Settings.HamlibSettings.SelectedRadio!, out var radioId))
         {
             var defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(radioId, Settings.HamlibSettings.SelectedPort);
 
             if (Settings.HamlibSettings.UseRigAdvanced)
             {
                 if (string.IsNullOrEmpty(Settings.HamlibSettings.OverrideCommandlineArg))
-                {
                     defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(radioId, Settings.HamlibSettings.SelectedPort,
                         Settings.HamlibSettings.DisablePTT,
                         Settings.HamlibSettings.AllowExternalControl);
-                }
                 else
-                {
                     defaultArgs = Settings.HamlibSettings.OverrideCommandlineArg;
-                }
             }
-            
+
             var (res, des) =
                 await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs);
             if (!res)
@@ -242,7 +232,8 @@ public class SettingsWindowViewModel : ViewModelBase
         }
 
         // send freq request to test
-        _ = await RigctldUtil.GetAllRigInfo(ip,port, Settings.HamlibSettings.ReportRFPower, Settings.HamlibSettings.ReportSplitInfo);
+        _ = await RigctldUtil.GetAllRigInfo(ip, port, Settings.HamlibSettings.ReportRFPower,
+            Settings.HamlibSettings.ReportSplitInfo);
 
         HamlibErrorPanel.ErrorMessage = string.Empty;
         return true;
@@ -305,8 +296,6 @@ public class SettingsWindowViewModel : ViewModelBase
         if (anythingChanged) return;
         // MessageBus.Current.SendMessage(part);
     }
-
-    [Reactive] public int WindowHeight { get; set; } = 800; 
 
     #region CloudlogAPI
 

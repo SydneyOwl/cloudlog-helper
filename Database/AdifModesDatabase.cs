@@ -11,16 +11,12 @@ public class AdifModesDatabase
     [PrimaryKey]
     [Column("id")]
     public int Id { get; set; }
-    
-    [Column("mode")]
-    public string? Mode { get; set; }
-    
-    [Column("submode")]
-    public string? SubMode { get; set; }
-    
-    [Column("qrgmode")]
-    public string? QrgMode { get; set; }
-    
-    [Column("active")]
-    public int Active { get; set; }
+
+    [Column("mode")] public string? Mode { get; set; }
+
+    [Column("submode")] public string? SubMode { get; set; }
+
+    [Column("qrgmode")] public string? QrgMode { get; set; }
+
+    [Column("active")] public int Active { get; set; }
 }

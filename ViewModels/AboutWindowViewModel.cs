@@ -10,15 +10,16 @@ namespace CloudlogHelper.ViewModels;
 
 public class AboutWindowViewModel : ViewModelBase
 {
-    public Interaction<string, Unit> OpenUriInteraction { get; }
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    public ReactiveCommand<Unit,Unit> OpenRepo { get; set; }
-    
+
     public AboutWindowViewModel()
     {
         OpenUriInteraction = new Interaction<string, Unit>();
         OpenRepo = ReactiveCommand.CreateFromTask(_openRepo);
     }
+
+    public Interaction<string, Unit> OpenUriInteraction { get; }
+    public ReactiveCommand<Unit, Unit> OpenRepo { get; set; }
 
     private async Task _openRepo()
     {
@@ -26,7 +27,7 @@ public class AboutWindowViewModel : ViewModelBase
         {
             await OpenUriInteraction.Handle(DefaultConfigs.RepoAddress);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             ClassLogger.Error(e.Message);
         }

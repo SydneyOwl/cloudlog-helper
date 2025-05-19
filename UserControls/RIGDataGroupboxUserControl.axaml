@@ -11,20 +11,20 @@
     <Design.DataContext>
         <userControls:RIGDataGroupboxViewModel />
     </Design.DataContext>
-    
+
     <UserControl.Styles>
         <Style Selector="Border.FreqBlock">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
-            <Setter Property="BoxShadow" Value="2 2 5 0 #888888"/>
-            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BoxShadow" Value="2 2 5 0 #888888" />
+            <Setter Property="CornerRadius" Value="10" />
         </Style>
     </UserControl.Styles>
-    
+
     <UserControl.Resources>
         <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
-        <converters:StringToVisibilityConverter x:Key="StringToVisibility"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibility" />
     </UserControl.Resources>
-    
+
     <StackPanel Orientation="Horizontal" Margin="10">
         <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.rigdata}}">
             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
@@ -43,7 +43,8 @@
                                        IsVisible="{Binding CurrentRxFrequencyInMeters, Converter={StaticResource StringToVisibility}}"
                                        FontWeight="Bold" Padding="2" Background="LightBlue"
                                        HorizontalAlignment="Left" />
-                            <TextBlock FontSize="10" Text="{Binding CurrentRxMode}" FontWeight="Bold" Padding="2" Background="Tan"
+                            <TextBlock FontSize="10" Text="{Binding CurrentRxMode}" FontWeight="Bold" Padding="2"
+                                       Background="Tan"
                                        IsVisible="{Binding CurrentRxMode, Converter={StaticResource StringToVisibility}}"
                                        HorizontalAlignment="Left" />
                         </StackPanel>
@@ -51,10 +52,10 @@
                             <TextBlock FontSize="30"
                                        Text="{Binding CurrentRxFrequency}"
                                        FontFamily="{StaticResource SevenSegmentFont}" />
-                            <TextBlock FontSize="10"  Text="MHz" FontWeight="Bold"
+                            <TextBlock FontSize="10" Text="MHz" FontWeight="Bold"
                                        FontFamily="{StaticResource SevenSegmentFont}"
-                                       VerticalAlignment="Bottom" 
-                                       Margin="10,0,0,5"/>
+                                       VerticalAlignment="Bottom"
+                                       Margin="10,0,0,5" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -73,7 +74,8 @@
                                        IsVisible="{Binding CurrentTxFrequencyInMeters, Converter={StaticResource StringToVisibility}}"
                                        FontWeight="Bold" Padding="2" Background="LightBlue"
                                        HorizontalAlignment="Left" />
-                            <TextBlock FontSize="10" Text="{Binding CurrentTxMode}" FontWeight="Bold" Padding="2" Background="Tan"
+                            <TextBlock FontSize="10" Text="{Binding CurrentTxMode}" FontWeight="Bold" Padding="2"
+                                       Background="Tan"
                                        IsVisible="{Binding CurrentTxMode, Converter={StaticResource StringToVisibility}}"
                                        HorizontalAlignment="Left" />
                         </StackPanel>
@@ -81,18 +83,20 @@
                             <TextBlock FontSize="30"
                                        Text="{Binding CurrentTxFrequency}"
                                        FontFamily="{StaticResource SevenSegmentFont}" />
-                            <TextBlock FontSize="10"  Text="MHz" FontWeight="Bold"
+                            <TextBlock FontSize="10" Text="MHz" FontWeight="Bold"
                                        FontFamily="{StaticResource SevenSegmentFont}"
-                                       VerticalAlignment="Bottom" 
-                                       Margin="10,0,0,5"/>
+                                       VerticalAlignment="Bottom"
+                                       Margin="10,0,0,5" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
-                
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,5" Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,5"
+                           Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" />
                 <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" />
-                
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,5" Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,5"
+                           Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" />
             </Grid>
         </HeaderedContentControl>

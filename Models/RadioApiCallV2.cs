@@ -8,38 +8,45 @@ public record RadioApiCallV2
     /// <summary>
     ///     Apikey of cloudlog.
     /// </summary>
-    [JsonProperty("key")] public string Key { get; set; }
+    [JsonProperty("key")]
+    public string Key { get; set; }
 
     /// <summary>
     ///     Rig model. (used for assigning received data)
     /// </summary>
-    [JsonProperty("radio")] public string Radio { get; set; }
+    [JsonProperty("radio")]
+    public string Radio { get; set; }
 
     /// <summary>
     ///     Frequency in Hz.
     /// </summary>
-    [JsonProperty("frequency")] public long Frequency { get; set; }
-    
+    [JsonProperty("frequency")]
+    public long Frequency { get; set; }
+
     /// <summary>
     ///     Mode of the rig.
     /// </summary>
-    [JsonProperty("mode")] public string Mode { get; set; }
+    [JsonProperty("mode")]
+    public string Mode { get; set; }
 
     /// <summary>
-    /// Optional Rx frequency in Hz.
+    ///     Optional Rx frequency in Hz.
     /// </summary>
-    [JsonProperty("frequency_rx")] public long? FrequencyRx { get; set; }
+    [JsonProperty("frequency_rx")]
+    public long? FrequencyRx { get; set; }
 
     /// <summary>
-    /// Optional Rx mode (not logged).
+    ///     Optional Rx mode (not logged).
     /// </summary>
-    [JsonProperty("mode_rx")] public string? ModeRx { get; set; }
-    
+    [JsonProperty("mode_rx")]
+    public string? ModeRx { get; set; }
+
     /// <summary>
-    /// Optional transmit power in Watts.
+    ///     Optional transmit power in Watts.
     /// </summary>
-    [JsonProperty("power")] public float? Power { get; set; }
-    
+    [JsonProperty("power")]
+    public float? Power { get; set; }
+
     // "prop_mode" and "sat_name"
 
     public override string ToString()

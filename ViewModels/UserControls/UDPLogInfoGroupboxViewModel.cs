@@ -7,7 +7,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
@@ -33,29 +32,24 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    /// All qsologged message received.
+    ///     All qsologged message received.
     /// </summary>
     private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
-    
+
     /// <summary>
-    /// Qsos being flitered.
-    /// </summary>
-    public ObservableCollectionExtended<RecordedCallsignDetail> FilteredQsos { get; set; } = new();
-    
-    /// <summary>
-    /// UDP Timeout watchdog.
+    ///     UDP Timeout watchdog.
     /// </summary>
     private readonly Subject<Unit> _heartbeatSubject = new();
-    
+
     /// <summary>
-    /// To be uploaded QSOs queue.
-    /// </summary>
-    private readonly ConcurrentQueue<RecordedCallsignDetail> _uploadQueue = new();
-    
-    /// <summary>
-    /// check if this queue is empty. Reupload qso function is disabled if queue is not empty.
+    ///     check if this queue is empty. Reupload qso function is disabled if queue is not empty.
     /// </summary>
     private readonly BehaviorSubject<bool> _isUploadQueueEmpty;
+
+    /// <summary>
+    ///     To be uploaded QSOs queue.
+    /// </summary>
+    private readonly ConcurrentQueue<RecordedCallsignDetail> _uploadQueue = new();
 
     private readonly ReactiveCommand<Unit, Unit> RestartUdpCommand;
     private readonly ReactiveCommand<Unit, Unit> UploadLogFromQueueCommand;
@@ -64,17 +58,16 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     ///     Total decoded number.
     /// </summary>
     private uint _allDecodedCount;
-    
-    /// <summary>
-    ///     The number of Qso made.
-    /// </summary>
-    private uint _qsosCount;
 
     /// <summary>
     ///     Settings for cloudlog.
     /// </summary>
     private CloudlogSettings _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
 
+    /// <summary>
+    ///     The number of Qso made.
+    /// </summary>
+    private uint _qsosCount;
 
 
     /// <summary>
@@ -87,7 +80,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         _isUploadQueueEmpty = new BehaviorSubject<bool>(_uploadQueue.IsEmpty);
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _settings.EnableUDPServer;
-        
+
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
         ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO, _isUploadQueueEmpty.AsObservable());
         ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);
@@ -100,7 +93,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         });
         RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);
         UploadLogFromQueueCommand = ReactiveCommand.CreateFromTask(_uploadQSOFromQueue);
-        
+
         this.WhenActivated(disposables =>
         {
             // Our client watchdog
@@ -185,6 +178,11 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         });
     }
 
+    /// <summary>
+    ///     Qsos being flitered.
+    /// </summary>
+    public ObservableCollectionExtended<RecordedCallsignDetail> FilteredQsos { get; set; } = new();
+
     public ReactiveCommand<Unit, Unit> SelectAllCommand { get; set; }
     public ReactiveCommand<Unit, Unit> DeleteSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
@@ -250,6 +248,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             ClassLogger.Trace($"Enqueued QSO: {rcd}");
             return;
         }
+
         ClassLogger.Trace($"ignoring enqueue QSO: {rcd}");
     }
 
@@ -277,19 +276,20 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             adif.AppendLine(_generateAdifFromRecordedCallsignDetail(recordedCallsignDetail));
             adif.AppendLine();
         }
+
         // ask user to save 
         var file = await ShowFilePickerDialog.Handle(Unit.Default);
         if (file is null) return;
-        
+
         var saveStream = await file.OpenWriteAsync();
         var st = new StreamWriter(saveStream);
         await st.WriteAsync(adif.ToString());
         st.Close();
     }
 
-    
+
     /// <summary>
-    /// Note that cloudlog seems to process qsos single-thread...
+    ///     Note that cloudlog seems to process qsos single-thread...
     /// </summary>
     private async Task _uploadQSOFromQueue()
     {
@@ -307,7 +307,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     //     ClassLogger.Debug($"This log is not uploadable. ignored: {adif}.");
                     //     continue;
                     // }
-                    
+
                     if (!_settings.AutoUploadQSO && !rcd.ForcedUpload)
                     {
                         rcd.UploadStatus = UploadStatus.Ignored;
@@ -315,7 +315,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         ClassLogger.Debug($"Auto upload not enabled. ignored: {adif}.");
                         continue;
                     }
-                    
+
                     // do possible retry...
                     for (var i = 0; i < _settings.RetryCount.Length; i++)
                     {
@@ -337,7 +337,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                             rcd.FailReason = null;
                             break;
                         }
-                        
+
                         await Task.Delay(1000);
                     }
                 }

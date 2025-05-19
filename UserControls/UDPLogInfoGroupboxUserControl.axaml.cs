@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogI
             ViewModel!.ShowFilePickerDialog.RegisterHandler(ShowSaveFilePickerDialog).DisposeWith(disposables);
         });
     }
-    
+
     private async Task ShowSaveFilePickerDialog(IInteractionContext<Unit, IStorageFile?> interaction)
     {
         var storageProvider = TopLevel.GetTopLevel(this)?.StorageProvider;
@@ -38,7 +37,7 @@ public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogI
             DefaultExtension = "adi",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType("adi") { Patterns = new[] { "*.adi" } },
+                new FilePickerFileType("adi") { Patterns = new[] { "*.adi" } }
             }
         });
         interaction.SetOutput(file);

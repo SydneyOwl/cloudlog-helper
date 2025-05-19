@@ -88,7 +88,7 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     WSJT-X Operating mode
     /// </summary>
     public string Mode { get; set; }
-    
+
     /// <summary>
     ///     WSJT-X Operating mode's parent mode
     /// </summary>
@@ -158,9 +158,9 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Client ID sent by client, e.g. `JTDX` `WSJT-X`
     /// </summary>
     public string ClientId { get; set; }
-    
+
     /// <summary>
-    ///    The fail reason of current upload.
+    ///     The fail reason of current upload.
     /// </summary>
     [Reactive]
     public string? FailReason { get; set; }
@@ -176,10 +176,10 @@ public class RecordedCallsignDetail : ReactiveObject
     /// </summary>
     [Reactive]
     public UploadStatus UploadStatus { get; set; } = UploadStatus.Pending;
-    
-    
+
+
     /// <summary>
-    /// Whether to force-upload this qso or not, even if auto upload function is not enabled.
+    ///     Whether to force-upload this qso or not, even if auto upload function is not enabled.
     /// </summary>
     public bool ForcedUpload { get; set; }
 
@@ -228,7 +228,7 @@ public class RecordedCallsignDetail : ReactiveObject
             UploadStatus = UploadStatus.Pending
         };
     }
-    
+
     public override string ToString()
     {
         return
@@ -267,9 +267,9 @@ public class RecordedCallsignDetail : ReactiveObject
         hashCode.Add(ClientId);
         return hashCode.ToHashCode();
     }
-    
+
     /// <summary>
-    /// Check if this qso is uploadable..
+    ///     Check if this qso is uploadable..
     /// </summary>
     /// <returns></returns>
     public bool IsUploadable()

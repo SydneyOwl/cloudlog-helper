@@ -5,7 +5,7 @@ using Avalonia.Media;
 
 namespace CloudlogHelper.Converters;
 
-public class StringToColorConverter:IValueConverter
+public class StringToColorConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

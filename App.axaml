@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="CloudlogHelper.App"
              xmlns:local="using:CloudlogHelper"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
