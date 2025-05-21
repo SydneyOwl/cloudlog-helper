@@ -1,13 +1,18 @@
-﻿using Nancy.Hosting.Self;
+﻿// #if false
 using System;
+using System.Threading.Tasks;
+using Nancy;
+using Nancy.Hosting.Self;
 using NLog;
 
-public class NancyService : IDisposable
+namespace CloudlogHelper.Utils;
+
+public class TCPDebugServer : IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private NancyHost _nancyHost;
 
-    public NancyService(string host, int port)
+    public TCPDebugServer(string host, int port)
     {
         var config = new HostConfiguration
         {
@@ -23,6 +28,20 @@ public class NancyService : IDisposable
     {
         _nancyHost?.Stop();
         _nancyHost?.Dispose();
+        GC.SuppressFinalize(this);
         ClassLogger.Info("NancyService stopped");
     }
 }
+
+public class APIModule : NancyModule
+{
+    public APIModule()
+    {
+        Get("/async", async (args, ct) => 
+        {
+            await Task.Delay(100); 
+            return "Hello Async World!";
+        });
+    }
+}
+// #endif

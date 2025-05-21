@@ -5,6 +5,7 @@
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls="clr-namespace:CloudlogHelper.UserControls"
+        xmlns:converters="clr-namespace:CloudlogHelper.Converters"
         mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
@@ -17,11 +18,15 @@
     <Design.DataContext>
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
+    <Window.Resources>
+        <converters:BoolToColorConverter x:Key="BoolToColor" />
+    </Window.Resources>
+
 
     <StackPanel>
         <!-- menu -->
         <StackPanel>
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ShowGridLines="False">
+            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto" ShowGridLines="False">
                 <Menu Grid.Row="0" Grid.Column="0">
                     <MenuItem Header="{I18N {x:Static resources:LangKeys.settings}}">
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}"
@@ -62,18 +67,32 @@
                         </MenuItem>
                     </MenuItem>
                 </Menu>
-                <ToggleButton Grid.Column="1" Grid.Row="0" IsChecked="{Binding IsTopmost}"
+                <ToggleButton Grid.Column="2" Grid.Row="0" IsChecked="{Binding IsTopmost}"
                               Margin="2">
                     <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20" />
                 </ToggleButton>
-                <!-- <StackPanel Grid.Column="1" Grid.Row="0" -->
-                <!--             Margin="0,0,10,0" VerticalAlignment="Center"> -->
-                <!--     <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto" ShowGridLines="True"> -->
-                <!--         <Image Grid.Column="0" Source="{Binding CurrentCat}" -->
-                <!--                Height="20" VerticalAlignment="Center"> -->
-                <!--         </Image> -->
-                <!--     </Grid> -->
-                <!-- </StackPanel> -->
+                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                            Margin="30,0,10,0" Spacing="30">
+                    <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
+                        <!-- rigctld -->
+                        <Ellipse Width="20" Height="20" Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
+                                 VerticalAlignment="Center" Stroke="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}" StrokeThickness="2"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold" Text="Rigctld"/>
+                            <TextBlock FontWeight="DemiBold" Text="{Binding CurrentRigctldAddress}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    
+                    <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+                        <!-- udp -->
+                        <Ellipse Width="20" Height="20" Fill="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
+                                 VerticalAlignment="Center" Stroke="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}" StrokeThickness="2"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold" Text="UDP Server"/>
+                            <TextBlock FontWeight="DemiBold" Text="{Binding CurrentUDPServerAddress}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
             </Grid>
         </StackPanel>
 
@@ -92,13 +111,6 @@
             <userControls:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="3" Grid.RowSpan="2"
                                                         DataContext="{Binding UDPLogInfoGroupboxVm}" />
         </Grid>
-        <!-- <StackPanel Orientation="Horizontal"> -->
-        <!--     <StackPanel> -->
-        <!--         <userControls:UserBasicDataGroupboxUserControl DataContext="{Binding UserBasicDataGroupboxVM}" /> -->
-        <!--         <userControls:RIGDataGroupboxUserControl DataContext="{Binding RigDataGroupboxVM}"/> -->
-        <!--     </StackPanel> -->
-        <!--     <userControls:UDPLogInfoGroupboxUserControl DataContext="{Binding UDPLogInfoGroupboxVm}"/> -->
-        <!-- </StackPanel> -->
     </StackPanel>
 
 </Window>

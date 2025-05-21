@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -88,7 +89,14 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                     if (x.Part == ChangedPart.NothingJustClosed) _holdRigUpdate = false;
                     return Unit.Default;
                 })
-                .Subscribe(_ => { _createNewTimer().DisposeWith(disposables); })
+                .Subscribe(_ =>
+                {
+                    // poll immediately after settings changed.
+                    Observable.Return(Unit.Default)
+                        .InvokeCommand(_pollCommand)
+                        .DisposeWith(disposables);
+                    _createNewTimer().DisposeWith(disposables);
+                })
                 .DisposeWith(disposables);
 
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
@@ -132,7 +140,12 @@ public class RIGDataGroupboxViewModel : ViewModelBase
 
             // do setup
             if (!_settings.PollAllowed) return;
-            if (_settings is { UseExternalRigctld: false }) _restartRigctldStrict(false);
+            if (_settings is { UseExternalRigctld: false }) _ = _restartRigctldStrict(false);
+            // poll immediately after vm inited, but wait for rigctld start.
+            Observable.Return(Unit.Default)
+                .Delay(TimeSpan.FromMilliseconds(1000))
+                .InvokeCommand(_pollCommand)
+                .DisposeWith(disposables);
         });
     }
 
@@ -159,15 +172,37 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString("unknown");
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString("unknown");
 
-    private (string, int) _getCurrentRigctldAddress()
+    // the endpoint we're sending requests to.
+    // the ip is always 127.0.0.1 expect useing external rigctld.
+    private (string, int) _getRigctldIpAndPort()
     {
+        // parse addr
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
-
-        if (_settings.UseExternalRigctld) (ip, port) = IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
-
+        
+        if (_settings.UseExternalRigctld)
+        {
+            return IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
+        }
+        
+        if (_settings.UseRigAdvanced &&
+            !string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
+        {
+            var matchPort = Regex.Match(_settings.OverrideCommandlineArg, @"-t\s+(\S+)");
+            if (matchPort.Success)
+            {
+                port = int.Parse(matchPort.Groups[1].Value);
+                ClassLogger.Debug($"Match port from args: {port}");
+            }
+            else
+            {
+                throw new Exception(TranslationHelper.GetString("failextractinfo"));
+            }
+        }
+        
         return (ip, port);
     }
+
 
     private void _resetStatus()
     {
@@ -216,7 +251,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         if (!_holdRigUpdate && !_settings.UseExternalRigctld) _ = await _restartRigctldStrict(true);
 
         // parse addr
-        var (ip, port) = _getCurrentRigctldAddress();
+        var (ip, port) = _getRigctldIpAndPort();
         var allInfo = await RigctldUtil.GetAllRigInfo(ip, port, _settings.ReportRFPower, _settings.ReportSplitInfo);
         ClassLogger.Debug(allInfo.ToString());
         CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);

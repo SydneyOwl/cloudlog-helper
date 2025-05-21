@@ -47,7 +47,7 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public Dictionary<string, string> KnownModels { get; set; } = new();
 
-    [Reactive] [JsonProperty] public string PollInterval { get; set; } = "9";
+    [Reactive] [JsonProperty] public string PollInterval { get; set; } = DefaultConfigs.RigctldDefaultPollingInterval.ToString();
     [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
 
     [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }

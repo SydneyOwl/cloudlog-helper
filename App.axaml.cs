@@ -10,6 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using NLog;
 using ReactiveUI;
 using ErrorReportWindow = CloudlogHelper.Views.ErrorReportWindow;
 using MainWindow = CloudlogHelper.Views.MainWindow;
@@ -18,6 +19,7 @@ namespace CloudlogHelper;
 
 public class App : Application
 {
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
@@ -52,32 +54,41 @@ public class App : Application
 
             _exitCommand = ReactiveCommand.Create(() => { desktop.Shutdown(); });
             _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
-
-            var nmiExit = new NativeMenuItem
+            
+            // create trayicon
+            try
             {
-                Header = TranslationHelper.GetString("exit"),
-                Command = _exitCommand
-            };
-            var nmiOpen = new NativeMenuItem
-            {
-                Header = TranslationHelper.GetString("open"),
-                Command = _openCommand
-            };
-
-            using var stream = AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/icon.png"));
-            var bitmap = new Bitmap(stream);
-
-            _trayIcon = new TrayIcon
-            {
-                ToolTipText = "CloudlogHelper",
-                Icon = new WindowIcon(bitmap),
-                // 可以添加菜单项
-                Menu = new NativeMenu
+                var nmiExit = new NativeMenuItem
                 {
-                    nmiExit,
-                    nmiOpen
-                }
-            };
+                    Header = TranslationHelper.GetString("exit"),
+                    Command = _exitCommand
+                };
+                var nmiOpen = new NativeMenuItem
+                {
+                    Header = TranslationHelper.GetString("open"),
+                    Command = _openCommand
+                };
+
+                using var stream = AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/icon.png"));
+                var bitmap = new Bitmap(stream);
+
+                _trayIcon = new TrayIcon
+                {
+                    ToolTipText = "CloudlogHelper",
+                    Icon = new WindowIcon(bitmap),
+                    // 可以添加菜单项
+                    Menu = new NativeMenu
+                    {
+                        nmiExit,
+                        nmiOpen
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                // this may fail on Windows 7
+                ClassLogger.Warn(ex.Message);
+            }
         }
 
         base.OnFrameworkInitializationCompleted();

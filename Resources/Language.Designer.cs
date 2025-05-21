@@ -429,6 +429,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to extract port number from the command line arguments. Please explicitly specify them using the -t parameters..
+        /// </summary>
+        public static string failextractinfo {
+            get {
+                return ResourceManager.GetString("failextractinfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Getting info....
         /// </summary>
         public static string gettinginfo {

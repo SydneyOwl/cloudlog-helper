@@ -390,4 +390,7 @@
     <data name="proxyhelp" xml:space="preserve">
         <value>允许代理其他应用程序发送的请求。用于避免同时向rigctld发送请求时可能造成的冲突。</value>
     </data>
+    <data name="failextractinfo" xml:space="preserve">
+        <value>无法从命令行参数中提取端口号。请显式使用参数-t指明。</value>
+    </data>
 </root>

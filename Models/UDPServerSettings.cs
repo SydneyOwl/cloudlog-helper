@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
 using ReactiveUI;
@@ -38,7 +39,7 @@ public class UDPServerSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public bool EnableUDPServer { get; set; } = true;
     [Reactive] [JsonProperty] public bool EnableConnectionFromOutside { get; set; }
-    [Reactive] [JsonProperty] public string UDPPort { get; set; } = "2237";
+    [Reactive] [JsonProperty] public string UDPPort { get; set; } = DefaultConfigs.UDPServerDefaultPort.ToString();
 
 
     [Reactive] [JsonProperty] public bool AutoUploadQSO { get; set; } = true;

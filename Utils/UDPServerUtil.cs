@@ -20,6 +20,12 @@ public class UDPServerUtil
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    public static bool IsUdpServerRunning()
+    {
+        if (_udpServer is null) return false;
+        return _udpServer.IsRunning;
+    }
+
     public static async Task RestartUDPServerAsync(IPAddress ip, int port,
         Action<WsjtxMessage> handler,
         Action<LogLevel, string>? udpLogger = null)

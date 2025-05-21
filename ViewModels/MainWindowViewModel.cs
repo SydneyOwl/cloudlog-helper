@@ -2,9 +2,12 @@
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Styling;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using NLog;
@@ -26,15 +29,6 @@ public class MainWindowViewModel : ViewModelBase
         OpenAboutWindow = ReactiveCommand.CreateFromTask(OpenWindow<AboutWindowViewModel>);
         SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
-        // var conflict = RigctldUtil.GetPossibleConflictProcess();
-
-        // don't check conflict processes if UseExternalRigctld enabled.
-        // var tmpSettings = ApplicationSettings.GetInstance();
-        // if (!tmpSettings.HamlibSettings.UseExternalRigctld
-        //     && tmpSettings.HamlibSettings is not { UseRigAdvanced: true, AllowProxyRequests: true }
-        //     && !string.IsNullOrEmpty(conflict))
-        //     RigDataErrorPanelVM.ErrorMessage =
-        //         TranslationHelper.GetString("conflicthamlib").Replace("{replace01}", conflict);
 
         UserBasicDataGroupboxVM = new UserBasicDataGroupboxViewModel();
         RigDataGroupboxVM = new RIGDataGroupboxViewModel();
@@ -51,10 +45,37 @@ public class MainWindowViewModel : ViewModelBase
 
             UDPLogInfoGroupboxVm.MessageStream.Subscribe(errstr => { UDPLogErrorPanelVM.ErrorMessage = errstr; })
                 .DisposeWith(disposables);
+
+            MessageBus.Current.Listen<SettingsChanged>().Subscribe(res =>
+            {
+                switch (res.Part)
+                {
+                    case ChangedPart.Hamlib:
+                        _updateRigctldListeningAddress();
+                        break;
+                    case ChangedPart.UDPServer:
+                        _updateUdpServerListeningAddress();
+                        break;
+                }
+            }).DisposeWith(disposables);
+            
+            // poll rigctld server status
+            Observable.Timer(TimeSpan.FromSeconds(2),TimeSpan.FromSeconds(2)).Subscribe(_ =>
+            {
+                IsUdpServerRunning = UDPServerUtil.IsUdpServerRunning();
+                IsRigctldRunning = RigctldUtil.IsRigctldClientRunning() || _isRigctldUsingExternal;
+            }).DisposeWith(disposables);
         });
+        _updateUdpServerListeningAddress();
+        _updateRigctldListeningAddress();
     }
 
     [Reactive] public bool IsTopmost { get; set; }
+    [Reactive] public string CurrentRigctldAddress { get; set; } = "(?)";
+    [Reactive] public string CurrentUDPServerAddress { get; set; } = "(?)";
+    [Reactive] public bool IsRigctldRunning { get; set; }
+    [Reactive] public bool IsUdpServerRunning { get; set; }
+    private bool _isRigctldUsingExternal;
 
     public Interaction<ViewModelBase, Unit> ShowNewWindow { get; } = new();
     public ReactiveCommand<Unit, Unit> OpenSettingsWindow { get; }
@@ -82,5 +103,87 @@ public class MainWindowViewModel : ViewModelBase
             ClassLogger.Error($"open failed:{typeof(T).Name}, {ex.Message}");
             throw;
         }
+    }
+    
+    
+    private void _updateRigctldListeningAddress()
+    {
+        var _settings = ApplicationSettings.GetInstance().HamlibSettings;
+        var ip = DefaultConfigs.RigctldDefaultHost;
+        var port = DefaultConfigs.RigctldDefaultPort;
+        
+
+        try
+        {
+            if (_settings.UseExternalRigctld)
+            {
+                _isRigctldUsingExternal = true;
+                (ip, port) = IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
+                CurrentRigctldAddress = $"({ip}:{port})";
+                return;
+            }
+
+            _isRigctldUsingExternal = false;
+
+            if (_settings.UseRigAdvanced &&
+                !string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
+            {
+                var matchIp = Regex.Match(_settings.OverrideCommandlineArg, @"-T\s+(\S+)");
+                if (matchIp.Success)
+                {
+                    ip = matchIp.Groups[1].Value;
+                    ClassLogger.Debug($"Match ip from args: {ip}");
+                }
+                else
+                {
+                    CurrentRigctldAddress = $"(?)";
+                    throw new Exception(TranslationHelper.GetString("failextractinfo"));
+                }
+
+                var matchPort = Regex.Match(_settings.OverrideCommandlineArg, @"-t\s+(\S+)");
+                if (matchPort.Success)
+                {
+                    port = int.Parse(matchPort.Groups[1].Value);
+                }
+                else
+                {
+                    CurrentRigctldAddress = $"(?)";
+                    throw new Exception(TranslationHelper.GetString("failextractinfo"));
+                }
+
+                CurrentRigctldAddress = $"({ip}:{port})";
+                return;
+            }
+
+            if (_settings is { UseRigAdvanced: true, AllowExternalControl: true })
+            {
+                CurrentRigctldAddress = $"(0.0.0.0:{port})";
+                return;
+            }
+
+            CurrentRigctldAddress = $"({ip}:{port})";
+        }
+        catch(Exception a)
+        {
+            ClassLogger.Error(a.Message);
+            CurrentRigctldAddress = $"(?)";
+        }
+    }
+
+    private void _updateUdpServerListeningAddress()
+    {
+        var settings = ApplicationSettings.GetInstance().UDPSettings;
+        var port = settings.UDPPort;
+        if (string.IsNullOrEmpty(port))
+        {
+            CurrentUDPServerAddress = "(?)";
+            return;
+        }
+        if (settings.EnableConnectionFromOutside)
+        {
+            CurrentUDPServerAddress = $"(0.0.0.0:{port})";
+            return;
+        }
+        CurrentUDPServerAddress = $"(127.0.0.1:{port})";
     }
 }

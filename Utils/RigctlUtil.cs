@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
@@ -53,12 +54,19 @@ public class RigctldUtil
     /// </summary>
     private static readonly Queue<string> _rigctldLogBuffer = new();
 
+    /// <summary>
+    /// AppendRigctldLog lock.
+    /// </summary>
     private static readonly object _lock = new();
 
     /// <summary>
     ///     Keep-alive tcp client for rigctld communications.
     /// </summary>
     private static TcpClient? _tcpClient;
+
+    private static string? _currentRigctldIp;
+    
+    private static int? _currentRigctldPort;
 
     /// <summary>
     ///     Logger for the class.
@@ -76,12 +84,19 @@ public class RigctldUtil
     /// <returns>True if either background or one-time process is running, false otherwise.</returns>
     public static bool IsRigctldClientRunning()
     {
-        var running = false;
-        if (_backgroundProcess is not null) running = !_backgroundProcess.HasExited;
-
-        if (_onetimeRigctldClient is not null) running = running || !_onetimeRigctldClient.HasExited;
-
-        return running;
+        try
+        {
+            var running = false;
+            if (_backgroundProcess is not null) running = !_backgroundProcess.HasExited;
+            if (_onetimeRigctldClient is not null) running = running || !_onetimeRigctldClient.HasExited;
+            return running;
+        }
+        catch (InvalidOperationException)
+        {
+            _onetimeRigctldClient = null;
+            _backgroundProcess = null;
+            return false;
+        }
     }
 
     private static void AppendRigctldLog(string? log)

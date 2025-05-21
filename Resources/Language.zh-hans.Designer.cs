@@ -429,6 +429,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 无法从命令行参数中提取端口号。请显式使用参数-t指明。.
+        /// </summary>
+        public static string failextractinfo {
+            get {
+                return ResourceManager.GetString("failextractinfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 获取数据中....
         /// </summary>
         public static string gettinginfo {

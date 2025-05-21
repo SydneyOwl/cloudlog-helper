@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -194,7 +195,7 @@ public class SettingsWindowViewModel : ViewModelBase
         return false;
     }
 
-    private async Task<bool> _testHamlib()
+    private (string, int) _getRigctldIpAndPort()
     {
         // parse addr
         var ip = DefaultConfigs.RigctldDefaultHost;
@@ -202,11 +203,31 @@ public class SettingsWindowViewModel : ViewModelBase
 
         if (Settings.HamlibSettings.UseExternalRigctld)
         {
-            var addr = Settings.HamlibSettings.ExternalRigctldHostAddress.Split(":");
-            if (addr.Length != 2 || !int.TryParse(addr[1], out port)) throw new Exception("Invalid address format");
-            ip = addr[0];
+            (ip,port) = IPAddrUtil.ParseAddress(Settings.HamlibSettings.ExternalRigctldHostAddress);
         }
 
+        if (Settings.HamlibSettings.UseRigAdvanced &&
+            !string.IsNullOrEmpty(Settings.HamlibSettings.OverrideCommandlineArg))
+        {
+            var matchPort = Regex.Match(Settings.HamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
+            if (matchPort.Success)
+            {
+                port = int.Parse(matchPort.Groups[1].Value);
+                ClassLogger.Debug($"Match port from args: {port}");
+            }
+            else
+            {
+                throw new Exception(TranslationHelper.GetString("failextractinfo"));
+            }
+        }
+
+        return (ip, port);
+    }
+
+    private async Task<bool> _testHamlib()
+    {
+        HamlibErrorPanel.ErrorMessage = string.Empty;
+        var (ip, port) = _getRigctldIpAndPort();
         if (!Settings.HamlibSettings.UseExternalRigctld &&
             _supportedModels.TryGetValue(Settings.HamlibSettings.SelectedRadio!, out var radioId))
         {
@@ -230,12 +251,16 @@ public class SettingsWindowViewModel : ViewModelBase
                 return false;
             }
         }
+        else
+        {
+            RigctldUtil.TerminateBackgroundProcess();
+        }
 
         // send freq request to test
         _ = await RigctldUtil.GetAllRigInfo(ip, port, Settings.HamlibSettings.ReportRFPower,
             Settings.HamlibSettings.ReportSplitInfo);
 
-        HamlibErrorPanel.ErrorMessage = string.Empty;
+        // HamlibErrorPanel.ErrorMessage = string.Empty;
         return true;
         // HamlibErrorPanel.ErrorMessage = TranslationHelper.GetString("inithamlibfailed");
         //
@@ -244,8 +269,6 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _refreshPort()
     {
-        // await RigctldUtil.TestIt();
-        // return;
         Ports = SerialPort.GetPortNames().ToList();
         var tmp = Settings.HamlibSettings.SelectedPort;
         if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
@@ -254,8 +277,6 @@ public class SettingsWindowViewModel : ViewModelBase
         // reset port name
         Settings.HamlibSettings.SelectedPort = "";
         Settings.HamlibSettings.SelectedPort = tmp;
-        // Console.WriteLine(await RigctldUtil.GetFreqFromBackgroundProcess());//Rig command: Frequency: 28069000
-        // Console.WriteLine(await RigctldUtil.GetModeFromBackgroundProcess());//Rig command: Mode: CW
     }
 
     private void _discardConf()

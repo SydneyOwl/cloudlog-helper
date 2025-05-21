@@ -390,4 +390,7 @@
     <data name="proxyhelp" xml:space="preserve">
         <value>Allow proxying requests sent by other applications. Used to prevent potential conflicts caused by simultaneous requests to rigctld.</value>
     </data>
+    <data name="failextractinfo" xml:space="preserve">
+        <value>Failed to extract port number from the command line arguments. Please explicitly specify them using the -t parameters.</value>
+    </data>
 </root>

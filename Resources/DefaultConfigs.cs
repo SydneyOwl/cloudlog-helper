@@ -92,6 +92,11 @@ public class DefaultConfigs
     ///     Default port number for Rigctld.
     /// </summary>
     public static readonly int RigctldDefaultPort = 4534;
+    
+    /// <summary>
+    ///     Default poll interval for Rigctld.
+    /// </summary>
+    public static readonly int RigctldDefaultPollingInterval = 15;
 
     /// <summary>
     ///     The maximum number of output lines to retain from rigctld.
@@ -152,6 +157,8 @@ public class DefaultConfigs
     ///     Expiry time (in seconds) for UDP client connections.
     /// </summary>
     public static readonly int UDPClientExpiryInSeconds = 60;
+    
+    public static readonly int UDPServerDefaultPort = 2237;
 
     /// <summary>
     ///     Default path to SQLite database file.
