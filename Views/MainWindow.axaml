@@ -72,7 +72,7 @@
                     <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20" />
                 </ToggleButton>
                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" 
-                            Margin="30,0,10,0" Spacing="30">
+                            Margin="10,0,10,0" Spacing="30">
                     <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
                         <!-- rigctld -->
                         <Ellipse Width="20" Height="20" Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"

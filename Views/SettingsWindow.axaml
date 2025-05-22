@@ -111,6 +111,51 @@
                                                         DataContext="{Binding CloudlogTestButton}" />
                 </Grid>
             </Border>
+            
+            <!-- Clublog 设置 -->
+            <userControls:ErrorPanelUserControl DataContext="{Binding CloudlogErrorPanel}" />
+            <Border Classes="SettingBlock">
+                <Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="*,*" ShowGridLines="False">
+                    <!-- callsign 设置 -->
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="Callsign"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Width="80"
+                                   FontSize="14" />
+                        <TextBox Watermark="Clublog callsign"
+                                 Width="150"
+                                 FontSize="14" />
+                    </StackPanel>
+
+                    <!-- password 设置 -->
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" Grid.Column="1" Grid.Row="0">
+                        <TextBlock Text="Password"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Width="80"
+                                   FontSize="14" />
+                        <TextBox Watermark="Clublog password"
+                                 Width="150"
+                                 FontSize="14" />
+                    </StackPanel>
+
+                    <!-- email 设置 -->
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                        <TextBlock Text="Email"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Width="80"
+                                   FontSize="14" />
+                        <TextBox Watermark="Clublog email"
+                                 Width="150"
+                                 FontSize="14" />
+                    </StackPanel>
+                    
+                  <userControls:TestButtonUserControl Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
+                                                        DataContext="{Binding CloudlogTestButton}" />
+                </Grid>
+            </Border>
 
             <!-- HamLib设置 -->
             <userControls:ErrorPanelUserControl DataContext="{Binding HamlibErrorPanel}" />

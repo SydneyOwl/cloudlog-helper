@@ -1,4 +1,4 @@
-﻿// #if false
+﻿#if false
 using System;
 using System.Threading.Tasks;
 using Nancy;
@@ -44,4 +44,4 @@ public class APIModule : NancyModule
         });
     }
 }
-// #endif
+#endif
