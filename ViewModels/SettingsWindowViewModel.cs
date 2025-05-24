@@ -336,7 +336,7 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             ClassLogger.Trace("udp settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged
-                { Part = ChangedPart.UDPServer }); // maybe user clickedTest
+                { Part = ChangedPart.UDPServer }); 
             anythingChanged = true;
         }
 

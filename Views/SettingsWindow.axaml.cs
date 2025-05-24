@@ -21,28 +21,30 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
     public SettingsWindow()
     {
         InitializeComponent();
-        var screen = Screens.ScreenFromVisual(this);
-        if (!Design.IsDesignMode)
-        {
-            try
-            {
-                if (screen == null)
-                {
-                    ClassLogger.Warn("Current window is not on any screen");
-                    return;
-                }
-
-                var workingArea = screen.WorkingArea;
-                ViewModel!.UpdateScreenInfo(workingArea.Height-50);
-                ClassLogger.Debug($"Current screen work area height: {workingArea.Height}");
-            }
-            catch (Exception e)
-            {
-                ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
-            }
-        }
+        
         this.WhenActivated(disposables =>
         {
+            var screen = Screens.ScreenFromVisual(this);
+            if (!Design.IsDesignMode)
+            {
+                try
+                {
+                    if (screen == null)
+                    {
+                        ClassLogger.Warn("Current window is not on any screen");
+                        return;
+                    }
+
+                    var workingArea = screen.WorkingArea;
+                    ViewModel!.UpdateScreenInfo(workingArea.Height);
+                    ClassLogger.Debug($"Current screen work area height: {workingArea.Height}");
+                }
+                catch (Exception e)
+                {
+                    ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
+                }
+            }
+            
             ViewModel!.DiscardConf
                 .Subscribe(_ =>
                 {

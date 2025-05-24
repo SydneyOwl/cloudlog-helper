@@ -131,15 +131,7 @@ public class HamlibSettings : ReactiveValidationObject
 
     protected bool Equals(HamlibSettings other)
     {
-        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort &&
-               PollInterval == other.PollInterval && PollAllowed == other.PollAllowed &&
-               ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo &&
-               UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT &&
-               AllowExternalControl == other.AllowExternalControl &&
-               OverrideCommandlineArg == other.OverrideCommandlineArg &&
-               UseExternalRigctld == other.UseExternalRigctld && AllowDebugServer == other.AllowDebugServer &&
-               DebugServerAddress == other.DebugServerAddress &&
-               ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
+        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort && PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo && UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT && AllowExternalControl == other.AllowExternalControl && OverrideCommandlineArg == other.OverrideCommandlineArg && UseExternalRigctld == other.UseExternalRigctld && AllowDebugServer == other.AllowDebugServer && DebugServerAddress == other.DebugServerAddress && ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
     }
 
     public override bool Equals(object? obj)
