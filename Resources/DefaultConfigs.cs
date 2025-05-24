@@ -30,7 +30,7 @@ public class DefaultConfigs
     /// <summary>
     ///     Default timeout (in seconds) for HTTP(s) requests.
     /// </summary>
-    public static readonly int DefaultRequestTimeout = 5;
+    public static readonly int DefaultRequestTimeout = 10;
 
     /// <summary>
     ///     Timeout (in seconds) for polling Cloudlog API (CloudlogKeyStationStatisticsAPIEndpoint).
@@ -82,6 +82,12 @@ public class DefaultConfigs
     /// Api endpoint for clublog
     /// </summary>
     public static readonly string ClublogQsoUploadEndpoint = "https://clublog.org/realtime.php";
+    
+    
+    /// <summary>
+    /// Test Api endpoint for clublog
+    /// </summary>
+    public static readonly string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
     /// <summary>
     /// This is for cloudlog helper only. 

@@ -7,7 +7,7 @@
         x:DataType="viewModels:SettingsWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.settings}}"
         SizeToContent="Width"
-        Height="{Binding WindowHeight}"
+        MaxHeight="{Binding WindowHeight}"
         Icon="avares://CloudlogHelper/Assets/icon.png"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
@@ -113,47 +113,52 @@
             </Border>
             
             <!-- Clublog 设置 -->
-            <userControls:ErrorPanelUserControl DataContext="{Binding CloudlogErrorPanel}" />
+            <userControls:ErrorPanelUserControl DataContext="{Binding ClublogErrorPanel}" />
             <Border Classes="SettingBlock">
                 <Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="*,*" ShowGridLines="False">
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,0,0">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.clublogsettings}}" FontWeight="Heavy" />
+                    </StackPanel>
+                    
                     <!-- callsign 设置 -->
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="0,0,0,8">
-                        <TextBlock Text="Callsign"
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.callsign}}"
                                    FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    Width="80"
                                    FontSize="14" />
-                        <TextBox Watermark="Clublog callsign"
+                        <TextBox Text="{Binding Settings.ClublogSettings.ClublogCallsign}"
                                  Width="150"
                                  FontSize="14" />
                     </StackPanel>
 
                     <!-- password 设置 -->
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" Grid.Column="1" Grid.Row="0">
-                        <TextBlock Text="Password"
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" Grid.Column="1" Grid.Row="1">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.password}}"
                                    FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    Width="80"
                                    FontSize="14" />
-                        <TextBox Watermark="Clublog password"
+                        <TextBox Text="{Binding Settings.ClublogSettings.ClublogPassword}"
+                                 PasswordChar="*"
                                  Width="150"
                                  FontSize="14" />
                     </StackPanel>
 
                     <!-- email 设置 -->
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0"  Margin="20,0,0,5">
                         <TextBlock Text="Email"
                                    FontWeight="SemiBold"
                                    VerticalAlignment="Center"
                                    Width="80"
                                    FontSize="14" />
-                        <TextBox Watermark="Clublog email"
+                        <TextBox Text="{Binding Settings.ClublogSettings.ClublogEmail}"
                                  Width="150"
                                  FontSize="14" />
                     </StackPanel>
                     
                   <userControls:TestButtonUserControl Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
-                                                        DataContext="{Binding CloudlogTestButton}" />
+                                                        DataContext="{Binding ClublogTestButton}" />
                 </Grid>
             </Border>
 
@@ -310,7 +315,7 @@
 
             <!-- UDP服务器设置 -->
             <Border Classes="SettingBlock">
-                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ShowGridLines="False">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ShowGridLines="False">
                     <CheckBox Content="{I18N {x:Static resources:LangKeys.enableudpserver}}" FontSize="14"
                               Grid.Column="0"
                               Grid.Row="0"
@@ -332,11 +337,16 @@
                               IsChecked="{Binding Settings.UDPSettings.EnableConnectionFromOutside}" />
 
                     <!-- QSO上传设置 -->
-                    <CheckBox Grid.Row="2" Grid.Column="0" Margin="0,10,0,0"
-                              Content="{I18N {x:Static resources:LangKeys.autoqsoupload}}"
-                              IsChecked="{Binding Settings.UDPSettings.AutoUploadQSO}" />
-                    <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" Orientation="Horizontal"
-                                HorizontalAlignment="Left" Spacing="10">
+                    <CheckBox Grid.Row="2" Grid.Column="0" Margin="0,30,0,0"
+                              Content="{I18N {x:Static resources:LangKeys.upload2cloudlog}}"
+                              IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToCloudlog}" />
+                    
+                    <CheckBox Grid.Row="3" Grid.Column="0" Margin="0,10,0,0"
+                              Content="{I18N {x:Static resources:LangKeys.upload2clublog}}"
+                              IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToClublog}" />
+                    
+                    <StackPanel Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Margin="0,30,0,0" Orientation="Horizontal"
+                                HorizontalAlignment="Left" Spacing="10" Height="30">
                         <TextBlock Text="{I18N {x:Static resources:LangKeys.qsoretrycount}}" VerticalAlignment="Center" />
                         <TextBox Width="150" Text="{Binding Settings.UDPSettings.RetryCount}" />
                     </StackPanel>

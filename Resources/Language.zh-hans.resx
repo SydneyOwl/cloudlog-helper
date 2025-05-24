@@ -393,4 +393,22 @@
     <data name="failextractinfo" xml:space="preserve">
         <value>无法从命令行参数中提取端口号。请显式使用参数-t指明。</value>
     </data>
+    <data name="clublogsettings" xml:space="preserve">
+        <value>Clublog设置</value>
+    </data>
+    <data name="callsign" xml:space="preserve">
+        <value>呼号</value>
+    </data>
+    <data name="password" xml:space="preserve">
+        <value>密码</value>
+    </data>
+    <data name="fillall" xml:space="preserve">
+        <value>请完整填写所有信息！</value>
+    </data>
+    <data name="upload2cloudlog" xml:space="preserve">
+        <value>自动上传QSO到Cloudlog</value>
+    </data>
+    <data name="upload2clublog" xml:space="preserve">
+        <value>自动上传QSO到Clublog</value>
+    </data>
 </root>

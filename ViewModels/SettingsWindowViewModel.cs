@@ -31,19 +31,22 @@ public class SettingsWindowViewModel : ViewModelBase
     public SettingsWindowViewModel()
     {
         // set resolution
-        try
+        if (!Design.IsDesignMode)
         {
-            var window = new Window();
-            var screenWorkingArea = window.Screens.Primary!.WorkingArea;
-            var aHeight = screenWorkingArea.Height;
-            ClassLogger.Debug($"Work area height:{aHeight}");
-            if (aHeight < WindowHeight) WindowHeight = aHeight - 10;
+            try
+            {
+                var window = new Window();
+                var screenWorkingArea = window.Screens.Primary!.WorkingArea;
+                var aHeight = screenWorkingArea.Height;
+                ClassLogger.Debug($"Work area height:{aHeight}");
+                if (aHeight < WindowHeight) WindowHeight = aHeight - 10;
+            }
+            catch (Exception e)
+            {
+                ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
+            }
         }
-        catch (Exception e)
-        {
-            ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
-        }
-
+        
         Settings = ApplicationSettings.GetInstance();
         Settings.BackupSettings();
 
@@ -59,6 +62,10 @@ public class SettingsWindowViewModel : ViewModelBase
         var cloudCmd =
             ReactiveCommand.CreateFromTask(_testCloudlogConnection, Settings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButton.SetTestButtonCommand(cloudCmd);
+        
+        var clubCmd =
+            ReactiveCommand.CreateFromTask(_testClublogConnection);
+        ClublogTestButton.SetTestButtonCommand(clubCmd);
 
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
@@ -75,6 +82,8 @@ public class SettingsWindowViewModel : ViewModelBase
             hamCmd.ThrownExceptions.Subscribe(err => HamlibErrorPanel.ErrorMessage = err.Message)
                 .DisposeWith(disposables);
             cloudCmd.ThrownExceptions.Subscribe(err => CloudlogErrorPanel.ErrorMessage = err.Message)
+                .DisposeWith(disposables);
+            clubCmd.ThrownExceptions.Subscribe(err => ClublogErrorPanel.ErrorMessage = err.Message)
                 .DisposeWith(disposables);
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
@@ -133,6 +142,20 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             HamlibErrorPanel.ErrorMessage = opt;
         }
+    }
+
+    private async Task<bool> _testClublogConnection()
+    {
+        ClublogErrorPanel.ErrorMessage = string.Empty;
+        if (Settings.ClublogSettings.IsClublogHasErrors())
+        {
+            ClublogErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");;
+            return false;
+        }
+        var res = await ClublogUtil.TestClublogConnectionAsync(Settings.ClublogSettings.ClublogCallsign,
+            Settings.ClublogSettings.ClublogPassword, Settings.ClublogSettings.ClublogEmail).ConfigureAwait(false);
+        ClublogErrorPanel.ErrorMessage = res;
+        return string.IsNullOrEmpty(res);
     }
 
     private async Task<bool> _testCloudlogConnection()
@@ -257,8 +280,17 @@ public class SettingsWindowViewModel : ViewModelBase
         }
 
         // send freq request to test
-        _ = await RigctldUtil.GetAllRigInfo(ip, port, Settings.HamlibSettings.ReportRFPower,
-            Settings.HamlibSettings.ReportSplitInfo);
+        try
+        {
+            _ = await RigctldUtil.GetAllRigInfo(ip, port, Settings.HamlibSettings.ReportRFPower,
+                Settings.HamlibSettings.ReportSplitInfo);
+        }
+        catch (Exception e)
+        {
+            // ClassLogger.Trace(e.Message);
+            HamlibErrorPanel.ErrorMessage = e.Message;
+            return false;
+        }
 
         // HamlibErrorPanel.ErrorMessage = string.Empty;
         return true;
@@ -297,6 +329,13 @@ public class SettingsWindowViewModel : ViewModelBase
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
             anythingChanged = true;
         }
+        
+        if (Settings.IsClublogConfChanged())
+        {
+            ClassLogger.Trace("clublog settings changed");
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Clublog });
+            anythingChanged = true;
+        }
 
         if (Settings.IsHamlibConfChanged())
         {
@@ -327,6 +366,12 @@ public class SettingsWindowViewModel : ViewModelBase
 
     #endregion
 
+    #region Clublog
+
+    public ErrorPanelViewModel ClublogErrorPanel { get; } = new();
+    public TestButtonViewModel ClublogTestButton { get; } = new();
+
+    #endregion
 
     #region HamLib
 

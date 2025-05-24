@@ -71,6 +71,12 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public CloudlogSettings CloudlogSettings { get; set; } = new();
+    
+    /// <summary>
+    ///     Clublog settings.
+    /// </summary>
+    [JsonProperty]
+    public ClublogSettings ClublogSettings { get; set; } = new();
 
     /// <summary>
     ///     Hamlib settings.
@@ -94,6 +100,18 @@ public class ApplicationSettings : ReactiveValidationObject
         if (_backupInstance is null) return false;
         var oldI = _backupInstance.CloudlogSettings;
         var newI = CloudlogSettings;
+        return !oldI.Equals(newI);
+    }
+    
+    /// <summary>
+    ///     Check if clublog configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsClublogConfChanged()
+    {
+        if (_backupInstance is null) return false;
+        var oldI = _backupInstance.ClublogSettings;
+        var newI = ClublogSettings;
         return !oldI.Equals(newI);
     }
 

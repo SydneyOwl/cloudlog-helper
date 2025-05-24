@@ -141,6 +141,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Callsign.
+        /// </summary>
+        public static string callsign {
+            get {
+                return ResourceManager.GetString("callsign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please check RIG connection!.
         /// </summary>
         public static string checkrigconn {
@@ -191,6 +200,15 @@ namespace CloudlogHelper.Resources {
         public static string cloudlogurlhelp {
             get {
                 return ResourceManager.GetString("cloudlogurlhelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clublog Settings.
+        /// </summary>
+        public static string clublogsettings {
+            get {
+                return ResourceManager.GetString("clublogsettings", resourceCulture);
             }
         }
         
@@ -438,6 +456,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please complete all required fields..
+        /// </summary>
+        public static string fillall {
+            get {
+                return ResourceManager.GetString("fillall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Getting info....
         /// </summary>
         public static string gettinginfo {
@@ -623,6 +650,15 @@ namespace CloudlogHelper.Resources {
         public static string open {
             get {
                 return ResourceManager.GetString("open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string password {
+            get {
+                return ResourceManager.GetString("password", resourceCulture);
             }
         }
         
@@ -1091,6 +1127,24 @@ namespace CloudlogHelper.Resources {
         public static string unsupportedrigmode {
             get {
                 return ResourceManager.GetString("unsupportedrigmode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto upload QSO to Cloudlog.
+        /// </summary>
+        public static string upload2cloudlog {
+            get {
+                return ResourceManager.GetString("upload2cloudlog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto upload QSO to Clublog.
+        /// </summary>
+        public static string upload2clublog {
+            get {
+                return ResourceManager.GetString("upload2clublog", resourceCulture);
             }
         }
         

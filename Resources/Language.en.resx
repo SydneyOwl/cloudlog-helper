@@ -393,4 +393,22 @@
     <data name="failextractinfo" xml:space="preserve">
         <value>Failed to extract port number from the command line arguments. Please explicitly specify them using the -t parameters.</value>
     </data>
+    <data name="clublogsettings" xml:space="preserve">
+        <value>Clublog Settings</value>
+    </data>
+    <data name="callsign" xml:space="preserve">
+        <value>Callsign</value>
+    </data>
+    <data name="password" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="fillall" xml:space="preserve">
+        <value>Please complete all required fields.</value>
+    </data>
+    <data name="upload2cloudlog" xml:space="preserve">
+        <value>Auto upload QSO to Cloudlog</value>
+    </data>
+    <data name="upload2clublog" xml:space="preserve">
+        <value>Auto upload QSO to Clublog</value>
+    </data>
 </root>
