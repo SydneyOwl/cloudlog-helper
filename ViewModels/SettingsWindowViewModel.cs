@@ -30,23 +30,6 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public SettingsWindowViewModel()
     {
-        // set resolution
-        if (!Design.IsDesignMode)
-        {
-            try
-            {
-                var window = new Window();
-                var screenWorkingArea = window.Screens.Primary!.WorkingArea;
-                var aHeight = screenWorkingArea.Height;
-                ClassLogger.Debug($"Work area height:{aHeight}");
-                WindowHeight = aHeight - 100;
-            }
-            catch (Exception e)
-            {
-                ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
-            }
-        }
-        
         Settings = ApplicationSettings.GetInstance();
         Settings.BackupSettings();
 
@@ -109,6 +92,11 @@ public class SettingsWindowViewModel : ViewModelBase
     public ApplicationSettings Settings { get; set; }
 
     [Reactive] public int WindowHeight { get; set; } = 800;
+
+    public void UpdateScreenInfo(int workAreaHeight)
+    {
+        WindowHeight = workAreaHeight - 100;
+    }
 
     private async Task _initializeHamlibAsync()
     {
