@@ -44,6 +44,18 @@
 
   ![](./md_assets/image-20250510212652161.png)
 
+### 📌 Clublog配置
+
++ 输入您在Clublog上注册时使用的呼号、邮箱和密码。
+
+![image-20250524113607297](./md_assets/image-20250524113607297.png)
+
++ 点击“测试”，如测试通过，您可以在“UDP设置”中启用“自动上传QSO到Clublog”。
+
+  ![image-20250524113747984](./md_assets/image-20250524113747984.png)
+
+
+
 ### 📌 Hamlib配置
 
 > [!NOTE]
@@ -203,6 +215,11 @@ dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true --self-containe
 挂机1小时后的CPU和内存占用如下，其中的CPU尖峰为某周期接收结束后的解码操作。
 
 <img src="./md_assets/img_branchmark.png" width="30%" />
+
+## 🙏 致谢
+
++ [Hamlib](https://github.com/Hamlib/Hamlib): 业余无线电设备控制库（支持电台、旋转器、调谐器及功放）
++ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): 基于 C# 的类库及示例代码，通过 .NET & .NET Framework 4.8 的 UDP 接口与 WSJT-X 交互
 
 ## 📝 许可证
 

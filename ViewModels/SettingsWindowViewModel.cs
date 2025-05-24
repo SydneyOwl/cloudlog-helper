@@ -39,7 +39,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 var screenWorkingArea = window.Screens.Primary!.WorkingArea;
                 var aHeight = screenWorkingArea.Height;
                 ClassLogger.Debug($"Work area height:{aHeight}");
-                if (aHeight < WindowHeight) WindowHeight = aHeight - 10;
+                WindowHeight = aHeight - 100;
             }
             catch (Exception e)
             {
