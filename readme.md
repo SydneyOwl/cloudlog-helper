@@ -220,3 +220,27 @@ binary, for any purpose, commercial or non-commercial, and by any
 means.
 
 Complete license terms available in the [Unlicense](./LICENSE) file.
+
+## ⚠️ DISCLAIMER
+1. Software Usage
+
+    Cloudlog Helper is a free and open-source software designed to assist amateur radio enthusiasts with Cloudlog/Wavelog integration. Users are free to download, use, or modify this software, but all usage is at their own risk. The developers and contributors shall not be held liable for any direct or indirect damages arising from the use of this software, including but not limited to:
+    + Data loss or corruption
+    + Malfunction or failure of radio equipment
+    + Network communication issues
+    + Other consequences caused by software incompatibility, configuration errors, or improper operation.
+
+2. Functional Limitations
+
+   + Testing Phase Notice: This software is currently in the UNDER TESTING stage and may contain undiscovered defects or instability. Users are advised to back up critical data before use and avoid relying solely on this software for essential operations.
+   + Third-Party Dependencies: This software relies on libraries/tools such as Hamlib and JTDX/WSJT-X. Its functionality and compatibility are subject to the limitations of these components. The developers cannot guarantee support for all devices or software configurations.
+
+3. Data Security & Privacy
+
+   + Users are solely responsible for securing sensitive data (e.g., Cloudlog/Wavelog API Keys, Clublog credentials). This software does not actively collect or store such information, but risks due to user device or network vulnerabilities remain the user’s responsibility.
+   + QSO data received via the UDP server is processed locally by default. Enabling "Allow External Connections" may introduce security risks—configure with caution.
+
+4. Equipment Operation Risks
+
+   + When controlling radios via Hamlib, adhere to the manufacturer’s guidelines. Incorrect polling intervals or configurations may cause device abnormalities. Initial testing without physical radio connection is recommended.
+   + Coordination with JTDX/WSJT-X requires avoiding port conflicts or control contention. The developers assume no liability for device damage caused by configuration errors.
