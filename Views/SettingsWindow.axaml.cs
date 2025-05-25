@@ -3,6 +3,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
+using Avalonia.VisualTree;
 using CloudlogHelper.ViewModels;
 using NLog;
 using ReactiveUI;
@@ -35,9 +36,11 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                         return;
                     }
 
-                    var workingArea = screen.WorkingArea;
-                    ViewModel!.UpdateScreenInfo(workingArea.Height);
-                    ClassLogger.Debug($"Current screen work area height: {workingArea.Height}");
+                    var dpi = this.GetVisualRoot()?.RenderScaling;
+                    var maxHeight = screen.WorkingArea.Height / dpi ?? 1.0;
+
+                    ViewModel!.UpdateScreenInfo((int)maxHeight);
+                    ClassLogger.Debug($"Current screen work area height: {maxHeight}, dpi: {dpi}");
                 }
                 catch (Exception e)
                 {

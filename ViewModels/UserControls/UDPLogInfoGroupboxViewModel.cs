@@ -169,7 +169,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         // // update settings cache
                         _settings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
                         WaitFirstConn = _settings.EnableUDPServer;
-                        TryStartUDPService().DisposeWith(disposables);
+                        TryStartUdpService().DisposeWith(disposables);
                     }
 
                     if (x.Part == ChangedPart.Cloudlog)
@@ -179,7 +179,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         _extraClublogSettings = ApplicationSettings.GetInstance().ClublogSettings.DeepClone();
                 })
                 .DisposeWith(disposables);
-            TryStartUDPService().DisposeWith(disposables);
+            TryStartUdpService().DisposeWith(disposables);
 
             // start uploading service
             Observable.Return(Unit.Default).InvokeCommand(UploadLogFromQueueCommand).DisposeWith(disposables);
@@ -211,7 +211,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     [Reactive] public bool ShowFailedOnly { get; set; }
 
 
-    private IDisposable TryStartUDPService()
+    private IDisposable TryStartUdpService()
     {
         if (!_settings.EnableUDPServer)
         {
@@ -317,14 +317,13 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 }
 
                 // do possible retry...
+                var cloudlogUploaded = false;
+                var clublogUploaded = false;
                 for (var i = 0; i < _settings.RetryCount.Length; i++)
                 {
                     rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
                     rcd.FailReason = null;
-
                     var failOutput = new StringBuilder();
-                    var cloudlogUploaded = false;
-                    var clublogUploaded = false;
 
                     try
                     {
