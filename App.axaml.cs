@@ -54,7 +54,7 @@ public class App : Application
 
             _exitCommand = ReactiveCommand.Create(() => { desktop.Shutdown(); });
             _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
-            
+
             // create trayicon
             try
             {

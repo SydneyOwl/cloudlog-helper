@@ -43,7 +43,7 @@ public class UDPServerSettings : ReactiveValidationObject
 
 
     [Reactive] [JsonProperty] public bool AutoUploadQSOToCloudlog { get; set; } = true;
-    [Reactive] [JsonProperty] public bool AutoUploadQSOToClublog { get; set; } = false;
+    [Reactive] [JsonProperty] public bool AutoUploadQSOToClublog { get; set; }
 
     [Reactive] [JsonProperty] public string RetryCount { get; set; } = "3";
 
@@ -71,7 +71,10 @@ public class UDPServerSettings : ReactiveValidationObject
 
     protected bool Equals(UDPServerSettings other)
     {
-        return EnableUDPServer == other.EnableUDPServer && EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort && AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog && AutoUploadQSOToClublog == other.AutoUploadQSOToClublog && RetryCount == other.RetryCount;
+        return EnableUDPServer == other.EnableUDPServer &&
+               EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort &&
+               AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog &&
+               AutoUploadQSOToClublog == other.AutoUploadQSOToClublog && RetryCount == other.RetryCount;
     }
 
     public override bool Equals(object? obj)
@@ -84,6 +87,7 @@ public class UDPServerSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(EnableUDPServer, EnableConnectionFromOutside, UDPPort, AutoUploadQSOToCloudlog, AutoUploadQSOToClublog, RetryCount);
+        return HashCode.Combine(EnableUDPServer, EnableConnectionFromOutside, UDPPort, AutoUploadQSOToCloudlog,
+            AutoUploadQSOToClublog, RetryCount);
     }
 }

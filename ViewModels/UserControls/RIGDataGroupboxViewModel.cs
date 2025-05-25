@@ -179,12 +179,9 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         // parse addr
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
-        
-        if (_settings.UseExternalRigctld)
-        {
-            return IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
-        }
-        
+
+        if (_settings.UseExternalRigctld) return IPAddrUtil.ParseAddress(_settings.ExternalRigctldHostAddress);
+
         if (_settings.UseRigAdvanced &&
             !string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
         {
@@ -199,7 +196,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 throw new Exception(TranslationHelper.GetString("failextractinfo"));
             }
         }
-        
+
         return (ip, port);
     }
 

@@ -18,8 +18,8 @@ public class ClublogUtil
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostUrlEncodedAsync(new
             {
-                email = email,
-                password = password,
+                email,
+                password,
                 call = callsign,
                 type = "dxqsl",
                 startyear = 1999,
@@ -31,8 +31,9 @@ public class ClublogUtil
         if (code == 200) return string.Empty;
         return responseText;
     }
-    
-    public static async Task<string> UploadQSOToClublogAsync(string callsign, string password, string email, string adif)
+
+    public static async Task<string> UploadQSOToClublogAsync(string callsign, string password, string email,
+        string adif)
     {
         var result = await DefaultConfigs.ClublogQsoUploadEndpoint
             .AllowHttpStatus(200, 400, 500, 403)
@@ -40,13 +41,13 @@ public class ClublogUtil
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostUrlEncodedAsync(new
             {
-                email = email,
-                password = password,
-                callsign = callsign,
-                adif = adif,
+                email,
+                password,
+                callsign,
+                adif,
                 api = DefaultConfigs.Clkk
             });
-        
+
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
         if (code == 200) return string.Empty;

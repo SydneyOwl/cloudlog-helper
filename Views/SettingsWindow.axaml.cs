@@ -12,22 +12,22 @@ namespace CloudlogHelper.Views;
 
 public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
 {
-    private bool _triggerByClickingButton;
-    
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private bool _triggerByClickingButton;
+
     public SettingsWindow()
     {
         InitializeComponent();
-        
+
         this.WhenActivated(disposables =>
         {
-            var screen = Screens.ScreenFromVisual(this);
             if (!Design.IsDesignMode)
             {
+                var screen = Screens.ScreenFromVisual(this);
                 try
                 {
                     if (screen == null)
@@ -36,8 +36,8 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                         return;
                     }
 
-                    var dpi = this.GetVisualRoot()?.RenderScaling;
-                    var maxHeight = screen.WorkingArea.Height / dpi ?? 1.0;
+                    var dpi = this.GetVisualRoot()?.RenderScaling ?? 1.0;
+                    var maxHeight = screen.WorkingArea.Height / dpi;
 
                     ViewModel!.UpdateScreenInfo((int)maxHeight);
                     ClassLogger.Debug($"Current screen work area height: {maxHeight}, dpi: {dpi}");
@@ -47,7 +47,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                     ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
                 }
             }
-            
+
             ViewModel!.DiscardConf
                 .Subscribe(_ =>
                 {

@@ -71,7 +71,7 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public CloudlogSettings CloudlogSettings { get; set; } = new();
-    
+
     /// <summary>
     ///     Clublog settings.
     /// </summary>
@@ -102,7 +102,7 @@ public class ApplicationSettings : ReactiveValidationObject
         var newI = CloudlogSettings;
         return !oldI.Equals(newI);
     }
-    
+
     /// <summary>
     ///     Check if clublog configs has been changed.
     /// </summary>

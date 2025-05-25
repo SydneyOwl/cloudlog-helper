@@ -23,6 +23,8 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private bool _isRigctldUsingExternal;
+
     public MainWindowViewModel()
     {
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(OpenWindow<SettingsWindowViewModel>);
@@ -58,9 +60,9 @@ public class MainWindowViewModel : ViewModelBase
                         break;
                 }
             }).DisposeWith(disposables);
-            
+
             // poll rigctld server status
-            Observable.Timer(TimeSpan.FromSeconds(2),TimeSpan.FromSeconds(2)).Subscribe(_ =>
+            Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)).Subscribe(_ =>
             {
                 IsUdpServerRunning = UDPServerUtil.IsUdpServerRunning();
                 IsRigctldRunning = RigctldUtil.IsRigctldClientRunning() || _isRigctldUsingExternal;
@@ -75,7 +77,6 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public string CurrentUDPServerAddress { get; set; } = "(?)";
     [Reactive] public bool IsRigctldRunning { get; set; }
     [Reactive] public bool IsUdpServerRunning { get; set; }
-    private bool _isRigctldUsingExternal;
 
     public Interaction<ViewModelBase, Unit> ShowNewWindow { get; } = new();
     public ReactiveCommand<Unit, Unit> OpenSettingsWindow { get; }
@@ -104,14 +105,14 @@ public class MainWindowViewModel : ViewModelBase
             throw;
         }
     }
-    
-    
+
+
     private void _updateRigctldListeningAddress()
     {
         var _settings = ApplicationSettings.GetInstance().HamlibSettings;
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
-        
+
 
         try
         {
@@ -136,7 +137,7 @@ public class MainWindowViewModel : ViewModelBase
                 }
                 else
                 {
-                    CurrentRigctldAddress = $"(?)";
+                    CurrentRigctldAddress = "(?)";
                     throw new Exception(TranslationHelper.GetString("failextractinfo"));
                 }
 
@@ -147,7 +148,7 @@ public class MainWindowViewModel : ViewModelBase
                 }
                 else
                 {
-                    CurrentRigctldAddress = $"(?)";
+                    CurrentRigctldAddress = "(?)";
                     throw new Exception(TranslationHelper.GetString("failextractinfo"));
                 }
 
@@ -163,10 +164,10 @@ public class MainWindowViewModel : ViewModelBase
 
             CurrentRigctldAddress = $"({ip}:{port})";
         }
-        catch(Exception a)
+        catch (Exception a)
         {
             ClassLogger.Error(a.Message);
-            CurrentRigctldAddress = $"(?)";
+            CurrentRigctldAddress = "(?)";
         }
     }
 
@@ -179,11 +180,13 @@ public class MainWindowViewModel : ViewModelBase
             CurrentUDPServerAddress = "(?)";
             return;
         }
+
         if (settings.EnableConnectionFromOutside)
         {
             CurrentUDPServerAddress = $"(0.0.0.0:{port})";
             return;
         }
+
         CurrentUDPServerAddress = $"(127.0.0.1:{port})";
     }
 }

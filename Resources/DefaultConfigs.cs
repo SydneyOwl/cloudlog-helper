@@ -77,23 +77,23 @@ public class DefaultConfigs
     ///     API endpoint for standard radio API calls(version 2) in Cloudlog.
     /// </summary>
     public static readonly string CloudlogRadioAPICallV2Endpoint = "/index.php/api/radio/";
-    
+
     /// <summary>
-    /// Api endpoint for clublog
+    ///     Api endpoint for clublog
     /// </summary>
     public static readonly string ClublogQsoUploadEndpoint = "https://clublog.org/realtime.php";
-    
-    
+
+
     /// <summary>
-    /// Test Api endpoint for clublog
+    ///     Test Api endpoint for clublog
     /// </summary>
     public static readonly string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
     /// <summary>
-    /// This is for cloudlog helper only. 
-    /// See also https://clublog.freshdesk.com/support/solutions/articles/54910-api-keys
+    ///     This is for cloudlog helper only.
+    ///     See also https://clublog.freshdesk.com/support/solutions/articles/54910-api-keys
     /// </summary>
-    public static readonly string Clkk = ("afce|ce|4"+"6e95|||83d99af3|9851"+"429d18dade6670278").Replace("|","");
+    public static readonly string Clkk = ("afce|ce|4" + "6e95|||83d99af3|9851" + "429d18dade6670278").Replace("|", "");
 
     /// <summary>
     ///     Default host address for Rigctld.
@@ -109,7 +109,7 @@ public class DefaultConfigs
     ///     Default port number for Rigctld.
     /// </summary>
     public static readonly int RigctldDefaultPort = 4534;
-    
+
     /// <summary>
     ///     Default poll interval for Rigctld.
     /// </summary>
@@ -174,7 +174,7 @@ public class DefaultConfigs
     ///     Expiry time (in seconds) for UDP client connections.
     /// </summary>
     public static readonly int UDPClientExpiryInSeconds = 60;
-    
+
     public static readonly int UDPServerDefaultPort = 2237;
 
     /// <summary>

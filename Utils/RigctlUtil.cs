@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
@@ -55,7 +54,7 @@ public class RigctldUtil
     private static readonly Queue<string> _rigctldLogBuffer = new();
 
     /// <summary>
-    /// AppendRigctldLog lock.
+    ///     AppendRigctldLog lock.
     /// </summary>
     private static readonly object _lock = new();
 
@@ -65,7 +64,7 @@ public class RigctldUtil
     private static TcpClient? _tcpClient;
 
     private static string? _currentRigctldIp;
-    
+
     private static int? _currentRigctldPort;
 
     /// <summary>

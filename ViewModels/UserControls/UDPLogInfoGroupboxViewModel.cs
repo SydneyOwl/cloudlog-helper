@@ -330,7 +330,8 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         if (!_settings.AutoUploadQSOToCloudlog) cloudlogUploaded = true;
                         if (!cloudlogUploaded)
                         {
-                            var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(_extraCloudlogSettings.CloudlogUrl,
+                            var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
+                                _extraCloudlogSettings.CloudlogUrl,
                                 _extraCloudlogSettings.CloudlogApiKey,
                                 _extraCloudlogSettings.CloudlogStationId, adif);
                             if (cloudlogResult.Status != "created")
@@ -366,7 +367,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                 failOutput.AppendLine(clublogResult);
                             }
                         }
-                        
+
                         if (clublogUploaded && cloudlogUploaded)
                         {
                             rcd.UploadStatus = UploadStatus.Success;

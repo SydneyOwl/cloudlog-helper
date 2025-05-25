@@ -7,7 +7,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -45,7 +44,7 @@ public class SettingsWindowViewModel : ViewModelBase
         var cloudCmd =
             ReactiveCommand.CreateFromTask(_testCloudlogConnection, Settings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButton.SetTestButtonCommand(cloudCmd);
-        
+
         var clubCmd =
             ReactiveCommand.CreateFromTask(_testClublogConnection);
         ClublogTestButton.SetTestButtonCommand(clubCmd);
@@ -137,9 +136,11 @@ public class SettingsWindowViewModel : ViewModelBase
         ClublogErrorPanel.ErrorMessage = string.Empty;
         if (Settings.ClublogSettings.IsClublogHasErrors())
         {
-            ClublogErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");;
+            ClublogErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");
+            ;
             return false;
         }
+
         var res = await ClublogUtil.TestClublogConnectionAsync(Settings.ClublogSettings.ClublogCallsign,
             Settings.ClublogSettings.ClublogPassword, Settings.ClublogSettings.ClublogEmail).ConfigureAwait(false);
         ClublogErrorPanel.ErrorMessage = res;
@@ -213,9 +214,7 @@ public class SettingsWindowViewModel : ViewModelBase
         var port = DefaultConfigs.RigctldDefaultPort;
 
         if (Settings.HamlibSettings.UseExternalRigctld)
-        {
-            (ip,port) = IPAddrUtil.ParseAddress(Settings.HamlibSettings.ExternalRigctldHostAddress);
-        }
+            (ip, port) = IPAddrUtil.ParseAddress(Settings.HamlibSettings.ExternalRigctldHostAddress);
 
         if (Settings.HamlibSettings.UseRigAdvanced &&
             !string.IsNullOrEmpty(Settings.HamlibSettings.OverrideCommandlineArg))
@@ -317,7 +316,7 @@ public class SettingsWindowViewModel : ViewModelBase
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
             anythingChanged = true;
         }
-        
+
         if (Settings.IsClublogConfChanged())
         {
             ClassLogger.Trace("clublog settings changed");
@@ -336,7 +335,7 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             ClassLogger.Trace("udp settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged
-                { Part = ChangedPart.UDPServer }); 
+                { Part = ChangedPart.UDPServer });
             anythingChanged = true;
         }
 

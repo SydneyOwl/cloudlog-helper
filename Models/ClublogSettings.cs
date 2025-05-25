@@ -5,12 +5,12 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.Models;
 
-public class ClublogSettings:ReactiveObject
+public class ClublogSettings : ReactiveObject
 {
-    [Reactive] [JsonProperty]public string ClublogCallsign { get; set; } = string.Empty;
-    [Reactive] [JsonProperty]public string ClublogPassword { get; set; } = string.Empty;
-    [Reactive] [JsonProperty]public string ClublogEmail { get; set; } = string.Empty;
-    
+    [Reactive] [JsonProperty] public string ClublogCallsign { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public string ClublogPassword { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public string ClublogEmail { get; set; } = string.Empty;
+
     public ClublogSettings DeepClone()
     {
         return JsonConvert.DeserializeObject<ClublogSettings>(JsonConvert.SerializeObject(this))!;
@@ -18,12 +18,14 @@ public class ClublogSettings:ReactiveObject
 
     public bool IsClublogHasErrors()
     {
-        return string.IsNullOrEmpty(ClublogCallsign) || string.IsNullOrEmpty(ClublogPassword) || string.IsNullOrEmpty(ClublogEmail);
+        return string.IsNullOrEmpty(ClublogCallsign) || string.IsNullOrEmpty(ClublogPassword) ||
+               string.IsNullOrEmpty(ClublogEmail);
     }
 
     protected bool Equals(ClublogSettings other)
     {
-        return ClublogCallsign == other.ClublogCallsign && ClublogPassword == other.ClublogPassword && ClublogEmail == other.ClublogEmail;
+        return ClublogCallsign == other.ClublogCallsign && ClublogPassword == other.ClublogPassword &&
+               ClublogEmail == other.ClublogEmail;
     }
 
     public override bool Equals(object? obj)
