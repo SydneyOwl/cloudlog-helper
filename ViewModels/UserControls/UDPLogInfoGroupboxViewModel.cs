@@ -168,7 +168,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         ClassLogger.Debug("Setting changed; updating udp");
                         // // update settings cache
                         var newSettings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
-                        WaitFirstConn = _settings.EnableUDPServer;
+                        WaitFirstConn = newSettings.EnableUDPServer;
                         if (_settings.RestartUDPNeeded(newSettings))
                         {
                             _settings = newSettings;

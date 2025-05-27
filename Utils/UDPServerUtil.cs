@@ -32,10 +32,10 @@ public class UDPServerUtil
     {
         try
         {
-            _cts = new CancellationTokenSource();
             TerminateUDPServer();
+            _cts = new CancellationTokenSource();
             // Small delay to ensure OS releases resources
-            await Task.Delay(100); 
+            await Task.Delay(500); 
             ClassLogger.Debug("Asking udpserver to start.");
             _udpServer = new WsjtxUdpServer(
                 DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler),
