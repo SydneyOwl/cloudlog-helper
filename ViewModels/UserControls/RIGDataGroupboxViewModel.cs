@@ -64,26 +64,32 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 .SelectMany(async x =>
                 {
                     ClassLogger.Trace("Setting changed; updating hamlib info");
-                    _settings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
                     _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
                     if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
 
                     if (x.Part == ChangedPart.Hamlib)
                     {
-                        SendMsgToParentVm("");
-                        _resetStatus();
-                        if (!_settings.PollAllowed)
+                        var newSettings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
+                        if (newSettings.RestartHamlibNeeded(_settings))
                         {
-                            // shut every service down
-                            RigctldUtil.CleanUp();
-                            return Unit.Default;
-                        }
+                            _settings = newSettings;
+                            SendMsgToParentVm("");
+                            _resetStatus();
+                            if (!_settings.PollAllowed)
+                            {
+                                // shut every service down
+                                RigctldUtil.CleanUp();
+                                return Unit.Default;
+                            }
 
-                        // check if we can start rigctld
-                        if (_settings is { UseExternalRigctld: false })
-                            await _restartRigctldStrict(false);
-                        else
-                            RigctldUtil.TerminateBackgroundProcess();
+                            // check if we can start rigctld
+                            if (_settings is { UseExternalRigctld: false })
+                                await _restartRigctldStrict(false);
+                            else
+                                RigctldUtil.TerminateBackgroundProcess();
+                        }
+                        
+                        _settings = newSettings;
                     }
 
                     if (x.Part == ChangedPart.NothingJustClosed) _holdRigUpdate = false;
@@ -334,6 +340,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
 
     private async Task<bool> _restartRigctldStrict(bool ignoreIfRunning)
     {
+        ClassLogger.Trace("trying to restart rigctld..");
         if (!_settings.IsHamlibHasErrors())
         {
             var myRig = _settings.SelectedRadio;

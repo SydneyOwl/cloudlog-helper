@@ -13,7 +13,7 @@ namespace CloudlogHelper.Utils;
 public class UDPServerUtil
 {
     private static WsjtxUdpServer? _udpServer;
-    private static readonly CancellationTokenSource _cts = new();
+    private static CancellationTokenSource _cts = new();
 
     /// <summary>
     ///     Logger for the class.
@@ -32,7 +32,10 @@ public class UDPServerUtil
     {
         try
         {
+            _cts = new CancellationTokenSource();
             TerminateUDPServer();
+            // Small delay to ensure OS releases resources
+            await Task.Delay(100); 
             ClassLogger.Debug("Asking udpserver to start.");
             _udpServer = new WsjtxUdpServer(
                 DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler),
@@ -50,13 +53,13 @@ public class UDPServerUtil
 
     public static void TerminateUDPServer()
     {
-        ClassLogger.Debug("Shutting down udp...");
         if (_udpServer is null) return;
         try
         {
+            ClassLogger.Debug("Shutting down udp...");
             if (!_cts.IsCancellationRequested) _cts.Cancel();
             if (_udpServer.IsRunning) _udpServer?.Stop();
-            if (_udpServer.IsDisposed) _udpServer?.Dispose();
+            if (!_udpServer!.IsDisposed) _udpServer?.Dispose();
         }
         catch (Exception e)
         {

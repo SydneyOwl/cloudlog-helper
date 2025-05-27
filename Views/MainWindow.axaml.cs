@@ -7,12 +7,18 @@ using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
 using CloudlogHelper.ViewModels;
+using NLog;
 using ReactiveUI;
 
 namespace CloudlogHelper.Views;
 
 public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 {
+    /// <summary>
+    ///     Logger for the class.
+    /// </summary>
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+    
     private bool _isManualClosing;
 
     public MainWindow()
@@ -27,33 +33,41 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             Observable.FromEventPattern<EventHandler<WindowClosingEventArgs>, WindowClosingEventArgs>(
                     h => Closing += h,
                     h => Closing -= h)
-                .Subscribe(async args =>
+                .Subscribe(async void (args) =>
                 {
-                    // ask users to minimize or close
-                    if (_isManualClosing) return;
-                    args.EventArgs.Cancel = true;
-                    var mode = ApplicationSettings.GetInstance().ShutdownMode;
-                    if (mode != ProgramShutdownMode.NotSpecified)
+                    try
                     {
-                        if (mode == ProgramShutdownMode.ToTray)
+                        // ask users to minimize or close
+                        if (_isManualClosing) return;
+                        args.EventArgs.Cancel = true;
+                        var mode = ApplicationSettings.GetInstance().ShutdownMode;
+                        if (mode != ProgramShutdownMode.NotSpecified)
+                        {
+                            if (mode == ProgramShutdownMode.ToTray)
+                            {
+                                Hide();
+                                return;
+                            }
+
+                            args.EventArgs.Cancel = false;
+                            return;
+                        }
+
+                        var dialog = new AskExitOrMinimizeWindow
+                            { DataContext = new AskExitOrMinimizeWindowViewModel() };
+                        if (await dialog.ShowDialog<bool>(this))
                         {
                             Hide();
                             return;
                         }
 
-                        args.EventArgs.Cancel = false;
-                        return;
+                        _isManualClosing = true;
+                        Close();
                     }
-
-                    var dialog = new AskExitOrMinimizeWindow { DataContext = new AskExitOrMinimizeWindowViewModel() };
-                    if (await dialog.ShowDialog<bool>(this))
+                    catch (Exception e)
                     {
-                        Hide();
-                        return;
+                        ClassLogger.Error($"Failed to hide or close window: {e.Message}");
                     }
-
-                    _isManualClosing = true;
-                    Close();
                 })
                 .DisposeWith(disposables);
         });

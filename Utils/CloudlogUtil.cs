@@ -181,21 +181,32 @@ public class CloudlogUtil
     public static async Task<CommonCloudlogResp> UploadAdifLogAsync(string url, string key, string profileId,
         string adifLog)
     {
-        // construct json
-        var payloadI = new AdifQSOUploadCall
+        try
         {
-            Key = key,
-            StationProfileId = profileId,
-            Type = "adif",
-            LogString = adifLog
-        };
-        var results = await url
-            .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .PostStringAsync(JsonConvert.SerializeObject(payloadI))
-            .ReceiveString();
-        return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
+            // construct json
+            var payloadI = new AdifQSOUploadCall
+            {
+                Key = key,
+                StationProfileId = profileId,
+                Type = "adif",
+                LogString = adifLog
+            };
+            var results = await url
+                .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
+                .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+                .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
+                .PostStringAsync(JsonConvert.SerializeObject(payloadI))
+                .ReceiveString();
+            return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
+        }
+        catch (Exception e)
+        {
+            return new CommonCloudlogResp
+            {
+                Status = "Failed",
+                Reason = e.Message
+            };
+        }
     }
 
     /// <summary>

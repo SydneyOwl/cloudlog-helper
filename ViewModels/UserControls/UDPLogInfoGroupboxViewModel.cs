@@ -167,9 +167,15 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     {
                         ClassLogger.Debug("Setting changed; updating udp");
                         // // update settings cache
-                        _settings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
+                        var newSettings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
                         WaitFirstConn = _settings.EnableUDPServer;
-                        TryStartUdpService().DisposeWith(disposables);
+                        if (_settings.RestartUDPNeeded(newSettings))
+                        {
+                            _settings = newSettings;
+                            TryStartUdpService().DisposeWith(disposables);
+                        }
+
+                        _settings = newSettings;
                     }
 
                     if (x.Part == ChangedPart.Cloudlog)

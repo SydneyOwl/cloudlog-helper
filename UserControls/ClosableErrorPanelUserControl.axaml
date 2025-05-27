@@ -18,12 +18,16 @@
                    VerticalAlignment="Center"
                    Source="avares://CloudlogHelper/Assets/Others/Error.png" Width="30" Margin="10,0,0,0" />
             <TextBlock Text="{Binding ErrorMessage}"
+                       MaxWidth="420"
+                       MaxLines="1"
                        Foreground="Black"
-                       Grid.Column="1"
                        FontSize="13"
-                       FontWeight="Medium"
+                       FontWeight="Bold"
                        VerticalAlignment="Center"
-                       TextWrapping="NoWrap" />
+                       TextTrimming="CharacterEllipsis"
+                       Margin="20,0,20,0"
+                       TextWrapping="Wrap"
+                       Grid.Column="1"/>
             <Button Grid.Column="2"
                     Background="Transparent"
                     Command="{Binding CloseErrorPanelCommand}">

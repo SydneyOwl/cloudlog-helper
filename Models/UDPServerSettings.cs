@@ -54,6 +54,13 @@ public class UDPServerSettings : ReactiveValidationObject
             !IsUDPConfigHasErrors()
     );
 
+    public bool RestartUDPNeeded(UDPServerSettings oldSettings)
+    {
+        return EnableUDPServer != oldSettings.EnableUDPServer || EnableConnectionFromOutside !=
+                                                              oldSettings.EnableConnectionFromOutside
+                                                              || UDPPort != oldSettings.UDPPort;
+    }
+
     private bool IsPropertyHasErrors(string propertyName)
     {
         return GetErrors(propertyName).Cast<string>().Any();

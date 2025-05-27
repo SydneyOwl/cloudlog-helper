@@ -35,22 +35,29 @@ public class ClublogUtil
     public static async Task<string> UploadQSOToClublogAsync(string callsign, string password, string email,
         string adif)
     {
-        var result = await DefaultConfigs.ClublogQsoUploadEndpoint
-            .AllowHttpStatus(200, 400, 500, 403)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .PostUrlEncodedAsync(new
-            {
-                email,
-                password,
-                callsign,
-                adif,
-                api = DefaultConfigs.Clkk
-            });
+        try
+        {
+            var result = await DefaultConfigs.ClublogQsoUploadEndpoint
+                .AllowHttpStatus(200, 400, 500, 403)
+                .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+                .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
+                .PostUrlEncodedAsync(new
+                {
+                    email,
+                    password,
+                    callsign,
+                    adif,
+                    api = DefaultConfigs.Clkk
+                });
 
-        var responseText = await result.GetStringAsync();
-        var code = result.StatusCode;
-        if (code == 200) return string.Empty;
-        return responseText;
+            var responseText = await result.GetStringAsync();
+            var code = result.StatusCode;
+            if (code == 200) return string.Empty;
+            return responseText;
+        }
+        catch (Exception e)
+        {
+            return e.Message;
+        }
     }
 }

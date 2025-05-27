@@ -90,6 +90,18 @@ public class HamlibSettings : ReactiveValidationObject
             !IsHamlibHasErrors()
     );
 
+    public bool RestartHamlibNeeded(HamlibSettings oldSettings)
+    {
+        return SelectedRadio != oldSettings.SelectedRadio || SelectedPort != oldSettings.SelectedPort ||
+               PollAllowed != oldSettings.PollAllowed ||
+               UseRigAdvanced != oldSettings.UseRigAdvanced || DisablePTT != oldSettings.DisablePTT ||
+               AllowExternalControl != oldSettings.AllowExternalControl ||
+               OverrideCommandlineArg != oldSettings.OverrideCommandlineArg ||
+               UseExternalRigctld != oldSettings.UseExternalRigctld || AllowDebugServer != oldSettings.AllowDebugServer ||
+               DebugServerAddress != oldSettings.DebugServerAddress ||
+               ExternalRigctldHostAddress != oldSettings.ExternalRigctldHostAddress;
+    }
+
     private bool IsPropertyHasErrors(string propertyName)
     {
         return GetErrors(propertyName).Cast<string>().Any();
