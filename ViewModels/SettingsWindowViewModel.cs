@@ -7,6 +7,8 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -31,13 +33,14 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         Settings = ApplicationSettings.GetInstance();
         Settings.BackupSettings();
+        // if (Design.IsDesignMode)return;
 
         _initializeHamlibAsync().ConfigureAwait(false);
 
         ShowCloudlogStationIdCombobox = Settings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
-        var hamCmd = ReactiveCommand.CreateFromTask(_testHamlib, Settings.HamlibSettings.IsHamlibValid);
-        HamlibTestButton.SetTestButtonCommand(hamCmd);
+        var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, Settings.HamlibSettings.IsHamlibValid);
+        HamlibTestButton.SetTestButtonCommand(hamlibCmd);
 
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
 
@@ -48,6 +51,10 @@ public class SettingsWindowViewModel : ViewModelBase
         var clubCmd =
             ReactiveCommand.CreateFromTask(_testClublogConnection);
         ClublogTestButton.SetTestButtonCommand(clubCmd);
+        
+        var hamcqCmd =
+            ReactiveCommand.CreateFromTask(_testHamCQConnection);
+        HamCQTestButton.SetTestButtonCommand(hamcqCmd);
 
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
@@ -61,12 +68,15 @@ public class SettingsWindowViewModel : ViewModelBase
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })
                 .DisposeWith(disposables);
-            hamCmd.ThrownExceptions.Subscribe(err => HamlibErrorPanel.ErrorMessage = err.Message)
+            hamlibCmd.ThrownExceptions.Subscribe(err => HamlibErrorPanel.ErrorMessage = err.Message)
                 .DisposeWith(disposables);
             cloudCmd.ThrownExceptions.Subscribe(err => CloudlogErrorPanel.ErrorMessage = err.Message)
                 .DisposeWith(disposables);
             clubCmd.ThrownExceptions.Subscribe(err => ClublogErrorPanel.ErrorMessage = err.Message)
                 .DisposeWith(disposables);
+            hamcqCmd.ThrownExceptions.Subscribe(err => HamCQErrorPanel.ErrorMessage = err.Message)
+                .DisposeWith(disposables);
+            
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
             {
@@ -89,13 +99,6 @@ public class SettingsWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
     public ApplicationSettings Settings { get; set; }
-
-    [Reactive] public int WindowHeight { get; set; } = 800;
-
-    public void UpdateScreenInfo(int workAreaHeight)
-    {
-        WindowHeight = workAreaHeight - 100;
-    }
 
     private async Task _initializeHamlibAsync()
     {
@@ -144,6 +147,20 @@ public class SettingsWindowViewModel : ViewModelBase
         var res = await ClublogUtil.TestClublogConnectionAsync(Settings.ClublogSettings.ClublogCallsign,
             Settings.ClublogSettings.ClublogPassword, Settings.ClublogSettings.ClublogEmail).ConfigureAwait(false);
         ClublogErrorPanel.ErrorMessage = res;
+        return string.IsNullOrEmpty(res);
+    }
+    
+    private async Task<bool> _testHamCQConnection()
+    {
+        HamCQErrorPanel.ErrorMessage = string.Empty;
+        if (Settings.HamCQSettings.IsHamCQHasErrors())
+        {
+            HamCQErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");
+            return false;
+        }
+
+        var res = await HamCQUtil.TestHamCQConnectionAsync(Settings.HamCQSettings.HamCQAPIKey).ConfigureAwait(false);
+        HamCQErrorPanel.ErrorMessage = res;
         return string.IsNullOrEmpty(res);
     }
 
@@ -323,6 +340,13 @@ public class SettingsWindowViewModel : ViewModelBase
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Clublog });
             anythingChanged = true;
         }
+        
+        if (Settings.IsHamCQConfChanged())
+        {
+            ClassLogger.Trace("hamcq settings changed");
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.HamCQ });
+            anythingChanged = true;
+        }
 
         if (Settings.IsHamlibConfChanged())
         {
@@ -357,6 +381,13 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public ErrorPanelViewModel ClublogErrorPanel { get; } = new();
     public TestButtonViewModel ClublogTestButton { get; } = new();
+
+    #endregion
+    
+    #region HamCQ
+
+    public ErrorPanelViewModel HamCQErrorPanel { get; } = new();
+    public TestButtonViewModel HamCQTestButton { get; } = new();
 
     #endregion
 

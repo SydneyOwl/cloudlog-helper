@@ -65,23 +65,16 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 {
                     ClassLogger.Trace("Setting changed; updating hamlib info");
                     _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
+                    var newSettings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
                     if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
 
                     if (x.Part == ChangedPart.Hamlib)
                     {
-                        var newSettings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
                         if (newSettings.RestartHamlibNeeded(_settings))
                         {
                             _settings = newSettings;
                             SendMsgToParentVm("");
                             _resetStatus();
-                            if (!_settings.PollAllowed)
-                            {
-                                // shut every service down
-                                RigctldUtil.CleanUp();
-                                return Unit.Default;
-                            }
-
                             // check if we can start rigctld
                             if (_settings is { UseExternalRigctld: false })
                                 await _restartRigctldStrict(false);
@@ -92,7 +85,15 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                         _settings = newSettings;
                     }
 
-                    if (x.Part == ChangedPart.NothingJustClosed) _holdRigUpdate = false;
+                    if (x.Part == ChangedPart.NothingJustClosed)
+                    {
+                        _holdRigUpdate = false;
+                        if (!newSettings.PollAllowed)
+                        {
+                            // shut every service down
+                            RigctldUtil.CleanUp();
+                        }
+                    }
                     return Unit.Default;
                 })
                 .Subscribe(_ =>

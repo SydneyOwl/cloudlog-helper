@@ -336,7 +336,7 @@
     <data name="t_Fail" xml:space="preserve">
         <value>上传失败</value>
     </data>
-    <data name="t_ignored" xml:space="preserve">
+    <data name="t_Ignored" xml:space="preserve">
         <value>忽略上传</value>
     </data>
     <data name="useexternalrigctld" xml:space="preserve">
@@ -410,5 +410,14 @@
     </data>
     <data name="upload2clublog" xml:space="preserve">
         <value>自动上传QSO到Clublog</value>
+    </data>
+    <data name="hamcqsettings" xml:space="preserve">
+        <value>HamCQ设置</value>
+    </data>
+    <data name="upload2hamcq" xml:space="preserve">
+        <value>自动上传QSO到HamCQ</value>
+    </data>
+    <data name="autoupload2" xml:space="preserve">
+        <value>自动上传QSO到</value>
     </data>
 </root>

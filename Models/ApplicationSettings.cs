@@ -77,6 +77,12 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public ClublogSettings ClublogSettings { get; set; } = new();
+    
+    /// <summary>
+    ///     HamCQ settings.
+    /// </summary>
+    [JsonProperty]
+    public HamCQSettings HamCQSettings { get; set; } = new();
 
     /// <summary>
     ///     Hamlib settings.
@@ -112,6 +118,18 @@ public class ApplicationSettings : ReactiveValidationObject
         if (_backupInstance is null) return false;
         var oldI = _backupInstance.ClublogSettings;
         var newI = ClublogSettings;
+        return !oldI.Equals(newI);
+    }
+    
+    /// <summary>
+    ///     Check if hamcq configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsHamCQConfChanged()
+    {
+        if (_backupInstance is null) return false;
+        var oldI = _backupInstance.HamCQSettings;
+        var newI = HamCQSettings;
         return !oldI.Equals(newI);
     }
 

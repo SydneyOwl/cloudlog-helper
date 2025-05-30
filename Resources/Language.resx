@@ -336,7 +336,7 @@
     <data name="t_Fail" xml:space="preserve">
         <value>Fail</value>
     </data>
-    <data name="t_ignored" xml:space="preserve">
+    <data name="t_Ignored" xml:space="preserve">
         <value>Ignored</value>
     </data>
     <data name="useexternalrigctld" xml:space="preserve">
@@ -410,5 +410,14 @@
     </data>
     <data name="upload2clublog" xml:space="preserve">
         <value>Auto upload QSO to Clublog</value>
+    </data>
+    <data name="hamcqsettings" xml:space="preserve">
+        <value>HamCQ Settings</value>
+    </data>
+    <data name="upload2hamcq" xml:space="preserve">
+        <value>Auto upload QSO to HamCQ</value>
+    </data>
+    <data name="autoupload2" xml:space="preserve">
+        <value>Auto upload QSO to</value>
     </data>
 </root>

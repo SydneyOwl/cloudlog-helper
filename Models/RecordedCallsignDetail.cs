@@ -170,6 +170,21 @@ public class RecordedCallsignDetail : ReactiveObject
     /// </summary>
     [Reactive]
     public bool Checked { get; set; }
+    
+    /// <summary>
+    ///     Upload status of cloudlog.
+    /// </summary>
+    public bool CloudlogUploaded { get; set; }
+    
+    /// <summary>
+    ///     Upload status of clublog.
+    /// </summary>
+    public bool ClublogUploaded { get; set; }
+    
+    /// <summary>
+    ///     Upload status of hamcq.
+    /// </summary>
+    public bool HamCQUploaded { get; set; }
 
     /// <summary>
     ///     Upload status of current item.

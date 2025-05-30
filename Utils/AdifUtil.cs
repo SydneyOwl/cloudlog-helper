@@ -27,7 +27,7 @@ public class AdifUtil
         adif.Append($"<freq:{log.Freq.Length}>{log.Freq} ");
         adif.Append($"<station_callsign:{log.StationCallsign.Length}>{log.StationCallsign} ");
         adif.Append($"<my_gridsquare:{log.MyGridSquare.Length}>{log.MyGridSquare} ");
-        adif.Append($"<comment:{log.Comment.Length}>{log.Comment} ");
+        if (!string.IsNullOrEmpty(log.Comment)) adif.Append($"<comment:{log.Comment.Length}>{log.Comment} ");
         adif.Append("<eor>");
         return adif.ToString();
     }

@@ -7,7 +7,6 @@
         x:DataType="viewModels:SettingsWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.settings}}"
         SizeToContent="Width"
-        MaxHeight="{Binding WindowHeight}"
         Icon="avares://CloudlogHelper/Assets/icon.png"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
@@ -160,6 +159,31 @@
                     <userControls:TestButtonUserControl Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
                                                         DataContext="{Binding ClublogTestButton}" />
                 </Grid>
+            </Border>
+            
+            <!-- HamCQ 设置 -->
+            <userControls:ErrorPanelUserControl DataContext="{Binding HamCQErrorPanel}" />
+            <Border Classes="SettingBlock">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel  VerticalAlignment="Center">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.hamcqsettings}}" FontWeight="Heavy" />
+                    </StackPanel>
+
+                    <!-- key 设置 -->
+                    <StackPanel Orientation="Horizontal" Margin="30,0,50,0" Height="50">
+                        <TextBlock Text="API Key"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Width="80"
+                                   FontSize="14" />
+                        <TextBox Text="{Binding Settings.HamCQSettings.HamCQAPIKey}"
+                                 Width="230"
+                                 Height="40"
+                                 FontSize="14" />
+                    </StackPanel>
+
+                    <userControls:TestButtonUserControl DataContext="{Binding HamCQTestButton}" />
+                </StackPanel>
             </Border>
 
             <!-- HamLib设置 -->
@@ -315,16 +339,19 @@
 
             <!-- UDP服务器设置 -->
             <Border Classes="SettingBlock">
-                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ShowGridLines="False">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" ShowGridLines="False">
                     <CheckBox Content="{I18N {x:Static resources:LangKeys.enableudpserver}}" FontSize="14"
                               Grid.Column="0"
                               Grid.Row="0"
                               IsChecked="{Binding Settings.UDPSettings.EnableUDPServer}" />
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
+                    <CheckBox Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.enableoutsideconn}}" Margin="0,10,0,0"
+                                             FontSize="14" Grid.Row="1"
+                                             IsChecked="{Binding Settings.UDPSettings.EnableConnectionFromOutside}" />
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Margin="0,10,0,0">
                         <TextBlock Text="{I18N {x:Static resources:LangKeys.port}}"
                                    FontWeight="SemiBold"
                                    VerticalAlignment="Center"
-                                   Width="120"
+                                   Margin="0,0,20,0"
                                    FontSize="14" />
                         <TextBox Text="{Binding Settings.UDPSettings.UDPPort}"
                                  Width="100"
@@ -332,24 +359,36 @@
                         <userControls:TipIconUserControl Margin="5,0,0,0"
                                                          TooltipText="{I18N {x:Static resources:LangKeys.udpporthelp}}" />
                     </StackPanel>
-                    <CheckBox Content="{I18N {x:Static resources:LangKeys.enableoutsideconn}}" Margin="20,0,0,0"
-                              FontSize="14" Grid.Column="1" Grid.Row="1"
-                              IsChecked="{Binding Settings.UDPSettings.EnableConnectionFromOutside}" />
 
                     <!-- QSO上传设置 -->
-                    <CheckBox Grid.Row="2" Grid.Column="0" Margin="0,30,0,0"
-                              Content="{I18N {x:Static resources:LangKeys.upload2cloudlog}}"
-                              IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToCloudlog}" />
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,0"
+                                Spacing="20"
+                                Grid.RowSpan="2"
+                                Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.autoupload2}}" VerticalAlignment="Center"/>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <CheckBox VerticalAlignment="Center"
+                                                  Content="CloudLog"
+                                                  IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToCloudlog}" />
+                            
+                                <CheckBox VerticalAlignment="Center"
+                                          Content="ClubLog"
+                                          IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToClublog}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox VerticalAlignment="Center"
+                                          Content="HamCQ"
+                                          IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToHamCQ}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
 
-                    <CheckBox Grid.Row="3" Grid.Column="0" Margin="0,10,0,0"
-                              Content="{I18N {x:Static resources:LangKeys.upload2clublog}}"
-                              IsChecked="{Binding Settings.UDPSettings.AutoUploadQSOToClublog}" />
-
-                    <StackPanel Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Margin="0,30,0,0"
+                    <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom"
                                 Orientation="Horizontal"
-                                HorizontalAlignment="Left" Spacing="10" Height="30">
+                                HorizontalAlignment="Center" Spacing="10" Height="30">
                         <TextBlock Text="{I18N {x:Static resources:LangKeys.qsoretrycount}}" VerticalAlignment="Center" />
-                        <TextBox Width="150" Text="{Binding Settings.UDPSettings.RetryCount}" />
+                        <TextBox Width="60" Text="{Binding Settings.UDPSettings.RetryCount}" />
                     </StackPanel>
                 </Grid>
             </Border>

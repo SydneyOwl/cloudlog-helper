@@ -11,6 +11,11 @@ public enum ChangedPart
     ///     Sent when setting window is closed and Clublog config changed.
     /// </summary>
     Clublog,
+    
+    /// <summary>
+    ///     Sent when setting window is closed and HamCQ config changed.
+    /// </summary>
+    HamCQ,
 
     /// <summary>
     ///     Sent when setting window is closed and Hamlib config changed.

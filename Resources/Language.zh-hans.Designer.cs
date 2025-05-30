@@ -105,6 +105,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 自动上传QSO到.
+        /// </summary>
+        public static string autoupload2 {
+            get {
+                return ResourceManager.GetString("autoupload2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 基本信息.
         /// </summary>
         public static string basicinfo {
@@ -479,6 +488,15 @@ namespace CloudlogHelper.Resources {
         public static string grid {
             get {
                 return ResourceManager.GetString("grid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HamCQ设置.
+        /// </summary>
+        public static string hamcqsettings {
+            get {
+                return ResourceManager.GetString("hamcqsettings", resourceCulture);
             }
         }
         
@@ -980,9 +998,9 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 忽略上传.
         /// </summary>
-        public static string t_ignored {
+        public static string t_Ignored {
             get {
-                return ResourceManager.GetString("t_ignored", resourceCulture);
+                return ResourceManager.GetString("t_Ignored", resourceCulture);
             }
         }
         
@@ -1145,6 +1163,15 @@ namespace CloudlogHelper.Resources {
         public static string upload2clublog {
             get {
                 return ResourceManager.GetString("upload2clublog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动上传QSO到HamCQ.
+        /// </summary>
+        public static string upload2hamcq {
+            get {
+                return ResourceManager.GetString("upload2hamcq", resourceCulture);
             }
         }
         

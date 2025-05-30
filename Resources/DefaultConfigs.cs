@@ -46,6 +46,11 @@ public class DefaultConfigs
     ///     Default ua for our application.
     /// </summary>
     public static string DefaultHTTPUserAgent = $"CloudlogHelper/{VersionInfo.Version}";
+    
+    /// <summary>
+    ///     Default name for our application.
+    /// </summary>
+    public static string DefaultApplicationName = $"CloudlogHelper {VersionInfo.Version}";
 
     /// <summary>
     ///     API endpoint for Checking whether this is a wavelog instance or not (by checking manifest.json)
@@ -83,11 +88,15 @@ public class DefaultConfigs
     /// </summary>
     public static readonly string ClublogQsoUploadEndpoint = "https://clublog.org/realtime.php";
 
-
     /// <summary>
     ///     Test Api endpoint for clublog
     /// </summary>
     public static readonly string ClublogTestEndpoint = "https://clublog.org/getadif.php";
+
+    /// <summary>
+    /// QSO Upload api endpoint for hamcq
+    /// </summary>
+    public static readonly string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
     /// <summary>
     ///     This is for cloudlog helper only.
