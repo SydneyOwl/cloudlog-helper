@@ -132,6 +132,19 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 .Buffer(5, 1)
                 .Select(window => window.Average())
                 .Subscribe(avg => { QsAvgMin = $"{avg.ToString("0.00")}Qsos/min"; });
+            
+            var filterObservable = this.WhenAnyValue(x => x.ShowFailedOnly)
+                .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail => 
+                    (detail.UploadStatus != UploadStatus.Success && showFailed) || 
+                    !showFailed));
+            
+            _allQsos.Connect()
+                .Filter(filterObservable)
+                .Sort(SortExpressionComparer<RecordedCallsignDetail>
+                    .Ascending(x => x.DateTimeOff))
+                .Bind(FilteredQsos)
+                .Subscribe()
+                .DisposeWith(disposables);
 
             // Callsign update trigger
             this.WhenAnyValue(x => x.SelectAll, x => x.ShowFailedOnly)
@@ -151,11 +164,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                             innerList[i].Checked = SelectAll;
                         }
                     });
-                    
-                    // calculate filtered qsos
-                    FilteredQsos.Clear();
-                    FilteredQsos.AddRange(_allQsos.Items.Where(detail =>
-                        (detail.UploadStatus != UploadStatus.Success && ShowFailedOnly) || !ShowFailedOnly));
                 }).DisposeWith(disposables);
 
             RestartUdpCommand.ThrownExceptions.Subscribe(err => { SendMsgToParentVm(err.Message); })
@@ -341,7 +349,8 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     }
 
                     // do possible retry...
-                    for (var i = 0; i < _settings.RetryCount.Length; i++)
+                    if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
+                    for (var i = 0; i < retTime; i++)
                     {
                         rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
                         rcd.FailReason = null;

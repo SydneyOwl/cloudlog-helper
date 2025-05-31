@@ -27,7 +27,7 @@ public class HamCQUtil
                 reqJson.Add("adif", adif);
                 reqJson.Add("app", DefaultConfigs.DefaultApplicationName);
             }
-            ClassLogger.Trace(reqJson.ToString());
+            // ClassLogger.Trace(reqJson.ToString());
             var result = await DefaultConfigs.HamCQQsoUploadEndpoint
                 .AllowHttpStatus(406)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
