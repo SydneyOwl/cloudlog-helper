@@ -9,7 +9,6 @@
         SizeToContent="Width"
         Icon="avares://CloudlogHelper/Assets/icon.png"
         WindowStartupLocation="CenterScreen"
-        CanResize="False"
         FontFamily="Segoe UI">
 
     <Design.DataContext>
