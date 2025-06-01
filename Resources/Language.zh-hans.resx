@@ -420,4 +420,10 @@
     <data name="autoupload2" xml:space="preserve">
         <value>自动上传QSO到</value>
     </data>
+    <data name="forwardmsg" xml:space="preserve">
+        <value>转发UDP数据包到</value>
+    </data>
+    <data name="forwardto" xml:space="preserve">
+        <value>转发地址</value>
+    </data>
 </root>

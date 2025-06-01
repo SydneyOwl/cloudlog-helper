@@ -1,9 +1,12 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         x:Class="CloudlogHelper.Views.SettingsWindow"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls="clr-namespace:CloudlogHelper.UserControls"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
         x:DataType="viewModels:SettingsWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.settings}}"
         SizeToContent="Width"
@@ -388,6 +391,16 @@
                                 HorizontalAlignment="Center" Spacing="10" Height="30">
                         <TextBlock Text="{I18N {x:Static resources:LangKeys.qsoretrycount}}" VerticalAlignment="Center" />
                         <TextBox Width="60" Text="{Binding Settings.UDPSettings.RetryCount}" />
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Row="3" Grid.Column="0" VerticalAlignment="Bottom"
+                                Orientation="Horizontal"
+                                Margin="0,20,0,0"
+                                HorizontalAlignment="Center" Spacing="10" >
+                        <CheckBox IsChecked="{Binding Settings.UDPSettings.ForwardMessage}"
+                                  Content="{I18N {x:Static resources:LangKeys.forwardmsg}}" x:Name="forward"/>
+                        <TextBlock Margin="20,0,0,0" Text="{I18N {x:Static resources:LangKeys.forwardto}}" VerticalAlignment="Center" />
+                        <TextBox IsEnabled="{Binding #forward.IsChecked}" Width="150" Text="{Binding Settings.UDPSettings.ForwardAddress}" />
                     </StackPanel>
                 </Grid>
             </Border>

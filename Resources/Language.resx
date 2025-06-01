@@ -420,4 +420,10 @@
     <data name="autoupload2" xml:space="preserve">
         <value>Auto upload QSO to</value>
     </data>
+    <data name="forwardmsg" xml:space="preserve">
+        <value>Forward message</value>
+    </data>
+    <data name="forwardto" xml:space="preserve">
+        <value>Forward address</value>
+    </data>
 </root>

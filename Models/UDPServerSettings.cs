@@ -48,13 +48,9 @@ public class UDPServerSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public bool AutoUploadQSOToHamCQ { get; set; }
 
     [Reactive] [JsonProperty] public string RetryCount { get; set; } = "3";
-
-    public IObservable<bool> IsUDPConfigValid => this.WhenAnyValue(
-        x => x.UDPPort,
-        x => x.RetryCount,
-        (a, b) =>
-            !IsUDPConfigHasErrors()
-    );
+    
+    [Reactive] [JsonProperty] public bool ForwardMessage { get; set; }
+    [Reactive] [JsonProperty] public string ForwardAddress { get; set; }
 
     public bool RestartUDPNeeded(UDPServerSettings oldSettings)
     {
@@ -80,7 +76,7 @@ public class UDPServerSettings : ReactiveValidationObject
 
     protected bool Equals(UDPServerSettings other)
     {
-        return EnableUDPServer == other.EnableUDPServer && EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort && AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog && AutoUploadQSOToClublog == other.AutoUploadQSOToClublog && AutoUploadQSOToHamCQ == other.AutoUploadQSOToHamCQ && RetryCount == other.RetryCount;
+        return EnableUDPServer == other.EnableUDPServer && EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort && AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog && AutoUploadQSOToClublog == other.AutoUploadQSOToClublog && AutoUploadQSOToHamCQ == other.AutoUploadQSOToHamCQ && RetryCount == other.RetryCount && ForwardMessage == other.ForwardMessage && ForwardAddress == other.ForwardAddress;
     }
 
     public override bool Equals(object? obj)
@@ -93,6 +89,16 @@ public class UDPServerSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(EnableUDPServer, EnableConnectionFromOutside, UDPPort, AutoUploadQSOToCloudlog, AutoUploadQSOToClublog, AutoUploadQSOToHamCQ, RetryCount);
+        var hashCode = new HashCode();
+        hashCode.Add(EnableUDPServer);
+        hashCode.Add(EnableConnectionFromOutside);
+        hashCode.Add(UDPPort);
+        hashCode.Add(AutoUploadQSOToCloudlog);
+        hashCode.Add(AutoUploadQSOToClublog);
+        hashCode.Add(AutoUploadQSOToHamCQ);
+        hashCode.Add(RetryCount);
+        hashCode.Add(ForwardMessage);
+        hashCode.Add(ForwardAddress);
+        return hashCode.ToHashCode();
     }
 }
