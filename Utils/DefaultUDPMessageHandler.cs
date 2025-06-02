@@ -3,24 +3,26 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Resources;
-using WsjtxUtils.WsjtxMessages.Messages;
-using WsjtxUtils.WsjtxUdpServer;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
+using WsjtxUtilsPatch.WsjtxUdpServer;
 
 namespace CloudlogHelper.Utils;
 
 public sealed class DefaultUDPMessageHandler : WsjtxUdpServerBaseAsyncMessageHandler
 {
     private Action<WsjtxMessage>? _onMessageReceived;
+    private Action<Memory<byte>>? _onRawMessageReceived;
 
     private DefaultUDPMessageHandler()
     {
     }
 
-    public static DefaultUDPMessageHandler GenerateDefaultUDPMessageHandlerWithCallback(Action<WsjtxMessage> callback)
+    public static DefaultUDPMessageHandler GenerateDefaultUDPMessageHandlerWithCallback(Action<WsjtxMessage>? callback, Action<Memory<byte>>? rawCallback)
     {
         var defHandler = new DefaultUDPMessageHandler
         {
             _onMessageReceived = callback,
+            _onRawMessageReceived = rawCallback,
             ConnectedClientExpiryInSeconds = DefaultConfigs.UDPClientExpiryInSeconds
         };
         return defHandler;
@@ -82,6 +84,13 @@ public sealed class DefaultUDPMessageHandler : WsjtxUdpServerBaseAsyncMessageHan
     {
         _onMessageReceived?.Invoke(message);
         await base.HandleWSPRDecodeMessageAsync(server, message, endPoint, cancellationToken);
+    }
+
+    public override async Task HandleRawMessageAsync(WsjtxUdpServer server, Memory<byte> message, EndPoint endPoint,
+        CancellationToken cancellationToken = new CancellationToken())
+    {
+        _onRawMessageReceived?.Invoke(message);
+        await base.HandleRawMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     #endregion

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NLog;
-using WsjtxUtils.WsjtxMessages.Messages;
-using WsjtxUtils.WsjtxUdpServer;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
+using WsjtxUtilsPatch.WsjtxUdpServer;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace CloudlogHelper.Utils;
@@ -13,7 +14,14 @@ namespace CloudlogHelper.Utils;
 public class UDPServerUtil
 {
     private static WsjtxUdpServer? _udpServer;
+
+    private static UdpClient? _forwardedClient;
+    
     private static CancellationTokenSource _cts = new();
+    
+    private static IPEndPoint _currentEndpoint;
+    
+    private static readonly object _syncLock = new object();
 
     /// <summary>
     ///     Logger for the class.
@@ -26,8 +34,38 @@ public class UDPServerUtil
         return _udpServer.IsRunning;
     }
 
+    public static async Task ForwardMessageAsync(Memory<byte> message, IPEndPoint endPoint)
+    {
+        lock (_syncLock)
+        {
+            if (_forwardedClient == null || !Equals(_currentEndpoint, endPoint))
+            {
+                _forwardedClient?.Dispose();
+                _forwardedClient = new UdpClient();
+                _currentEndpoint = endPoint;
+                ClassLogger.Debug("Created new UdpClient instance");
+            }
+            else
+            {
+                ClassLogger.Debug("Reusing client");
+            }
+        }
+
+        try
+        {
+            await _forwardedClient.SendAsync(message, endPoint);
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error($"Failed to send message: {ex.Message}");
+            throw;
+        }
+    }
+
+
     public static async Task RestartUDPServerAsync(IPAddress ip, int port,
         Action<WsjtxMessage> handler,
+        Action<Memory<byte>> rawhandler,
         Action<LogLevel, string>? udpLogger = null)
     {
         try
@@ -38,7 +76,7 @@ public class UDPServerUtil
             await Task.Delay(500); 
             ClassLogger.Debug("Asking udpserver to start.");
             _udpServer = new WsjtxUdpServer(
-                DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler),
+                DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler,rawhandler),
                 ip,
                 port,
                 logger: new UDPServerLogger(udpLogger));
@@ -60,6 +98,9 @@ public class UDPServerUtil
             if (!_cts.IsCancellationRequested) _cts.Cancel();
             if (_udpServer.IsRunning) _udpServer?.Stop();
             if (!_udpServer!.IsDisposed) _udpServer?.Dispose();
+            _forwardedClient?.Dispose();
+            _forwardedClient = null;
+            _currentEndpoint = null;
         }
         catch (Exception e)
         {

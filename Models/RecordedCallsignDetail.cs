@@ -3,7 +3,7 @@ using CloudlogHelper.Database;
 using CloudlogHelper.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using WsjtxUtils.WsjtxMessages.Messages;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
 namespace CloudlogHelper.Models;
 

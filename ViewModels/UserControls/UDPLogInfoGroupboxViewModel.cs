@@ -19,7 +19,8 @@ using DynamicData.Binding;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using WsjtxUtils.WsjtxMessages.Messages;
+using WsjtxUtilsPatch.WsjtxMessages;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace CloudlogHelper.ViewModels.UserControls;
@@ -268,6 +269,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             _settings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
             int.Parse(_settings.UDPPort),
             _wsjtxMsgHandler,
+            _wsjtxMsgForwarder,
             _wsjtxMsgLogger
         );
     }
@@ -479,6 +481,22 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         {
             ClassLogger.Debug($"Failed to parse:{e.Message}");
             return null;
+        }
+    }
+
+    private async void _wsjtxMsgForwarder(Memory<byte> message)
+    {
+        try
+        {
+            if (_settings.ForwardMessage)
+            {
+                // ClassLogger.Trace(message.DeserializeWsjtxMessage().MessageType);
+                await UDPServerUtil.ForwardMessageAsync(message, IPEndPoint.Parse(_settings.ForwardAddress));
+            }
+        } 
+        catch (Exception e)
+        {
+            ClassLogger.Error($"Failed to process wsjtxmsg: {e.Message}");
         }
     }
 
