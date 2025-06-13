@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CloudlogHelper.Validation;
+using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -77,10 +78,26 @@ public class CloudlogSettings : ReactiveValidationObject
         (url, key, id) => !IsCloudlogHasErrors()
     );
 
+    public void ApplySettingsChange(CloudlogSettings settings)
+    {
+        CloudlogUrl = settings.CloudlogUrl;
+        CloudlogApiKey = settings.CloudlogApiKey;
+        CloudlogStationId = settings.CloudlogStationId;
+        AvailableCloudlogStationInfo.Clear();
+        AvailableCloudlogStationInfo.AddRange(settings.AvailableCloudlogStationInfo);
+    }
+
     public bool IsCloudlogHasErrors()
     {
-        return IsPropertyHasErrors(nameof(CloudlogUrl)) || IsPropertyHasErrors(nameof(CloudlogApiKey)) ||
-               IsPropertyHasErrors(nameof(CloudlogStationId));
+        return !string.IsNullOrEmpty(SettingsValidation.ValidateNotEmpty(CloudlogUrl)) ||
+               !string.IsNullOrEmpty(SettingsValidation.ValidateStartsWithHttp(CloudlogUrl)) ||
+               !string.IsNullOrEmpty(SettingsValidation.ValidateNotEndsWithApiQso(CloudlogUrl)) ||
+               !string.IsNullOrEmpty(SettingsValidation.ValidateSpace(CloudlogUrl)) ||
+               !string.IsNullOrEmpty(SettingsValidation.ValidateNotEmpty(CloudlogApiKey)) ||
+               !string.IsNullOrEmpty(SettingsValidation.ValidateSpace(CloudlogApiKey));
+        // string.IsNullOrEmpty(CloudlogStationId);
+        // return IsPropertyHasErrors(nameof(CloudlogUrl)) || IsPropertyHasErrors(nameof(CloudlogApiKey)) ||
+        //        IsPropertyHasErrors(nameof(CloudlogStationId));
     }
 
     private bool IsPropertyHasErrors(string propertyName)
@@ -88,9 +105,10 @@ public class CloudlogSettings : ReactiveValidationObject
         return GetErrors(propertyName).Cast<string>().Any();
     }
 
-    public CloudlogSettings DeepClone()
+    public CloudlogSettings GetReference()
     {
-        return JsonConvert.DeserializeObject<CloudlogSettings>(JsonConvert.SerializeObject(this))!;
+        return this;
+        // return JsonConvert.DeserializeObject<CloudlogSettings>(JsonConvert.SerializeObject(this))!;
     }
 
     protected bool Equals(CloudlogSettings other)

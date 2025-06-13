@@ -7,8 +7,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -31,27 +29,26 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public SettingsWindowViewModel()
     {
-        Settings = ApplicationSettings.GetInstance();
-        Settings.BackupSettings();
+        DraftSettings = ApplicationSettings.GetDraftInstance();
         // if (Design.IsDesignMode)return;
 
         _initializeHamlibAsync().ConfigureAwait(false);
 
-        ShowCloudlogStationIdCombobox = Settings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
+        ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
-        var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, Settings.HamlibSettings.IsHamlibValid);
+        var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
         HamlibTestButton.SetTestButtonCommand(hamlibCmd);
 
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
 
         var cloudCmd =
-            ReactiveCommand.CreateFromTask(_testCloudlogConnection, Settings.CloudlogSettings.IsCloudlogValid);
+            ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButton.SetTestButtonCommand(cloudCmd);
 
         var clubCmd =
             ReactiveCommand.CreateFromTask(_testClublogConnection);
         ClublogTestButton.SetTestButtonCommand(clubCmd);
-        
+
         var hamcqCmd =
             ReactiveCommand.CreateFromTask(_testHamCQConnection);
         HamCQTestButton.SetTestButtonCommand(hamcqCmd);
@@ -63,7 +60,7 @@ public class SettingsWindowViewModel : ViewModelBase
         this.WhenActivated(disposables =>
         {
             // Subscribe language change
-            this.WhenAnyValue(x => x.Settings.LanguageType).Subscribe(language =>
+            this.WhenAnyValue(x => x.DraftSettings.LanguageType).Subscribe(language =>
                 {
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })
@@ -76,7 +73,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
             hamcqCmd.ThrownExceptions.Subscribe(err => HamCQErrorPanel.ErrorMessage = err.Message)
                 .DisposeWith(disposables);
-            
+
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
             {
@@ -98,7 +95,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
-    public ApplicationSettings Settings { get; set; }
+    public ApplicationSettings DraftSettings { get; set; }
 
     private async Task _initializeHamlibAsync()
     {
@@ -117,15 +114,14 @@ public class SettingsWindowViewModel : ViewModelBase
         var (listResult, opt) = await RigctldUtil.StartOnetimeRigctldAsync("--list");
         if (listResult)
         {
-            _supportedModels = RigctldUtil.ParseAllModelsFromRawOutput(opt);
-            SupportedRadios = _supportedModels.Keys.OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToList();
-            // refresh selected item
-            var sel = Settings.HamlibSettings.SelectedRadio;
+            SupportedModels = RigctldUtil.ParseAllModelsFromRawOutput(opt)
+                .OrderBy(x => x.Model)
+                .ToList();
 
-            Settings.HamlibSettings.KnownModels = _supportedModels;
-            Settings.HamlibSettings.SelectedRadio = string.Empty;
-            Settings.HamlibSettings.SelectedRadio = sel;
-
+            var selection = DraftSettings.HamlibSettings.SelectedRigInfo;
+            DraftSettings.HamlibSettings.SelectedRigInfo = null;
+            if (selection is not null && SupportedModels.Contains(selection))
+                DraftSettings.HamlibSettings.SelectedRigInfo = selection;
             HamlibInitPassed = true;
         }
         else
@@ -137,29 +133,31 @@ public class SettingsWindowViewModel : ViewModelBase
     private async Task<bool> _testClublogConnection()
     {
         ClublogErrorPanel.ErrorMessage = string.Empty;
-        if (Settings.ClublogSettings.IsClublogHasErrors())
+        if (DraftSettings.ClublogSettings.IsClublogHasErrors())
         {
             ClublogErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");
             ;
             return false;
         }
 
-        var res = await ClublogUtil.TestClublogConnectionAsync(Settings.ClublogSettings.ClublogCallsign,
-            Settings.ClublogSettings.ClublogPassword, Settings.ClublogSettings.ClublogEmail).ConfigureAwait(false);
+        var res = await ClublogUtil.TestClublogConnectionAsync(DraftSettings.ClublogSettings.ClublogCallsign,
+                DraftSettings.ClublogSettings.ClublogPassword, DraftSettings.ClublogSettings.ClublogEmail)
+            .ConfigureAwait(false);
         ClublogErrorPanel.ErrorMessage = res;
         return string.IsNullOrEmpty(res);
     }
-    
+
     private async Task<bool> _testHamCQConnection()
     {
         HamCQErrorPanel.ErrorMessage = string.Empty;
-        if (Settings.HamCQSettings.IsHamCQHasErrors())
+        if (DraftSettings.HamCQSettings.IsHamCQHasErrors())
         {
             HamCQErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");
             return false;
         }
 
-        var res = await HamCQUtil.TestHamCQConnectionAsync(Settings.HamCQSettings.HamCQAPIKey).ConfigureAwait(false);
+        var res = await HamCQUtil.TestHamCQConnectionAsync(DraftSettings.HamCQSettings.HamCQAPIKey)
+            .ConfigureAwait(false);
         HamCQErrorPanel.ErrorMessage = res;
         return string.IsNullOrEmpty(res);
     }
@@ -170,8 +168,8 @@ public class SettingsWindowViewModel : ViewModelBase
         CloudlogErrorPanel.ErrorMessage = string.Empty;
         try
         {
-            var msg = await CloudlogUtil.TestCloudlogConnectionAsync(Settings.CloudlogSettings.CloudlogUrl,
-                Settings.CloudlogSettings.CloudlogApiKey);
+            var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
+                DraftSettings.CloudlogSettings.CloudlogApiKey);
 
             if (!string.IsNullOrEmpty(msg))
             {
@@ -179,36 +177,37 @@ public class SettingsWindowViewModel : ViewModelBase
                 return false;
             }
 
-            var stationInfo = await CloudlogUtil.GetStationInfoAsync(Settings.CloudlogSettings.CloudlogUrl,
-                Settings.CloudlogSettings.CloudlogApiKey);
+            var stationInfo = await CloudlogUtil.GetStationInfoAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
+                DraftSettings.CloudlogSettings.CloudlogApiKey);
             if (stationInfo.Count == 0)
             {
                 CloudlogErrorPanel.ErrorMessage = TranslationHelper.GetString("failedstationinfo");
-                Settings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
-                Settings.CloudlogSettings.CloudlogStationId = string.Empty;
+                DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
+                DraftSettings.CloudlogSettings.CloudlogStationId = string.Empty;
                 ShowCloudlogStationIdCombobox = false;
                 return false;
             }
 
-            var oldVal = Settings.CloudlogSettings.CloudlogStationId;
+            var oldVal = DraftSettings.CloudlogSettings.CloudlogStationId;
 
-            Settings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
-            Settings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
+            DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
+            DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
             ShowCloudlogStationIdCombobox = true;
 
-            if (string.IsNullOrEmpty(Settings.CloudlogSettings.CloudlogStationId))
+            if (string.IsNullOrEmpty(DraftSettings.CloudlogSettings.CloudlogStationId))
             {
-                Settings.CloudlogSettings.CloudlogStationId = stationInfo[0].StationId!;
+                DraftSettings.CloudlogSettings.CloudlogStationId = stationInfo[0].StationId!;
             }
             else
             {
-                Settings.CloudlogSettings.CloudlogStationId = "";
-                Settings.CloudlogSettings.CloudlogStationId = oldVal;
+                DraftSettings.CloudlogSettings.CloudlogStationId = "";
+                DraftSettings.CloudlogSettings.CloudlogStationId = oldVal;
             }
 
             CloudlogErrorPanel.ErrorMessage = string.Empty;
 
-            var instType = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(Settings.CloudlogSettings.CloudlogUrl);
+            var instType =
+                await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl);
             // instanceuncompitable
             if (instType != ServerInstanceType.Cloudlog)
                 CloudlogInfoPanel.InfoMessage = TranslationHelper.GetString("instanceuncompitable")
@@ -230,13 +229,13 @@ public class SettingsWindowViewModel : ViewModelBase
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
 
-        if (Settings.HamlibSettings.UseExternalRigctld)
-            (ip, port) = IPAddrUtil.ParseAddress(Settings.HamlibSettings.ExternalRigctldHostAddress);
+        if (DraftSettings.HamlibSettings.UseExternalRigctld)
+            (ip, port) = IPAddrUtil.ParseAddress(DraftSettings.HamlibSettings.ExternalRigctldHostAddress);
 
-        if (Settings.HamlibSettings.UseRigAdvanced &&
-            !string.IsNullOrEmpty(Settings.HamlibSettings.OverrideCommandlineArg))
+        if (DraftSettings.HamlibSettings.UseRigAdvanced &&
+            !string.IsNullOrEmpty(DraftSettings.HamlibSettings.OverrideCommandlineArg))
         {
-            var matchPort = Regex.Match(Settings.HamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
+            var matchPort = Regex.Match(DraftSettings.HamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
             if (matchPort.Success)
             {
                 port = int.Parse(matchPort.Groups[1].Value);
@@ -255,19 +254,20 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         HamlibErrorPanel.ErrorMessage = string.Empty;
         var (ip, port) = _getRigctldIpAndPort();
-        if (!Settings.HamlibSettings.UseExternalRigctld &&
-            _supportedModels.TryGetValue(Settings.HamlibSettings.SelectedRadio!, out var radioId))
+        if (DraftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
         {
-            var defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(radioId, Settings.HamlibSettings.SelectedPort);
+            var defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
+                DraftSettings.HamlibSettings.SelectedPort);
 
-            if (Settings.HamlibSettings.UseRigAdvanced)
+            if (DraftSettings.HamlibSettings.UseRigAdvanced)
             {
-                if (string.IsNullOrEmpty(Settings.HamlibSettings.OverrideCommandlineArg))
-                    defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(radioId, Settings.HamlibSettings.SelectedPort,
-                        Settings.HamlibSettings.DisablePTT,
-                        Settings.HamlibSettings.AllowExternalControl);
+                if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.OverrideCommandlineArg))
+                    defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
+                        DraftSettings.HamlibSettings.SelectedPort,
+                        DraftSettings.HamlibSettings.DisablePTT,
+                        DraftSettings.HamlibSettings.AllowExternalControl);
                 else
-                    defaultArgs = Settings.HamlibSettings.OverrideCommandlineArg;
+                    defaultArgs = DraftSettings.HamlibSettings.OverrideCommandlineArg;
             }
 
             var (res, des) =
@@ -286,8 +286,8 @@ public class SettingsWindowViewModel : ViewModelBase
         // send freq request to test
         try
         {
-            _ = await RigctldUtil.GetAllRigInfo(ip, port, Settings.HamlibSettings.ReportRFPower,
-                Settings.HamlibSettings.ReportSplitInfo);
+            _ = await RigctldUtil.GetAllRigInfo(ip, port, DraftSettings.HamlibSettings.ReportRFPower,
+                DraftSettings.HamlibSettings.ReportSplitInfo);
         }
         catch (Exception e)
         {
@@ -306,56 +306,58 @@ public class SettingsWindowViewModel : ViewModelBase
     private async Task _refreshPort()
     {
         Ports = SerialPort.GetPortNames().ToList();
-        var tmp = Settings.HamlibSettings.SelectedPort;
+        var tmp = DraftSettings.HamlibSettings.SelectedPort;
         if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
-        if (string.IsNullOrEmpty(Settings.HamlibSettings.SelectedPort))
-            Settings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
+        if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.SelectedPort))
+            DraftSettings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
         // reset port name
-        Settings.HamlibSettings.SelectedPort = "";
-        Settings.HamlibSettings.SelectedPort = tmp;
+        DraftSettings.HamlibSettings.SelectedPort = "";
+        DraftSettings.HamlibSettings.SelectedPort = tmp;
     }
 
     private void _discardConf()
     {
         // resume settings
         ClassLogger.Trace("Discarding confse");
-        Settings.RestoreSettings();
+        DraftSettings.RestoreSettings();
         MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     private void _saveAndApplyConf()
     {
         var anythingChanged = false;
-        Settings.WriteCurrentSettingsToFile();
-        if (Settings.IsCloudlogConfChanged())
+        var cmp = ApplicationSettings.GetInstance().DeepClone();
+        DraftSettings.ApplySettings();
+        DraftSettings.WriteCurrentSettingsToFile();
+        if (DraftSettings.IsCloudlogConfChanged(cmp))
         {
             ClassLogger.Trace("Cloudlog settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
             anythingChanged = true;
         }
 
-        if (Settings.IsClublogConfChanged())
+        if (DraftSettings.IsClublogConfChanged(cmp))
         {
             ClassLogger.Trace("clublog settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Clublog });
             anythingChanged = true;
         }
-        
-        if (Settings.IsHamCQConfChanged())
+
+        if (DraftSettings.IsHamCQConfChanged(cmp))
         {
             ClassLogger.Trace("hamcq settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.HamCQ });
             anythingChanged = true;
         }
 
-        if (Settings.IsHamlibConfChanged())
+        if (DraftSettings.IsHamlibConfChanged(cmp))
         {
             ClassLogger.Trace("hamlib settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
             anythingChanged = true;
         }
 
-        if (Settings.IsUDPConfChanged())
+        if (DraftSettings.IsUDPConfChanged(cmp))
         {
             ClassLogger.Trace("udp settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged
@@ -383,7 +385,7 @@ public class SettingsWindowViewModel : ViewModelBase
     public TestButtonViewModel ClublogTestButton { get; } = new();
 
     #endregion
-    
+
     #region HamCQ
 
     public ErrorPanelViewModel HamCQErrorPanel { get; } = new();
@@ -399,11 +401,10 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public TestButtonViewModel HamlibTestButton { get; } = new();
 
-    [Reactive] public List<string> SupportedRadios { get; set; }
     [Reactive] public List<string> Ports { get; set; }
     [Reactive] public string HamlibVersion { get; set; } = "Unknown hamlib version";
 
-    private Dictionary<string, string> _supportedModels;
+    [Reactive] public List<RigInfo> SupportedModels { get; set; } = new();
 
     #endregion
 }

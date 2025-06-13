@@ -426,4 +426,16 @@
     <data name="forwardto" xml:space="preserve">
         <value>Forward address</value>
     </data>
+    <data name="advancedsettings" xml:space="preserve">
+        <value>Advanced</value>
+    </data>
+    <data name="udpserver" xml:space="preserve">
+        <value>UDP Server</value>
+    </data>
+    <data name="tools" xml:space="preserve">
+        <value>Tools</value>
+    </data>
+    <data name="qsoassistant" xml:space="preserve">
+        <value>QSO Assistant</value>
+    </data>
 </root>

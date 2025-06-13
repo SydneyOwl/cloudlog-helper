@@ -426,4 +426,16 @@
     <data name="forwardto" xml:space="preserve">
         <value>转发地址</value>
     </data>
+    <data name="advancedsettings" xml:space="preserve">
+        <value>高级设置</value>
+    </data>
+    <data name="udpserver" xml:space="preserve">
+        <value>UDP服务器</value>
+    </data>
+    <data name="tools" xml:space="preserve">
+        <value>工具</value>
+    </data>
+    <data name="qsoassistant" xml:space="preserve">
+        <value>QSO上传助手</value>
+    </data>
 </root>

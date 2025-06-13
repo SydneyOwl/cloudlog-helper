@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -9,9 +8,15 @@ public class HamCQSettings : ReactiveObject
 {
     [Reactive] [JsonProperty] public string HamCQAPIKey { get; set; } = string.Empty;
 
-    public HamCQSettings DeepClone()
+    public void ApplySettingsChange(HamCQSettings settings)
     {
-        return JsonConvert.DeserializeObject<HamCQSettings>(JsonConvert.SerializeObject(this))!;
+        HamCQAPIKey = settings.HamCQAPIKey;
+    }
+
+    public HamCQSettings GetReference()
+    {
+        return this;
+        // return JsonConvert.DeserializeObject<HamCQSettings>(JsonConvert.SerializeObject(this))!;
     }
 
     public bool IsHamCQHasErrors()

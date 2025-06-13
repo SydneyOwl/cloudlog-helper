@@ -6,7 +6,7 @@ namespace CloudlogHelper.Validation;
 /// <summary>
 ///     Some commonly used validations.
 /// </summary>
-public class SettingsValidation
+public static class SettingsValidation
 {
     public static string ValidateNotEmpty(string url)
     {
@@ -37,5 +37,16 @@ public class SettingsValidation
         if (url.Trim() != url)
             return TranslationHelper.GetString("spacenotallowed");
         return string.Empty;
+    }
+
+    public static bool CheckStringNotNull(string? st)
+    {
+        return !string.IsNullOrEmpty(st);
+    }
+
+    public static bool CheckInt(string? st)
+    {
+        if (!int.TryParse(st, out var res)) return false;
+        return !string.IsNullOrEmpty(st) && res >= 1;
     }
 }

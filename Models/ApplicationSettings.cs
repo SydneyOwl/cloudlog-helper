@@ -34,19 +34,21 @@ public enum ProgramShutdownMode
 public class ApplicationSettings : ReactiveValidationObject
 {
     /// <summary>
-    ///     Application-wide settings instance. Note this is not thread-safe.
+    ///     Instance in using.
     /// </summary>
-    private static ApplicationSettings? _uniqueInstance;
+    private static ApplicationSettings? _currentInstance;
+
+
+    /// <summary>
+    ///     Instance for settings window.
+    /// </summary>
+    public static ApplicationSettings? DraftInstance;
 
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    /// <summary>
-    ///     Instance used to restore settings if user clicked cancel, or to check any part of the settings changed.
-    /// </summary>
-    private ApplicationSettings _backupInstance;
 
     private ApplicationSettings()
     {
@@ -77,7 +79,7 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public ClublogSettings ClublogSettings { get; set; } = new();
-    
+
     /// <summary>
     ///     HamCQ settings.
     /// </summary>
@@ -95,16 +97,22 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public UDPServerSettings UDPSettings { get; set; } = new();
+    
+    /// <summary>
+    ///     QSA Settings
+    /// </summary>
+    [JsonProperty]
+    public QsoSyncAssistantSettings QsoSyncAssistantSettings { get; set; } = new();
 
 
     /// <summary>
     ///     Check if cloudlog configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsCloudlogConfChanged()
+    public bool IsCloudlogConfChanged(ApplicationSettings? compare)
     {
-        if (_backupInstance is null) return false;
-        var oldI = _backupInstance.CloudlogSettings;
+        if (compare is null) return false;
+        var oldI = compare.CloudlogSettings;
         var newI = CloudlogSettings;
         return !oldI.Equals(newI);
     }
@@ -113,22 +121,22 @@ public class ApplicationSettings : ReactiveValidationObject
     ///     Check if clublog configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsClublogConfChanged()
+    public bool IsClublogConfChanged(ApplicationSettings? compare)
     {
-        if (_backupInstance is null) return false;
-        var oldI = _backupInstance.ClublogSettings;
+        if (compare is null) return false;
+        var oldI = compare.ClublogSettings;
         var newI = ClublogSettings;
         return !oldI.Equals(newI);
     }
-    
+
     /// <summary>
     ///     Check if hamcq configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsHamCQConfChanged()
+    public bool IsHamCQConfChanged(ApplicationSettings? compare)
     {
-        if (_backupInstance is null) return false;
-        var oldI = _backupInstance.HamCQSettings;
+        if (compare is null) return false;
+        var oldI = compare.HamCQSettings;
         var newI = HamCQSettings;
         return !oldI.Equals(newI);
     }
@@ -137,10 +145,10 @@ public class ApplicationSettings : ReactiveValidationObject
     ///     Check if hamlib configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsHamlibConfChanged()
+    public bool IsHamlibConfChanged(ApplicationSettings? compare)
     {
-        if (_backupInstance is null) return false;
-        var oldI = _backupInstance.HamlibSettings;
+        if (compare is null) return false;
+        var oldI = compare.HamlibSettings;
         var newI = HamlibSettings;
         return !oldI.Equals(newI);
     }
@@ -149,10 +157,10 @@ public class ApplicationSettings : ReactiveValidationObject
     ///     Check if udp server configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsUDPConfChanged()
+    public bool IsUDPConfChanged(ApplicationSettings? compare)
     {
-        if (_backupInstance is null) return false;
-        var oldI = _backupInstance.UDPSettings;
+        if (compare is null) return false;
+        var oldI = compare.UDPSettings;
         var newI = UDPSettings;
         return !oldI.Equals(newI);
     }
@@ -164,7 +172,12 @@ public class ApplicationSettings : ReactiveValidationObject
     /// <returns></returns>
     public static ApplicationSettings GetInstance()
     {
-        return _uniqueInstance ??= new ApplicationSettings();
+        return _currentInstance ??= new ApplicationSettings();
+    }
+
+    public static ApplicationSettings GetDraftInstance()
+    {
+        return DraftInstance ??= new ApplicationSettings();
     }
 
     /// <summary>
@@ -175,12 +188,13 @@ public class ApplicationSettings : ReactiveValidationObject
         try
         {
             var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
-            _uniqueInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
+            _currentInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
+            DraftInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
             ClassLogger.Trace("Calling ->DeserializeObjectSettings successfully.");
         }
         catch (Exception e1)
         {
-            ClassLogger.Warn($"Failed to read settings: {e1.Message}; use default settings instead.");
+            ClassLogger.Warn(e1, "Failed to read settings; use default settings instead.");
             // simply ignore it
         }
     }
@@ -194,29 +208,36 @@ public class ApplicationSettings : ReactiveValidationObject
         try
         {
             File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this));
-            ClassLogger.Trace("Calling ->WriteCurrentSettingsToFile successfully.");
+            ClassLogger.Trace($"Calling ->WriteCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
         catch (Exception e1)
         {
-            ClassLogger.Error($"Failed to write settings: {e1.Message}");
+            ClassLogger.Error(e1, "Failed to write settings. Ignored.");
         }
     }
 
-
-    /// <summary>
-    ///     Deep clone current setting instance to _backupInstance.
-    /// </summary>
-    public void BackupSettings()
+    public ApplicationSettings DeepClone()
     {
-        _backupInstance = JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this))!;
+        return JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this))!;
     }
 
+    public void ApplySettings()
+    {
+        _currentInstance!.CloudlogSettings.ApplySettingsChange(CloudlogSettings);
+        _currentInstance!.ClublogSettings.ApplySettingsChange(ClublogSettings);
+        _currentInstance!.HamCQSettings.ApplySettingsChange(HamCQSettings);
+        _currentInstance!.HamlibSettings.ApplySettingsChange(HamlibSettings);
+        _currentInstance!.UDPSettings.ApplySettingsChange(UDPSettings);
+        // _settingsInstance = _currentInstance;
+    }
 
-    /// <summary>
-    ///     Restore settings using _uniqueInstance.
-    /// </summary>
     public void RestoreSettings()
     {
-        _uniqueInstance = _backupInstance;
+        CloudlogSettings.ApplySettingsChange(_currentInstance!.CloudlogSettings);
+        ClublogSettings.ApplySettingsChange(_currentInstance!.ClublogSettings);
+        HamCQSettings.ApplySettingsChange(_currentInstance!.HamCQSettings);
+        HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
+        UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);
+        // _settingsInstance = _currentInstance;
     }
 }

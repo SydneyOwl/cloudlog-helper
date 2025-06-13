@@ -46,7 +46,7 @@ public class CloudlogUtil
         }
         catch (Exception ex)
         {
-            ClassLogger.Warn($"Error GetCurrentServerInstanceType:{ex.Message}");
+            ClassLogger.Warn(ex, "Error GetCurrentServerInstanceType.");
             return ServerInstanceType.Unknown;
         }
     }

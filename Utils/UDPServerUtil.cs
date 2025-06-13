@@ -16,12 +16,12 @@ public class UDPServerUtil
     private static WsjtxUdpServer? _udpServer;
 
     private static UdpClient? _forwardedClient;
-    
+
     private static CancellationTokenSource _cts = new();
-    
+
     private static IPEndPoint _currentEndpoint;
-    
-    private static readonly object _syncLock = new object();
+
+    private static readonly object _syncLock = new();
 
     /// <summary>
     ///     Logger for the class.
@@ -57,7 +57,7 @@ public class UDPServerUtil
         }
         catch (Exception ex)
         {
-            ClassLogger.Error($"Failed to send message: {ex.Message}");
+            ClassLogger.Error(ex, "Failed to send message.");
             throw;
         }
     }
@@ -73,10 +73,10 @@ public class UDPServerUtil
             TerminateUDPServer();
             _cts = new CancellationTokenSource();
             // Small delay to ensure OS releases resources
-            await Task.Delay(500); 
+            await Task.Delay(500);
             ClassLogger.Debug("Asking udpserver to start.");
             _udpServer = new WsjtxUdpServer(
-                DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler,rawhandler),
+                DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler, rawhandler),
                 ip,
                 port,
                 logger: new UDPServerLogger(udpLogger));
@@ -84,7 +84,7 @@ public class UDPServerUtil
         }
         catch (Exception e)
         {
-            ClassLogger.Error($"Exception here: {e.Message}");
+            ClassLogger.Error(e, "Error starting udp.");
             udpLogger?.Invoke(LogLevel.Error, e.Message);
         }
     }
@@ -104,7 +104,7 @@ public class UDPServerUtil
         }
         catch (Exception e)
         {
-            ClassLogger.Warn($"Error occurred while shutting down udp server... {e.Message}");
+            ClassLogger.Warn(e, "Error occurred while shutting down udp server");
             // ignored...
         }
 

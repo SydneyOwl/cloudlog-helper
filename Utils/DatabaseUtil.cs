@@ -116,7 +116,7 @@ public class DatabaseUtil
         }
         catch (Exception e)
         {
-            ClassLogger.Warn($"Failed to initialize database: {e.Message}. Ignored.");
+            ClassLogger.Warn(e, "Failed to initialize database. Ignored.");
         }
         finally
         {
@@ -221,7 +221,7 @@ public class DatabaseUtil
         }
         catch (Exception e)
         {
-            ClassLogger.Warn($"Failed to InitAdifModesDatabase: {e.Message}. Ignored.");
+            ClassLogger.Warn(e, "Failed to InitAdifModesDatabase. Ignored.");
             // Console.WriteLine(e.Message);
             //ignored
         }
@@ -280,7 +280,7 @@ public class DatabaseUtil
         }
         catch (Exception e)
         {
-            ClassLogger.Warn($"Failed to InitPrefixAndCountryDataAsync: {e.Message}. Ignored.");
+            ClassLogger.Warn(e, "Failed to InitPrefixAndCountryDataAsync. Ignored.");
             // Console.WriteLine(e.Message);
             //ignored
         }

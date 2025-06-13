@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
+using CloudlogHelper.Validation;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -16,36 +16,26 @@ public class HamlibSettings : ReactiveValidationObject
 {
     public HamlibSettings()
     {
-        this.ValidationRule(x => x.SelectedRadio,
-            st => !string.IsNullOrEmpty(st),
+        this.ValidationRule(x => x.SelectedRigInfo,
+            st => st?.Id is not null,
             TranslationHelper.GetString("notnull")
         );
         this.ValidationRule(x => x.SelectedPort,
-            st => !string.IsNullOrEmpty(st),
+            SettingsValidation.CheckStringNotNull,
             TranslationHelper.GetString("notnull")
         );
         this.ValidationRule(x => x.ExternalRigctldHostAddress,
             IPAddrUtil.CheckAddress!,
             TranslationHelper.GetString("invalidaddr")
         );
-        this.ValidationRule(x => x.DebugServerAddress,
-            IPAddrUtil.CheckAddress!,
-            TranslationHelper.GetString("invalidaddr")
-        );
         this.ValidationRule(x => x.PollInterval,
-            st =>
-            {
-                if (!int.TryParse(st, out var res)) return false;
-                return !string.IsNullOrEmpty(st) && res >= 1;
-            },
+            SettingsValidation.CheckInt,
             TranslationHelper.GetString("pollintervalreq")
         );
     }
 
-    [Reactive] [JsonProperty] public string SelectedRadio { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public RigInfo? SelectedRigInfo { get; set; } = new();
     [Reactive] [JsonProperty] public string SelectedPort { get; set; } = string.Empty;
-
-    [Reactive] [JsonProperty] public Dictionary<string, string> KnownModels { get; set; } = new();
 
     [Reactive]
     [JsonProperty]
@@ -66,40 +56,49 @@ public class HamlibSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public string OverrideCommandlineArg { get; set; } = string.Empty;
 
     [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
-    [Reactive] [JsonProperty] public bool AllowDebugServer { get; set; }
-
-    [Reactive]
-    [JsonProperty]
-    public string DebugServerAddress { get; set; } = DefaultConfigs.DebugServerDefaultBindingAddress;
 
     [Reactive]
     [JsonProperty]
     public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
 
     public IObservable<bool> IsHamlibValid => this.WhenAnyValue(
-        x => x.SelectedRadio,
+        x => x.SelectedRigInfo,
         x => x.SelectedPort,
         x => x.PollInterval,
         x => x.ExternalRigctldHostAddress,
         x => x.UseExternalRigctld,
-        x => x.DebugServerAddress,
         x => x.OverrideCommandlineArg,
         x => x.UseRigAdvanced,
-        x => x.AllowDebugServer,
-        (a, b, c, d, e, f, g, h, i) =>
+        (a, b, c, e, f, g, h) =>
             !IsHamlibHasErrors()
     );
 
     public bool RestartHamlibNeeded(HamlibSettings oldSettings)
     {
-        return SelectedRadio != oldSettings.SelectedRadio || SelectedPort != oldSettings.SelectedPort ||
+        if (SelectedRigInfo is null) return true;
+        return !SelectedRigInfo.Equals(oldSettings.SelectedRigInfo) || SelectedPort != oldSettings.SelectedPort ||
                PollAllowed != oldSettings.PollAllowed ||
                UseRigAdvanced != oldSettings.UseRigAdvanced || DisablePTT != oldSettings.DisablePTT ||
                AllowExternalControl != oldSettings.AllowExternalControl ||
                OverrideCommandlineArg != oldSettings.OverrideCommandlineArg ||
-               UseExternalRigctld != oldSettings.UseExternalRigctld || AllowDebugServer != oldSettings.AllowDebugServer ||
-               DebugServerAddress != oldSettings.DebugServerAddress ||
+               UseExternalRigctld != oldSettings.UseExternalRigctld ||
                ExternalRigctldHostAddress != oldSettings.ExternalRigctldHostAddress;
+    }
+
+    public void ApplySettingsChange(HamlibSettings settings)
+    {
+        SelectedRigInfo = settings.SelectedRigInfo?.DeepClone();
+        SelectedPort = settings.SelectedPort;
+        PollInterval = settings.PollInterval;
+        PollAllowed = settings.PollAllowed;
+        ReportRFPower = settings.ReportRFPower;
+        ReportSplitInfo = settings.ReportSplitInfo;
+        UseRigAdvanced = settings.UseRigAdvanced;
+        DisablePTT = settings.DisablePTT;
+        AllowExternalControl = settings.AllowExternalControl;
+        OverrideCommandlineArg = settings.OverrideCommandlineArg;
+        UseExternalRigctld = settings.UseExternalRigctld;
+        ExternalRigctldHostAddress = settings.ExternalRigctldHostAddress;
     }
 
     private bool IsPropertyHasErrors(string propertyName)
@@ -107,37 +106,26 @@ public class HamlibSettings : ReactiveValidationObject
         return GetErrors(propertyName).Cast<string>().Any();
     }
 
-    public bool IsHamlibOK()
-    {
-        return !IsHamlibHasErrors();
-    }
-
     public bool IsHamlibHasErrors()
     {
         if (UseRigAdvanced)
-        {
             if (!string.IsNullOrEmpty(OverrideCommandlineArg))
-                if (IsPropertyHasErrors(nameof(SelectedRadio)))
+                if (SelectedRigInfo?.Id is null)
                     return true;
 
-            if (AllowDebugServer)
-                if (IsPropertyHasErrors(nameof(DebugServerAddress)))
-                    return true;
-        }
-
-        if (IsPropertyHasErrors(nameof(PollInterval))) return true;
+        if (!SettingsValidation.CheckInt(PollInterval)) return true;
 
         if (!UseExternalRigctld)
-            return IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort));
+            return SelectedRigInfo?.Id is null || !SettingsValidation.CheckStringNotNull(SelectedPort);
 
-        return IsPropertyHasErrors(nameof(ExternalRigctldHostAddress));
-
-        return false;
-        // return (UseRigAdvanced && (string.IsNullOrEmpty(OverrideCommandlineArg) || IsPropertyHasErrors(nameof(SelectedRadio)))) || 
-        //        ((IsPropertyHasErrors(nameof(SelectedRadio)) || IsPropertyHasErrors(nameof(SelectedPort)) || IsPropertyHasErrors(nameof(PollInterval))) && !UseExternalRigctld && !UseRigAdvanced) 
-        //        || (IsPropertyHasErrors(nameof(ExternalRigctldHostAddress)) && UseExternalRigctld) || IsPropertyHasErrors(nameof(SelectedRadio));
+        return !IPAddrUtil.CheckAddress(ExternalRigctldHostAddress);
     }
 
+
+    public HamlibSettings GetReference()
+    {
+        return this;
+    }
 
     public HamlibSettings DeepClone()
     {
@@ -146,14 +134,14 @@ public class HamlibSettings : ReactiveValidationObject
 
     protected bool Equals(HamlibSettings other)
     {
-        return SelectedRadio == other.SelectedRadio && SelectedPort == other.SelectedPort &&
+        return SelectedRigInfo != null &&
+               SelectedRigInfo.Equals(other.SelectedRigInfo) && SelectedPort == other.SelectedPort &&
                PollInterval == other.PollInterval && PollAllowed == other.PollAllowed &&
                ReportRFPower == other.ReportRFPower && ReportSplitInfo == other.ReportSplitInfo &&
                UseRigAdvanced == other.UseRigAdvanced && DisablePTT == other.DisablePTT &&
                AllowExternalControl == other.AllowExternalControl &&
                OverrideCommandlineArg == other.OverrideCommandlineArg &&
-               UseExternalRigctld == other.UseExternalRigctld && AllowDebugServer == other.AllowDebugServer &&
-               DebugServerAddress == other.DebugServerAddress &&
+               UseExternalRigctld == other.UseExternalRigctld &&
                ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
     }
 
@@ -168,7 +156,7 @@ public class HamlibSettings : ReactiveValidationObject
     public override int GetHashCode()
     {
         var hashCode = new HashCode();
-        hashCode.Add(SelectedRadio);
+        hashCode.Add(SelectedRigInfo);
         hashCode.Add(SelectedPort);
         hashCode.Add(PollInterval);
         hashCode.Add(PollAllowed);
@@ -179,8 +167,6 @@ public class HamlibSettings : ReactiveValidationObject
         hashCode.Add(AllowExternalControl);
         hashCode.Add(OverrideCommandlineArg);
         hashCode.Add(UseExternalRigctld);
-        hashCode.Add(AllowDebugServer);
-        hashCode.Add(DebugServerAddress);
         hashCode.Add(ExternalRigctldHostAddress);
         return hashCode.ToHashCode();
     }

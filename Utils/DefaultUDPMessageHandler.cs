@@ -17,7 +17,8 @@ public sealed class DefaultUDPMessageHandler : WsjtxUdpServerBaseAsyncMessageHan
     {
     }
 
-    public static DefaultUDPMessageHandler GenerateDefaultUDPMessageHandlerWithCallback(Action<WsjtxMessage>? callback, Action<Memory<byte>>? rawCallback)
+    public static DefaultUDPMessageHandler GenerateDefaultUDPMessageHandlerWithCallback(Action<WsjtxMessage>? callback,
+        Action<Memory<byte>>? rawCallback)
     {
         var defHandler = new DefaultUDPMessageHandler
         {
@@ -87,7 +88,7 @@ public sealed class DefaultUDPMessageHandler : WsjtxUdpServerBaseAsyncMessageHan
     }
 
     public override async Task HandleRawMessageAsync(WsjtxUdpServer server, Memory<byte> message, EndPoint endPoint,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = new())
     {
         _onRawMessageReceived?.Invoke(message);
         await base.HandleRawMessageAsync(server, message, endPoint, cancellationToken);

@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -19,7 +20,6 @@ using DynamicData.Binding;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using WsjtxUtilsPatch.WsjtxMessages;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -38,6 +38,23 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
 
     /// <summary>
+    ///     Settings for cloudlog.
+    /// </summary>
+    private readonly CloudlogSettings _extraCloudlogSettings =
+        ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
+
+    /// <summary>
+    ///     Settings for clublog.
+    /// </summary>
+    private readonly ClublogSettings _extraClublogSettings =
+        ApplicationSettings.GetInstance().ClublogSettings.GetReference();
+
+    /// <summary>
+    ///     Settings for hamcq.
+    /// </summary>
+    private readonly HamCQSettings _extraHamCQSettings = ApplicationSettings.GetInstance().HamCQSettings.GetReference();
+
+    /// <summary>
     ///     UDP Timeout watchdog.
     /// </summary>
     private readonly Subject<Unit> _heartbeatSubject = new();
@@ -46,6 +63,11 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     ///     check if this queue is empty. Reupload qso function is disabled if queue is not empty.
     /// </summary>
     private readonly BehaviorSubject<bool> _isUploadQueueEmpty;
+
+    /// <summary>
+    ///     Settings for UDPServer.
+    /// </summary>
+    private readonly UDPServerSettings _settings = ApplicationSettings.GetInstance().UDPSettings.GetReference();
 
     /// <summary>
     ///     To be uploaded QSOs queue.
@@ -61,31 +83,14 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private uint _allDecodedCount;
 
     /// <summary>
-    ///     Settings for cloudlog.
+    ///     Old Settings for UDPServer to check if a restart is needed.
     /// </summary>
-    private CloudlogSettings _extraCloudlogSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
-
-    /// <summary>
-    ///     Settings for clublog.
-    /// </summary>
-    private ClublogSettings _extraClublogSettings = ApplicationSettings.GetInstance().ClublogSettings.DeepClone();
-    
-    
-    /// <summary>
-    ///     Settings for clublog.
-    /// </summary>
-    private HamCQSettings _extraHamCQSettings = ApplicationSettings.GetInstance().HamCQSettings.DeepClone();
+    private UDPServerSettings _oldSettings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
 
     /// <summary>
     ///     The number of Qso made.
     /// </summary>
     private uint _qsosCount;
-
-
-    /// <summary>
-    ///     Settings for UDPServer.
-    /// </summary>
-    private UDPServerSettings _settings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
 
     public UDPLogInfoGroupboxViewModel()
     {
@@ -101,12 +106,8 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             _allQsos.Edit(innerList =>
             {
                 for (var i = innerList.Count - 1; i >= 0; i--)
-                {
                     if (innerList[i].Checked)
-                    {
                         innerList.RemoveAt(i);
-                    }
-                }
             });
         });
         RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);
@@ -133,12 +134,12 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 .Buffer(5, 1)
                 .Select(window => window.Average())
                 .Subscribe(avg => { QsAvgMin = $"{avg.ToString("0.00")}Qsos/min"; });
-            
+
             var filterObservable = this.WhenAnyValue(x => x.ShowFailedOnly)
-                .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail => 
-                    (detail.UploadStatus != UploadStatus.Success && showFailed) || 
+                .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail =>
+                    (detail.UploadStatus != UploadStatus.Success && showFailed) ||
                     !showFailed));
-            
+
             _allQsos.Connect()
                 .Filter(filterObservable)
                 .Sort(SortExpressionComparer<RecordedCallsignDetail>
@@ -161,19 +162,20 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                     innerList[i].Checked = false;
                                     continue;
                                 }
-                        
+
                             innerList[i].Checked = SelectAll;
                         }
                     });
                 }).DisposeWith(disposables);
 
-            RestartUdpCommand.ThrownExceptions.Subscribe(err => { SendMsgToParentVm(err.Message); })
+            RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) => 
+                    await ShowNotification.Handle(("Error",err.Message, NotificationType.Error)))
                 .DisposeWith(disposables);
 
-            UploadLogFromQueueCommand.ThrownExceptions.Subscribe(err => { SendMsgToParentVm(err.Message); })
+            UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) => await ShowNotification.Handle(("Error",err.Message, NotificationType.Error)))
                 .DisposeWith(disposables);
 
-            ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(err => { SendMsgToParentVm(err.Message); })
+            ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(async void (err) => await ShowNotification.Handle(("Error",err.Message, NotificationType.Error)))
                 .DisposeWith(disposables);
 
             // refresh cloudlog infos immediately if settings changed.
@@ -184,26 +186,11 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     if (x.Part == ChangedPart.UDPServer)
                     {
                         ClassLogger.Debug("Setting changed; updating udp");
-                        // // update settings cache
-                        var newSettings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
-                        WaitFirstConn = newSettings.EnableUDPServer;
-                        if (_settings.RestartUDPNeeded(newSettings))
-                        {
-                            _settings = newSettings;
-                            TryStartUdpService().DisposeWith(disposables);
-                        }
+                        WaitFirstConn = _settings.EnableUDPServer;
+                        if (_settings.RestartUDPNeeded(_oldSettings)) TryStartUdpService().DisposeWith(disposables);
 
-                        _settings = newSettings;
+                        _oldSettings = _settings.DeepClone();
                     }
-
-                    if (x.Part == ChangedPart.Cloudlog)
-                        _extraCloudlogSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
-
-                    if (x.Part == ChangedPart.Clublog)
-                        _extraClublogSettings = ApplicationSettings.GetInstance().ClublogSettings.DeepClone();
-                    
-                    if (x.Part == ChangedPart.HamCQ)
-                        _extraHamCQSettings = ApplicationSettings.GetInstance().HamCQSettings.DeepClone();
                 })
                 .DisposeWith(disposables);
             TryStartUdpService().DisposeWith(disposables);
@@ -243,7 +230,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         if (!_settings.EnableUDPServer)
         {
             UDPServerUtil.TerminateUDPServer();
-            SendMsgToParentVm("");
             return Disposable.Empty;
         }
 
@@ -254,7 +240,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private async Task _restartUdp()
     {
         ClassLogger.Debug("trying to start UDP...");
-        await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
+        // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
         // create a default handler here
         if (_settings.IsUDPConfigHasErrors())
         {
@@ -262,8 +248,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             WaitFirstConn = false;
             throw new Exception(TranslationHelper.GetString("invalidudpconf"));
         }
-
-        SendMsgToParentVm("");
 
         _ = UDPServerUtil.RestartUDPServerAsync(
             _settings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
@@ -330,7 +314,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private async Task _uploadQSOFromQueue()
     {
         while (true)
-        {
             try
             {
                 _isUploadQueueEmpty.OnNext(_uploadQueue.IsEmpty);
@@ -435,7 +418,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         }
                         catch (Exception ex)
                         {
-                            ClassLogger.Debug($"Qso uploaded failed:{ex.Message}.");
+                            ClassLogger.Debug(ex, "Qso uploaded failed.");
                             rcd.UploadStatus = UploadStatus.Fail;
                             rcd.FailReason = ex.Message;
                         }
@@ -444,13 +427,12 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             }
             catch (Exception st)
             {
-                ClassLogger.Error($"Error occurred while uploading qso data: {st.Message}. This is ignored.");
+                ClassLogger.Error(st, "Error occurred while uploading qso data. This is ignored.");
             }
             finally
             {
                 await Task.Delay(500);
             }
-        }
     }
 
     private string? _generateAdifFromRecordedCallsignDetail(RecordedCallsignDetail rcd)
@@ -479,7 +461,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ClassLogger.Debug($"Failed to parse:{e.Message}");
+            ClassLogger.Debug(e, "Failed to parse");
             return null;
         }
     }
@@ -489,14 +471,12 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         try
         {
             if (_settings.ForwardMessage)
-            {
                 // ClassLogger.Trace(message.DeserializeWsjtxMessage().MessageType);
                 await UDPServerUtil.ForwardMessageAsync(message, IPEndPoint.Parse(_settings.ForwardAddress));
-            }
-        } 
+        }
         catch (Exception e)
         {
-            ClassLogger.Error($"Failed to process wsjtxmsg: {e.Message}");
+            ClassLogger.Error(e, "Failed to process wsjtxmsg.");
         }
     }
 
@@ -538,13 +518,13 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ClassLogger.Error($"Failed to process wsjtxmsg: {e.Message}");
+            ClassLogger.Error(e, "Failed to process wsjtxmsg");
         }
     }
 
     private void _wsjtxMsgLogger(LogLevel level, string message)
     {
         if (level < LogLevel.Error) return;
-        SendMsgToParentVm(message);
+        ShowNotification.Handle(("Warning", message, NotificationType.Warning)).GetAwaiter().GetResult();
     }
 }

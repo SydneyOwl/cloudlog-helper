@@ -27,6 +27,7 @@ public class HamCQUtil
                 reqJson.Add("adif", adif);
                 reqJson.Add("app", DefaultConfigs.DefaultApplicationName);
             }
+
             // ClassLogger.Trace(reqJson.ToString());
             var result = await DefaultConfigs.HamCQQsoUploadEndpoint
                 .AllowHttpStatus(406)
@@ -37,7 +38,7 @@ public class HamCQUtil
             var responseText = await result.GetStringAsync();
             var code = result.StatusCode;
             ClassLogger.Debug($"Got response from `TestHamCQConnectionAsync`: {code} {responseText}");
-            if (responseText == "Pass")return string.Empty;
+            if (responseText == "Pass") return string.Empty;
             var res = JsonConvert.DeserializeObject<JObject>(responseText);
             if (res is null) return $"HamCQ Error: {TranslationHelper.GetString("invalidapikey")}({responseText})";
             return $"HamCQ Error: {TranslationHelper.GetString("invalidapikey")} ({res["message"]})";

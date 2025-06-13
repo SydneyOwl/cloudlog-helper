@@ -142,13 +142,14 @@ Here’s how to set it up (using Windows 7 as an example):
 #### ⚙️ UDP Server Settings
 
 | Setting                      | Description                                                  |
-| ---------------------------- | ------------------------------------------------------------ |
+|------------------------------| ------------------------------------------------------------ |
 | Enable UDP server            | Start a UDP server to receive QSO data from third-party software. |
 | Port number                  | UDP server port.                                             |
 | Allow external connections   | Allow requests from non-localhost devices.                   |
 | Auto-upload QSOs to Cloudlog | Automatically upload received QSOs to the specified Cloudlog server. |
 | Auto-upload QSOs to Clublog  | Automatically upload received QSOs to the specified Clublog server. |
 | QSO upload retry attempts    | Number of retries for failed QSO uploads.                    |
+| Forward UDP packets          |Forward received UDP packets to specified UDP server, such as GridTracker. |
 
 ## 🛠️ Compilation
 

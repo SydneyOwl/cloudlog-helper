@@ -31,19 +31,4 @@ public class AdifUtil
         adif.Append("<eor>");
         return adif.ToString();
     }
-    // <call:6>****
-// <gridsquare:4>***
-// <mode:4>MFSK
-// <submode:3>FT4
-// <rst_sent:3>+08
-// <rst_rcvd:3>-11
-// <qso_date:8>20241104
-// <time_on:6>073752
-// <qso_date_off:8>20241104
-// <time_off:6>073822
-// <band:3>10m
-// <freq:9>28.181414
-// <station_callsign:6>***
-// <my_gridsquare:4>***
-// <comment:17>Distance: *** km <eor>
 }

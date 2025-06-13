@@ -18,10 +18,10 @@
     <Design.DataContext>
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
+    
     <Window.Resources>
         <converters:BoolToColorConverter x:Key="BoolToColor" />
     </Window.Resources>
-
 
     <StackPanel>
         <!-- menu -->
@@ -53,6 +53,20 @@
                                 <MenuItem.Icon>
                                     <Image Width="32" Height="32"
                                            Source="avares://CloudlogHelper/Assets/MenuImgs/Dark.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.tools}}">
+                            <MenuItem.Icon>
+                                <Image Width="32" Height="32"
+                                       Source="avares://CloudlogHelper/Assets/MenuImgs/Tool.png" />
+                            </MenuItem.Icon>
+                            <MenuItem Header="{I18N {x:Static resources:LangKeys.qsoassistant}}"
+                                      Command="{Binding OpenQSOAssistantWindow}">
+                                <MenuItem.Icon>
+                                    <Image Width="32" Height="32"
+                                           Source="avares://CloudlogHelper/Assets/MenuImgs/QsoAssistant.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
@@ -103,19 +117,12 @@
             </Grid>
         </StackPanel>
 
-        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
-            <userControls:ClosableErrorPanelUserControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
-                                                        DataContext="{Binding CloudlogErrorPanelVM}" />
-            <userControls:ClosableErrorPanelUserControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
-                                                        DataContext="{Binding RigDataErrorPanelVM }" />
-            <userControls:ClosableErrorPanelUserControl Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"
-                                                        DataContext="{Binding UDPLogErrorPanelVM }" />
-
-            <userControls:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="3"
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+            <userControls:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="0"
                                                            DataContext="{Binding UserBasicDataGroupboxVM}" />
-            <userControls:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="4"
+            <userControls:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="1"
                                                      DataContext="{Binding RigDataGroupboxVM}" />
-            <userControls:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="3" Grid.RowSpan="2"
+            <userControls:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                                                         DataContext="{Binding UDPLogInfoGroupboxVm}" />
         </Grid>
     </StackPanel>

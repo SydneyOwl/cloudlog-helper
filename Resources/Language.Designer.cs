@@ -848,5 +848,29 @@ namespace CloudlogHelper.Resources {
                 return ResourceManager.GetString("forwardto", resourceCulture);
             }
         }
+        
+        public static string advancedsettings {
+            get {
+                return ResourceManager.GetString("advancedsettings", resourceCulture);
+            }
+        }
+        
+        public static string udpserver {
+            get {
+                return ResourceManager.GetString("udpserver", resourceCulture);
+            }
+        }
+        
+        public static string tools {
+            get {
+                return ResourceManager.GetString("tools", resourceCulture);
+            }
+        }
+        
+        public static string qsoassistant {
+            get {
+                return ResourceManager.GetString("qsoassistant", resourceCulture);
+            }
+        }
     }
 }

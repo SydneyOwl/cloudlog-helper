@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -22,7 +23,7 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
 
     private readonly ReactiveCommand<Unit, Unit> _pollCommand;
 
-    private CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
+    private readonly CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
     public UserBasicDataGroupboxViewModel()
     {
@@ -38,19 +39,23 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
                 .Subscribe(x =>
                 {
                     ClassLogger.Debug("Setting changed; updating cloudlog info");
-                    // update settings cache
-                    _settings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
                     // _ = _refreshUserBasicData();
                     Observable.Return(Unit.Default) // 触发信号
+                        .Delay(TimeSpan.FromMilliseconds(500))
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
                     // SendMsgToParentVm("");
                 })
                 .DisposeWith(disposables);
 
-            _pollCommand.ThrownExceptions.Subscribe(err =>
+            _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
-                    SendMsgToParentVm(err.Message);
+                    OP = TranslationHelper.GetString("unknown");
+                    GridSquare = TranslationHelper.GetString("unknown");
+                    QsToday = TranslationHelper.GetString("unknown");
+                    QsMonth = TranslationHelper.GetString("unknown");
+                    QsYear = TranslationHelper.GetString("unknown");
+                    await ShowNotification.Handle(("Error", err.Message, NotificationType.Error));
                     // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
                 .DisposeWith(disposables);
@@ -73,7 +78,7 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
 
     private async Task _refreshUserBasicData()
     {
-        await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
+        // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
         ClassLogger.Debug("Refreshing userbasic data....");
         if (_settings.IsCloudlogHasErrors())
             throw new Exception(TranslationHelper.GetString("confcloudlogfirst"));
@@ -101,12 +106,5 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
         QsToday = statistic.Value.Today;
         QsMonth = statistic.Value.MonthQsos;
         QsYear = statistic.Value.YearQsos;
-
-        // check if avg qso datas is ready for us
-        // todo since adif report system is not ready yet
-
-
-        // told parent vm cloudlog has no errors!
-        SendMsgToParentVm("");
     }
 }

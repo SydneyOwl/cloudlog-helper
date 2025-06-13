@@ -27,7 +27,7 @@
                        TextTrimming="CharacterEllipsis"
                        Margin="20,0,20,0"
                        TextWrapping="Wrap"
-                       Grid.Column="1"/>
+                       Grid.Column="1" />
             <Button Grid.Column="2"
                     Background="Transparent"
                     Command="{Binding CloseErrorPanelCommand}">

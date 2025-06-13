@@ -11,9 +11,17 @@ public class ClublogSettings : ReactiveObject
     [Reactive] [JsonProperty] public string ClublogPassword { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public string ClublogEmail { get; set; } = string.Empty;
 
-    public ClublogSettings DeepClone()
+    public void ApplySettingsChange(ClublogSettings settings)
     {
-        return JsonConvert.DeserializeObject<ClublogSettings>(JsonConvert.SerializeObject(this))!;
+        ClublogCallsign = settings.ClublogCallsign;
+        ClublogPassword = settings.ClublogPassword;
+        ClublogEmail = settings.ClublogEmail;
+    }
+
+    public ClublogSettings GetReference()
+    {
+        return this;
+        // return JsonConvert.DeserializeObject<ClublogSettings>(JsonConvert.SerializeObject(this))!;
     }
 
     public bool IsClublogHasErrors()

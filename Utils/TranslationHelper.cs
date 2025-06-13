@@ -47,7 +47,7 @@ public class TranslationHelper
         }
         catch (Exception ex)
         {
-            ClassLogger.Warn($"Failed to detect default language: {ex.Message}. Using english instead.");
+            ClassLogger.Warn(ex, "Failed to detect default language. Using english instead.");
         }
 
         return SupportedLanguage.English;

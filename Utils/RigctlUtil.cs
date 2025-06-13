@@ -503,17 +503,25 @@ public class RigctldUtil
     /// </summary>
     /// <param name="rawOutput">The raw output string from hamlib.</param>
     /// <returns>Dictionary mapping model names to their IDs.</returns>
-    public static Dictionary<string, string> ParseAllModelsFromRawOutput(string rawOutput)
+    public static List<RigInfo> ParseAllModelsFromRawOutput(string rawOutput)
     {
-        var result = new Dictionary<string, string>();
-        foreach (var se in rawOutput.Split("\n", StringSplitOptions.RemoveEmptyEntries))
-        {
-            if (se.Contains("Rig #")) continue;
-            var tmp = se.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (tmp.Length != 6) continue;
-            if (string.IsNullOrEmpty(tmp[0]) || string.IsNullOrEmpty(tmp[2])) continue;
-            result[tmp[2]] = tmp[0];
-        }
+        var result = new List<RigInfo>();
+        // Dynamically calculate extraction length based on the header row
+        using var tmp = rawOutput.Split("\n", StringSplitOptions.RemoveEmptyEntries).AsEnumerable().GetEnumerator();
+        while (tmp.MoveNext())
+            if (tmp.Current.Contains("Rig #"))
+                break;
+
+        var columnBounds = RigListParser.GetColumnBounds(tmp.Current);
+        while (tmp.MoveNext())
+            try
+            {
+                result.Add(RigListParser.ParseRigLine(tmp.Current, columnBounds));
+            }
+            catch (Exception e)
+            {
+                ClassLogger.Warn(e, "Failed to parse line {tmp.Current}");
+            }
 
         return result;
     }
@@ -609,8 +617,9 @@ public class RigctldUtil
             _backgroundProcess?.Dispose();
             _backgroundProcess = null;
         }
-        catch
+        catch (Exception ex)
         {
+            ClassLogger.Warn(ex, "Failed to terminate process.");
             // ignored
         }
     }
@@ -628,8 +637,9 @@ public class RigctldUtil
             _onetimeRigctldClient?.Dispose();
             _onetimeRigctldClient = null;
         }
-        catch
+        catch (Exception ex)
         {
+            ClassLogger.Warn(ex, "Failed to terminate process.");
             // ignored
         }
     }

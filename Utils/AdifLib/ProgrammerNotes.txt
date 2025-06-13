@@ -1,0 +1,36 @@
+﻿Programmer's Notes for ADIFLib
+
+Classes
+ADIF -			This represents an ADIF file or collection of ADIFQSO items.
+ADIFQSO -		This represents an ADIF QSO item.  Basically, this is a single
+				detail line in an ADIF file.
+ADIFQSOCollection - Collection of ADIFQSOs.
+ADIFHeader -	This represents the ADIF header.
+Token -			Class specifically meant to represent, parse and export a single 
+				ADIF token.  What is an adif token?  Simple, it is a single unit of 
+				information within an ADIF record.  For example, <CALL:4>NV9U   This is
+				an ADIF token.
+TokenCollection - List of Tokens.
+
+
+----------------------------------------------------------------------------------------------
+Class Heirarchy
+ADIF
+	ADIFHeader
+		TokenCollection
+			Token
+	ADIFQSOCollection
+		ADIFQSO
+			TokenCollection
+				Token
+----------------------------------------------------------------------------------------------
+Conventions
+Private properties that have a public presentation should begin with an underscore.
+
+
+20191012 -	This is really ADIFLib version 2.  Why?  Version 1 was getting far too top heavy.  
+			The focus of the first attempt seemed to be aiming twards validation of the 
+			ADIF structure and data.  After considerable work, I realized the initial focus
+			should have been on parsing, import and export.  This top-heavy version seemed to
+			be collapsing under the weight of validation, where parsing, import and export
+			seemed to be drowning.  RIP version 1, welcome version 2.

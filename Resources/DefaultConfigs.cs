@@ -31,6 +31,12 @@ public class DefaultConfigs
     ///     Default timeout (in seconds) for HTTP(s) requests.
     /// </summary>
     public static readonly int DefaultRequestTimeout = 10;
+    
+    
+    /// <summary>
+    ///     Default timeout (in seconds) for QSODownload HTTP(s) requests.
+    /// </summary>
+    public static readonly int QSODownloadRequestTimeout = 30;
 
     /// <summary>
     ///     Timeout (in seconds) for polling Cloudlog API (CloudlogKeyStationStatisticsAPIEndpoint).
@@ -46,11 +52,16 @@ public class DefaultConfigs
     ///     Default ua for our application.
     /// </summary>
     public static string DefaultHTTPUserAgent = $"CloudlogHelper/{VersionInfo.Version}";
-    
+
     /// <summary>
     ///     Default name for our application.
     /// </summary>
     public static string DefaultApplicationName = $"CloudlogHelper {VersionInfo.Version}";
+    
+    /// <summary>
+    ///     QSOSampleCountChoice
+    /// </summary>
+    public static List<int> QSOSampleCountChoice = new(){50,100,200,500,1000};
 
     /// <summary>
     ///     API endpoint for Checking whether this is a wavelog instance or not (by checking manifest.json)
@@ -62,6 +73,21 @@ public class DefaultConfigs
     ///     API endpoint for interacting with QSO (log entry) data in Cloudlog.
     /// </summary>
     public static string CloudlogQSOAPIEndpoint = "/index.php/api/qso/";
+    
+    /// <summary>
+    ///     API endpoint for login Cloudlog.
+    /// </summary>
+    public static string CloudlogLoginEndpoint = "/index.php/user/login";
+    
+    /// <summary>
+    ///     API endpoint for Cloudlog settings.
+    /// </summary>
+    public static string CloudlogDashboardEndpoint = "/index.php/dashboard";
+    
+    /// <summary>
+    ///     API endpoint for fetching recent qsos.
+    /// </summary>
+    public static string CloudlogQSOAdvancedEndpoint = "/index.php/logbookadvanced/search";
 
     /// <summary>
     ///     API endpoint for testing authentication keys in Cloudlog.
@@ -94,7 +120,7 @@ public class DefaultConfigs
     public static readonly string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
     /// <summary>
-    /// QSO Upload api endpoint for hamcq
+    ///     QSO Upload api endpoint for hamcq
     /// </summary>
     public static readonly string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
@@ -132,7 +158,7 @@ public class DefaultConfigs
     ///     - Set to 0 to disable logging rigctld output.
     ///     - Set to -1 to continuously rediect stdout and stderr of rigctld to console.
     /// </remarks>
-    public static readonly int MaxRigctldOutputLineCount = 200;
+    public static readonly int MaxRigctldOutputLineCount = 0;
 
     /// <summary>
     ///     Default port number of proxy server.

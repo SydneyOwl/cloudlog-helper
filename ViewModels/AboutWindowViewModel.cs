@@ -29,7 +29,7 @@ public class AboutWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ClassLogger.Error(e.Message);
+            ClassLogger.Error(e);
         }
     }
 }

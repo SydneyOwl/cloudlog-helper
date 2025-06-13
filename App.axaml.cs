@@ -10,6 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using CloudlogHelper.Views;
 using NLog;
 using ReactiveUI;
 using ErrorReportWindow = CloudlogHelper.Views.ErrorReportWindow;
@@ -46,7 +47,7 @@ public class App : Application
                         return;
                     }
 
-            var mainWindow = new MainWindow
+            var mainWindow = new MainWindow()
             {
                 ViewModel = new MainWindowViewModel()
             };
@@ -87,7 +88,7 @@ public class App : Application
             catch (Exception ex)
             {
                 // this may fail on Windows 7
-                ClassLogger.Warn(ex.Message);
+                ClassLogger.Warn(ex);
             }
         }
 

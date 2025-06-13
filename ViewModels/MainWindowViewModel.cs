@@ -29,6 +29,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(OpenWindow<SettingsWindowViewModel>);
         OpenAboutWindow = ReactiveCommand.CreateFromTask(OpenWindow<AboutWindowViewModel>);
+        OpenQSOAssistantWindow = ReactiveCommand.CreateFromTask(OpenWindow<QsoSyncAssistantViewModel>);
         SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
 
@@ -39,15 +40,6 @@ public class MainWindowViewModel : ViewModelBase
         //subscribe exception obsflows!
         this.WhenActivated(disposables =>
         {
-            UserBasicDataGroupboxVM.MessageStream.Subscribe(errstr => { CloudlogErrorPanelVM.ErrorMessage = errstr; })
-                .DisposeWith(disposables);
-
-            RigDataGroupboxVM.MessageStream.Subscribe(errstr => { RigDataErrorPanelVM.ErrorMessage = errstr; })
-                .DisposeWith(disposables);
-
-            UDPLogInfoGroupboxVm.MessageStream.Subscribe(errstr => { UDPLogErrorPanelVM.ErrorMessage = errstr; })
-                .DisposeWith(disposables);
-
             MessageBus.Current.Listen<SettingsChanged>().Subscribe(res =>
             {
                 switch (res.Part)
@@ -82,16 +74,13 @@ public class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> OpenSettingsWindow { get; }
 
     public ReactiveCommand<Unit, Unit> OpenAboutWindow { get; }
+    public ReactiveCommand<Unit, Unit> OpenQSOAssistantWindow { get; }
     public ReactiveCommand<Unit, Unit> SwitchLightTheme { get; }
     public ReactiveCommand<Unit, Unit> SwitchDarkTheme { get; }
 
     public UserBasicDataGroupboxViewModel UserBasicDataGroupboxVM { get; set; }
     public RIGDataGroupboxViewModel RigDataGroupboxVM { get; set; }
     public UDPLogInfoGroupboxViewModel UDPLogInfoGroupboxVm { get; set; }
-
-    public ClosableErrorPanelViewModel CloudlogErrorPanelVM { get; set; } = new();
-    public ClosableErrorPanelViewModel RigDataErrorPanelVM { get; set; } = new();
-    public ClosableErrorPanelViewModel UDPLogErrorPanelVM { get; set; } = new();
 
     private async Task OpenWindow<T>() where T : ViewModelBase, new()
     {
@@ -166,7 +155,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception a)
         {
-            ClassLogger.Error(a.Message);
+            ClassLogger.Error(a);
             CurrentRigctldAddress = "(?)";
         }
     }

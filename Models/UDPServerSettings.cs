@@ -3,7 +3,6 @@ using System.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
@@ -44,13 +43,27 @@ public class UDPServerSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public bool AutoUploadQSOToCloudlog { get; set; } = true;
     [Reactive] [JsonProperty] public bool AutoUploadQSOToClublog { get; set; }
-    
+
     [Reactive] [JsonProperty] public bool AutoUploadQSOToHamCQ { get; set; }
 
     [Reactive] [JsonProperty] public string RetryCount { get; set; } = "3";
-    
+
     [Reactive] [JsonProperty] public bool ForwardMessage { get; set; }
     [Reactive] [JsonProperty] public string ForwardAddress { get; set; }
+
+
+    public void ApplySettingsChange(UDPServerSettings settings)
+    {
+        EnableUDPServer = settings.EnableUDPServer;
+        EnableConnectionFromOutside = settings.EnableConnectionFromOutside;
+        UDPPort = settings.UDPPort;
+        AutoUploadQSOToCloudlog = settings.AutoUploadQSOToCloudlog;
+        AutoUploadQSOToClublog = settings.AutoUploadQSOToClublog;
+        AutoUploadQSOToHamCQ = settings.AutoUploadQSOToHamCQ;
+        RetryCount = settings.RetryCount;
+        ForwardMessage = settings.ForwardMessage;
+        ForwardAddress = settings.ForwardAddress;
+    }
 
     public bool RestartUDPNeeded(UDPServerSettings oldSettings)
     {
@@ -69,14 +82,26 @@ public class UDPServerSettings : ReactiveValidationObject
         return IsPropertyHasErrors(nameof(UDPPort)) || IsPropertyHasErrors(nameof(RetryCount));
     }
 
+    public UDPServerSettings GetReference()
+    {
+        return this;
+        // return JsonConvert.DeserializeObject<UDPServerSettings>(JsonConvert.SerializeObject(this))!;
+    }
+
     public UDPServerSettings DeepClone()
     {
+        // return this;
         return JsonConvert.DeserializeObject<UDPServerSettings>(JsonConvert.SerializeObject(this))!;
     }
 
     protected bool Equals(UDPServerSettings other)
     {
-        return EnableUDPServer == other.EnableUDPServer && EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort && AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog && AutoUploadQSOToClublog == other.AutoUploadQSOToClublog && AutoUploadQSOToHamCQ == other.AutoUploadQSOToHamCQ && RetryCount == other.RetryCount && ForwardMessage == other.ForwardMessage && ForwardAddress == other.ForwardAddress;
+        return EnableUDPServer == other.EnableUDPServer &&
+               EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort &&
+               AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog &&
+               AutoUploadQSOToClublog == other.AutoUploadQSOToClublog &&
+               AutoUploadQSOToHamCQ == other.AutoUploadQSOToHamCQ && RetryCount == other.RetryCount &&
+               ForwardMessage == other.ForwardMessage && ForwardAddress == other.ForwardAddress;
     }
 
     public override bool Equals(object? obj)

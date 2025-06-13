@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -23,9 +24,20 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
+    ///     Settings for cloudlog
+    /// </summary>
+    private readonly CloudlogSettings
+        _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
+
+    /// <summary>
     ///     Command for polling data(mode and frequency)
     /// </summary>
     private readonly ReactiveCommand<Unit, Unit> _pollCommand;
+
+    /// <summary>
+    ///     Settings for hamlib.
+    /// </summary>
+    private readonly HamlibSettings _settings = ApplicationSettings.GetInstance().HamlibSettings.GetReference();
 
     /// <summary>
     ///     observable sequence. Whether to cancel the timer or not.
@@ -33,24 +45,20 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     private Subject<Unit> _cancel;
 
     /// <summary>
-    ///     Settings for cloudlog
-    /// </summary>
-    private CloudlogSettings _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
-
-    /// <summary>
-    ///     Accumulative failed times.
-    /// </summary>
-    private int _failedTimes;
-
-    /// <summary>
     ///     whether to call _restartRigctldStrict or not.
     /// </summary>
     private bool _holdRigUpdate;
 
+
     /// <summary>
-    ///     Settings for hamlib.
+    ///     Old Settings for hamlib. Used for checking if rigctl restart is needed.
     /// </summary>
-    private HamlibSettings _settings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
+    private HamlibSettings _oldSettings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
+
+    /// <summary>
+    ///     Accumulative rig connection failed times.
+    /// </summary>
+    private int _rigConnFailedTimes;
 
     public RIGDataGroupboxViewModel()
     {
@@ -63,17 +71,13 @@ public class RIGDataGroupboxViewModel : ViewModelBase
             MessageBus.Current.Listen<SettingsChanged>()
                 .SelectMany(async x =>
                 {
-                    ClassLogger.Trace("Setting changed; updating hamlib info");
-                    _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.DeepClone();
-                    var newSettings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
                     if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
 
                     if (x.Part == ChangedPart.Hamlib)
                     {
-                        if (newSettings.RestartHamlibNeeded(_settings))
+                        ClassLogger.Trace("Setting changed; updating hamlib info");
+                        if (_settings.RestartHamlibNeeded(_oldSettings))
                         {
-                            _settings = newSettings;
-                            SendMsgToParentVm("");
                             _resetStatus();
                             // check if we can start rigctld
                             if (_settings is { UseExternalRigctld: false })
@@ -81,19 +85,19 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                             else
                                 RigctldUtil.TerminateBackgroundProcess();
                         }
-                        
-                        _settings = newSettings;
+
+                        _oldSettings = _settings.DeepClone();
                     }
 
                     if (x.Part == ChangedPart.NothingJustClosed)
                     {
+                        _rigConnFailedTimes = 0;
                         _holdRigUpdate = false;
-                        if (!newSettings.PollAllowed)
-                        {
+                        if (!_settings.PollAllowed)
                             // shut every service down
                             RigctldUtil.CleanUp();
-                        }
                     }
+
                     return Unit.Default;
                 })
                 .Subscribe(_ =>
@@ -110,34 +114,37 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 {
                     try
                     {
-                        _defaultExceptionHandler(err.Message);
-                        if (_failedTimes++ >= DefaultConfigs.MaxRigctldErrorCount)
+                        await _defaultExceptionHandler(err.Message);
+                        if (_rigConnFailedTimes++ >= DefaultConfigs.MaxRigctldErrorCount)
                         {
                             // avoid following errors
-                            _failedTimes = int.MinValue;
+                            _rigConnFailedTimes = int.MinValue;
+                            _resetStatus();
+                            _disposeAllTimers();
                             // popup!
                             var choice = await ShowAskForRetryMessageBox.Handle(Unit.Default);
                             switch (choice)
                             {
                                 case "Retry":
-                                    _disposeAllTimers();
+                                    _rigConnFailedTimes = 0;
                                     await _restartRigctldStrict(false);
+                                    Observable.Return(Unit.Default)
+                                        .InvokeCommand(_pollCommand)
+                                        .DisposeWith(disposables);
                                     _createNewTimer().DisposeWith(disposables);
                                     break;
                                 case "Open Settings":
                                     await OpenSettingsWindow.Handle(Unit.Default);
                                     break;
                                 case "Cancel":
-                                    return;
+                                    break;
                             }
-
-                            _failedTimes = 0;
                         }
                     }
                     catch (Exception e)
                     {
                         // nested exception..
-                        ClassLogger.Error(e.Message);
+                        ClassLogger.Error(e);
                     }
                 })
                 .DisposeWith(disposables);
@@ -160,8 +167,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     ///     Open messagebox in view.
     /// </summary>
     public Interaction<Unit, string> ShowAskForRetryMessageBox { get; } = new();
-
-
+    
     /// <summary>
     ///     Open settings in view.
     /// </summary>
@@ -223,14 +229,14 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         NextUploadTime = TranslationHelper.GetString("unknown");
     }
 
-    private void _defaultExceptionHandler(string exceptionMsg)
+    private async Task _defaultExceptionHandler(string exceptionMsg)
     {
         UploadStatus = TranslationHelper.GetString("failed");
         CurrentRxFrequency = "ERROR";
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
         CurrentRxMode = string.Empty;
-        SendMsgToParentVm(exceptionMsg);
+        await ShowNotification.Handle(("Error",exceptionMsg, NotificationType.Error));
         ClassLogger.Error(exceptionMsg);
     }
 
@@ -238,16 +244,24 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     {
         ClassLogger.Trace("Refreshing hamlib data....");
 
+        if (_rigConnFailedTimes < 0)
+        {
+            ClassLogger.Trace("Waiting for user choice. ignored poll sir.");
+            return;
+        }
+
         if (!_settings.PollAllowed)
         {
-            _failedTimes = 0;
+            _rigConnFailedTimes = 0;
             ClassLogger.Trace("Poll disabled. ignore....");
             return;
         }
 
+        // ClassLogger.Debug($"Let's see if its really? {_settings.SelectedRigInfo.ToString()}");
+
         if (_settings.IsHamlibHasErrors())
         {
-            _failedTimes = 0;
+            _rigConnFailedTimes = 0;
             throw new Exception(TranslationHelper.GetString("confhamlibfirst"));
         }
 
@@ -268,20 +282,30 @@ public class RIGDataGroupboxViewModel : ViewModelBase
 
         IsSplit = allInfo.IsSplit;
 
+        _rigConnFailedTimes = 0;
+
         // freq read from hamlib is already in hz!
         if (!_extraSettings.IsCloudlogHasErrors())
         {
-            var result = await CloudlogUtil.UploadRigInfoAsync(_extraSettings.CloudlogUrl,
-                _extraSettings.CloudlogApiKey,
-                _settings.SelectedRadio, allInfo);
-            if (result.Status == "success")
+            try
             {
-                UploadStatus = TranslationHelper.GetString("success");
+                var result = await CloudlogUtil.UploadRigInfoAsync(_extraSettings.CloudlogUrl,
+                    _extraSettings.CloudlogApiKey,
+                    _settings.SelectedRigInfo!.Model!, allInfo);
+                if (result.Status == "success")
+                {
+                    UploadStatus = TranslationHelper.GetString("success");
+                }
+                else
+                {
+                    UploadStatus = TranslationHelper.GetString("failed");
+                    ClassLogger.Warn($"Failed to update rig info: {result.Reason}");
+                }
             }
-            else
+            catch (Exception ex)
             {
                 UploadStatus = TranslationHelper.GetString("failed");
-                ClassLogger.Warn($"Failed to update rig info: {result.Reason}");
+                ClassLogger.Warn(ex, "Failed to upload rig info");
             }
         }
         else
@@ -289,14 +313,6 @@ public class RIGDataGroupboxViewModel : ViewModelBase
             UploadStatus = TranslationHelper.GetString("failed");
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
         }
-
-        // then, start tcp proxy server.
-        // await _restartTCPServer();
-
-        _failedTimes = 0;
-
-        // told parent vm cloudlog has no errors!
-        SendMsgToParentVm("");
     }
 
     private IDisposable _createNewTimer()
@@ -304,15 +320,21 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         ClassLogger.Trace("Creating new rig timer...");
         _cancel.OnNext(Unit.Default);
 
+        if (!int.TryParse(_settings.PollInterval, out var pollInterval))
+        {
+            ClassLogger.Warn(
+                $"Failed to parse poll interval: {_settings.PollInterval}. Using default value {DefaultConfigs.RigctldDefaultPollingInterval}.");
+            pollInterval = DefaultConfigs.RigctldDefaultPollingInterval;
+        }
+
         return Observable.Defer(() =>
             {
-                var pollInterval = int.Parse(_settings.PollInterval);
                 return Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
                     .Select(x => pollInterval - (int)x - 1)
                     .TakeWhile(sec => sec >= 0)
                     .Do(sec =>
                     {
-                        if (!_settings.PollAllowed) return;
+                        if (!_settings.PollAllowed || _rigConnFailedTimes < 0) return;
                         if (sec == 0)
                         {
                             NextUploadTime = TranslationHelper.GetString("gettinginfo");
@@ -343,16 +365,16 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     {
         ClassLogger.Trace("trying to restart rigctld..");
         if (!_settings.IsHamlibHasErrors())
-        {
-            var myRig = _settings.SelectedRadio;
-            if (_settings.KnownModels.TryGetValue(myRig, out var id))
+            if (!string.IsNullOrEmpty(_settings.SelectedRigInfo?.Id))
             {
-                var defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(id, _settings.SelectedPort);
+                var defaultArgs =
+                    RigctldUtil.GenerateRigctldCmdArgs(_settings.SelectedRigInfo.Id, _settings.SelectedPort);
 
                 if (_settings.UseRigAdvanced)
                 {
                     if (string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
-                        defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(id, _settings.SelectedPort,
+                        defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(_settings.SelectedRigInfo.Id,
+                            _settings.SelectedPort,
                             _settings.DisablePTT,
                             _settings.AllowExternalControl);
                     else
@@ -361,7 +383,6 @@ public class RIGDataGroupboxViewModel : ViewModelBase
 
                 return (await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs, ignoreIfRunning)).Item1;
             }
-        }
 
         ClassLogger.Debug("Errors in hamlib confs. Shutting down rigctld and ignoring _restartRigctldStrict");
         RigctldUtil.TerminateBackgroundProcess();

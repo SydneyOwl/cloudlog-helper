@@ -2,7 +2,6 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.VisualTree;
@@ -28,11 +27,10 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
         this.WhenActivated(disposables =>
         {
             // seems like linux does not support dpi reading...
-            if (!Design.IsDesignMode && !RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                var screen = Screens.ScreenFromVisual(this);
+            if (!Design.IsDesignMode)
                 try
                 {
+                    var screen = Screens.ScreenFromVisual(this);
                     if (screen == null)
                     {
                         ClassLogger.Warn("Current window is not on any screen");
@@ -42,21 +40,18 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                     var dpi = this.GetVisualRoot()?.RenderScaling ?? 1.0;
                     var maxHeight = screen.WorkingArea.Height / dpi;
 
-                    Height = (int)(maxHeight * 0.9);
-                    Position = new PixelPoint(Position.X, 10);
-                    
+                    Height = (int)(maxHeight * 0.7);
+
+                    // Position = new PixelPoint(Position.X, 10);
                     ClassLogger.Debug($"Current screen work area height: {maxHeight}, dpi: {dpi}");
                 }
                 catch (Exception e)
                 {
                     Height = 800;
-                    ClassLogger.Warn($"Failed to fetch workarea height;{e.Message} ignored");
+                    ClassLogger.Warn(e, "Failed to fetch workarea height");
                 }
-            }
             else
-            {
                 Height = 800;
-            }
 
             ViewModel!.DiscardConf
                 .Subscribe(_ =>

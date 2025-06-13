@@ -18,7 +18,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
+
     private bool _isManualClosing;
 
     public MainWindow()
@@ -66,7 +66,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                     }
                     catch (Exception e)
                     {
-                        ClassLogger.Error($"Failed to hide or close window: {e.Message}");
+                        ClassLogger.Error(e, "Failed to hide or close window");
                     }
                 })
                 .DisposeWith(disposables);
@@ -87,6 +87,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         {
             SettingsWindowViewModel vm => new SettingsWindow { DataContext = vm },
             AboutWindowViewModel vm => new AboutWindow { DataContext = vm },
+            QsoSyncAssistantViewModel vm => new QsoSyncAssistantWindow { DataContext = vm },
             _ => throw new NotSupportedException($"ViewModel not supported: {viewModel.GetType().Name}")
         };
 
