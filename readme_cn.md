@@ -42,17 +42,17 @@
 + 点击“测试”，如您输入正确，在apikey下方将出现选择站点ID的下拉框。如果您在Cloudlog /
   Wavelog设置了多个站点请在此选择正确的id，后续的QSO都将上传到此id中。
 
-  ![](./md_assets/image-20250510212652161.png)
+  ![image-20250615191924477](./md_assets/image-20250615191924477.png)
 
 ### 📌 Clublog配置
 
 + 输入您在Clublog上注册时使用的呼号、邮箱和密码。
 
-![image-20250524113607297](./md_assets/image-20250524113607297.png)
+![image-20250615191934943](./md_assets/image-20250615191934943.png)
 
 + 点击“测试”，如测试通过，您可以在“UDP设置”中启用“自动上传QSO到Clublog”。
 
-  ![image-20250524113747984](./md_assets/image-20250524113747984.png)
+  ![image-20250615191954681](./md_assets/image-20250615191954681.png)
 
 ### 📌 HamCQ配置
 
@@ -79,7 +79,7 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 + 在`设备端口`中选择您的设备所在的端口。
 + 点击“测试”按钮。测试无误后方可勾选“电台数据自动上报”。点击“确认”保存配置。
 
-<img src="./md_assets/hamlib.png" width="50%" />
+<img src="./md_assets/image-20250615192010245.png" width="50%" />
 
 + 软件主界面应该出现了读取到的电台相关信息。打开您的Cloudlog网站，主页应该出现了您的电台信息：
 
@@ -95,10 +95,9 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 将接收这些信息并解码，将通联结果实时上传至您的Cloudlog服务器。
 
 + 此部分不须过多配置，如果您更改了此部分的端口号，请同步更改JTDX中的UDP服务器配置。**注意，如果JTDX和Cloudlog
-  Helper不在同一台机器上运行，您需要勾选“允许外部连接”选项，并更改JTDX中UDP服务器的ip地址部分为运行Cloudlog Helper机器的ip。
-  **
+  Helper不在同一台机器上运行，您需要勾选“允许外部连接”选项，并更改JTDX中UDP服务器的ip地址部分为运行Cloudlog Helper机器的ip。**
 
-<img src="./md_assets/image-20250510222349765.png" alt="image-20250510222349765" width="60%" />
+<img src="./md_assets/image-20250615192042489.png" alt="image-20250510222349765" width="60%" />
 
 + 此后，当JTDX处于发射模式，或完成了一个QSO之后，软件主界面都会显示对应信息。
 
@@ -133,6 +132,25 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 + 现在您就成功实现了CloudlogHelper和JTDX的协同工作。
 
   <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" width="70%" />
+
+### 🔧 实用工具
+
+#### QSO上传助手
+
+此工具能够自动从您的Cloudlog服务器上下载已上传的QSO，并于本地QSO(**目前仅支持Wsjtx和JTDX格式的日志**)进行对比，筛选出未上传的QSO并帮您自动上传补齐。例如您启动了jtdx， 但是忘记启动日志记录软件，或者网络不小心断开了没发现， 这时候就会存在遗漏 QSO 没上传的情况。此工具旨在解决这一问题。
+
+<img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
+
+| 配置项                  | 说明                                                         |
+| ----------------------- | ------------------------------------------------------------ |
+| Execute sync on startup | 如果勾选了此项，则在每次启动软件时都会首先打开这一工具并自动开始同步。 |
+| Username                | Cloudlog的登陆用户名。                                       |
+| Password                | Cloudlog的密码。                                             |
+| Cloud Sample            | 从Cloudlog上下载的最新的QSO数量，这些QSO将作为基准数据，用于与本地QSO进行对比。**此值应该显著大于Local Sample. **例如设为 `200` 表示工具会获取云端最新的 200 条 QSO 记录。 |
+| Local Sample            | 从本地日志文件读取的最近 QSO 记录数量，用于与云端记录对比。例如设为 `50` 表示工具会检查本地最新的 50 条 QSO 是否都已上传到云端（即是否在从云端下载的，数量为Cloud Sample的最新QSO中都存在）。 |
+| Local Log Paths         | 本地的日志路径。                                             |
+
+
 
 ### 🎯 各配置项说明
 
@@ -227,6 +245,7 @@ dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true --self-containe
 
 + [Hamlib](https://github.com/Hamlib/Hamlib): 业余无线电设备控制库（支持电台、旋转器、调谐器及功放）
 + [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): 基于 C# 的类库及示例代码，通过 .NET & .NET Framework 4.8 的 UDP 接口与 WSJT-X 交互
++ [ADIFLib](https://github.com/kv9y/ADIFLib): 用于读取、解析和写入 ADIF（版本 3.1.0）文件的 C# 库。
 
 ## 📝 许可证
 

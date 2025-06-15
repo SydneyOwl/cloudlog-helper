@@ -46,17 +46,17 @@ Helper a try!
 
 + Click "Test." If your input is correct, a dropdown for selecting the Station ID will appear below the API KEY. If you have multiple stations set up in Cloudlog / Wavelog, select the correct ID here. All subsequent QSOs will be uploaded to this ID.
 
-  ![image-20250524114842178](./md_assets/image-20250524114842178.png)
+  ![image-20250615191603704](./md_assets/image-20250615191603704.png)
 
 ### 📌 Clublog Configuration
 
 + Enter the callsign, email, and password you used when registering on Clublog.
 
-![image-20250524114934649](./md_assets/image-20250524114934649.png)
+![image-20250615191626100](./md_assets/image-20250615191626100.png)
 
 + Click "Test." If the test passes, you can enable "Automatically upload QSOs to Clublog" in the "UDP Settings."
 
-  ![image-20250524115040135](./md_assets/image-20250524115040135.png)
+  ![image-20250615191636101](./md_assets/image-20250615191636101.png)
 
 ### 📌 Hamlib Configuration
 
@@ -72,7 +72,7 @@ This software can periodically upload radio information (frequency, mode, etc.) 
 + Choose the port where your device is connected under `Device Port`.
 + Click the "Test" button. Only after a successful test should you check "Enable automatic radio data reporting." Click "Confirm" to save the settings.
 
-<img src="./md_assets/image-20250524115143015.png" width="50%" />
+<img src="./md_assets/image-20250615191803125.png" width="50%" />
 
 + The software’s main interface should now display the retrieved radio information. Open your Cloudlog website, and the homepage should show your radio details:
 
@@ -88,11 +88,28 @@ This feature works similarly to `GridTracker`. `JTDX` broadcasts decoded callsig
 
 + Minimal configuration is required here. If you change the port number, ensure the UDP server settings in JTDX are updated accordingly. **Note: If JTDX and Cloudlog Helper are not running on the same machine, you must enable "Allow external connections" and set the UDP server IP address in JTDX to the IP of the machine running Cloudlog Helper.**
 
-<img src="./md_assets/image-20250524115213082.png" alt="image-20250510222349765" width="60%" />
+<img src="./md_assets/image-20250615191831895.png" alt="image-20250510222349765" width="60%" />
 
 + After this setup, the software’s main interface will display relevant information when JTDX is in transmit mode or after completing a QSO.
 
 <img src="./md_assets/image-20250524115350845.png" alt="image-20250510223010041" width="30%" />
+
+
+### 🔧 Utility Tools
+
+#### 🔧  QSO Upload Assistant
+This tool automatically downloads uploaded QSOs from your Cloudlog server and compares them with local QSO records(**Currently only wsjtx and jtdx format log is supported.**). It identifies and automatically uploads any missing QSOs. For example, if you started JTDX but forgot to launch your logging software, or if your network connection was accidentally interrupted, this tool will help recover those unuploaded QSOs.
+
+<img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
+
+| Configuration Item       | Description                                                                 |
+|--------------------------|-----------------------------------------------------------------------------|
+| Execute sync on startup  | If enabled, the tool will automatically start syncing upon software launch. |
+| Username                 | Your Cloudlog login username.                                               |
+| Password                 | Your Cloudlog password.                                                     |
+| Cloud Sample             | Number of recent QSOs downloaded from Cloudlog as reference data. **This value should be significantly larger than Local Sample.** Example: Setting to `200` means retrieving the latest 200 QSO records from Cloudlog. |
+| Local Sample             | Number of recent QSO records read from local log files for comparison. Example: Setting to `50` means checking if the latest 50 local QSOs exist in the Cloud Sample dataset. |
+| Local Log Paths          | Paths to local log files.                                                   |
 
 ## 🚀 Advanced
 
