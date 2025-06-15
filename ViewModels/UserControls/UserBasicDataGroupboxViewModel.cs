@@ -80,11 +80,11 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
     {
         // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
         ClassLogger.Debug("Refreshing userbasic data....");
-        if (_settings.IsCloudlogHasErrors())
+        if (_settings.IsCloudlogHasErrors(true))
             throw new Exception(TranslationHelper.GetString("confcloudlogfirst"));
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
-            _settings.CloudlogStationId);
+            _settings.CloudlogStationInfo?.StationId!);
         if (info is null)
         {
             // todo tell main viewmodel that exception occurred...

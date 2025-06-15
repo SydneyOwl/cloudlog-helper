@@ -183,25 +183,25 @@ public class SettingsWindowViewModel : ViewModelBase
             {
                 CloudlogErrorPanel.ErrorMessage = TranslationHelper.GetString("failedstationinfo");
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
-                DraftSettings.CloudlogSettings.CloudlogStationId = string.Empty;
+                DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
                 ShowCloudlogStationIdCombobox = false;
                 return false;
             }
 
-            var oldVal = DraftSettings.CloudlogSettings.CloudlogStationId;
+            var oldVal = DraftSettings.CloudlogSettings.CloudlogStationInfo;
 
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
             ShowCloudlogStationIdCombobox = true;
 
-            if (string.IsNullOrEmpty(DraftSettings.CloudlogSettings.CloudlogStationId))
+            if (string.IsNullOrEmpty(DraftSettings.CloudlogSettings.CloudlogStationInfo?.StationId))
             {
-                DraftSettings.CloudlogSettings.CloudlogStationId = stationInfo[0].StationId!;
+                DraftSettings.CloudlogSettings.CloudlogStationInfo = stationInfo[0];
             }
             else
             {
-                DraftSettings.CloudlogSettings.CloudlogStationId = "";
-                DraftSettings.CloudlogSettings.CloudlogStationId = oldVal;
+                DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
+                DraftSettings.CloudlogSettings.CloudlogStationInfo = oldVal;
             }
 
             CloudlogErrorPanel.ErrorMessage = string.Empty;

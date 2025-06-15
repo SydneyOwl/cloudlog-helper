@@ -50,7 +50,7 @@ public class QsoSyncAssistantUtil
         return result.Cookies;
     }
 
-    public static async Task<string> DownloadQSOs(string baseurl, string key,
+    public static async Task<string> DownloadQSOs(string baseurl, string stationCallsign,
         int stationId, int qsoCount, IEnumerable<FlurlCookie> cookies)
     {
         // check for instance
@@ -75,9 +75,7 @@ public class QsoSyncAssistantUtil
         else
         {
             // get callsign
-            var statstic = await CloudlogUtil.GetStationInfoAsync(baseurl, key, stationId.ToString());
-            if (statstic is null) throw new Exception("Failed to fetch de");
-            tmp.Add("de", statstic.Value.StationCallsign);
+            tmp.Add("de", stationCallsign);
             tmp.Add("dx", "");
             tmp.Add("operator", "");
             tmp.Add("gridsquare", "");
@@ -238,13 +236,21 @@ public class QsoSyncAssistantUtil
         return previousEor >= 0 ? previousEor + 5 : 0;
     }
 
-
-    public static void owl()
+    public static async Task<bool> UploadAdifLogAsync(string baseurl, string adif, string stationId, IEnumerable<FlurlCookie> cookies)
     {
-        // foreach (var lastQso in GetLastQsos("C:\\Users\\Administrator\\Desktop\\example.adif", 1000))
-        // {
-        //     Console.WriteLine(lastQso);
-        //     Console.WriteLine("============================");
-        // }
+       var resp = await baseurl
+            .AppendPathSegments(DefaultConfigs.CloudlogAdifFileUploadEndpoint)
+            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
+            .WithCookies(cookies)
+            .PostMultipartAsync(mp => mp
+                .AddString("station_profile", stationId) 
+                .AddFile("userfile", 
+                    new MemoryStream(Encoding.UTF8.GetBytes(adif)), 
+                    "cloudlog-helper-generate.adi", 
+                    "application/octet-stream")
+            );
+       var res = await resp.GetStringAsync();
+       return (res.Contains("ADIF Imported", StringComparison.InvariantCultureIgnoreCase));
     }
 }

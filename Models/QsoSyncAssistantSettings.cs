@@ -35,5 +35,5 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public string? CloudlogPassword { get; set; }
     [Reactive] [JsonProperty] public ObservableCollection<string>? LocalLogPath { get; set; }
     [Reactive] [JsonProperty] public int CloudlogQSOSampleCount { get; set; } = 200;
-    [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 200;
+    [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 50;
 }

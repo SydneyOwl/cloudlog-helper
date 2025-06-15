@@ -333,6 +333,14 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         continue;
                     }
 
+                    if (_extraCloudlogSettings.IsCloudlogHasErrors(checkStationId: true))
+                    {
+                        rcd.UploadStatus = UploadStatus.Ignored;
+                        rcd.FailReason = TranslationHelper.GetString("confcloudlogfirst");
+                        ClassLogger.Debug($"Cloudlog conf has error. ignored: {adif}.");
+                        continue;
+                    }
+
                     // do possible retry...
                     if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
                     for (var i = 0; i < retTime; i++)
@@ -349,7 +357,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                 var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
                                     _extraCloudlogSettings.CloudlogUrl,
                                     _extraCloudlogSettings.CloudlogApiKey,
-                                    _extraCloudlogSettings.CloudlogStationId, adif);
+                                    _extraCloudlogSettings.CloudlogStationInfo?.StationId!, adif);
                                 if (cloudlogResult.Status != "created")
                                 {
                                     ClassLogger.Debug("A qso for cloudlog failed to upload.");

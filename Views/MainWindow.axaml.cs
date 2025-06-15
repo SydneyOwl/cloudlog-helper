@@ -70,6 +70,14 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                     }
                 })
                 .DisposeWith(disposables);
+            
+            // Start qso assistant, if required.
+            if (ApplicationSettings.GetInstance().QsoSyncAssistantSettings.ExecuteOnStart)
+            {
+                var vm = new QsoSyncAssistantViewModel();
+                vm.ExecuteOnStart();
+                new QsoSyncAssistantWindow { DataContext = vm }.ShowDialog( this);
+            }
         });
     }
 

@@ -133,8 +133,7 @@
                                         IsVisible="{Binding ShowCloudlogStationIdCombobox}">
                                 <ComboBox Classes="setting-control"
                                           ItemsSource="{Binding DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo}"
-                                          SelectedValue="{Binding DraftSettings.CloudlogSettings.CloudlogStationId}"
-                                          SelectedValueBinding="{Binding StationId}">
+                                          SelectedValue="{Binding DraftSettings.CloudlogSettings.CloudlogStationInfo}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">

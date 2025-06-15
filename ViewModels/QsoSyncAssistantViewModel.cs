@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ public class QsoSyncAssistantViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private bool _execOnStart;
+
     public QsoSyncAssistantViewModel()
     {
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
@@ -37,6 +40,16 @@ public class QsoSyncAssistantViewModel : ViewModelBase
 
         AddLogPathCommand = ReactiveCommand.CreateFromTask(AddLogPath);
         Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
+
+        this.WhenActivated(disposable =>
+        {
+            if(_execOnStart) StartSyncCommand.Execute().Subscribe().DisposeWith(disposable);
+        });
+    }
+
+    public void ExecuteOnStart()
+    {
+        _execOnStart = true;
     }
 
     public ReactiveCommand<Unit, Unit> SaveConf { get; }
@@ -85,7 +98,7 @@ public class QsoSyncAssistantViewModel : ViewModelBase
             return;
         }
 
-        if (Settings.CloudlogSettings.IsCloudlogHasErrors())
+        if (Settings.CloudlogSettings.IsCloudlogHasErrors(true))
         {
             _logProgress("Please complete all Cloudlog Settings in main application!");
             return;
@@ -93,6 +106,7 @@ public class QsoSyncAssistantViewModel : ViewModelBase
 
         try
         {
+            var stationCallsign = Settings.CloudlogSettings.CloudlogStationInfo?.StationCallsign;
             SyncStarted = true;
             _logProgress("Starting login and downloading qsos from cloudlog/wavelog...", 10);
             var cookies = await QsoSyncAssistantUtil.LoginAndGetCookies(Settings.CloudlogSettings.CloudlogUrl,
@@ -105,14 +119,10 @@ public class QsoSyncAssistantViewModel : ViewModelBase
 
             _logProgress($"Detected datetime format: {datetimeFormat}.Downloading QSOs...", 25);
             var rawData = await QsoSyncAssistantUtil.DownloadQSOs(Settings.CloudlogSettings.CloudlogUrl,
-                Settings.CloudlogSettings.CloudlogApiKey,
-                int.Parse(Settings.CloudlogSettings.CloudlogStationId),
+                stationCallsign!,
+                int.Parse(Settings.CloudlogSettings.CloudlogStationInfo?.StationId!),
                 Settings.QsoSyncAssistantSettings.CloudlogQSOSampleCount,
                 cookies);
-
-            var stationCallsign = (await CloudlogUtil.GetStationInfoAsync(Settings.CloudlogSettings.CloudlogUrl,
-                Settings.CloudlogSettings.CloudlogApiKey,
-                Settings.CloudlogSettings.CloudlogStationId))?.StationCallsign;
 
             _logProgress("Qsos downloaded. Analysing...", 30);
             var cloudRaw = JsonConvert.DeserializeObject<List<AdvanceQSOInfo>>(rawData);
@@ -171,8 +181,7 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                     }
                     
                     _logProgress(
-                        $"Found {compareRes.Count} QSOs not uploaded. Generating adif file...",
-                        CurrentProgress+sEach);
+                        $"Found {compareRes.Count} QSOs not uploaded. Generating adif file...");
 
                     var adifText = new StringBuilder();
                     foreach (var advanceQSOInfo in compareRes)
@@ -180,8 +189,16 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                         adifText.AppendLine(advanceQSOInfo.RawData.ToString());
                     }
                     
-                    
-                    
+                    _logProgress($"Uploading adif file...");
+
+                    var adifUploadRes = await QsoSyncAssistantUtil.UploadAdifLogAsync(Settings.CloudlogSettings.CloudlogUrl,
+                        adifText.ToString(),Settings.CloudlogSettings.CloudlogStationInfo?.StationId!,cookies);
+                    if (adifUploadRes)
+                    {
+                        _logProgress($"Adif file uploaded successfully.", CurrentProgress+sEach);
+                        continue;
+                    }
+                    _logProgress($"Adif file uploaded failed. ignored.", CurrentProgress+sEach);
                 }
                 catch (Exception e)
                 {

@@ -65,7 +65,7 @@ public class CloudlogSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public string CloudlogUrl { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public string CloudlogApiKey { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public string CloudlogStationId { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public StationInfo? CloudlogStationInfo { get; set; }
 
     [Reactive]
     [JsonProperty]
@@ -74,7 +74,7 @@ public class CloudlogSettings : ReactiveValidationObject
     public IObservable<bool> IsCloudlogValid => this.WhenAnyValue(
         x => x.CloudlogUrl,
         x => x.CloudlogApiKey,
-        x => x.CloudlogStationId,
+        x => x.CloudlogStationInfo,
         (url, key, id) => !IsCloudlogHasErrors()
     );
 
@@ -82,23 +82,25 @@ public class CloudlogSettings : ReactiveValidationObject
     {
         CloudlogUrl = settings.CloudlogUrl;
         CloudlogApiKey = settings.CloudlogApiKey;
-        CloudlogStationId = settings.CloudlogStationId;
+        CloudlogStationInfo = settings.CloudlogStationInfo;
         AvailableCloudlogStationInfo.Clear();
         AvailableCloudlogStationInfo.AddRange(settings.AvailableCloudlogStationInfo);
     }
 
-    public bool IsCloudlogHasErrors()
+    public bool IsCloudlogHasErrors(bool checkStationId = false)
     {
         return !string.IsNullOrEmpty(SettingsValidation.ValidateNotEmpty(CloudlogUrl)) ||
                !string.IsNullOrEmpty(SettingsValidation.ValidateStartsWithHttp(CloudlogUrl)) ||
                !string.IsNullOrEmpty(SettingsValidation.ValidateNotEndsWithApiQso(CloudlogUrl)) ||
                !string.IsNullOrEmpty(SettingsValidation.ValidateSpace(CloudlogUrl)) ||
                !string.IsNullOrEmpty(SettingsValidation.ValidateNotEmpty(CloudlogApiKey)) ||
-               !string.IsNullOrEmpty(SettingsValidation.ValidateSpace(CloudlogApiKey));
+               !string.IsNullOrEmpty(SettingsValidation.ValidateSpace(CloudlogApiKey)) ||
+               (checkStationId && string.IsNullOrEmpty(CloudlogStationInfo?.StationId));
         // string.IsNullOrEmpty(CloudlogStationId);
         // return IsPropertyHasErrors(nameof(CloudlogUrl)) || IsPropertyHasErrors(nameof(CloudlogApiKey)) ||
         //        IsPropertyHasErrors(nameof(CloudlogStationId));
     }
+    
 
     private bool IsPropertyHasErrors(string propertyName)
     {
@@ -114,7 +116,7 @@ public class CloudlogSettings : ReactiveValidationObject
     protected bool Equals(CloudlogSettings other)
     {
         return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
-               CloudlogStationId == other.CloudlogStationId;
+               CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId;
     }
 
     public override bool Equals(object? obj)
@@ -127,6 +129,6 @@ public class CloudlogSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationId);
+        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo);
     }
 }

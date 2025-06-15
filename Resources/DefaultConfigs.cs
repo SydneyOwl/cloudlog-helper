@@ -85,6 +85,11 @@ public class DefaultConfigs
     public static string CloudlogDashboardEndpoint = "/index.php/dashboard";
     
     /// <summary>
+    ///     API endpoint for Cloudlog settings.
+    /// </summary>
+    public static string CloudlogAdifFileUploadEndpoint = "/index.php/adif/import";
+    
+    /// <summary>
     ///     API endpoint for fetching recent qsos.
     /// </summary>
     public static string CloudlogQSOAdvancedEndpoint = "/index.php/logbookadvanced/search";
