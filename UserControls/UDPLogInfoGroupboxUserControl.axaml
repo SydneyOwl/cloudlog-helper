@@ -5,6 +5,7 @@
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
+             xmlns:userControls1="clr-namespace:CloudlogHelper.UserControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
              x:Class="CloudlogHelper.UserControls.UDPLogInfoGroupboxUserControl"
              x:DataType="userControls:UDPLogInfoGroupboxViewModel">
@@ -26,21 +27,10 @@
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.qsorate}}"
                            Margin="0,0,0,10" />
-                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                    <TextBlock Margin="10,0,0,15" Text="{Binding QsAvgMin}" />
-                    <Image Width="20"
-                           Height="20"
-                           Margin="5,-15,0,0"
-                           Source="avares://CloudlogHelper/Assets/Settings/Help.png"
-                           VerticalAlignment="Center"
-                           Cursor="Hand">
-                        <ToolTip.Tip>
-                            <TextBlock Text="{I18N {x:Static resources:LangKeys.within5min}}"
-                                       FontSize="14"
-                                       MaxWidth="300"
-                                       TextWrapping="Wrap" />
-                        </ToolTip.Tip>
-                    </Image>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,15">
+                    <TextBlock Text="{Binding QsAvgMin}" VerticalAlignment="Center" />
+                    <userControls1:TipIconUserControl
+                        TooltipText="{I18N {x:Static resources:LangKeys.within5min}}"  VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -96,18 +86,7 @@
                                                 Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
                                                 VerticalAlignment="Center"
                                                 FontWeight="Bold" />
-                                            <Image Margin="5,0,0,0"
-                                                   Width="20"
-                                                   Height="20"
-                                                   Source="avares://CloudlogHelper/Assets/Settings/Help.png"
-                                                   VerticalAlignment="Center"
-                                                   IsVisible="{Binding FailReason, Converter={StaticResource StringToVisibility}}"
-                                                   Cursor="Hand">
-                                                <ToolTip.Tip>
-                                                    <TextBlock Text="{Binding FailReason}" FontSize="14" MaxWidth="300"
-                                                               TextWrapping="Wrap" />
-                                                </ToolTip.Tip>
-                                            </Image>
+                                            <userControls1:TipIconUserControl TooltipText="{Binding FailReason}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>

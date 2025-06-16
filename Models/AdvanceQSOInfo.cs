@@ -63,11 +63,11 @@ public class AdvanceQSOInfo
             switch (token.Name)
             {
                 case "call":
-                    case "CALL":
-                        tmp.Dx = token.Data;
+                case "CALL":
+                    tmp.Dx = token.Data;
                     break;
                 case "mode":
-                    case "MODE":
+                case "MODE":
                     mode = token.Data;
                     break;
                 case "submode":
@@ -75,23 +75,23 @@ public class AdvanceQSOInfo
                     submode = token.Data;
                     break;
                 case "rst_sent":
-                    case "RST_SENT":
+                case "RST_SENT":
                     tmp.RstSent = token.Data;
                     break;
                 case "rst_rcvd":
-                    case "RST_RCVD":
+                case "RST_RCVD":
                     tmp.RstReceived =  token.Data;
                     break;
                 case "band":
-                    case "BAND":
+                case "BAND":
                     tmp.Band = token.Data;
                     break;
                 case "qso_date":
-                    case "QSO_DATE":
+                case "QSO_DATE":
                     qsoDate = token.Data;
                     break;
                 case "time_on":
-                    case "TIME_ON":
+                case "TIME_ON":
                     timeOn = token.Data;
                     break;
                 case "station_callsign":

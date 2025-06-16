@@ -125,13 +125,19 @@
                 </Border>
                 
         
-                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                        Margin="0,0,0,0"
-                        Width="100" Height="50"
-                        HorizontalAlignment="Right"
-                        Command="{Binding StartSyncCommand}"
-                        Content="Start SYNC" FontWeight="DemiBold" 
-                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <StackPanel Orientation="Horizontal" Spacing="30" HorizontalAlignment="Right">
+                    <Button Width="100" Height="50"
+                            HorizontalAlignment="Right"
+                            Command="{Binding StartSyncCommand}"
+                            Content="Start SYNC" FontWeight="DemiBold" 
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    
+                    <Button Width="100" Height="50"
+                            HorizontalAlignment="Right"
+                            Command="{Binding StopSyncCommand}"
+                            Content="STOP" FontWeight="DemiBold" 
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                </StackPanel>
             </StackPanel>
         </Border>
         

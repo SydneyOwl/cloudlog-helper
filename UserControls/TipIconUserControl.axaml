@@ -18,5 +18,8 @@
                        MaxWidth="300"
                        TextWrapping="Wrap" />
         </ToolTip.Tip>
+        <ToolTip.ShowDelay>
+            10
+        </ToolTip.ShowDelay>
     </Image>
 </UserControl>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.IO;
+using System.Threading;
 
 /// <summary>
 /// Main ADIF Class
@@ -119,7 +120,7 @@ namespace ADIFLib
         /// Read a file into an ADIF file.
         /// </summary>
         /// <param name="FileName"></param>
-        public void ReadFromFile(string FileName, int lastQsoCount = -1)
+        public void ReadFromFile(string FileName, int lastQsoCount = -1, CancellationToken cancellationToken = default)
         {
             uint lineNumber = 0;
 
@@ -133,7 +134,7 @@ namespace ADIFLib
                 {
                     try
                     {
-                        ReadFromStream(readThisFile, ref lineNumber, lastQsoCount);
+                        ReadFromStream(readThisFile, ref lineNumber, lastQsoCount, cancellationToken);
                     }
                     catch (Exception ex)
                     {
@@ -176,12 +177,12 @@ namespace ADIFLib
 
         // Read from a stream.
         // Allow multiple lines per header or QSO.
-        private void ReadFromStream(StreamReader TheStream, ref uint LineNumber, int lastQsoCount = -1)
+        private void ReadFromStream(StreamReader TheStream, ref uint LineNumber, int lastQsoCount = -1, CancellationToken cancellationToken=default)
         {
             var theLine = "";
             var lastQsoLines = new Queue<string>();
 
-            while (!TheStream.EndOfStream)
+            while (!TheStream.EndOfStream && !cancellationToken.IsCancellationRequested)
             {
                 theLine += TheStream.ReadLine().Trim();
                 if (theLine != "")
