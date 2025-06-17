@@ -1,3 +1,5 @@
 v0.1.0 Initial release of Cloudlog helper.
 v0.1.1 Demo version, released at hamcq
 v0.1.2 UDP dispose problem fix, clublog problem fix, UI enhancements
+v0.1.3 Hamcq support, Realtime Upload problem fix
+v0.1.4 Udp forwarder, QSO Assistant, many bugs fixed

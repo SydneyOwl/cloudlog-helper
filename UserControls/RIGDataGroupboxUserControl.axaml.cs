@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Notifications;
 using Avalonia.ReactiveUI;
 using Avalonia.Threading;
 using CloudlogHelper.ViewModels;
@@ -17,7 +15,6 @@ using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
-using Notification = Avalonia.Controls.Notifications.Notification;
 
 namespace CloudlogHelper.UserControls;
 
@@ -25,13 +22,6 @@ public partial class RIGDataGroupboxUserControl : ReactiveUserControl<RIGDataGro
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private WindowNotificationManager? _manager;
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToVisualTree(e);
-        var topLevel = TopLevel.GetTopLevel(this);
-        _manager = new WindowNotificationManager(topLevel){ MaxItems = 3};
-    }
     public RIGDataGroupboxUserControl()
     {
         InitializeComponent();
@@ -40,24 +30,12 @@ public partial class RIGDataGroupboxUserControl : ReactiveUserControl<RIGDataGro
             ViewModel!.ShowAskForRetryMessageBox
                 .RegisterHandler(DoShowAskRetryMessageboxAsync)
                 .DisposeWith(disposables);
-            ViewModel!.ShowNotification
-                .RegisterHandler(DoShowNotificationAsync)
-                .DisposeWith(disposables);
             ViewModel!.OpenSettingsWindow
                 .RegisterHandler(DoOpenSettingsWindowAsync)
                 .DisposeWith(disposables);
         });
     }
-    
-    
-    private async Task DoShowNotificationAsync(IInteractionContext<(string, string, NotificationType), Unit> interaction)
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _manager?.Show(new Notification(interaction.Input.Item1, interaction.Input.Item2, interaction.Input.Item3));
-            interaction.SetOutput(Unit.Default);
-        });
-    }
+
 
     private async Task DoShowAskRetryMessageboxAsync(IInteractionContext<Unit, string> interaction)
     {
@@ -100,9 +78,22 @@ public partial class RIGDataGroupboxUserControl : ReactiveUserControl<RIGDataGro
 
     private async Task DoOpenSettingsWindowAsync(IInteractionContext<Unit, Unit> interaction)
     {
+        if (App.WindowTracker.TryGetWindow(typeof(SettingsWindow), out var target))
+        {
+            target!.Show();
+            target.Activate();
+            interaction.SetOutput(Unit.Default);
+            return;
+        }
+
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is Window window)
-            await new SettingsWindow { DataContext = new SettingsWindowViewModel() }.ShowDialog(window);
+        {
+            var wd = new SettingsWindow { DataContext = new SettingsWindowViewModel() };
+            App.WindowTracker.Track(wd);
+            await wd.ShowDialog(window);
+        }
+
         interaction.SetOutput(Unit.Default);
     }
 }

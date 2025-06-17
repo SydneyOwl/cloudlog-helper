@@ -9,7 +9,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-using Avalonia.Controls.Notifications;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -168,14 +167,16 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     });
                 }).DisposeWith(disposables);
 
-            RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) => 
-                    await ShowNotification.Handle(("Error",err.Message, NotificationType.Error)))
+            RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await WindowNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
-            UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) => await ShowNotification.Handle(("Error",err.Message, NotificationType.Error)))
+            UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await WindowNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
-            ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(async void (err) => await ShowNotification.Handle(("Error",err.Message, NotificationType.Error)))
+            ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await WindowNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             // refresh cloudlog infos immediately if settings changed.
@@ -333,7 +334,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         continue;
                     }
 
-                    if (_extraCloudlogSettings.IsCloudlogHasErrors(checkStationId: true))
+                    if (_extraCloudlogSettings.IsCloudlogHasErrors(true))
                     {
                         rcd.UploadStatus = UploadStatus.Ignored;
                         rcd.FailReason = TranslationHelper.GetString("confcloudlogfirst");
@@ -533,6 +534,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private void _wsjtxMsgLogger(LogLevel level, string message)
     {
         if (level < LogLevel.Error) return;
-        ShowNotification.Handle(("Warning", message, NotificationType.Warning)).GetAwaiter().GetResult();
+        WindowNotification.SendWarningNotificationSync(message);
     }
 }

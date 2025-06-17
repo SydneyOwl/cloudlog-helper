@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
 using ADIFLib;
 using Newtonsoft.Json;
@@ -10,36 +8,26 @@ namespace CloudlogHelper.Models;
 // fetched from logbookadvanced/search 
 public class AdvanceQSOInfo
 {
-    [JsonProperty("qsoId")] 
-    public string? QsoId { get; set; }
+    [JsonProperty("qsoId")] public string? QsoId { get; set; }
 
-    [JsonProperty("qsoDateTime")] 
-    public string? QsoDateTime { get; set; }
+    [JsonProperty("qsoDateTime")] public string? QsoDateTime { get; set; }
 
-    [JsonProperty("de")] 
-    public string? De { get; set; }
+    [JsonProperty("de")] public string? De { get; set; }
 
-    [JsonProperty("dx")] 
-    public string? Dx { get; set; }
+    [JsonProperty("dx")] public string? Dx { get; set; }
 
-    [JsonProperty("mode")] 
-    public string? Mode { get; set; }
+    [JsonProperty("mode")] public string? Mode { get; set; }
 
-    [JsonProperty("rstS")] 
-    public string? RstSent { get; set; }
+    [JsonProperty("rstS")] public string? RstSent { get; set; }
 
-    [JsonProperty("rstR")] 
-    public string? RstReceived { get; set; }
+    [JsonProperty("rstR")] public string? RstReceived { get; set; }
 
-    [JsonProperty("band")] 
-    public string? Band { get; set; }
-    
-    
-    [JsonIgnore]
-    public DateTime QsoTimeOn { get; set; }
-    
-    [JsonIgnore]
-    public ADIFQSO RawData { get; set; }
+    [JsonProperty("band")] public string? Band { get; set; }
+
+
+    [JsonIgnore] public DateTime QsoTimeOn { get; set; }
+
+    [JsonIgnore] public ADIFQSO RawData { get; set; }
 
     public void ParseDatetime(string format)
     {
@@ -59,7 +47,6 @@ public class AdvanceQSOInfo
         var mode = "";
         var submode = "";
         foreach (var token in adif)
-        {
             switch (token.Name)
             {
                 case "call":
@@ -80,7 +67,7 @@ public class AdvanceQSOInfo
                     break;
                 case "rst_rcvd":
                 case "RST_RCVD":
-                    tmp.RstReceived =  token.Data;
+                    tmp.RstReceived = token.Data;
                     break;
                 case "band":
                 case "BAND":
@@ -99,17 +86,15 @@ public class AdvanceQSOInfo
                     tmp.De = token.Data;
                     break;
             }
-        }
 
         tmp.QsoDateTime = $"{qsoDate} {timeOn}";
         tmp.ParseDatetime("yyyyMMdd HHmmss");
-        
+
         // make sure mode refers to submode, if exists
-        tmp.Mode = string.IsNullOrEmpty(submode)?mode:submode;
+        tmp.Mode = string.IsNullOrEmpty(submode) ? mode : submode;
 
         return tmp;
     }
-    
 }
 
 // "qsoID": "11",

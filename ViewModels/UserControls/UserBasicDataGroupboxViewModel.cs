@@ -3,7 +3,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Controls.Notifications;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -55,7 +54,7 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
                     QsToday = TranslationHelper.GetString("unknown");
                     QsMonth = TranslationHelper.GetString("unknown");
                     QsYear = TranslationHelper.GetString("unknown");
-                    await ShowNotification.Handle(("Error", err.Message, NotificationType.Error));
+                    await WindowNotification.SendErrorNotificationAsync(err.Message);
                     // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
                 .DisposeWith(disposables);

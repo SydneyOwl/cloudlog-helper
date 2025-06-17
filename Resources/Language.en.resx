@@ -438,4 +438,25 @@
     <data name="qsoassistant" xml:space="preserve">
         <value>QSO Assistant</value>
     </data>
+    <data name="qsosyncsucc" xml:space="preserve">
+        <value>QSO Sync finished successfully.</value>
+    </data>
+    <data name="titleinfo" xml:space="preserve">
+        <value>Info</value>
+    </data>
+    <data name="titlesuccess" xml:space="preserve">
+        <value>Success</value>
+    </data>
+    <data name="titlewarning" xml:space="preserve">
+        <value>Warning</value>
+    </data>
+    <data name="titleerror" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="qsosyncing" xml:space="preserve">
+        <value>Syncing QSO...</value>
+    </data>
+    <data name="failedsyncqso" xml:space="preserve">
+        <value>Failed to sync QSO: </value>
+    </data>
 </root>

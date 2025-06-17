@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,13 +76,20 @@ public class DatabaseUtil
 
             // NEVER USE `Assembly.GetEntryAssembly()?.GetName().Version`: SEEMS LIKE IT'LL CHANGE AFTER AVALONIA FULLY INITIALIZED!
             var appVer = VersionInfo.Version;
+            var formalRelease = true;
+            // for xxx-rc1
+            if (appVer.Contains('-'))
+            {
+                formalRelease = false;
+                appVer = appVer.Split("-").FirstOrDefault();
+            }
 
-            var appVersion = new Version("0.0.0.0");
+            var appVersion = new Version("0.0.0");
             if (!forceInitDatabase) appVersion = new Version(appVer);
             ClassLogger.Trace($"DBVer:{dbVersion}");
             ClassLogger.Trace($"appVersion:{appVersion}");
 
-            if (appVersion > dbVersion || forceInitDatabase)
+            if (appVersion > dbVersion || forceInitDatabase || !formalRelease)
             {
                 ClassLogger.Trace($"upgrading {dbVersion} => {appVersion}");
                 await InitCountryDicAsync();

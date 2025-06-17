@@ -20,7 +20,6 @@ public partial class ErrorReportWindow : ReactiveWindow<ErrorReportWindowViewMod
 
     public ErrorReportWindow(string logPath)
     {
-        // 获取出错信息
         try
         {
             _errorMessage = File.ReadAllText(logPath);

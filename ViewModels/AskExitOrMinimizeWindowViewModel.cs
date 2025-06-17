@@ -12,13 +12,14 @@ public class AskExitOrMinimizeWindowViewModel : ViewModelBase
 
     public AskExitOrMinimizeWindowViewModel()
     {
-        _settings = ApplicationSettings.GetInstance();
+        _settings = ApplicationSettings.GetDraftInstance();
         ConfirmToTray = ReactiveCommand.Create(() =>
         {
             if (RememberChoice)
             {
                 _settings.ShutdownMode =
                     MinimizeToTray ? ProgramShutdownMode.ToTray : ProgramShutdownMode.Shutdown;
+                _settings.ApplySettings();
                 _settings.WriteCurrentSettingsToFile();
             }
 

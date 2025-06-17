@@ -31,8 +31,8 @@ public class DefaultConfigs
     ///     Default timeout (in seconds) for HTTP(s) requests.
     /// </summary>
     public static readonly int DefaultRequestTimeout = 10;
-    
-    
+
+
     /// <summary>
     ///     Default timeout (in seconds) for QSODownload HTTP(s) requests.
     /// </summary>
@@ -57,11 +57,11 @@ public class DefaultConfigs
     ///     Default name for our application.
     /// </summary>
     public static string DefaultApplicationName = $"CloudlogHelper {VersionInfo.Version}";
-    
+
     /// <summary>
     ///     QSOSampleCountChoice
     /// </summary>
-    public static List<int> QSOSampleCountChoice = new(){50,100,200,500,1000};
+    public static List<int> QSOSampleCountChoice = new() { 50, 100, 200, 500, 1000 };
 
     /// <summary>
     ///     API endpoint for Checking whether this is a wavelog instance or not (by checking manifest.json)
@@ -73,22 +73,22 @@ public class DefaultConfigs
     ///     API endpoint for interacting with QSO (log entry) data in Cloudlog.
     /// </summary>
     public static string CloudlogQSOAPIEndpoint = "/index.php/api/qso/";
-    
+
     /// <summary>
     ///     API endpoint for login Cloudlog.
     /// </summary>
     public static string CloudlogLoginEndpoint = "/index.php/user/login";
-    
+
     /// <summary>
     ///     API endpoint for Cloudlog settings.
     /// </summary>
     public static string CloudlogDashboardEndpoint = "/index.php/dashboard";
-    
+
     /// <summary>
     ///     API endpoint for Cloudlog settings.
     /// </summary>
     public static string CloudlogAdifFileUploadEndpoint = "/index.php/adif/import";
-    
+
     /// <summary>
     ///     API endpoint for fetching recent qsos.
     /// </summary>

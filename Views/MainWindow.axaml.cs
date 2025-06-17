@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
+using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
 using ReactiveUI;
@@ -70,13 +71,21 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                     }
                 })
                 .DisposeWith(disposables);
-            
+
             // Start qso assistant, if required.
             if (ApplicationSettings.GetInstance().QsoSyncAssistantSettings.ExecuteOnStart)
             {
+                WindowNotification.SendInfoNotificationSync(TranslationHelper.GetString("qsosyncing"));
                 var vm = new QsoSyncAssistantViewModel();
-                vm.ExecuteOnStart();
-                new QsoSyncAssistantWindow { DataContext = vm }.ShowDialog( this);
+                vm.EnableExecuteOnStart();
+                var qsoWindow = new QsoSyncAssistantWindow { DataContext = vm };
+                App.WindowTracker.Track(qsoWindow);
+                qsoWindow.ShowInTaskbar = false; 
+                qsoWindow.WindowState = WindowState.Minimized;
+                qsoWindow.Show(this);
+                qsoWindow.Hide();
+                // qsoWindow.WindowState = WindowState.Normal;
+                // do something inside
             }
         });
     }
@@ -99,6 +108,18 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             _ => throw new NotSupportedException($"ViewModel not supported: {viewModel.GetType().Name}")
         };
 
+
+        if (App.WindowTracker.TryGetWindow(newWindow.GetType(), out var existWindow))
+        {
+            ClassLogger.Trace("Window found!");
+            existWindow!.Show(this);
+            existWindow.WindowState = WindowState.Normal;
+            existWindow.Activate();
+            interaction.SetOutput(Unit.Default);
+            return;
+        }
+
+        App.WindowTracker.Track(newWindow);
         await newWindow.ShowDialog(this);
         interaction.SetOutput(Unit.Default);
     }

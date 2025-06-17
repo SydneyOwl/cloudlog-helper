@@ -100,7 +100,7 @@ public class CloudlogSettings : ReactiveValidationObject
         // return IsPropertyHasErrors(nameof(CloudlogUrl)) || IsPropertyHasErrors(nameof(CloudlogApiKey)) ||
         //        IsPropertyHasErrors(nameof(CloudlogStationId));
     }
-    
+
 
     private bool IsPropertyHasErrors(string propertyName)
     {

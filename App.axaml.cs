@@ -10,7 +10,6 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
-using CloudlogHelper.Views;
 using NLog;
 using ReactiveUI;
 using ErrorReportWindow = CloudlogHelper.Views.ErrorReportWindow;
@@ -24,6 +23,8 @@ public class App : Application
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
+
+    public static WindowTracker WindowTracker { get; } = new();
 
     public override void Initialize()
     {
@@ -47,13 +48,18 @@ public class App : Application
                         return;
                     }
 
-            var mainWindow = new MainWindow()
+            var mainWindow = new MainWindow
             {
                 ViewModel = new MainWindowViewModel()
             };
             desktop.MainWindow = mainWindow;
+            WindowNotification.SetTopLevel(mainWindow);
 
-            _exitCommand = ReactiveCommand.Create(() => { desktop.Shutdown(); });
+            _exitCommand = ReactiveCommand.Create(() =>
+            {
+                mainWindow.CloseDirectly();
+                desktop.Shutdown();
+            });
             _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
 
             // create trayicon

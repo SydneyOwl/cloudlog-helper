@@ -37,7 +37,6 @@ public class MainWindowViewModel : ViewModelBase
         RigDataGroupboxVM = new RIGDataGroupboxViewModel();
         UDPLogInfoGroupboxVm = new UDPLogInfoGroupboxViewModel();
 
-        //subscribe exception obsflows!
         this.WhenActivated(disposables =>
         {
             MessageBus.Current.Listen<SettingsChanged>().Subscribe(res =>
@@ -53,7 +52,6 @@ public class MainWindowViewModel : ViewModelBase
                 }
             }).DisposeWith(disposables);
 
-            // poll rigctld server status
             Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)).Subscribe(_ =>
             {
                 IsUdpServerRunning = UDPServerUtil.IsUdpServerRunning();

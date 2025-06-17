@@ -1,7 +1,6 @@
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.VisualTree;

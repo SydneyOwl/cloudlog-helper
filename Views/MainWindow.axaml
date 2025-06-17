@@ -18,7 +18,7 @@
     <Design.DataContext>
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
-    
+
     <Window.Resources>
         <converters:BoolToColorConverter x:Key="BoolToColor" />
     </Window.Resources>
@@ -56,7 +56,7 @@
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
-                        
+
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.tools}}">
                             <MenuItem.Icon>
                                 <Image Width="32" Height="32"

@@ -10,64 +10,74 @@
         SizeToContent="Manual"
         WindowStartupLocation="CenterScreen"
         Icon="avares://CloudlogHelper/Assets/icon.png"
-        Topmost="True"
         Title="QSO Sync Assistant"
         Width="600" Height="720"
         x:DataType="viewModels:QsoSyncAssistantViewModel">
-        
+
     <Design.DataContext>
         <viewModels:QsoSyncAssistantViewModel />
     </Design.DataContext>
-    
+
     <Window.Resources>
-        <converters:EllipsisMiddleConverter x:Key="EllipsisConverter"/>
+        <converters:EllipsisMiddleConverter x:Key="EllipsisConverter" />
     </Window.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="15" ColumnDefinitions="*,*" RowSpacing="10" ShowGridLines="False">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="15" ColumnDefinitions="*,*" RowSpacing="10"
+          ShowGridLines="False">
         <!-- Header -->
         <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
-            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png"/>
-            <TextBlock Text="QSO Sync Assistant" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" />
+            <TextBlock Text="QSO Sync Assistant" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" />
         </StackPanel>
 
         <!-- Settings.QsoSyncAssistantSettings Section -->
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" 
-                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"  BorderThickness="1" CornerRadius="5" Padding="10">
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1"
+                CornerRadius="5" Padding="10">
             <StackPanel Spacing="10">
-                <TextBlock Text="SYNC Settings" FontWeight="Bold" Margin="0,0,0,5"/>
-                
-                <CheckBox Content="Execute sync on startup" IsChecked="{Binding Settings.QsoSyncAssistantSettings.ExecuteOnStart}"/>
-                
+                <TextBlock Text="SYNC Settings" FontWeight="Bold" Margin="0,0,0,5" />
+
+                <CheckBox Content="Execute sync on startup"
+                          IsChecked="{Binding Settings.QsoSyncAssistantSettings.ExecuteOnStart}" />
+
                 <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
-                        <TextBlock Text="Username:"  VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBox HorizontalAlignment="Right" Text="{Binding Settings.QsoSyncAssistantSettings.CloudlogUserName}" Watermark="Cloudlog username"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                        <TextBlock Text="Username:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBox HorizontalAlignment="Right"
+                                 Text="{Binding Settings.QsoSyncAssistantSettings.CloudlogUserName}"
+                                 Watermark="Cloudlog username" />
                     </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" >
-                        <TextBlock Text="Password:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBox HorizontalAlignment="Right"  Text="{Binding Settings.QsoSyncAssistantSettings.CloudlogPassword}" PasswordChar="•" Watermark="Cloudlog password"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                        <TextBlock Text="Password:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBox HorizontalAlignment="Right"
+                                 Text="{Binding Settings.QsoSyncAssistantSettings.CloudlogPassword}" PasswordChar="•"
+                                 Watermark="Cloudlog password" />
                     </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal"  Grid.Row="3" Grid.Column="0" >
-                        <TextBlock Text="Cloud sample:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <ComboBox HorizontalAlignment="Right" ItemsSource="{x:Static resources:DefaultConfigs.QSOSampleCountChoice}" SelectedValue="{Binding Settings.QsoSyncAssistantSettings.CloudlogQSOSampleCount}"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+                        <TextBlock Text="Cloud sample:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <ComboBox HorizontalAlignment="Right"
+                                  ItemsSource="{x:Static resources:DefaultConfigs.QSOSampleCountChoice}"
+                                  SelectedValue="{Binding Settings.QsoSyncAssistantSettings.CloudlogQSOSampleCount}" />
                     </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal"  Grid.Row="4" Grid.Column="0" >
-                        <TextBlock Text="Local sample:" VerticalAlignment="Center"  Margin="0,0,10,0"/>
-                        <ComboBox HorizontalAlignment="Right" ItemsSource="{x:Static resources:DefaultConfigs.QSOSampleCountChoice}" SelectedValue="{Binding Settings.QsoSyncAssistantSettings.LocalQSOSampleCount}"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="0">
+                        <TextBlock Text="Local sample:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <ComboBox HorizontalAlignment="Right"
+                                  ItemsSource="{x:Static resources:DefaultConfigs.QSOSampleCountChoice}"
+                                  SelectedValue="{Binding Settings.QsoSyncAssistantSettings.LocalQSOSampleCount}" />
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>
 
         <!-- Local Log Path -->
-        <Border Grid.Row="1" Grid.Column="1"   BorderThickness="1" CornerRadius="5" Padding="10">
+        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" CornerRadius="5" Padding="10">
             <StackPanel Spacing="5">
-                <TextBlock Text="LOCAL LOG PATHS" FontWeight="Bold" Margin="0,0,0,5"/>
-        
-                <ListBox ItemsSource="{Binding Settings.QsoSyncAssistantSettings.LocalLogPath}" Height="230" 
+                <TextBlock Text="LOCAL LOG PATHS" FontWeight="Bold" Margin="0,0,0,5" />
+
+                <ListBox ItemsSource="{Binding Settings.QsoSyncAssistantSettings.LocalLogPath}" Height="230"
                          ScrollViewer.VerticalScrollBarVisibility="Auto" x:Name="localLogPath">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
@@ -77,69 +87,71 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center" ShowGridLines="False">
-                                <TextBlock Grid.Column="1" Text="{Binding Converter={StaticResource EllipsisConverter}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Converter={StaticResource EllipsisConverter}}"
+                                           VerticalAlignment="Center" Margin="5,0,0,0" />
                                 <!-- IDE thinks RemoveLogPathCommand does not exist but this does work -->
                                 <Button Grid.Column="0" Content="-" FontWeight="Bold"
                                         Command="{Binding $parent[ListBox].DataContext.RemoveLogPathCommand}"
                                         CommandParameter="{Binding}"
-                                        Width="25" Margin="5,0,0,0"/>
+                                        Width="25" Margin="5,0,0,0" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-        
-                <Button Content="Add Log Path" Command="{Binding AddLogPathCommand}" 
+
+                <Button Content="Add Log Path" Command="{Binding AddLogPathCommand}"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                        HorizontalAlignment="Right"/>
+                        HorizontalAlignment="Right" />
             </StackPanel>
         </Border>
-        
+
         <!-- Status Section -->
-        <Border Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" 
-                 BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
-                 BorderThickness="1" CornerRadius="8" Padding="15" 
-                 Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        <Border Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="15"
+                Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
             <StackPanel Spacing="12">
                 <TextBlock Text="SYNC STATUS" FontWeight="SemiBold" FontSize="14"
-                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" 
-                           Margin="0,0,0,2"/>
-        
+                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                           Margin="0,0,0,2" />
+
                 <ProgressBar Height="8" IsIndeterminate="False"
                              Value="{Binding CurrentProgress}" Maximum="100"
                              Foreground="{DynamicResource SystemAccentColorBrush}"
                              Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
-                             CornerRadius="4"/>
-        
-                <Border CornerRadius="6" 
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" 
-                        Padding="12" 
-                        BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
+                             CornerRadius="4" />
+
+                <Border CornerRadius="6"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        Padding="12"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                         BorderThickness="1">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="120" 
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="120"
                                   x:Name="currentInfoTextBlock">
-                        <TextBlock Text="{Binding CurrentInfo}" 
-                                   FontSize="12" 
+                        <TextBlock Text="{Binding CurrentInfo}"
+                                   FontSize="12"
                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                   TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap" />
                     </ScrollViewer>
                 </Border>
-                
-        
+
+
                 <StackPanel Orientation="Horizontal" Spacing="30" HorizontalAlignment="Right">
                     <Button Width="100" Height="50"
                             HorizontalAlignment="Right"
                             Command="{Binding StartSyncCommand}"
-                            Content="Start SYNC" FontWeight="DemiBold" 
+                            Content="Start SYNC" FontWeight="DemiBold"
                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                    
+
                     <Button Width="100" Height="50"
                             HorizontalAlignment="Right"
                             Command="{Binding StopSyncCommand}"
-                            Content="STOP" FontWeight="DemiBold" 
+                            Content="STOP" FontWeight="DemiBold"
                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
                 </StackPanel>
             </StackPanel>
         </Border>
-        
+
     </Grid>
 </Window>

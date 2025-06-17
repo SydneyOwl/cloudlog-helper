@@ -438,4 +438,25 @@
     <data name="qsoassistant" xml:space="preserve">
         <value>QSO上传助手</value>
     </data>
+    <data name="qsosyncsucc" xml:space="preserve">
+        <value>QSO同步成功！</value>
+    </data>
+    <data name="titleinfo" xml:space="preserve">
+        <value>提示</value>
+    </data>
+    <data name="titlesuccess" xml:space="preserve">
+        <value>成功</value>
+    </data>
+    <data name="titlewarning" xml:space="preserve">
+        <value>注意</value>
+    </data>
+    <data name="titleerror" xml:space="preserve">
+        <value>错误</value>
+    </data>
+    <data name="qsosyncing" xml:space="preserve">
+        <value>正在同步QSO...</value>
+    </data>
+    <data name="failedsyncqso" xml:space="preserve">
+        <value>QSO同步出错：</value>
+    </data>
 </root>

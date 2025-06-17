@@ -14,7 +14,6 @@
     </Design.DataContext>
     <UserControl.Resources>
         <converters:StringToColorConverter x:Key="StatusToColor" />
-        <converters:StringToVisibilityConverter x:Key="StringToVisibility" />
         <converters:UploadStatusToTranslatedString x:Key="StringToTranslatedString" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="10">
@@ -30,7 +29,7 @@
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,15">
                     <TextBlock Text="{Binding QsAvgMin}" VerticalAlignment="Center" />
                     <userControls1:TipIconUserControl
-                        TooltipText="{I18N {x:Static resources:LangKeys.within5min}}"  VerticalAlignment="Center"/>
+                        TooltipText="{I18N {x:Static resources:LangKeys.within5min}}" VerticalAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -86,7 +85,8 @@
                                                 Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
                                                 VerticalAlignment="Center"
                                                 FontWeight="Bold" />
-                                            <userControls1:TipIconUserControl TooltipText="{Binding FailReason}" VerticalAlignment="Center"/>
+                                            <userControls1:TipIconUserControl TooltipText="{Binding FailReason}"
+                                                                              VerticalAlignment="Center" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>

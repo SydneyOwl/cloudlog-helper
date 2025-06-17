@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia.Controls.Notifications;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -167,7 +166,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     ///     Open messagebox in view.
     /// </summary>
     public Interaction<Unit, string> ShowAskForRetryMessageBox { get; } = new();
-    
+
     /// <summary>
     ///     Open settings in view.
     /// </summary>
@@ -236,7 +235,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
         CurrentRxMode = string.Empty;
-        await ShowNotification.Handle(("Error",exceptionMsg, NotificationType.Error));
+        await WindowNotification.SendErrorNotificationAsync(exceptionMsg);
         ClassLogger.Error(exceptionMsg);
     }
 

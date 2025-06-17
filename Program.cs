@@ -24,13 +24,13 @@ internal sealed class Program
     {
         try
         {
-            _initializeCulture();
-
             var verboseLevel = args.Contains("--verbose") ? LogLevel.Trace : LogLevel.Info;
             if (args.Contains("--log2file"))
                 _initializeLogger(verboseLevel, true);
             else
                 _initializeLogger(verboseLevel);
+
+            _initializeCulture();
 
             // To be honest, I don't know why but if this is initialized at OnFrameworkInitializationCompleted it would fail...
             _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: args.Contains("--reinit-db"));
@@ -82,8 +82,12 @@ Stack：{ex.StackTrace}");
     {
         ApplicationSettings.ReadSettingsFromFile();
         var settings = ApplicationSettings.GetInstance();
+        var draftSettings = ApplicationSettings.GetDraftInstance();
         if (settings.LanguageType == SupportedLanguage.NotSpecified)
+        {
             settings.LanguageType = TranslationHelper.DetectDefaultLanguage();
+            draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
+        }
         I18NExtension.Culture = TranslationHelper.GetCultureInfo(settings.LanguageType);
     }
 

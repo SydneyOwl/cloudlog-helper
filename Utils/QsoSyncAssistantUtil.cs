@@ -45,10 +45,11 @@ public class QsoSyncAssistantUtil
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout));
 
         var result = await loginRequest
-            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(),default,cancellationToken);
+            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
         var redirectUrl = result.Headers.FirstOrDefault("Location");
         if (!redirectUrl.Contains("dashboard")) throw new Exception("Incorrect username or password");
-        if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException("Operation(LoginAndGetCookies) was canceled.");
+        if (cancellationToken.IsCancellationRequested)
+            throw new OperationCanceledException("Operation(LoginAndGetCookies) was canceled.");
         return result.Cookies;
     }
 
@@ -98,13 +99,15 @@ public class QsoSyncAssistantUtil
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
             .WithCookies(cookies)
-            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(),default,cancellationToken);
+            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
 
-        if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException("Operation(DownloadQSOs) was canceled.");
+        if (cancellationToken.IsCancellationRequested)
+            throw new OperationCanceledException("Operation(DownloadQSOs) was canceled.");
         return await recentQs.GetStringAsync();
     }
 
-    public static async Task<string> GetDateFormat(string baseurl, IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
+    public static async Task<string> GetDateFormat(string baseurl, IEnumerable<FlurlCookie> cookies,
+        CancellationToken cancellationToken)
     {
         var dashboard = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogDashboardEndpoint)
@@ -126,7 +129,7 @@ public class QsoSyncAssistantUtil
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .WithCookies(cookies)
-            .GetStringAsync(default,cancellationToken);
+            .GetStringAsync(default, cancellationToken);
 
         doc = new HtmlDocument();
         doc.LoadHtml(settingsPage);
@@ -136,7 +139,8 @@ public class QsoSyncAssistantUtil
             ?.GetAttributeValue("value", string.Empty)
             .Trim();
 
-        if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException("Operation(GetDateFormat) was canceled.");
+        if (cancellationToken.IsCancellationRequested)
+            throw new OperationCanceledException("Operation(GetDateFormat) was canceled.");
         if (string.IsNullOrEmpty(dateFormatValue)) return string.Empty;
         return FormatMap.TryGetValue(dateFormatValue, out var res) ? res : string.Empty;
     }
@@ -228,33 +232,36 @@ public class QsoSyncAssistantUtil
 
         // Look for the start of the record (either start of buffer or after previous <eor>)
         var bufferStr = buffer.ToString();
-    
+
         // Check if we're at the start of the buffer
         if (eorIndex == 0)
             return 0;
 
         // Look for previous <eor>
-        var previousEor = bufferStr.LastIndexOf("<eor>", Math.Min(eorIndex - 1, bufferStr.Length - 1), StringComparison.OrdinalIgnoreCase);
-    
+        var previousEor = bufferStr.LastIndexOf("<eor>", Math.Min(eorIndex - 1, bufferStr.Length - 1),
+            StringComparison.OrdinalIgnoreCase);
+
         return previousEor >= 0 ? previousEor + 5 : 0;
     }
 
-    public static async Task<bool> UploadAdifLogAsync(string baseurl, string adif, string stationId, IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
+    public static async Task<bool> UploadAdifLogAsync(string baseurl, string adif, string stationId,
+        IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
     {
-       var resp = await baseurl
+        var resp = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogAdifFileUploadEndpoint)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .WithCookies(cookies)
             .PostMultipartAsync(mp => mp
-                .AddString("station_profile", stationId) 
-                .AddFile("userfile", 
-                    new MemoryStream(Encoding.UTF8.GetBytes(adif)), 
-                    "cloudlog-helper-generate.adi", 
-                    "application/octet-stream"),default,cancellationToken
+                    .AddString("station_profile", stationId)
+                    .AddFile("userfile",
+                        new MemoryStream(Encoding.UTF8.GetBytes(adif)),
+                        "cloudlog-helper-generate.adi",
+                        "application/octet-stream"), default, cancellationToken
             );
-       var res = await resp.GetStringAsync();
-       if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException("Operation(UploadAdifLogAsync) was canceled.");
-       return (res.Contains("ADIF Imported", StringComparison.InvariantCultureIgnoreCase));
+        var res = await resp.GetStringAsync();
+        if (cancellationToken.IsCancellationRequested)
+            throw new OperationCanceledException("Operation(UploadAdifLogAsync) was canceled.");
+        return res.Contains("ADIF Imported", StringComparison.InvariantCultureIgnoreCase);
     }
 }

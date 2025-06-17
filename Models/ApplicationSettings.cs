@@ -42,7 +42,7 @@ public class ApplicationSettings : ReactiveValidationObject
     /// <summary>
     ///     Instance for settings window.
     /// </summary>
-    public static ApplicationSettings? DraftInstance;
+    private static ApplicationSettings? _draftInstance;
 
     /// <summary>
     ///     Logger for the class.
@@ -97,7 +97,7 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public UDPServerSettings UDPSettings { get; set; } = new();
-    
+
     /// <summary>
     ///     QSA Settings
     /// </summary>
@@ -177,7 +177,7 @@ public class ApplicationSettings : ReactiveValidationObject
 
     public static ApplicationSettings GetDraftInstance()
     {
-        return DraftInstance ??= new ApplicationSettings();
+        return _draftInstance ??= new ApplicationSettings();
     }
 
     /// <summary>
@@ -189,8 +189,9 @@ public class ApplicationSettings : ReactiveValidationObject
         {
             var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
             _currentInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
-            DraftInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
+            _draftInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
             ClassLogger.Trace("Calling ->DeserializeObjectSettings successfully.");
+            ClassLogger.Trace($"_currentInstance null: {_currentInstance is null}");
         }
         catch (Exception e1)
         {
@@ -208,7 +209,8 @@ public class ApplicationSettings : ReactiveValidationObject
         try
         {
             File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this));
-            ClassLogger.Trace($"Calling ->WriteCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
+            ClassLogger.Trace(
+                $"Calling ->WriteCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
         catch (Exception e1)
         {
