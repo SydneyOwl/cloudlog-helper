@@ -235,7 +235,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
         CurrentRxMode = string.Empty;
-        await WindowNotification.SendErrorNotificationAsync(exceptionMsg);
+        await App.NotificationManager.SendErrorNotificationAsync(exceptionMsg);
         ClassLogger.Error(exceptionMsg);
     }
 

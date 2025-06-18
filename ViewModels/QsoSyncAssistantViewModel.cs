@@ -93,9 +93,12 @@ public class QsoSyncAssistantViewModel : ViewModelBase
 
     private void _logProgress(string info, float? progress = null)
     {
-        if (progress is not null) CurrentProgress = progress.Value;
-        if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
-        ClassLogger.Debug(info);
+        // Dispatcher.UIThread.Invoke(() =>
+        // {
+            if (progress is not null) CurrentProgress = progress.Value;
+            if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
+            ClassLogger.Debug(info);
+        // });
     }
 
     private async Task _stopSync()
@@ -173,17 +176,22 @@ public class QsoSyncAssistantViewModel : ViewModelBase
             if (Settings.QsoSyncAssistantSettings.LocalLogPath!.Count == 0)
                 throw new Exception("Please select ur local logs.");
 
+            var errorOccurred = false;
+
             var sEach = (float)50 / Settings.QsoSyncAssistantSettings.LocalLogPath.Count;
             foreach (var localLog in Settings.QsoSyncAssistantSettings.LocalLogPath)
                 try
                 {
-                    if (_source.IsCancellationRequested) break;
+                    if (_source.IsCancellationRequested) throw new OperationCanceledException("Operation cancelled by user.");
                     _logProgress($"Try reading qso data from {localLog}, this may take sometime...", CurrentProgress);
 
                     // not elegant for large files...
                     var parser = new ADIF();
-                    parser.ReadFromFile(localLog, Settings.QsoSyncAssistantSettings.LocalQSOSampleCount, _source.Token);
-
+                    await Task.Run(() => 
+                    {
+                        parser.ReadFromFile(localLog, Settings.QsoSyncAssistantSettings.LocalQSOSampleCount, _source.Token);
+                    });
+                    
                     _logProgress(
                         $"Parsing qso data from {localLog} successfully. Read {parser.QSOCount} Qsos. Checking qsos not uploaded...",
                         CurrentProgress);
@@ -237,23 +245,25 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                         continue;
                     }
 
-                    _logProgress("Adif file uploaded failed. ignored.", CurrentProgress + sEach);
+                    throw new Exception($"Failed to upload adif file: {localLog}");
                 }
                 catch (Exception e)
                 {
+                    errorOccurred = true;
                     _logProgress($"Parsing qso data from {localLog} failed: {e.Message}. Skipping...",
                         CurrentProgress + sEach);
                 }
 
+            if (errorOccurred) throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
             _logProgress(TranslationHelper.GetString("qsosyncsucc"), 100);
             if (_executeOnStart)
-                await WindowNotification.SendSuccessNotificationAsync($"{TranslationHelper.GetString("qsosyncsucc")}");
+                await App.NotificationManager.SendSuccessNotificationAsync($"{TranslationHelper.GetString("qsosyncsucc")}");
         }
         catch (Exception ex)
         {
             _logProgress($"Failed to sync QSOs: {ex.Message}", 100);
             if (_executeOnStart)
-                await WindowNotification.SendErrorNotificationAsync(
+                await App.NotificationManager.SendErrorNotificationAsync(
                     $"{TranslationHelper.GetString("failedsyncqso")}{ex.Message}");
         }
         finally

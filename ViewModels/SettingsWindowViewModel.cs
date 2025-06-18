@@ -7,6 +7,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -30,9 +31,6 @@ public class SettingsWindowViewModel : ViewModelBase
     public SettingsWindowViewModel()
     {
         DraftSettings = ApplicationSettings.GetDraftInstance();
-        // if (Design.IsDesignMode)return;
-
-        _initializeHamlibAsync().ConfigureAwait(false);
 
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
@@ -52,6 +50,10 @@ public class SettingsWindowViewModel : ViewModelBase
         var hamcqCmd =
             ReactiveCommand.CreateFromTask(_testHamCQConnection);
         HamCQTestButton.SetTestButtonCommand(hamcqCmd);
+        
+        var eqslCmd =
+            ReactiveCommand.CreateFromTask(_testEqslConnection);
+        EqslTestButton.SetTestButtonCommand(eqslCmd);
 
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
@@ -65,13 +67,19 @@ public class SettingsWindowViewModel : ViewModelBase
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })
                 .DisposeWith(disposables);
-            hamlibCmd.ThrownExceptions.Subscribe(err => HamlibErrorPanel.ErrorMessage = err.Message)
+            hamlibCmd.ThrownExceptions.Subscribe(err => NotificationManager?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            cloudCmd.ThrownExceptions.Subscribe(err => CloudlogErrorPanel.ErrorMessage = err.Message)
+            cloudCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            clubCmd.ThrownExceptions.Subscribe(err => ClublogErrorPanel.ErrorMessage = err.Message)
+            clubCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            hamcqCmd.ThrownExceptions.Subscribe(err => HamCQErrorPanel.ErrorMessage = err.Message)
+            hamcqCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
+                .DisposeWith(disposables);
+            eqslCmd.ThrownExceptions.Subscribe(err =>
+                {
+                    ClassLogger.Trace(err.Message);
+                    NotificationManager?.SendErrorNotificationSync(err.Message);
+                })
                 .DisposeWith(disposables);
 
 
@@ -86,6 +94,9 @@ public class SettingsWindowViewModel : ViewModelBase
                 .InvokeCommand(RefreshPort)
                 .DisposeWith(disposables);
         });
+        
+        if (Design.IsDesignMode)return;
+        _ = _initializeHamlibAsync();
         MessageBus.Current.SendMessage(new SettingsChanged
         {
             Part = ChangedPart.NothingJustOpened
@@ -95,6 +106,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
+    
+    public WindowNotification NotificationManager { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
 
     private async Task _initializeHamlibAsync()
@@ -107,7 +120,7 @@ public class SettingsWindowViewModel : ViewModelBase
         }
         else
         {
-            HamlibErrorPanel.ErrorMessage = output;
+            NotificationManager?.SendErrorNotificationSync(output);
             return;
         }
 
@@ -126,46 +139,43 @@ public class SettingsWindowViewModel : ViewModelBase
         }
         else
         {
-            HamlibErrorPanel.ErrorMessage = opt;
+            NotificationManager?.SendErrorNotificationSync(opt);
         }
     }
 
     private async Task<bool> _testClublogConnection()
     {
-        ClublogErrorPanel.ErrorMessage = string.Empty;
-        if (DraftSettings.ClublogSettings.IsClublogHasErrors())
+        if (DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.IsClublogHasErrors())
         {
-            ClublogErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");
-            ;
+            NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("fillall"));
             return false;
         }
 
-        var res = await ClublogUtil.TestClublogConnectionAsync(DraftSettings.ClublogSettings.ClublogCallsign,
-                DraftSettings.ClublogSettings.ClublogPassword, DraftSettings.ClublogSettings.ClublogEmail)
-            .ConfigureAwait(false);
-        ClublogErrorPanel.ErrorMessage = res;
-        return string.IsNullOrEmpty(res);
+        var res = await ClublogUtil.TestClublogConnectionAsync(DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogCallsign,
+                DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogPassword, DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogEmail);
+
+        if (string.IsNullOrEmpty(res)) return true;
+        NotificationManager?.SendErrorNotificationSync(res);
+        return false;
     }
 
     private async Task<bool> _testHamCQConnection()
     {
-        HamCQErrorPanel.ErrorMessage = string.Empty;
-        if (DraftSettings.HamCQSettings.IsHamCQHasErrors())
+        if (DraftSettings.ThirdPartyLogServiceSettings.HamCQSettings.IsHamCQHasErrors())
         {
-            HamCQErrorPanel.ErrorMessage = TranslationHelper.GetString("fillall");
+            NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("fillall"));
             return false;
         }
 
-        var res = await HamCQUtil.TestHamCQConnectionAsync(DraftSettings.HamCQSettings.HamCQAPIKey)
-            .ConfigureAwait(false);
-        HamCQErrorPanel.ErrorMessage = res;
-        return string.IsNullOrEmpty(res);
+        var res = await HamCQUtil.TestHamCQConnectionAsync(DraftSettings.ThirdPartyLogServiceSettings.HamCQSettings.HamCQAPIKey);
+        if (string.IsNullOrEmpty(res)) return true;
+        NotificationManager?.SendErrorNotificationSync(res);
+        return false;
     }
 
     private async Task<bool> _testCloudlogConnection()
     {
         CloudlogInfoPanel.InfoMessage = string.Empty;
-        CloudlogErrorPanel.ErrorMessage = string.Empty;
         try
         {
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
@@ -173,7 +183,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
             if (!string.IsNullOrEmpty(msg))
             {
-                CloudlogErrorPanel.ErrorMessage = msg;
+                NotificationManager?.SendErrorNotificationSync(msg);
                 return false;
             }
 
@@ -181,7 +191,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 DraftSettings.CloudlogSettings.CloudlogApiKey);
             if (stationInfo.Count == 0)
             {
-                CloudlogErrorPanel.ErrorMessage = TranslationHelper.GetString("failedstationinfo");
+                NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("failedstationinfo"));
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
                 DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
                 ShowCloudlogStationIdCombobox = false;
@@ -204,8 +214,6 @@ public class SettingsWindowViewModel : ViewModelBase
                 DraftSettings.CloudlogSettings.CloudlogStationInfo = oldVal;
             }
 
-            CloudlogErrorPanel.ErrorMessage = string.Empty;
-
             var instType =
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl);
             // instanceuncompitable
@@ -217,9 +225,27 @@ public class SettingsWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            CloudlogErrorPanel.ErrorMessage = e.Message;
+            NotificationManager?.SendErrorNotificationSync(e.Message);
         }
 
+        return false;
+    }
+
+    private async Task<bool> _testEqslConnection()
+    {
+        if (DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.IsEqslHasErrors())
+        {
+            NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("fillall"));
+            return false;
+        }
+
+        var res = await EqslUtil.TestEqslConnectionAsync(
+            DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.Username,
+            DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.Password,
+            DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.QthNickname);
+        
+        if (string.IsNullOrEmpty(res)) return true;
+        NotificationManager?.SendErrorNotificationSync(res);
         return false;
     }
 
@@ -252,7 +278,6 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task<bool> _testHamlib()
     {
-        HamlibErrorPanel.ErrorMessage = string.Empty;
         var (ip, port) = _getRigctldIpAndPort();
         if (DraftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
         {
@@ -274,7 +299,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs);
             if (!res)
             {
-                HamlibErrorPanel.ErrorMessage = des;
+                NotificationManager?.SendErrorNotificationSync(des);
                 return false;
             }
         }
@@ -291,16 +316,11 @@ public class SettingsWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            // ClassLogger.Trace(e.Message);
-            HamlibErrorPanel.ErrorMessage = e.Message;
+            NotificationManager?.SendErrorNotificationSync(e.Message);
             return false;
         }
 
-        // HamlibErrorPanel.ErrorMessage = string.Empty;
         return true;
-        // HamlibErrorPanel.ErrorMessage = TranslationHelper.GetString("inithamlibfailed");
-        //
-        // return false;
     }
 
     private async Task _refreshPort()
@@ -336,17 +356,10 @@ public class SettingsWindowViewModel : ViewModelBase
             anythingChanged = true;
         }
 
-        if (DraftSettings.IsClublogConfChanged(cmp))
+        if (DraftSettings.IsThirdPartyConfChanged(cmp))
         {
-            ClassLogger.Trace("clublog settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Clublog });
-            anythingChanged = true;
-        }
-
-        if (DraftSettings.IsHamCQConfChanged(cmp))
-        {
-            ClassLogger.Trace("hamcq settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.HamCQ });
+            ClassLogger.Trace("ThirdPartyLogService settings changed");
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.ThirdPartyLogService });
             anythingChanged = true;
         }
 
@@ -372,7 +385,6 @@ public class SettingsWindowViewModel : ViewModelBase
 
     #region CloudlogAPI
 
-    public ErrorPanelViewModel CloudlogErrorPanel { get; } = new();
     public FixedInfoPanelViewModel CloudlogInfoPanel { get; } = new();
     public TestButtonViewModel CloudlogTestButton { get; } = new();
     [Reactive] public bool ShowCloudlogStationIdCombobox { get; set; }
@@ -381,21 +393,24 @@ public class SettingsWindowViewModel : ViewModelBase
 
     #region Clublog
 
-    public ErrorPanelViewModel ClublogErrorPanel { get; } = new();
     public TestButtonViewModel ClublogTestButton { get; } = new();
 
     #endregion
 
     #region HamCQ
 
-    public ErrorPanelViewModel HamCQErrorPanel { get; } = new();
     public TestButtonViewModel HamCQTestButton { get; } = new();
+
+    #endregion
+    
+    #region EQSL
+
+    public TestButtonViewModel EqslTestButton { get; } = new();
 
     #endregion
 
     #region HamLib
 
-    public ErrorPanelViewModel HamlibErrorPanel { get; } = new();
     [Reactive] public bool HamlibInitPassed { get; set; }
     public ReactiveCommand<Unit, Unit> RefreshPort { get; }
 

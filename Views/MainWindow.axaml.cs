@@ -75,7 +75,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             // Start qso assistant, if required.
             if (ApplicationSettings.GetInstance().QsoSyncAssistantSettings.ExecuteOnStart)
             {
-                WindowNotification.SendInfoNotificationSync(TranslationHelper.GetString("qsosyncing"));
+                App.NotificationManager.SendInfoNotificationSync(TranslationHelper.GetString("qsosyncing"));
                 var vm = new QsoSyncAssistantViewModel();
                 vm.EnableExecuteOnStart();
                 var qsoWindow = new QsoSyncAssistantWindow { DataContext = vm };

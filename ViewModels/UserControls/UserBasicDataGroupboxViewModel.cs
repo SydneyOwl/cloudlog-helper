@@ -54,7 +54,7 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
                     QsToday = TranslationHelper.GetString("unknown");
                     QsMonth = TranslationHelper.GetString("unknown");
                     QsYear = TranslationHelper.GetString("unknown");
-                    await WindowNotification.SendErrorNotificationAsync(err.Message);
+                    await App.NotificationManager.SendErrorNotificationAsync(err.Message);
                     // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
                 .DisposeWith(disposables);

@@ -75,16 +75,10 @@ public class ApplicationSettings : ReactiveValidationObject
     public CloudlogSettings CloudlogSettings { get; set; } = new();
 
     /// <summary>
-    ///     Clublog settings.
+    ///     Third party settings.
     /// </summary>
     [JsonProperty]
-    public ClublogSettings ClublogSettings { get; set; } = new();
-
-    /// <summary>
-    ///     HamCQ settings.
-    /// </summary>
-    [JsonProperty]
-    public HamCQSettings HamCQSettings { get; set; } = new();
+    public ThirdPartyLogServiceSettings ThirdPartyLogServiceSettings { get; set; } = new();
 
     /// <summary>
     ///     Hamlib settings.
@@ -118,26 +112,14 @@ public class ApplicationSettings : ReactiveValidationObject
     }
 
     /// <summary>
-    ///     Check if clublog configs has been changed.
+    ///     Check if third party configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsClublogConfChanged(ApplicationSettings? compare)
+    public bool IsThirdPartyConfChanged(ApplicationSettings? compare)
     {
         if (compare is null) return false;
-        var oldI = compare.ClublogSettings;
-        var newI = ClublogSettings;
-        return !oldI.Equals(newI);
-    }
-
-    /// <summary>
-    ///     Check if hamcq configs has been changed.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsHamCQConfChanged(ApplicationSettings? compare)
-    {
-        if (compare is null) return false;
-        var oldI = compare.HamCQSettings;
-        var newI = HamCQSettings;
+        var oldI = compare.ThirdPartyLogServiceSettings;
+        var newI = ThirdPartyLogServiceSettings;
         return !oldI.Equals(newI);
     }
 
@@ -208,7 +190,7 @@ public class ApplicationSettings : ReactiveValidationObject
     {
         try
         {
-            File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this));
+            File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this, Formatting.Indented));
             ClassLogger.Trace(
                 $"Calling ->WriteCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
@@ -226,8 +208,7 @@ public class ApplicationSettings : ReactiveValidationObject
     public void ApplySettings()
     {
         _currentInstance!.CloudlogSettings.ApplySettingsChange(CloudlogSettings);
-        _currentInstance!.ClublogSettings.ApplySettingsChange(ClublogSettings);
-        _currentInstance!.HamCQSettings.ApplySettingsChange(HamCQSettings);
+        _currentInstance!.ThirdPartyLogServiceSettings.ApplySettingsChange(ThirdPartyLogServiceSettings);
         _currentInstance!.HamlibSettings.ApplySettingsChange(HamlibSettings);
         _currentInstance!.UDPSettings.ApplySettingsChange(UDPSettings);
         // _settingsInstance = _currentInstance;
@@ -236,8 +217,7 @@ public class ApplicationSettings : ReactiveValidationObject
     public void RestoreSettings()
     {
         CloudlogSettings.ApplySettingsChange(_currentInstance!.CloudlogSettings);
-        ClublogSettings.ApplySettingsChange(_currentInstance!.ClublogSettings);
-        HamCQSettings.ApplySettingsChange(_currentInstance!.HamCQSettings);
+        ThirdPartyLogServiceSettings.ApplySettingsChange(_currentInstance!.ThirdPartyLogServiceSettings);
         HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
         UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);
         // _settingsInstance = _currentInstance;

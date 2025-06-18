@@ -256,7 +256,7 @@ public class QsoSyncAssistantUtil
                     .AddString("station_profile", stationId)
                     .AddFile("userfile",
                         new MemoryStream(Encoding.UTF8.GetBytes(adif)),
-                        "cloudlog-helper-generate.adi",
+                        "cloudlog-helper-generated.adi",
                         "application/octet-stream"), default, cancellationToken
             );
         var res = await resp.GetStringAsync();

@@ -459,4 +459,13 @@
     <data name="failedsyncqso" xml:space="preserve">
         <value>QSO同步出错：</value>
     </data>
+    <data name="thirdpartylogsys" xml:space="preserve">
+        <value>第三方日志系统</value>
+    </data>
+    <data name="username" xml:space="preserve">
+        <value>用户名</value>
+    </data>
+    <data name="qthnick" xml:space="preserve">
+        <value>QTH别名（可选）</value>
+    </data>
 </root>

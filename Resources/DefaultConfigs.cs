@@ -130,6 +130,12 @@ public class DefaultConfigs
     public static readonly string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
     /// <summary>
+    ///     QSO Upload api endpoint for eqsl
+    /// </summary>
+    public static readonly string EqslTestEndpoint =
+        "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
+
+    /// <summary>
     ///     This is for cloudlog helper only.
     ///     See also https://clublog.freshdesk.com/support/solutions/articles/54910-api-keys
     /// </summary>

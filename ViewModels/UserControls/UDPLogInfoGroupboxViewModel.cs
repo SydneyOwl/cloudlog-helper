@@ -45,13 +45,8 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     /// <summary>
     ///     Settings for clublog.
     /// </summary>
-    private readonly ClublogSettings _extraClublogSettings =
-        ApplicationSettings.GetInstance().ClublogSettings.GetReference();
-
-    /// <summary>
-    ///     Settings for hamcq.
-    /// </summary>
-    private readonly HamCQSettings _extraHamCQSettings = ApplicationSettings.GetInstance().HamCQSettings.GetReference();
+    private readonly ThirdPartyLogServiceSettings _thirdPartySettings =
+        ApplicationSettings.GetInstance().ThirdPartyLogServiceSettings;
 
     /// <summary>
     ///     UDP Timeout watchdog.
@@ -168,15 +163,15 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 }).DisposeWith(disposables);
 
             RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await WindowNotification.SendErrorNotificationAsync(err.Message))
+                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await WindowNotification.SendErrorNotificationAsync(err.Message))
+                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await WindowNotification.SendErrorNotificationAsync(err.Message))
+                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             // refresh cloudlog infos immediately if settings changed.
@@ -376,8 +371,8 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                             if (!rcd.ClublogUploaded)
                             {
                                 var clublogResult = await ClublogUtil.UploadQSOToClublogAsync(
-                                    _extraClublogSettings.ClublogCallsign, _extraClublogSettings.ClublogPassword,
-                                    _extraClublogSettings.ClublogEmail, adif);
+                                    _thirdPartySettings.ClublogSettings.ClublogCallsign, _thirdPartySettings.ClublogSettings.ClublogPassword,
+                                    _thirdPartySettings.ClublogSettings.ClublogEmail, adif);
 
                                 if (string.IsNullOrEmpty(clublogResult))
                                 {
@@ -397,7 +392,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                             if (!rcd.HamCQUploaded)
                             {
                                 var hamcqResult =
-                                    await HamCQUtil.UploadQSOToHamCQAsync(_extraHamCQSettings.HamCQAPIKey, adif);
+                                    await HamCQUtil.UploadQSOToHamCQAsync(_thirdPartySettings.HamCQSettings.HamCQAPIKey, adif);
 
                                 if (string.IsNullOrEmpty(hamcqResult))
                                 {
@@ -534,6 +529,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     private void _wsjtxMsgLogger(LogLevel level, string message)
     {
         if (level < LogLevel.Error) return;
-        WindowNotification.SendWarningNotificationSync(message);
+        App.NotificationManager.SendWarningNotificationSync(message);
     }
 }

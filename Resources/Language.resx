@@ -459,4 +459,13 @@
     <data name="failedsyncqso" xml:space="preserve">
         <value>Failed to sync QSO: </value>
     </data>
+    <data name="thirdpartylogsys" xml:space="preserve">
+        <value>Third-party Log Systems</value>
+    </data>
+    <data name="username" xml:space="preserve">
+        <value>Username</value>
+    </data>
+    <data name="qthnick" xml:space="preserve">
+        <value>QTH Nickname(optional)</value>
+    </data>
 </root>

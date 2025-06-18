@@ -69,6 +69,19 @@
             <Setter Property="Padding" Value="16 8" />
             <Setter Property="MinWidth" Value="120" />
         </Style>
+        
+        <Style Selector="Border.subsection-card">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+        </Style>
+
+        <Style Selector="TextBlock.subsection-title">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0 0 0 4"/>
+        </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*,Auto" Margin="16">
@@ -100,7 +113,6 @@
                 <Border Classes="setting-card">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Cloudlog" Classes="section-title" />
-                        <userControls:ErrorPanelUserControl DataContext="{Binding CloudlogErrorPanel}" />
 
                         <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto" ShowGridLines="False"
                               RowSpacing="10">
@@ -153,50 +165,85 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Clublog Settings -->
+                <!-- Third-party Log Systems -->
                 <Border Classes="setting-card">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="Clublog" Classes="section-title" />
-                        <userControls:ErrorPanelUserControl DataContext="{Binding ClublogErrorPanel}" />
+                    <StackPanel Spacing="15">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.thirdpartylogsys}}" Classes="section-title" />
+                        
+                        <!-- Clublog Settings -->
+                        <Border Classes="subsection-card" Padding="12">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="Clublog" Classes="subsection-title" />
 
-                        <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
-                            <!-- Email -->
-                            <TextBlock Text="Email" Classes="setting-label" Grid.Row="0" Grid.Column="0" />
-                            <TextBox Classes="setting-control" Grid.Row="0" Grid.Column="1"
-                                     Text="{Binding DraftSettings.ClublogSettings.ClublogEmail}" />
+                                <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                                    <!-- Email -->
+                                    <TextBlock Text="Email" Classes="setting-label" Grid.Row="0" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="0" Grid.Column="1"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogEmail}" />
 
-                            <!-- Callsign -->
-                            <TextBlock Text="{I18N {x:Static resources:LangKeys.callsign}}" Classes="setting-label"
-                                       Grid.Row="1" Grid.Column="0" />
-                            <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1"
-                                     Text="{Binding DraftSettings.ClublogSettings.ClublogCallsign}" />
+                                    <!-- Callsign -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.callsign}}" Classes="setting-label"
+                                               Grid.Row="1" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogCallsign}" />
 
-                            <!-- Password -->
-                            <TextBlock Text="{I18N {x:Static resources:LangKeys.password}}" Classes="setting-label"
-                                       Grid.Row="2" Grid.Column="0" />
-                            <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
-                                     Text="{Binding DraftSettings.ClublogSettings.ClublogPassword}"
-                                     PasswordChar="•" />
+                                    <!-- Password -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.password}}" Classes="setting-label"
+                                               Grid.Row="2" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogPassword}"
+                                             PasswordChar="•" />
 
-                            <userControls:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"
-                                                                DataContext="{Binding ClublogTestButton}" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
+                                    <userControls:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Margin="20,0,0,0"
+                                                                        DataContext="{Binding ClublogTestButton}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
 
-                <!-- HamCQ Settings -->
-                <Border Classes="setting-card">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="HamCQ" Classes="section-title" />
-                        <userControls:ErrorPanelUserControl DataContext="{Binding HamCQErrorPanel}" />
+                        <!-- HamCQ Settings -->
+                        <Border Classes="subsection-card" Padding="12">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="HamCQ" Classes="subsection-title" />
 
-                        <Grid ColumnDefinitions="*,2*,*">
-                            <TextBlock Text="API Key" Classes="setting-label" />
-                            <TextBox Classes="setting-control" Grid.Column="1"
-                                     Text="{Binding DraftSettings.HamCQSettings.HamCQAPIKey}" />
-                            <userControls:TestButtonUserControl Grid.Column="2"
-                                                                DataContext="{Binding HamCQTestButton}" />
-                        </Grid>
+                                <Grid ColumnDefinitions="*,2*,*">
+                                    <TextBlock Text="API Key" Classes="setting-label" />
+                                    <TextBox Classes="setting-control" Grid.Column="1"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.HamCQSettings.HamCQAPIKey}" />
+                                    <userControls:TestButtonUserControl Grid.Column="2" Margin="20,0,0,0"
+                                                                        DataContext="{Binding HamCQTestButton}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- EQSL -->
+                         <Border Classes="subsection-card" Padding="12">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="eqsl.cc" Classes="subsection-title" />
+
+                                <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                                    <!-- username -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.username}}" Classes="setting-label" Grid.Row="0" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="0" Grid.Column="1"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.Username}" />
+
+                                    <!-- password -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.password}}" Classes="setting-label"
+                                               Grid.Row="1" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1"
+                                             PasswordChar="*"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.Password}" />
+
+                                    <!-- nick -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.qthnick}}" Classes="setting-label"
+                                               Grid.Row="2" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
+                                             Text="{Binding DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.QthNickname}"/>
+
+                                    <userControls:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Margin="20,0,0,0"
+                                                                        DataContext="{Binding EqslTestButton}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Border>
 
@@ -204,7 +251,6 @@
                 <Border Classes="setting-card">
                     <StackPanel Spacing="12">
                         <TextBlock Text="HamLib" Classes="section-title" />
-                        <userControls:ErrorPanelUserControl DataContext="{Binding HamlibErrorPanel}" />
 
                         <Grid IsEnabled="{Binding HamlibInitPassed}" ColumnDefinitions="*,2*,*"
                               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False" RowSpacing="10">

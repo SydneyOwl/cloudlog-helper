@@ -816,6 +816,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QTH Nickname(optional).
+        /// </summary>
+        public static string qthnick {
+            get {
+                return ResourceManager.GetString("qthnick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Polling interval should be more than 1s!.
         /// </summary>
         public static string reachminiumpollinterval {
@@ -1131,6 +1140,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Third-party Log Systems.
+        /// </summary>
+        public static string thirdpartylogsys {
+            get {
+                return ResourceManager.GetString("thirdpartylogsys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string titleerror {
@@ -1334,6 +1352,15 @@ namespace CloudlogHelper.Resources {
         public static string useexternalrigctld {
             get {
                 return ResourceManager.GetString("useexternalrigctld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username.
+        /// </summary>
+        public static string username {
+            get {
+                return ResourceManager.GetString("username", resourceCulture);
             }
         }
         

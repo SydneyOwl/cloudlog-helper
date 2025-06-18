@@ -25,6 +25,7 @@ public class App : Application
     private static ReactiveCommand<Unit, Unit>? _openCommand;
 
     public static WindowTracker WindowTracker { get; } = new();
+    public static WindowNotification NotificationManager { get; private set; }
 
     public override void Initialize()
     {
@@ -53,7 +54,7 @@ public class App : Application
                 ViewModel = new MainWindowViewModel()
             };
             desktop.MainWindow = mainWindow;
-            WindowNotification.SetTopLevel(mainWindow);
+            NotificationManager = new WindowNotification(mainWindow);
 
             _exitCommand = ReactiveCommand.Create(() =>
             {
