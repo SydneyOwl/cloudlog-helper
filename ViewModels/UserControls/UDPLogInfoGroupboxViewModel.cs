@@ -189,6 +189,19 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     }
                 })
                 .DisposeWith(disposables);
+            
+            MessageBus.Current.Listen<QsoUploadRequested>()
+                .Subscribe(x =>
+                {
+                    foreach (var rcd in x.QsoData)
+                    {
+                        _allQsos.Add(rcd);
+                        _checkAndEnqueueQSO(rcd);
+                    }
+                })
+                .DisposeWith(disposables);
+            
+            
             TryStartUdpService().DisposeWith(disposables);
 
             // start uploading service
@@ -315,13 +328,15 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 _isUploadQueueEmpty.OnNext(_uploadQueue.IsEmpty);
                 if (_uploadQueue.TryDequeue(out var rcd))
                 {
-                    var adif = _generateAdifFromRecordedCallsignDetail(rcd);
+                    var adif = rcd.RawData?.ToString()??_generateAdifFromRecordedCallsignDetail(rcd);
                     if (string.IsNullOrEmpty(adif)) continue;
                     ClassLogger.Debug($"Try Logging: {adif}");
-                    if (_settings is
+                    if (_thirdPartySettings is
                         {
-                            AutoUploadQSOToCloudlog: false, AutoUploadQSOToClublog: false, AutoUploadQSOToHamCQ: false
-                        } && !rcd.ForcedUpload)
+                            ClublogSettings.AutoQSOUploadEnabled: false, 
+                            EqslSettings.AutoQSOUploadEnabled: false,
+                            HamCQSettings.AutoQSOUploadEnabled: false
+                        } && !_extraCloudlogSettings.AutoQSOUploadEnabled && !rcd.ForcedUpload)
                     {
                         rcd.UploadStatus = UploadStatus.Ignored;
                         rcd.FailReason = TranslationHelper.GetString("qsouploaddisabled");
@@ -329,13 +344,13 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         continue;
                     }
 
-                    if (_extraCloudlogSettings.IsCloudlogHasErrors(true))
-                    {
-                        rcd.UploadStatus = UploadStatus.Ignored;
-                        rcd.FailReason = TranslationHelper.GetString("confcloudlogfirst");
-                        ClassLogger.Debug($"Cloudlog conf has error. ignored: {adif}.");
-                        continue;
-                    }
+                    // if (_extraCloudlogSettings.IsCloudlogHasErrors(true))
+                    // {
+                    //     rcd.UploadStatus = UploadStatus.Ignored;
+                    //     rcd.FailReason = TranslationHelper.GetString("confcloudlogfirst");
+                    //     ClassLogger.Debug($"Cloudlog conf has error. ignored: {adif}.");
+                    //     continue;
+                    // }
 
                     // do possible retry...
                     if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
@@ -347,7 +362,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
 
                         try
                         {
-                            if (!_settings.AutoUploadQSOToCloudlog) rcd.CloudlogUploaded = true;
+                            if (!_extraCloudlogSettings.AutoQSOUploadEnabled) rcd.CloudlogUploaded = true;
                             if (!rcd.CloudlogUploaded)
                             {
                                 var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
@@ -358,7 +373,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                 {
                                     ClassLogger.Debug("A qso for cloudlog failed to upload.");
                                     rcd.CloudlogUploaded = false;
-                                    failOutput.AppendLine(cloudlogResult.Reason);
+                                    failOutput.AppendLine("Cloudlog: "+cloudlogResult.Reason.Trim());
                                 }
                                 else
                                 {
@@ -367,7 +382,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                 }
                             }
 
-                            if (!_settings.AutoUploadQSOToClublog) rcd.ClublogUploaded = true;
+                            if (!_thirdPartySettings.ClublogSettings.AutoQSOUploadEnabled) rcd.ClublogUploaded = true;
                             if (!rcd.ClublogUploaded)
                             {
                                 var clublogResult = await ClublogUtil.UploadQSOToClublogAsync(
@@ -384,11 +399,11 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                 {
                                     ClassLogger.Debug("A qso for clublog failed to upload.");
                                     rcd.ClublogUploaded = false;
-                                    failOutput.AppendLine(clublogResult);
+                                    failOutput.AppendLine("Clublog: "+clublogResult.Trim());
                                 }
                             }
 
-                            if (!_settings.AutoUploadQSOToHamCQ) rcd.HamCQUploaded = true;
+                            if (!_thirdPartySettings.HamCQSettings.AutoQSOUploadEnabled) rcd.HamCQUploaded = true;
                             if (!rcd.HamCQUploaded)
                             {
                                 var hamcqResult =
@@ -404,17 +419,38 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                                 {
                                     ClassLogger.Debug("A qso for hamcq failed to upload.");
                                     rcd.HamCQUploaded = false;
-                                    failOutput.AppendLine(hamcqResult);
+                                    failOutput.AppendLine("HamCQ: "+hamcqResult.Trim());
                                 }
                             }
 
-                            if (rcd is { CloudlogUploaded: true, ClublogUploaded: true, HamCQUploaded: true })
+                            if (!_thirdPartySettings.EqslSettings.AutoQSOUploadEnabled) rcd.EqslUploaded = true;
+                            if (!rcd.EqslUploaded)
+                            {
+                                var eqslResult = await EqslUtil.UploadQSOToEqslAsync(_thirdPartySettings.EqslSettings.Username,
+                                        _thirdPartySettings.EqslSettings.Password,
+                                        adif);
+
+                                if (string.IsNullOrEmpty(eqslResult))
+                                {
+                                    // success
+                                    ClassLogger.Debug("A qso for eqsl uploaded succcessfully.");
+                                    rcd.EqslUploaded = true;
+                                }
+                                else
+                                {
+                                    ClassLogger.Debug("A qso for eqsl failed to upload.");
+                                    rcd.EqslUploaded = false;
+                                    failOutput.AppendLine("eqsl: "+eqslResult.Trim());
+                                }
+                            }
+
+                            if (rcd is { CloudlogUploaded: true, ClublogUploaded: true, HamCQUploaded: true, EqslUploaded: true })
                             {
                                 rcd.UploadStatus = UploadStatus.Success;
                                 rcd.FailReason = string.Empty;
                                 break;
                             }
-
+                            
                             rcd.UploadStatus = UploadStatus.Fail;
                             rcd.FailReason = failOutput.ToString();
 

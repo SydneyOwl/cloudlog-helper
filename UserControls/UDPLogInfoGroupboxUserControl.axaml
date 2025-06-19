@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <converters:StringToColorConverter x:Key="StatusToColor" />
         <converters:UploadStatusToTranslatedString x:Key="StringToTranslatedString" />
+        <converters:FailReasonToTooltipConverter x:Key="FailReasonToTooltip" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="10">
         <HeaderedContentControl Header="UDP Logs">
@@ -85,8 +86,19 @@
                                                 Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
                                                 VerticalAlignment="Center"
                                                 FontWeight="Bold" />
-                                            <userControls1:TipIconUserControl TooltipText="{Binding FailReason}"
-                                                                              VerticalAlignment="Center" />
+                                            <Image Margin="5,0,0,0"
+                                                   Width="20"
+                                                   Height="20"
+                                                   Source="avares://CloudlogHelper/Assets/Settings/Help.png"
+                                                   VerticalAlignment="Center">
+                                                <ToolTip.Tip>
+                                                    <TextBlock Text="{Binding FailReason, 
+                                                    Converter={StaticResource FailReasonToTooltip}}"/>
+                                                </ToolTip.Tip>
+                                                <ToolTip.ShowDelay>
+                                                    10
+                                                </ToolTip.ShowDelay>
+                                            </Image>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
@@ -99,14 +111,14 @@
                                    Foreground="Azure" Text="{Binding MsgSending}" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top" Background="OrangeRed"
+                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top" Background="rgba(255, 69, 0, 0.8)"
                                 IsVisible="{Binding TimeoutStatus}">
                         <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
-                                Background="CornflowerBlue" IsVisible="{Binding WaitFirstConn}">
+                                Background="rgba(100, 149, 237, 0.8)" IsVisible="{Binding WaitFirstConn}">
                         <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.waitconn}}" />
                     </StackPanel>

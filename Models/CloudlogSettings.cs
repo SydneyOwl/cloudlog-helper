@@ -67,6 +67,8 @@ public class CloudlogSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public string CloudlogApiKey { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public StationInfo? CloudlogStationInfo { get; set; }
 
+    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; } = true;
+
     [Reactive]
     [JsonProperty]
     public ObservableCollection<StationInfo> AvailableCloudlogStationInfo { get; set; } = new();
@@ -83,6 +85,7 @@ public class CloudlogSettings : ReactiveValidationObject
         CloudlogUrl = settings.CloudlogUrl;
         CloudlogApiKey = settings.CloudlogApiKey;
         CloudlogStationInfo = settings.CloudlogStationInfo;
+        AutoQSOUploadEnabled = settings.AutoQSOUploadEnabled;
         AvailableCloudlogStationInfo.Clear();
         AvailableCloudlogStationInfo.AddRange(settings.AvailableCloudlogStationInfo);
     }
@@ -116,7 +119,7 @@ public class CloudlogSettings : ReactiveValidationObject
     protected bool Equals(CloudlogSettings other)
     {
         return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
-               CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId;
+               CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId && AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
     }
 
     public override bool Equals(object? obj)
@@ -129,6 +132,6 @@ public class CloudlogSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo);
+        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo,AutoQSOUploadEnabled);
     }
 }

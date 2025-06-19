@@ -1,4 +1,5 @@
 ﻿using System;
+using ADIFLib;
 using CloudlogHelper.Database;
 using CloudlogHelper.Utils;
 using ReactiveUI;
@@ -158,6 +159,12 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Client ID sent by client, e.g. `JTDX` `WSJT-X`
     /// </summary>
     public string ClientId { get; set; }
+    
+    
+    /// <summary>
+    /// Original adif data.
+    /// </summary>
+    public ADIFQSO? RawData { get; set; }
 
     /// <summary>
     ///     The fail reason of current upload.
@@ -185,6 +192,11 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Upload status of hamcq.
     /// </summary>
     public bool HamCQUploaded { get; set; }
+    
+    /// <summary>
+    ///     Upload status of eqsl.
+    /// </summary>
+    public bool EqslUploaded { get; set; }
 
     /// <summary>
     ///     Upload status of current item.
@@ -241,6 +253,29 @@ public class RecordedCallsignDetail : ReactiveObject
                 ? string.Empty
                 : qlo.Id[..(qlo.Id.Length > 6 ? 6 : qlo.Id.Length)],
             UploadStatus = UploadStatus.Pending
+        };
+    }
+
+    public static RecordedCallsignDetail Parse(AdvanceQSOInfo info, bool markAsOldQso = true)
+    {
+        return new RecordedCallsignDetail
+        {
+            LocalizedCountryName = markAsOldQso?"Local Log":"?",
+            DXCall = info.Dx!,
+            ReportSent = info.RstSent!,
+            ReportReceived = info.RstReceived!,
+            TXFrequencyInMeters = info.Band!,
+            Mode = info.Mode!,
+            ClientId = "LOCAL",
+            RawData = info.RawData,
+            FailReason = null,
+            Checked = false,
+            CloudlogUploaded = false,
+            ClublogUploaded = false,
+            HamCQUploaded = false,
+            EqslUploaded = false,
+            UploadStatus = UploadStatus.Pending,
+            ForcedUpload = false
         };
     }
 

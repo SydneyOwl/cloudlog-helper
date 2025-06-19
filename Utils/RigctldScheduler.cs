@@ -21,7 +21,7 @@ public struct WorkItem
 /// <summary>
 ///     Priority-based task scheduler for rigctld commands. Not very useful so far.
 /// </summary>
-public class RigctldScheduler
+public class RigctldScheduler:IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
@@ -110,5 +110,13 @@ public class RigctldScheduler
             _lowPriorityQueue.TryDequeue(out var item);
             item.TaskCompletionSource.TrySetCanceled();
         }
+    }
+
+    public void Dispose()
+    {  
+        GC.SuppressFinalize(this);
+        Stop();
+        _cts.Dispose();
+        _workAvailable.Dispose();
     }
 }

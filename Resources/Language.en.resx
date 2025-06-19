@@ -468,4 +468,22 @@
     <data name="qthnick" xml:space="preserve">
         <value>QTH Nickname(optional)</value>
     </data>
+    <data name="uploadingqso" xml:space="preserve">
+        <value>This QSO is being uploaded</value>
+    </data>
+    <data name="retryingqso" xml:space="preserve">
+        <value>This QSO is being retried.</value>
+    </data>
+    <data name="pendingqso" xml:space="preserve">
+        <value>This QSO is pending.</value>
+    </data>
+    <data name="successqso" xml:space="preserve">
+        <value>This QSO Uploaded successfully.</value>
+    </data>
+    <data name="failedqso" xml:space="preserve">
+        <value>Failed to upload this QSO.</value>
+    </data>
+    <data name="ignoreqso" xml:space="preserve">
+        <value>This QSO is ignored - Maybe none of third party log service is enabled?</value>
+    </data>
 </root>

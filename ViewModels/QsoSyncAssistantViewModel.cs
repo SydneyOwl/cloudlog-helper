@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ADIFLib;
 using Avalonia.Platform.Storage;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
@@ -226,26 +227,34 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                             CurrentProgress + sEach);
                         continue;
                     }
-
-                    _logProgress(
-                        $"Found {compareRes.Count} QSOs not uploaded. Generating adif file...");
-
-                    var adifText = new StringBuilder();
-                    foreach (var advanceQSOInfo in compareRes) adifText.AppendLine(advanceQSOInfo.RawData.ToString());
-
-                    _logProgress("Uploading adif file...");
-
-                    var adifUploadRes = await QsoSyncAssistantUtil.UploadAdifLogAsync(
-                        Settings.CloudlogSettings.CloudlogUrl,
-                        adifText.ToString(), Settings.CloudlogSettings.CloudlogStationInfo?.StationId!, cookies,
-                        _source.Token);
-                    if (adifUploadRes)
+                    
+                    MessageBus.Current.SendMessage(new QsoUploadRequested
                     {
-                        _logProgress("Adif file uploaded successfully.", CurrentProgress + sEach);
-                        continue;
-                    }
-
-                    throw new Exception($"Failed to upload adif file: {localLog}");
+                        QsoData = compareRes.Select(x=>RecordedCallsignDetail.Parse(x)).ToList()
+                    });
+                    
+                    _logProgress(
+                        $"Found {compareRes.Count} QSOs not uploaded. Adding them into upload queue...",CurrentProgress + sEach);
+                    
+                    // _logProgress(
+                    //     $"Found {compareRes.Count} QSOs not uploaded. Generating adif file...");
+                    //
+                    // var adifText = new StringBuilder();
+                    // foreach (var advanceQSOInfo in compareRes) adifText.AppendLine(advanceQSOInfo.RawData.ToString());
+                    //
+                    // _logProgress("Uploading adif file...");
+                    //
+                    // var adifUploadRes = await QsoSyncAssistantUtil.UploadAdifLogAsync(
+                    //     Settings.CloudlogSettings.CloudlogUrl,
+                    //     adifText.ToString(), Settings.CloudlogSettings.CloudlogStationInfo?.StationId!, cookies,
+                    //     _source.Token);
+                    // if (adifUploadRes)
+                    // {
+                    //     _logProgress("Adif file uploaded successfully.", CurrentProgress + sEach);
+                    //     continue;
+                    // }
+                    //
+                    // throw new Exception($"Failed to upload adif file: {localLog}");
                 }
                 catch (Exception e)
                 {

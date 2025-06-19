@@ -40,12 +40,6 @@ public class UDPServerSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public bool EnableConnectionFromOutside { get; set; }
     [Reactive] [JsonProperty] public string UDPPort { get; set; } = DefaultConfigs.UDPServerDefaultPort.ToString();
 
-
-    [Reactive] [JsonProperty] public bool AutoUploadQSOToCloudlog { get; set; } = true;
-    [Reactive] [JsonProperty] public bool AutoUploadQSOToClublog { get; set; }
-
-    [Reactive] [JsonProperty] public bool AutoUploadQSOToHamCQ { get; set; }
-
     [Reactive] [JsonProperty] public string RetryCount { get; set; } = "3";
 
     [Reactive] [JsonProperty] public bool ForwardMessage { get; set; }
@@ -57,9 +51,6 @@ public class UDPServerSettings : ReactiveValidationObject
         EnableUDPServer = settings.EnableUDPServer;
         EnableConnectionFromOutside = settings.EnableConnectionFromOutside;
         UDPPort = settings.UDPPort;
-        AutoUploadQSOToCloudlog = settings.AutoUploadQSOToCloudlog;
-        AutoUploadQSOToClublog = settings.AutoUploadQSOToClublog;
-        AutoUploadQSOToHamCQ = settings.AutoUploadQSOToHamCQ;
         RetryCount = settings.RetryCount;
         ForwardMessage = settings.ForwardMessage;
         ForwardAddress = settings.ForwardAddress;
@@ -97,10 +88,8 @@ public class UDPServerSettings : ReactiveValidationObject
     protected bool Equals(UDPServerSettings other)
     {
         return EnableUDPServer == other.EnableUDPServer &&
-               EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort &&
-               AutoUploadQSOToCloudlog == other.AutoUploadQSOToCloudlog &&
-               AutoUploadQSOToClublog == other.AutoUploadQSOToClublog &&
-               AutoUploadQSOToHamCQ == other.AutoUploadQSOToHamCQ && RetryCount == other.RetryCount &&
+               EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort
+               && RetryCount == other.RetryCount &&
                ForwardMessage == other.ForwardMessage && ForwardAddress == other.ForwardAddress;
     }
 
@@ -118,9 +107,6 @@ public class UDPServerSettings : ReactiveValidationObject
         hashCode.Add(EnableUDPServer);
         hashCode.Add(EnableConnectionFromOutside);
         hashCode.Add(UDPPort);
-        hashCode.Add(AutoUploadQSOToCloudlog);
-        hashCode.Add(AutoUploadQSOToClublog);
-        hashCode.Add(AutoUploadQSOToHamCQ);
         hashCode.Add(RetryCount);
         hashCode.Add(ForwardMessage);
         hashCode.Add(ForwardAddress);

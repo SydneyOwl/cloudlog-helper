@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -7,10 +8,12 @@ namespace CloudlogHelper.Models;
 public class HamCQSettings : ReactiveObject
 {
     [Reactive] [JsonProperty] public string HamCQAPIKey { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; }
 
     public void ApplySettingsChange(HamCQSettings settings)
     {
         HamCQAPIKey = settings.HamCQAPIKey;
+        AutoQSOUploadEnabled = settings.AutoQSOUploadEnabled;
     }
 
     public HamCQSettings GetReference()
@@ -26,7 +29,7 @@ public class HamCQSettings : ReactiveObject
 
     protected bool Equals(HamCQSettings other)
     {
-        return HamCQAPIKey == other.HamCQAPIKey;
+        return HamCQAPIKey == other.HamCQAPIKey && AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
     }
 
     public override bool Equals(object? obj)
@@ -39,6 +42,6 @@ public class HamCQSettings : ReactiveObject
 
     public override int GetHashCode()
     {
-        return HamCQAPIKey.GetHashCode();
+        return HashCode.Combine(HamCQAPIKey, AutoQSOUploadEnabled);
     }
 }

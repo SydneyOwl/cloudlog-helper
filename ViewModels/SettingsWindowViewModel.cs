@@ -338,6 +338,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private void _discardConf()
     {
         // resume settings
+        if (Design.IsDesignMode)return;
         ClassLogger.Trace("Discarding confse");
         DraftSettings.RestoreSettings();
         MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });

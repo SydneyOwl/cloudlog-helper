@@ -10,12 +10,15 @@ public class ClublogSettings : ReactiveObject
     [Reactive] [JsonProperty] public string ClublogCallsign { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public string ClublogPassword { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public string ClublogEmail { get; set; } = string.Empty;
+    
+    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; }
 
     public void ApplySettingsChange(ClublogSettings settings)
     {
         ClublogCallsign = settings.ClublogCallsign;
         ClublogPassword = settings.ClublogPassword;
         ClublogEmail = settings.ClublogEmail;
+        AutoQSOUploadEnabled = settings.AutoQSOUploadEnabled;
     }
 
     public ClublogSettings GetReference()
@@ -33,7 +36,7 @@ public class ClublogSettings : ReactiveObject
     protected bool Equals(ClublogSettings other)
     {
         return ClublogCallsign == other.ClublogCallsign && ClublogPassword == other.ClublogPassword &&
-               ClublogEmail == other.ClublogEmail;
+               ClublogEmail == other.ClublogEmail && AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
     }
 
     public override bool Equals(object? obj)
@@ -46,6 +49,6 @@ public class ClublogSettings : ReactiveObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(ClublogCallsign, ClublogPassword, ClublogEmail);
+        return HashCode.Combine(ClublogCallsign, ClublogPassword, ClublogEmail, AutoQSOUploadEnabled);
     }
 }

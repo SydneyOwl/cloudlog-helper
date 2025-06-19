@@ -438,6 +438,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to upload this QSO..
+        /// </summary>
+        public static string failedqso {
+            get {
+                return ResourceManager.GetString("failedqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to fetch RIG info!.
         /// </summary>
         public static string failedriginfo {
@@ -551,6 +560,15 @@ namespace CloudlogHelper.Resources {
         public static string helpfeedback {
             get {
                 return ResourceManager.GetString("helpfeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This QSO is ignored - Maybe none of third party log service is enabled?.
+        /// </summary>
+        public static string ignoreqso {
+            get {
+                return ResourceManager.GetString("ignoreqso", resourceCulture);
             }
         }
         
@@ -717,6 +735,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This QSO is pending..
+        /// </summary>
+        public static string pendingqso {
+            get {
+                return ResourceManager.GetString("pendingqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rig data polling is not enabled！.
         /// </summary>
         public static string polldisabled {
@@ -875,6 +902,15 @@ namespace CloudlogHelper.Resources {
         public static string retrycountreq {
             get {
                 return ResourceManager.GetString("retrycountreq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This QSO is being retried..
+        /// </summary>
+        public static string retryingqso {
+            get {
+                return ResourceManager.GetString("retryingqso", resourceCulture);
             }
         }
         
@@ -1055,6 +1091,15 @@ namespace CloudlogHelper.Resources {
         public static string success {
             get {
                 return ResourceManager.GetString("success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This QSO Uploaded successfully..
+        /// </summary>
+        public static string successqso {
+            get {
+                return ResourceManager.GetString("successqso", resourceCulture);
             }
         }
         
@@ -1316,6 +1361,15 @@ namespace CloudlogHelper.Resources {
         public static string uploading {
             get {
                 return ResourceManager.GetString("uploading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This QSO is being uploaded.
+        /// </summary>
+        public static string uploadingqso {
+            get {
+                return ResourceManager.GetString("uploadingqso", resourceCulture);
             }
         }
         

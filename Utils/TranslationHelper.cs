@@ -16,7 +16,7 @@ public enum SupportedLanguage
 /// <summary>
 ///     Provides helper methods for translation and language support.
 /// </summary>
-public class TranslationHelper
+public static class TranslationHelper
 {
     /// <summary>
     ///     Logger for the class.

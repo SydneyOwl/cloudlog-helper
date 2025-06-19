@@ -10,12 +10,14 @@ public class EqslSettings:ReactiveObject
     [Reactive] [JsonProperty] public string Username { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public string Password { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public string QthNickname { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; }
 
     public void ApplySettingsChange(EqslSettings settings)
     {
         Username = settings.Username;
         Password = settings.Password;
         QthNickname = settings.QthNickname;
+        AutoQSOUploadEnabled = settings.AutoQSOUploadEnabled;
     }
 
     public EqslSettings GetReference()
@@ -31,7 +33,7 @@ public class EqslSettings:ReactiveObject
 
     protected bool Equals(EqslSettings other)
     {
-        return Username == other.Username && Password == other.Password && QthNickname == other.QthNickname;
+        return Username == other.Username && Password == other.Password && QthNickname == other.QthNickname && AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
     }
 
     public override bool Equals(object? obj)
@@ -44,6 +46,6 @@ public class EqslSettings:ReactiveObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Username, Password, QthNickname);
+        return HashCode.Combine(Username, Password, QthNickname, AutoQSOUploadEnabled);
     }
 }

@@ -468,4 +468,22 @@
     <data name="qthnick" xml:space="preserve">
         <value>QTH别名（可选）</value>
     </data>
+    <data name="uploadingqso" xml:space="preserve">
+        <value>正在上传此QSO。</value>
+    </data>
+    <data name="retryingqso" xml:space="preserve">
+        <value>正在重试上传</value>
+    </data>
+    <data name="pendingqso" xml:space="preserve">
+        <value>此QSO正在等待上传。</value>
+    </data>
+    <data name="successqso" xml:space="preserve">
+        <value>此QSO上传成功。</value>
+    </data>
+    <data name="failedqso" xml:space="preserve">
+        <value>此QSO上传失败。</value>
+    </data>
+    <data name="ignoreqso" xml:space="preserve">
+        <value>此QSO已被忽略 - 是不是把所有第三方日志的上传功能都关了？</value>
+    </data>
 </root>

@@ -37,7 +37,7 @@ public class HamCQUtil
                 .PostStringAsync(reqJson.ToString());
             var responseText = await result.GetStringAsync();
             var code = result.StatusCode;
-            ClassLogger.Debug($"Got response from `TestHamCQConnectionAsync`: {code} {responseText}");
+            // ClassLogger.Debug($"Got response from `TestHamCQConnectionAsync`: {code} {responseText}");
             if (responseText == "Pass") return string.Empty;
             var res = JsonConvert.DeserializeObject<JObject>(responseText);
             if (res is null) return $"HamCQ Error: {TranslationHelper.GetString("invalidapikey")}({responseText})";

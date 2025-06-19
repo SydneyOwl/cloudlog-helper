@@ -130,10 +130,16 @@ public class DefaultConfigs
     public static readonly string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
     /// <summary>
-    ///     QSO Upload api endpoint for eqsl
+    ///     QSO test api endpoint for eqsl
     /// </summary>
     public static readonly string EqslTestEndpoint =
         "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
+    
+    /// <summary>
+    ///     QSO Upload api endpoint for eqsl
+    /// </summary>
+    public static readonly string EqslQsoUploadEndpoint =
+        "https://www.eQSL.cc/qslcard/importADIF.cfm";
 
     /// <summary>
     ///     This is for cloudlog helper only.
