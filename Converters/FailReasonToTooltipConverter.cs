@@ -12,7 +12,7 @@ public class FailReasonToTooltipConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not string failReason) return "Value is not a string";
+        if (value is not string failReason) return "This QSO is being processed.";
         return !string.IsNullOrEmpty(failReason) ? failReason : "This QSO has no error message.";
     }
 

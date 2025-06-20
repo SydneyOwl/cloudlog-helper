@@ -54,6 +54,7 @@ public class App : Application
                 ViewModel = new MainWindowViewModel()
             };
             desktop.MainWindow = mainWindow;
+            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
             NotificationManager = new WindowNotification(mainWindow);
 
             _exitCommand = ReactiveCommand.Create(() =>
@@ -84,7 +85,6 @@ public class App : Application
                 {
                     ToolTipText = "CloudlogHelper",
                     Icon = new WindowIcon(bitmap),
-                    // 可以添加菜单项
                     Menu = new NativeMenu
                     {
                         nmiExit,
