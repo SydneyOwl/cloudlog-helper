@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,11 +9,30 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
+using CommandLine;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
 
 namespace CloudlogHelper;
+
+public class CommandLineOptions
+{
+    [Option("verbose", HelpText = "Enable verbose logging (Trace level).")]
+    public bool Verbose { get; set; }
+
+    [Option("log2file", HelpText = "Log output to file.")]
+    public bool LogToFile { get; set; }
+
+    [Option("reinit-db", HelpText = "Force reinitialize the database.")]
+    public bool ReinitDatabase { get; set; }
+
+    [Option("dev", HelpText = "Developer mode (throw exceptions).")]
+    public bool DeveloperMode { get; set; }
+
+    [Option("crash-report", HelpText = "Path to crash report file.", Hidden = true)]
+    public string? CrashReportFile { get; set; }
+}
 
 internal sealed class Program
 {
@@ -22,26 +42,29 @@ internal sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        Parser.Default.ParseArguments<CommandLineOptions>(args)
+            .WithParsed(options => RunWithOptions(options, args))
+            .WithNotParsed(HandleParseErrors);
+    }
+
+    private static void RunWithOptions(CommandLineOptions options, string[] originalArgs )
+    {
         try
         {
-            var verboseLevel = args.Contains("--verbose") ? LogLevel.Trace : LogLevel.Info;
-            if (args.Contains("--log2file"))
-                _initializeLogger(verboseLevel, true);
-            else
-                _initializeLogger(verboseLevel);
-
+            var verboseLevel = options.Verbose ? LogLevel.Trace : LogLevel.Info;
+            _initializeLogger(verboseLevel, options.LogToFile);
             _initializeCulture();
 
             // To be honest, I don't know why but if this is initialized at OnFrameworkInitializationCompleted it would fail...
-            _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: args.Contains("--reinit-db"));
+            _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: options.ReinitDatabase);
 
             BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args);
+                .StartWithClassicDesktopLifetime(originalArgs);
         }
         catch (Exception ex)
         {
-            if (args.Contains("--dev")) throw;
-            if (args.Contains("--crash-report")) return;
+            if (options.DeveloperMode) throw;
+            if (string.IsNullOrEmpty(options.CrashReportFile)) return;
             var tmp = Path.GetTempFileName();
             // Console.WriteLine(tmp);
             File.WriteAllText(tmp,
@@ -65,6 +88,17 @@ Stack：{ex.StackTrace}");
             DatabaseUtil.Cleanup();
             UDPServerUtil.TerminateUDPServer();
         }
+    }
+    
+    private static void HandleParseErrors(IEnumerable<Error> errors)
+    {
+        // Handle command line parsing errors here
+        // For example, you might want to display help text or exit
+        foreach (var error in errors)
+        {
+            Console.WriteLine($@"Error while parsing args: {error}");
+        }
+        Environment.Exit(1);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
