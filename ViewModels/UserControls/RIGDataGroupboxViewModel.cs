@@ -31,7 +31,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     /// <summary>
     ///     Command for polling data(mode and frequency)
     /// </summary>
-    private readonly ReactiveCommand<Unit, Unit> _pollCommand;
+    private ReactiveCommand<Unit, Unit> _pollCommand;
 
     /// <summary>
     ///     Settings for hamlib.
@@ -58,10 +58,27 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     ///     Accumulative rig connection failed times.
     /// </summary>
     private int _rigConnFailedTimes;
+    
+    /// <summary>
+    /// Indicates if the initialization is skipped...
+    /// </summary>
+    public bool InitSkipped { get; private set; }
 
-    public RIGDataGroupboxViewModel()
+    public RIGDataGroupboxViewModel() { }
+    
+    public static RIGDataGroupboxViewModel Create(bool skipInit = false)
     {
-        // check if conf is available, then start rigctld
+        var vm = new RIGDataGroupboxViewModel();
+        vm.InitSkipped = skipInit;
+        if (!skipInit)
+        {
+            vm.Initialize(); 
+        }
+        return vm;
+    }
+    
+    private void Initialize(){
+    // check if conf is available, then start rigctld
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
         this.WhenActivated(disposables =>
         {

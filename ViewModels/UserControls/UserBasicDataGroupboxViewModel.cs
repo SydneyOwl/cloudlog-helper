@@ -20,11 +20,25 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly ReactiveCommand<Unit, Unit> _pollCommand;
+    private ReactiveCommand<Unit, Unit> _pollCommand;
 
     private readonly CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
-    public UserBasicDataGroupboxViewModel()
+    public bool InitSkipped { get; private set; }
+    public UserBasicDataGroupboxViewModel(){}
+    
+    public static UserBasicDataGroupboxViewModel Create(bool skipInit = false)
+    {
+        var vm = new UserBasicDataGroupboxViewModel();
+        vm.InitSkipped = skipInit;
+        if (!skipInit)
+        {
+            vm.Initialize(); 
+        }
+        return vm;
+    }
+    
+    private void Initialize()
     {
         // poll it!
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshUserBasicData);

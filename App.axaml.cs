@@ -8,6 +8,7 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
@@ -23,10 +24,16 @@ public class App : Application
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
-
     public static WindowTracker WindowTracker { get; } = new();
     public static WindowNotification NotificationManager { get; private set; }
+    public static CommandLineOptions CmdOptions { get; private set; }
 
+    public App(CommandLineOptions? options)
+    {
+        options ??= new CommandLineOptions();
+        CmdOptions = options;
+    }
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -40,14 +47,13 @@ public class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            if (desktop.Args != null)
-                for (var i = 0; i < desktop.Args.Length; i++)
-                    if (desktop.Args[i] == "--crash-report")
-                    {
-                        desktop.MainWindow = new ErrorReportWindow(desktop.Args[i + 1])
-                            { ViewModel = new ErrorReportWindowViewModel() };
-                        return;
-                    }
+            
+            if (!string.IsNullOrEmpty(CmdOptions.CrashReportFile))
+            {
+                desktop.MainWindow = new ErrorReportWindow(CmdOptions.CrashReportFile)
+                    { ViewModel = new ErrorReportWindowViewModel() };
+                return;
+            }
 
             var mainWindow = new MainWindow
             {

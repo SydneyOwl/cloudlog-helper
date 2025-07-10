@@ -56,14 +56,14 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
-                        <TextBlock Text="Cloud sample:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBlock Text="Cloud sample (days):" VerticalAlignment="Center" Margin="0,0,10,0" />
                         <ComboBox HorizontalAlignment="Right"
-                                  ItemsSource="{x:Static resources:DefaultConfigs.QSOSampleCountChoice}"
-                                  SelectedValue="{Binding Settings.QsoSyncAssistantSettings.CloudlogQSOSampleCount}" />
+                                  ItemsSource="{x:Static resources:DefaultConfigs.QSODayRangeChoice}"
+                                  SelectedValue="{Binding Settings.QsoSyncAssistantSettings.CloudlogQSODayRange}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="0">
-                        <TextBlock Text="Local sample:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBlock Text="Local sample (QSOs):" VerticalAlignment="Center" Margin="0,0,10,0" />
                         <ComboBox HorizontalAlignment="Right"
                                   ItemsSource="{x:Static resources:DefaultConfigs.QSOSampleCountChoice}"
                                   SelectedValue="{Binding Settings.QsoSyncAssistantSettings.LocalQSOSampleCount}" />

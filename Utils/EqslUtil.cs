@@ -18,8 +18,6 @@ public class EqslUtil
     {
         try
         {
-
-
             var defaultParam =
                 $"UserName={Uri.EscapeDataString(username)}&Password={Uri.EscapeDataString(password)}&LimitDateHi={Uri.EscapeDataString("01/01/1990")}";
             if (!string.IsNullOrEmpty(qthnickname)) defaultParam += $"&QTHNickname={Uri.EscapeDataString(qthnickname)}";

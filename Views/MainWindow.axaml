@@ -87,6 +87,7 @@
                 </ToggleButton>
                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center"
                             HorizontalAlignment="Right"
+                            IsVisible="{Binding !UdpLogOnly}"
                             Margin="10,0,10,0" Spacing="30">
                     <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
                         <!-- rigctld -->
@@ -119,8 +120,10 @@
 
         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
             <userControls:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="0"
+                                                           IsVisible="{Binding !InitSkipped}"
                                                            DataContext="{Binding UserBasicDataGroupboxVM}" />
             <userControls:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="1"
+                                                     IsVisible="{Binding !InitSkipped}"
                                                      DataContext="{Binding RigDataGroupboxVM}" />
             <userControls:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                                                         DataContext="{Binding UDPLogInfoGroupboxVm}" />

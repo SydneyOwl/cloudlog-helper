@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -15,24 +14,6 @@ using NLog.Config;
 using NLog.Targets;
 
 namespace CloudlogHelper;
-
-public class CommandLineOptions
-{
-    [Option("verbose", HelpText = "Enable verbose logging (Trace level).")]
-    public bool Verbose { get; set; }
-
-    [Option("log2file", HelpText = "Log output to file.")]
-    public bool LogToFile { get; set; }
-
-    [Option("reinit-db", HelpText = "Force reinitialize the database.")]
-    public bool ReinitDatabase { get; set; }
-
-    [Option("dev", HelpText = "Developer mode (throw exceptions).")]
-    public bool DeveloperMode { get; set; }
-
-    [Option("crash-report", HelpText = "Path to crash report file.", Hidden = true)]
-    public string? CrashReportFile { get; set; }
-}
 
 internal sealed class Program
 {
@@ -58,7 +39,7 @@ internal sealed class Program
             // To be honest, I don't know why but if this is initialized at OnFrameworkInitializationCompleted it would fail...
             _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: options.ReinitDatabase);
 
-            BuildAvaloniaApp()
+            BuildAvaloniaApp(options)
                 .StartWithClassicDesktopLifetime(originalArgs);
         }
         catch (Exception ex)
@@ -102,9 +83,9 @@ Stack：{ex.StackTrace}");
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
+    public static AppBuilder BuildAvaloniaApp(CommandLineOptions? options)
     {
-        return AppBuilder.Configure<App>()
+        return AppBuilder.Configure(()=> new App(options))
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()

@@ -53,27 +53,73 @@ public class QsoSyncAssistantUtil
         return result.Cookies;
     }
 
+    public static async Task<string> DownloadQSOFile(string baseurl, string stationId, int dateRange,
+        IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
+    {
+        var today = DateTime.Today.ToString("yyyy-MM-dd");
+        var nDaysBefore = DateTime.Today.AddDays(dateRange * -1).ToString("yyyy-MM-dd");
+        
+        var response = await baseurl
+            .AppendPathSegments(DefaultConfigs.ExportCustomAdifLogs) 
+            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
+            .WithCookies(cookies)
+            .PostMultipartAsync(mp => mp
+                .AddString("station_profile", stationId)
+                .AddString("from", nDaysBefore)
+                .AddString("to", today), cancellationToken: cancellationToken)
+            .ReceiveBytes();
+        
+        return Encoding.UTF8.GetString(response);
+   }
+
     public static async Task<string> DownloadQSOs(string baseurl, string stationCallsign,
         int stationId, int qsoCount, IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
     {
         // check for instance
         var instance = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(baseurl);
         var tmp = new JObject();
-        tmp.Add("qsoresults", qsoCount);
         if (instance == ServerInstanceType.Wavelog)
         {
+            tmp.Add("dateFrom", "");
+            tmp.Add("dateTo", "");
             tmp.Add("de[]", stationId);
             tmp.Add("dx", "*");
+            tmp.Add("mode", "");
+            tmp.Add("band", "");
+            tmp.Add("qslSent", "");
+            tmp.Add("qslReceived", "");
+            tmp.Add("qslSentMethod", "");
+            tmp.Add("qslReceivedMethod", "");
+            tmp.Add("iota", "");
             tmp.Add("operator", "*");
+            tmp.Add("dxcc", "");
+            tmp.Add("propmode", "");
             tmp.Add("gridsquare", "*");
             tmp.Add("state", "*");
+            tmp.Add("county", "*");
+            tmp.Add("qsoresults", qsoCount.ToString());
+            tmp.Add("sats", "All");
             tmp.Add("orbits", "All");
+            tmp.Add("cqzone", "All");
+            tmp.Add("ituzone", "All");
+            tmp.Add("lotwSent", "");
+            tmp.Add("lotwReceived", "");
+            tmp.Add("clublogSent", "");
+            tmp.Add("clublogReceived", "");
+            tmp.Add("eqslSent", "");
+            tmp.Add("eqslReceived", "");
             tmp.Add("qslvia", "*");
             tmp.Add("sota", "*");
             tmp.Add("pota", "*");
             tmp.Add("wwff", "*");
+            tmp.Add("qslimages", "");
+            tmp.Add("dupes", "");
             tmp.Add("contest", "*");
+            tmp.Add("invalid", "");
+            tmp.Add("continent", "");
             tmp.Add("comment", "*");
+            tmp.Add("qsoids", "");
         }
         else
         {
@@ -90,10 +136,6 @@ public class QsoSyncAssistantUtil
             tmp.Add("contest", "");
             tmp.Add("comment", "");
         }
-
-        tmp.Add("dateFrom", "");
-        tmp.Add("dateTo", "");
-        tmp.Add("sats", "All");
         var recentQs = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogQSOAdvancedEndpoint)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
@@ -152,77 +194,28 @@ public class QsoSyncAssistantUtil
     /// <param name="filePath"></param>
     /// <param name="targetCount"></param>
     /// <returns></returns>
-    [Obsolete]
-    public static string GetLastestQsos(string filePath, int targetCount)
+    public static string ReadLastestQsos(string filePath, int targetCount)
     {
-        const int chunkSize = 4096;
-        var records = new List<string>(targetCount);
-        var buffer = new StringBuilder();
+        var queue = new Queue<string>(targetCount);
 
-        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        using var reader = new StreamReader(filePath);
+        var lineNum = 1;
+        while (!reader.EndOfStream)
         {
-            var position = fs.Length;
-            var chunk = new byte[chunkSize];
-            var remainingPartialRecord = string.Empty;
-
-            while (position > 0 && records.Count < targetCount)
-            {
-                var readSize = (int)Math.Min(chunkSize, position);
-                position -= readSize;
-                fs.Seek(position, SeekOrigin.Begin);
-                _ = fs.Read(chunk, 0, readSize);
-
-                var chunkText = Encoding.UTF8.GetString(chunk, 0, readSize);
-                buffer.Insert(0, chunkText);
-
-                // Prepend any partial record from previous chunk
-                if (!string.IsNullOrEmpty(remainingPartialRecord))
-                {
-                    buffer.Insert(0, remainingPartialRecord);
-                    remainingPartialRecord = string.Empty;
-                }
-
-                var searchPosition = buffer.Length;
-                while (records.Count < targetCount)
-                {
-                    var eorIndex = buffer.ToString()
-                        .LastIndexOf("<eor>", searchPosition - 1, StringComparison.OrdinalIgnoreCase);
-                    if (eorIndex < 0) break;
-
-                    var recordStart = FindRecordStart(buffer, eorIndex);
-                    if (recordStart < 0)
-                    {
-                        // If we can't find a complete record, save the partial for next chunk
-                        remainingPartialRecord = buffer.ToString(0, eorIndex + 5);
-                        buffer.Remove(0, eorIndex + 5);
-                        break;
-                    }
-
-                    var record = buffer.ToString(recordStart, eorIndex + 5 - recordStart);
-                    records.Insert(0, record);
-                    buffer.Remove(recordStart, eorIndex + 5 - recordStart);
-                    searchPosition = recordStart;
-                }
-            }
-
-            // Handle any remaining complete record in the buffer
-            if (records.Count < targetCount && buffer.Length > 0)
-            {
-                var eorIndex = buffer.ToString().LastIndexOf("<eor>", StringComparison.OrdinalIgnoreCase);
-                if (eorIndex >= 0)
-                {
-                    var recordStart = FindRecordStart(buffer, eorIndex);
-                    if (recordStart >= 0)
-                    {
-                        var record = buffer.ToString(recordStart, eorIndex + 5 - recordStart);
-                        records.Insert(0, record);
-                    }
-                }
-            }
+            var line = reader.ReadLine();
+            if (string.IsNullOrEmpty(line))continue;
+            if (!line.Contains("CALL", StringComparison.InvariantCultureIgnoreCase)
+                || !line.Contains("MODE", StringComparison.InvariantCultureIgnoreCase)
+                || !line.Contains("BAND", StringComparison.InvariantCultureIgnoreCase)
+                || !line.Contains("RST", StringComparison.InvariantCultureIgnoreCase))
+                throw new Exception($"This is not a correct Wsjtx/jtdx log file! - line {lineNum}");
+            if (queue.Count == targetCount)
+                queue.Dequeue();
+            queue.Enqueue(line);
+            lineNum++;
         }
 
-        // Return the requested number of records (or all if there aren't enough)
-        return string.Join("\n", records.Take(targetCount));
+        return string.Join("\n", queue);
     }
 
     private static int FindRecordStart(StringBuilder buffer, int eorIndex)

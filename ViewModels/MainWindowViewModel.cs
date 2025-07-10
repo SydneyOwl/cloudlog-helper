@@ -22,19 +22,21 @@ public class MainWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-
     private bool _isRigctldUsingExternal;
+    public bool UdpLogOnly { get; private set; }
 
     public MainWindowViewModel()
     {
+        UdpLogOnly = App.CmdOptions.AutoUdpLogUploadOnly;
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(OpenWindow<SettingsWindowViewModel>);
         OpenAboutWindow = ReactiveCommand.CreateFromTask(OpenWindow<AboutWindowViewModel>);
         OpenQSOAssistantWindow = ReactiveCommand.CreateFromTask(OpenWindow<QsoSyncAssistantViewModel>);
         SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
 
-        UserBasicDataGroupboxVM = new UserBasicDataGroupboxViewModel();
-        RigDataGroupboxVM = new RIGDataGroupboxViewModel();
+        UserBasicDataGroupboxVM = UserBasicDataGroupboxViewModel.Create(UdpLogOnly);
+        RigDataGroupboxVM = RIGDataGroupboxViewModel.Create(UdpLogOnly);
+        
         UDPLogInfoGroupboxVm = new UDPLogInfoGroupboxViewModel();
 
         this.WhenActivated(disposables =>

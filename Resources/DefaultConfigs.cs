@@ -64,6 +64,11 @@ public class DefaultConfigs
     public static List<int> QSOSampleCountChoice = new() { 50, 100, 200, 500, 1000 };
 
     /// <summary>
+    ///     QSODayRangeChoice
+    /// </summary>
+    public static List<int> QSODayRangeChoice = new() { 10, 30, 60, 120, 240, 365, 720, 1000, 2000 };
+    
+    /// <summary>
     ///     API endpoint for Checking whether this is a wavelog instance or not (by checking manifest.json)
     ///     Maybe someday I'll call it cloudwave helper. haha!
     /// </summary>
@@ -93,6 +98,11 @@ public class DefaultConfigs
     ///     API endpoint for fetching recent qsos.
     /// </summary>
     public static string CloudlogQSOAdvancedEndpoint = "/index.php/logbookadvanced/search";
+
+    /// <summary>
+    ///     API Endpoint for downloading adif in specified date range.
+    /// </summary>
+    public static string ExportCustomAdifLogs = "/adif/export_custom";
 
     /// <summary>
     ///     API endpoint for testing authentication keys in Cloudlog.
@@ -147,6 +157,16 @@ public class DefaultConfigs
     /// </summary>
     public static readonly string Clkk = ("afce|ce|4" + "6e95|||83d99af3|9851" + "429d18dade6670278").Replace("|", "");
 
+    /// <summary>
+    /// Allowed freq offset when comparing qso.
+    /// </summary>
+    public static readonly float AllowedFreqOffsetMHz = 0.1f;
+    
+    /// <summary>
+    /// Allowed time offset when comparing qso.
+    /// </summary>
+    public static readonly int AllowedTimeOffsetMinutes = 10;
+    
     /// <summary>
     ///     Default host address for Rigctld.
     /// </summary>

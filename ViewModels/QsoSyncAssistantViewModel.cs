@@ -96,9 +96,9 @@ public class QsoSyncAssistantViewModel : ViewModelBase
     {
         // Dispatcher.UIThread.Invoke(() =>
         // {
-            if (progress is not null) CurrentProgress = progress.Value;
-            if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
-            ClassLogger.Debug(info);
+        if (progress is not null) CurrentProgress = progress.Value;
+        if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
+        ClassLogger.Debug(info);
         // });
     }
 
@@ -147,33 +147,25 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                 Settings.QsoSyncAssistantSettings.CloudlogPassword!,
                 _source.Token);
 
-            _logProgress("Login successfully. Checking datetime format...", 15);
-            var datetimeFormat =
-                await QsoSyncAssistantUtil.GetDateFormat(Settings.CloudlogSettings.CloudlogUrl, cookies, _source.Token);
-            if (string.IsNullOrEmpty(datetimeFormat)) throw new Exception("Failed to detect datetime format!");
-
-            _logProgress($"Detected datetime format: {datetimeFormat}.Downloading QSOs...", 25);
-            var rawData = await QsoSyncAssistantUtil.DownloadQSOs(Settings.CloudlogSettings.CloudlogUrl,
-                stationCallsign!,
-                int.Parse(Settings.CloudlogSettings.CloudlogStationInfo?.StationId!),
-                Settings.QsoSyncAssistantSettings.CloudlogQSOSampleCount,
+            _logProgress(
+                $"Login successfully. Downloading QSOs within {Settings.QsoSyncAssistantSettings.CloudlogQSODayRange} days...",
+                15);
+            var cloudAdif = await QsoSyncAssistantUtil.DownloadQSOFile(Settings.CloudlogSettings.CloudlogUrl,
+                Settings.CloudlogSettings.CloudlogStationInfo!.Value.StationId!,
+                Settings.QsoSyncAssistantSettings.CloudlogQSODayRange,
                 cookies,
                 _source.Token);
-
             _logProgress("Qsos downloaded. Analysing...", 30);
-            var cloudRaw = JsonConvert.DeserializeObject<List<AdvanceQSOInfo>>(rawData);
-            if (cloudRaw is null) throw new Exception("Failed to parse downloaded data.");
-            // transform it
-            var cloudParsed = cloudRaw
-                .Select(x =>
-                {
-                    x.ParseDatetime(datetimeFormat);
-                    return x;
-                })
-                .Where(x => x is not null)
-                .ToList();
 
-            _logProgress($"{cloudParsed.Count} Qsos parsed successfully.", 30);
+            var cloudParser = new ADIF();
+            await Task.Run(() => { cloudParser.ReadFromString(cloudAdif, _source.Token); });
+
+            _logProgress($"{cloudParser.QSOCount} Qsos from cloud parsed successfully.", 30);
+
+            var cloudParsed = cloudParser.TheQSOs
+                .Select(AdifLog.Parse)
+                .ToList();
+            
             if (Settings.QsoSyncAssistantSettings.LocalLogPath!.Count == 0)
                 throw new Exception("Please select ur local logs.");
 
@@ -183,41 +175,43 @@ public class QsoSyncAssistantViewModel : ViewModelBase
             foreach (var localLog in Settings.QsoSyncAssistantSettings.LocalLogPath)
                 try
                 {
-                    if (_source.IsCancellationRequested) throw new OperationCanceledException("Operation cancelled by user.");
+                    if (_source.IsCancellationRequested)
+                        throw new OperationCanceledException("Operation cancelled by user.");
                     _logProgress($"Try reading qso data from {localLog}, this may take sometime...", CurrentProgress);
 
                     // not elegant for large files...
-                    var parser = new ADIF();
-                    await Task.Run(() => 
+                    var localParser = new ADIF();
+                    await Task.Run(() =>
                     {
-                        parser.ReadFromFile(localLog, Settings.QsoSyncAssistantSettings.LocalQSOSampleCount, _source.Token);
+                        // read last n lines
+                        var lq = QsoSyncAssistantUtil.ReadLastestQsos(localLog,
+                            Settings.QsoSyncAssistantSettings.LocalQSOSampleCount);
+                        localParser.ReadFromString(lq, _source.Token);
                     });
-                    
+
                     _logProgress(
-                        $"Parsing qso data from {localLog} successfully. Read {parser.QSOCount} Qsos. Checking qsos not uploaded...",
+                        $"Parsing qso data from {localLog} successfully. Read {localParser.QSOCount} Qsos. Checking qsos not uploaded...",
                         CurrentProgress);
 
-                    var localParsed = parser.TheQSOs
-                        .Select(AdvanceQSOInfo.Parse)
+                    var localParsed = localParser.TheQSOs
+                        .Select(AdifLog.Parse)
                         .ToList();
 
-                    var comparer = new QSOComparer(_source.Token);
-
-                    var compareRes = localParsed.Except(cloudParsed, comparer).ToList();
+                    var compareRes = localParsed.Except(cloudParsed, AdifLog.AdifLogComparer).ToList();
 
                     for (var i = compareRes.Count - 1; i >= 0; i--)
                     {
-                        if (!string.Equals(compareRes[i].De, stationCallsign,
+                        if (!string.Equals(compareRes[i].StationCallsign, stationCallsign,
                                 StringComparison.InvariantCultureIgnoreCase))
                         {
                             _logProgress(
-                                $"Found QSOs not recorded: {compareRes[i].Dx} {compareRes[i].Mode}, but the station callsign does not match({compareRes[i].De} != {stationCallsign}) so ignored.");
+                                $"Found QSOs not recorded: {compareRes[i].Call} {compareRes[i].Mode}, but the station callsign does not match({compareRes[i].StationCallsign} != {stationCallsign}) so ignored.");
                             compareRes.RemoveAt(i);
                             continue;
                         }
 
                         _logProgress(
-                            $"Found QSOs not recorded: {compareRes[i].Dx} {compareRes[i].Mode} {compareRes[i].Band}");
+                            $"Found QSOs not recorded: {compareRes[i].Call} {compareRes[i].Mode} {compareRes[i].Band}");
                     }
 
                     if (compareRes.Count == 0)
@@ -227,34 +221,15 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                             CurrentProgress + sEach);
                         continue;
                     }
-                    
+
                     MessageBus.Current.SendMessage(new QsoUploadRequested
                     {
-                        QsoData = compareRes.Select(x=>RecordedCallsignDetail.Parse(x)).ToList()
+                        QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x)).ToList()
                     });
-                    
+
                     _logProgress(
-                        $"Found {compareRes.Count} QSOs not uploaded. Adding them into upload queue...",CurrentProgress + sEach);
-                    
-                    // _logProgress(
-                    //     $"Found {compareRes.Count} QSOs not uploaded. Generating adif file...");
-                    //
-                    // var adifText = new StringBuilder();
-                    // foreach (var advanceQSOInfo in compareRes) adifText.AppendLine(advanceQSOInfo.RawData.ToString());
-                    //
-                    // _logProgress("Uploading adif file...");
-                    //
-                    // var adifUploadRes = await QsoSyncAssistantUtil.UploadAdifLogAsync(
-                    //     Settings.CloudlogSettings.CloudlogUrl,
-                    //     adifText.ToString(), Settings.CloudlogSettings.CloudlogStationInfo?.StationId!, cookies,
-                    //     _source.Token);
-                    // if (adifUploadRes)
-                    // {
-                    //     _logProgress("Adif file uploaded successfully.", CurrentProgress + sEach);
-                    //     continue;
-                    // }
-                    //
-                    // throw new Exception($"Failed to upload adif file: {localLog}");
+                        $"Found {compareRes.Count} QSOs not uploaded. Adding them into upload queue...",
+                        CurrentProgress + sEach);
                 }
                 catch (Exception e)
                 {
@@ -263,10 +238,12 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                         CurrentProgress + sEach);
                 }
 
-            if (errorOccurred) throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
+            if (errorOccurred)
+                throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
             _logProgress(TranslationHelper.GetString("qsosyncsucc"), 100);
             if (_executeOnStart)
-                await App.NotificationManager.SendSuccessNotificationAsync($"{TranslationHelper.GetString("qsosyncsucc")}");
+                await App.NotificationManager.SendSuccessNotificationAsync(
+                    $"{TranslationHelper.GetString("qsosyncsucc")}");
         }
         catch (Exception ex)
         {
@@ -278,46 +255,6 @@ public class QsoSyncAssistantViewModel : ViewModelBase
         finally
         {
             SyncStarted = false;
-        }
-    }
-
-    public class QSOComparer : IEqualityComparer<AdvanceQSOInfo?>
-    {
-        private readonly CancellationToken _token;
-
-        public QSOComparer(CancellationToken token = default)
-        {
-            _token = token;
-        }
-
-        public bool Equals(AdvanceQSOInfo? x, AdvanceQSOInfo? y)
-        {
-            if (ReferenceEquals(x, y)) return true;
-            if (x is null || y is null) return false;
-            // return true;
-
-            return Math.Abs((x.QsoTimeOn - y.QsoTimeOn).TotalMinutes) < 5
-                   && string.Equals(x.Dx, y.Dx, StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(x.Mode, y.Mode, StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(x.Band, y.Band, StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(x.RstReceived, y.RstReceived, StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(x.RstSent, y.RstSent, StringComparison.OrdinalIgnoreCase);
-
-            // && string.Equals(x.StationCallsign, y.StationCallsign, StringComparison.OrdinalIgnoreCase);
-        }
-
-        public int GetHashCode(AdvanceQSOInfo obj)
-        {
-            // return 0;
-            if (_token.IsCancellationRequested) throw new OperationCanceledException("User aborted.");
-            if (obj is null) return 0;
-            return HashCode.Combine(
-                obj.QsoTimeOn.Date,
-                obj.Dx?.ToUpperInvariant(),
-                obj.Band?.ToUpperInvariant(),
-                obj.RstSent?.ToUpperInvariant(),
-                obj.RstReceived?.ToUpperInvariant()
-            );
         }
     }
 }

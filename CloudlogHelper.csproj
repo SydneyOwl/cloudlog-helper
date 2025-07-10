@@ -65,6 +65,7 @@
         <EmbeddedResource Include="Resources\adif_modes.dat"/>
         <EmbeddedResource Remove="Hamlib\**"/>
         <None Remove="Hamlib\**"/>
+        <None Remove="cloudlog-helper.zip" />
     </ItemGroup>
 
     <ItemGroup>

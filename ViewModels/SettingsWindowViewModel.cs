@@ -112,6 +112,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _initializeHamlibAsync()
     {
+        if (App.CmdOptions.AutoUdpLogUploadOnly)return;
         var (result, output) = await RigctldUtil.StartOnetimeRigctldAsync("--version");
         // init hamlib
         if (result)

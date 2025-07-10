@@ -256,16 +256,16 @@ public class RecordedCallsignDetail : ReactiveObject
         };
     }
 
-    public static RecordedCallsignDetail Parse(AdvanceQSOInfo info, bool markAsOldQso = true)
+    public static RecordedCallsignDetail Parse(AdifLog info, bool markAsOldQso = true)
     {
         return new RecordedCallsignDetail
         {
             LocalizedCountryName = markAsOldQso?"Local Log":"?",
-            DXCall = info.Dx!,
+            DXCall = info.Call!,
             ReportSent = info.RstSent!,
-            ReportReceived = info.RstReceived!,
+            ReportReceived = info.RstRcvd!,
             TXFrequencyInMeters = info.Band!,
-            Mode = info.Mode!,
+            Mode = string.IsNullOrEmpty(info.SubMode)?info.Mode:info.SubMode,
             ClientId = "LOCAL",
             RawData = info.RawData,
             FailReason = null,
