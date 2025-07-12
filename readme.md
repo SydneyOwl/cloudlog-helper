@@ -122,14 +122,14 @@ accidentally interrupted, this tool will help recover those unuploaded QSOs.
 
 <img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
 
-| Configuration Item      | Description                                                                                                                                                                                                             |
-|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Execute sync on startup | If enabled, the tool will automatically start syncing upon software launch.                                                                                                                                             |
-| Username                | Your Cloudlog login username.                                                                                                                                                                                           |
-| Password                | Your Cloudlog password.                                                                                                                                                                                                 |
-| Cloud Sample            | Number of recent QSOs downloaded from Cloudlog as reference data. **This value should be significantly larger than Local Sample.** Example: Setting to `200` means retrieving the latest 200 QSO records from Cloudlog. |
-| Local Sample            | Number of recent QSO records read from local log files for comparison. Example: Setting to `50` means checking if the latest 50 local QSOs exist in the Cloud Sample dataset.                                           |
-| Local Log Paths         | Paths to local log files.                                                                                                                                                                                               |
+| Configuration Item          | Description                                                                                                                                                      |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Execute sync on startup | If checked, the tool will automatically launch and start syncing every time the software starts.                                                                                                                     |
+| Username                | Your Cloudlog login username.                                                                                                                                         |
+| Password                | Your Cloudlog password.                                                                                                                                            |
+| Cloud Sample (days)     | The number of recent QSOs downloaded from Cloudlog by day, which will be used as reference data for comparison with local QSOs.<br/>Adjust this based on your needs. If you have fewer QSOs, set a higher value to ensure enough sample data is downloaded to cover local QSOs. **For example, setting it to `10` means the tool will fetch the latest 10 days of QSO records from the cloud.** |
+| Local Sample (QSOs)     | The number of recent QSO records loaded from the local log file for comparison with cloud records. For example, setting it to `50` means the tool will check whether the latest 50 local QSOs have been uploaded to the cloud (i.e., whether they exist in the cloud's latest QSOs, as defined by the Cloud Sample setting).                                        |
+| Local Log Paths         | Path(s) to your local log file(s). |
 
 ## 🚀 Advanced
 
@@ -194,6 +194,19 @@ Here’s how to set it up (using Windows 7 as an example):
 | Auto-upload QSOs to Clublog  | Automatically upload received QSOs to the specified Clublog server.        |
 | QSO upload retry attempts    | Number of retries for failed QSO uploads.                                  |
 | Forward UDP packets          | Forward received UDP packets to specified UDP server, such as GridTracker. |
+
+Here's a more polished and natural version for a README file:
+
+#### ⚙️ Command Line Options
+
+| Option             | Description                                                                 |  
+|--------------------|-----------------------------------------------------------------------------|  
+| `--verbose`        | Enable verbose logging (Trace level)                                        |  
+| `--log2file`       | Save logs to file (stored in `./log/xxxx`)                                  |  
+| `--reinit-db`      | Force database reinitialization                                             |  
+| `--dev`            | Developer mode - disables crash reporting dialog                            |  
+| `--udp-log-only`   | Minimal UI mode - only shows UDP log upload functionality                   |  
+| `--crash-report`   | [Internal] Specify crash log directory (used by error reporting system)     |  
 
 ## 🛠️ Compilation
 
