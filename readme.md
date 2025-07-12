@@ -56,7 +56,7 @@ Helper a try!
 
 + Enter the callsign, email, and password you used when registering on Clublog.
 
-![image-20250615191626100](./md_assets/image-20250615191626100.png)
+  ![image-20250615191626100](./md_assets/image-20250615191626100.png)
 
 + Click "Test." If the test passes, you can enable "Automatically upload QSOs to Clublog" in the "UDP Settings."
 
@@ -82,17 +82,17 @@ information for reference.
 + Click the "Test" button. Only after a successful test should you check "Enable automatic radio data reporting."
   Click "Confirm" to save the settings.
 
-<img src="./md_assets/image-20250615191803125.png" width="50%" />
+  <img src="./md_assets/image-20250615191803125.png" width="50%" />
 
 + The software’s main interface should now display the retrieved radio information. Open your Cloudlog website, and the
   homepage should show your radio details:
 
-<img src="./md_assets/image-20250511120812425.png" alt="image-20250510221517526" width="50%" />
+  <img src="./md_assets/image-20250511120812425.png" alt="image-20250510221517526" width="50%" />
 
 + Under "Station," select your radio. From then on, when filling in QSO details, Cloudlog will automatically populate
   the frequency, mode, and other information.
 
-<img src="./md_assets/image-20250510221120607.png" alt="image-20250510221120607" width="50%" />
+  <img src="./md_assets/image-20250510221120607.png" alt="image-20250510221120607" width="50%" />
 
 ### 📌 UDP Server Configuration
 
@@ -104,12 +104,12 @@ to your Cloudlog server.
   updated accordingly. **Note: If JTDX and Cloudlog Helper are not running on the same machine, you must enable "Allow
   external connections" and set the UDP server IP address in JTDX to the IP of the machine running Cloudlog Helper.**
 
-<img src="./md_assets/image-20250615191831895.png" alt="image-20250510222349765" width="60%" />
+  <img src="./md_assets/image-20250615191831895.png" alt="image-20250510222349765" width="60%" />
 
 + After this setup, the software’s main interface will display relevant information when JTDX is in transmit mode or
   after completing a QSO.
 
-<img src="./md_assets/image-20250524115350845.png" alt="image-20250510223010041" width="30%" />
+  <img src="./md_assets/image-20250524115350845.png" alt="image-20250510223010041" width="30%" />
 
 ### 🔧 Utility Tools
 
@@ -120,7 +120,7 @@ This tool automatically downloads uploaded QSOs from your Cloudlog server and co
 For example, if you started JTDX but forgot to launch your logging software, or if your network connection was
 accidentally interrupted, this tool will help recover those unuploaded QSOs.
 
-<img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
+  <img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
 
 | Configuration Item          | Description                                                                                                                                                      |
 |-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
