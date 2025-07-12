@@ -196,22 +196,22 @@ namespace ADIFLib
         // Allow multiple lines per header or QSO.
         private void ReadFromStream(StreamReader TheStream, ref uint LineNumber, CancellationToken cancellation)
         {
-            var theLine = "";
+            var theLine = new StringBuilder();
 
             while (!TheStream.EndOfStream && !cancellation.IsCancellationRequested)
             {
                 var curLine = TheStream.ReadLine().Trim();    
                 // avoid naughty cases - someone's name contains <!
-                if (curLine.ToUpper().Contains("<NAME") || curLine.ToUpper().Contains("<MY_"))
+                if (curLine.ToUpper().Contains("<NAME"))
                 {
                     // Console.WriteLine("Escaping naughty fields");
                     LineNumber++;
                     continue;
                 };
-                theLine += curLine;
-                if (theLine != "")
+                theLine.Append(curLine);
+                if (theLine.ToString() != "")
                 {
-                    if (theLine.ToUpper().EndsWith("<EOH>"))
+                    if (theLine.ToString().EndsWith("<EOH>", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (TheADIFHeader != null)
                         {
@@ -219,18 +219,18 @@ namespace ADIFLib
                         }
                         else
                         {
-                            TheADIFHeader = new ADIFHeader(theLine);  // Add the header.
+                            TheADIFHeader = new ADIFHeader(theLine.ToString());  // Add the header.
                             LineNumber++;
-                            theLine = "";
+                            theLine.Clear();
                         }
                     }
                     else
                     {
-                        if (theLine.ToUpper().EndsWith("<EOR>"))
+                        if (theLine.ToString().EndsWith("<EOR>", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            TheQSOs.Add(new ADIFQSO(theLine));
+                            TheQSOs.Add(new ADIFQSO(theLine.ToString()));
                             LineNumber++;
-                            theLine = "";
+                            theLine.Clear();
                         }
                         else
                         {

@@ -573,6 +573,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ignore this qso permanently.
+        /// </summary>
+        public static string ignoreqsopermanently {
+            get {
+                return ResourceManager.GetString("ignoreqsopermanently", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Falied to init hamlib!.
         /// </summary>
         public static string inithamlibfailed {

@@ -7,8 +7,9 @@ namespace CloudlogHelper.Converters;
 
 public class StringToColorConverter : IValueConverter
 {
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
+        if (value is null) return Brushes.Red;
         return value?.ToString() switch
         {
             "Fail" => Brushes.Red,

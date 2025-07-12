@@ -200,18 +200,27 @@ public class QsoSyncAssistantUtil
 
         using var reader = new StreamReader(filePath);
         var lineNum = 1;
+        var logFound = false;
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
             if (string.IsNullOrEmpty(line))continue;
-            if (!line.Contains("CALL", StringComparison.InvariantCultureIgnoreCase)
-                || !line.Contains("MODE", StringComparison.InvariantCultureIgnoreCase)
-                || !line.Contains("BAND", StringComparison.InvariantCultureIgnoreCase)
-                || !line.Contains("RST", StringComparison.InvariantCultureIgnoreCase))
+
+            if (line.Contains("<CALL:", StringComparison.InvariantCultureIgnoreCase))
+            {
+                logFound = true;
+            }
+            
+            if (!logFound) continue;
+            
+            if (!line.Contains("<CALL:", StringComparison.InvariantCultureIgnoreCase)
+                || !line.Contains("<MODE:", StringComparison.InvariantCultureIgnoreCase)
+                || !line.Contains("<BAND:", StringComparison.InvariantCultureIgnoreCase)
+                || !line.Contains("<RST_", StringComparison.InvariantCultureIgnoreCase))
                 throw new Exception($"This is not a correct Wsjtx/jtdx log file! - line {lineNum}");
             if (queue.Count == targetCount)
                 queue.Dequeue();
-            queue.Enqueue(line);
+            queue.Enqueue(line.Trim());
             lineNum++;
         }
 

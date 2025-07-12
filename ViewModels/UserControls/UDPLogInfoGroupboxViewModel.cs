@@ -70,6 +70,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
 
     private readonly ReactiveCommand<Unit, Unit> RestartUdpCommand;
     private readonly ReactiveCommand<Unit, Unit> UploadLogFromQueueCommand;
+    private readonly ReactiveCommand<Unit, Unit> IgnoreSelectedQSOPermanentlyCommand; 
 
     /// <summary>
     ///     Total decoded number.
@@ -106,6 +107,8 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         });
         RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);
         UploadLogFromQueueCommand = ReactiveCommand.CreateFromTask(_uploadQSOFromQueue);
+
+        IgnoreSelectedQSOPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);
 
         this.WhenActivated(disposables =>
         {
@@ -165,6 +168,10 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await App.NotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
+            
+            IgnoreSelectedQSOPermanentlyCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
+                .DisposeWith(disposables);
 
             UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await App.NotificationManager.SendErrorNotificationAsync(err.Message))
@@ -218,6 +225,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> DeleteSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
+    
 
     public Interaction<Unit, IStorageFile?> ShowFilePickerDialog { get; }
 
@@ -288,6 +296,14 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             recordedCallsignDetail.ForcedUpload = true;
             _checkAndEnqueueQSO(recordedCallsignDetail);
         }
+    }
+
+    private async Task _ignoreSelectedQSO()
+    {
+        foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
+        {
+            // todo 
+        } 
     }
 
     private async Task _createAdifFromCheckedQSO()

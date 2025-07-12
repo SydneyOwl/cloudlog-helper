@@ -1,15 +1,14 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Converters;
 
-public class UploadStatusToTranslatedString : IValueConverter
+public class NullableStringToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return TranslationHelper.GetString("t_" + value);
+        return !string.IsNullOrEmpty(value as string);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

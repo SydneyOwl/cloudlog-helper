@@ -14,7 +14,8 @@
     </Design.DataContext>
     <UserControl.Resources>
         <converters:StringToColorConverter x:Key="StatusToColor" />
-        <converters:UploadStatusToTranslatedString x:Key="StringToTranslatedString" />
+        <converters:UploadStatusToTranslatedStringConverter x:Key="StringToTranslatedString" />
+        <converters:UploadStatusToVisibilityConverter x:Key="StatusToVisibility" />
         <converters:FailReasonToTooltipConverter x:Key="FailReasonToTooltip" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="10">
@@ -90,10 +91,12 @@
                                                    Width="20"
                                                    Height="20"
                                                    Source="avares://CloudlogHelper/Assets/Settings/Help.png"
+                                                   IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
                                                    VerticalAlignment="Center">
                                                 <ToolTip.Tip>
-                                                    <TextBlock Text="{Binding FailReason, 
-                                                    Converter={StaticResource FailReasonToTooltip}}"/>
+                                                    <TextBlock
+                                                        Text="{Binding FailReason, 
+                                                    Converter={StaticResource FailReasonToTooltip}}" />
                                                 </ToolTip.Tip>
                                                 <ToolTip.ShowDelay>
                                                     10
@@ -111,7 +114,8 @@
                                    Foreground="Azure" Text="{Binding MsgSending}" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top" Background="rgba(255, 69, 0, 0.8)"
+                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
+                                Background="rgba(255, 69, 0, 0.8)"
                                 IsVisible="{Binding TimeoutStatus}">
                         <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />

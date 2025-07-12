@@ -109,16 +109,12 @@ public class AdifLog
 
         public int GetHashCode(AdifLog obj)
         {
+            // return 0;
             var hashCode = new HashCode();
             hashCode.Add(obj.Call);
-            hashCode.Add(obj.Mode);
-            hashCode.Add(obj.SubMode);
             hashCode.Add(obj.RstSent);
             hashCode.Add(obj.RstRcvd);
             hashCode.Add(obj.QsoDate);
-            hashCode.Add(obj.TimeOn);
-            hashCode.Add(obj.Band);
-            hashCode.Add(obj.Freq);
             return hashCode.ToHashCode();
         }
     }

@@ -22,7 +22,7 @@
 
     <UserControl.Resources>
         <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
-        <converters:StringToVisibilityConverter x:Key="StringToVisibility" />
+        <converters:NullableStringToVisibilityConverter x:Key="StringToVisibility" />
     </UserControl.Resources>
 
     <StackPanel Orientation="Horizontal" Margin="10">

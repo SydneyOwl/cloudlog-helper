@@ -486,4 +486,7 @@
     <data name="ignoreqso" xml:space="preserve">
         <value>此QSO已被忽略 - 是不是把所有第三方日志的上传功能都关了？</value>
     </data>
+    <data name="ignoreqsopermanently" xml:space="preserve">
+        <value>永久忽略此QSO</value>
+    </data>
 </root>
