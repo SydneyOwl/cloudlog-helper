@@ -492,4 +492,7 @@
     <data name="failrigcomm" xml:space="preserve">
         <value>与电台通信失败！</value>
     </data>
+    <data name="pseselfirst" xml:space="preserve">
+        <value>请先勾选QSO!</value>
+    </data>
 </root>

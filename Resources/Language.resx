@@ -492,4 +492,7 @@
     <data name="failrigcomm" xml:space="preserve">
         <value>Failed to communicate with rig!</value>
     </data>
+    <data name="pseselfirst" xml:space="preserve">
+        <value>Please select any qso first!</value>
+    </data>
 </root>

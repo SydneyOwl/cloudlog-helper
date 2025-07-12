@@ -1,4 +1,5 @@
 ﻿using System;
+using CloudlogHelper.Models;
 using SQLite;
 
 namespace CloudlogHelper.Database;
@@ -34,4 +35,24 @@ public class IgnoredQsoDatabase
     
     [Column("qso_start_time")]
     public DateTime? QsoStartTime { get; set; }
+
+    public static IgnoredQsoDatabase Parse(RecordedCallsignDetail detail)
+    {
+        return new IgnoredQsoDatabase
+        {
+            De = detail.DXCall,
+            Dx = detail.MyCall,
+            Freq = (detail.TXFrequencyInHz / 1_000_000.0).ToString("0.000000"),
+            FinalMode = detail.Mode,
+            RstSent = detail.ReportSent,
+            RstRecv = detail.ReportReceived,
+            QsoStartTime = detail.DateTimeOn
+        };
+    }
+
+    public override string ToString()
+    {
+        return
+            $"{nameof(Id)}: {Id}, {nameof(De)}: {De}, {nameof(Dx)}: {Dx}, {nameof(Freq)}: {Freq}, {nameof(FinalMode)}: {FinalMode}, {nameof(RstSent)}: {RstSent}, {nameof(RstRecv)}: {RstRecv}, {nameof(QsoStartTime)}: {QsoStartTime}";
+    }
 }

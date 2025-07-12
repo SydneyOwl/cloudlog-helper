@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using ADIFLib;
 using CloudlogHelper.Database;
 using CloudlogHelper.Utils;
@@ -79,7 +80,7 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     TX Frequency (Hz)
     /// </summary>
     public ulong TXFrequencyInHz { get; set; }
-
+    
     /// <summary>
     ///     Tx frequency in meters like `20m`
     /// </summary>
@@ -258,13 +259,21 @@ public class RecordedCallsignDetail : ReactiveObject
 
     public static RecordedCallsignDetail Parse(AdifLog info, bool markAsOldQso = true)
     {
+        ulong hzValue = 0;
+        if (double.TryParse(info.Freq, out var mhzValue))
+        {
+            hzValue = (ulong)(mhzValue * 1_000_000);
+        }
         return new RecordedCallsignDetail
         {
             LocalizedCountryName = markAsOldQso?"Local Log":"?",
             DXCall = info.Call!,
+            MyCall = info.StationCallsign,
             ReportSent = info.RstSent!,
             ReportReceived = info.RstRcvd!,
             TXFrequencyInMeters = info.Band!,
+            TXFrequencyInHz = hzValue,
+            DateTimeOn = DateTime.ParseExact($"{info.QsoDate} {info.TimeOn}","yyyyMMdd HHmmss",CultureInfo.InvariantCulture),
             Mode = string.IsNullOrEmpty(info.SubMode)?info.Mode:info.SubMode,
             ClientId = "LOCAL",
             RawData = info.RawData,
@@ -277,6 +286,37 @@ public class RecordedCallsignDetail : ReactiveObject
             UploadStatus = UploadStatus.Pending,
             ForcedUpload = false
         };
+    }
+
+    public string? GenerateAdif()
+    {
+        var rcd = this;
+        try
+        {
+            var adif = AdifUtil.GenerateAdifLog(new AdifLog
+            {
+                Call = rcd.DXCall,
+                GridSquare = rcd.DXGrid,
+                Mode = string.IsNullOrEmpty(rcd.ParentMode) ? rcd.Mode : rcd.ParentMode,
+                SubMode = string.IsNullOrEmpty(rcd.ParentMode) ? string.Empty : rcd.Mode,
+                RstSent = rcd.ReportSent,
+                RstRcvd = rcd.ReportReceived,
+                QsoDate = rcd.DateTimeOn.ToString("yyyyMMdd"),
+                TimeOn = rcd.DateTimeOn.ToString("HHmmss"),
+                QsoDateOff = rcd.DateTimeOff.ToString("yyyyMMdd"),
+                TimeOff = rcd.DateTimeOff.ToString("HHmmss"),
+                Band = rcd.TXFrequencyInMeters,
+                Freq = (rcd.TXFrequencyInHz / 1_000_000.0).ToString("0.000000"),
+                StationCallsign = rcd.MyCall,
+                MyGridSquare = rcd.MyGrid,
+                Comment = rcd.Comments
+            });
+            return adif;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
 
     public override string ToString()

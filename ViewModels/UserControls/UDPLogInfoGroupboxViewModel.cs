@@ -11,6 +11,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -302,6 +303,19 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
 
     private async Task _ignoreSelectedQSO()
     {
+        var candidate = _allQsos.Items.Where(x => x.Checked).ToList();
+        if (!candidate.Any())
+        {
+            await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>()
+            {
+                new()
+                {
+                    Name = "OK",
+                    IsDefault = true,
+                }
+            }, Icon.Info, "Notice", TranslationHelper.GetString("pseselfirst"));
+            return;
+        }
         var result = await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>()
         {
             new()
@@ -315,9 +329,10 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             }
         }, Icon.Warning, "Warning", TranslationHelper.GetString("ignoreqsopermanently"));
         if (result == "Cancel")return;
-        foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
+        foreach (var recordedCallsignDetail in candidate)
         {
-            // todo 
+            ClassLogger.Info($"Logging: {recordedCallsignDetail.ToString()}");
+            await DatabaseUtil.MarkQsoIgnored(IgnoredQsoDatabase.Parse(recordedCallsignDetail));
         } 
     }
 
@@ -333,7 +348,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         adif.AppendLine();
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
         {
-            adif.AppendLine(_generateAdifFromRecordedCallsignDetail(recordedCallsignDetail));
+            adif.AppendLine(recordedCallsignDetail.GenerateAdif());
             adif.AppendLine();
         }
 
@@ -359,7 +374,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 _isUploadQueueEmpty.OnNext(_uploadQueue.IsEmpty);
                 if (_uploadQueue.TryDequeue(out var rcd))
                 {
-                    var adif = rcd.RawData?.ToString()??_generateAdifFromRecordedCallsignDetail(rcd);
+                    var adif = rcd.RawData?.ToString()??rcd.GenerateAdif();
                     if (string.IsNullOrEmpty(adif)) continue;
                     ClassLogger.Debug($"Try Logging: {adif}");
                     if (_thirdPartySettings is
@@ -504,37 +519,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             {
                 await Task.Delay(500);
             }
-    }
-
-    private string? _generateAdifFromRecordedCallsignDetail(RecordedCallsignDetail rcd)
-    {
-        try
-        {
-            var adif = AdifUtil.GenerateAdifLog(new AdifLog
-            {
-                Call = rcd.DXCall,
-                GridSquare = rcd.DXGrid,
-                Mode = string.IsNullOrEmpty(rcd.ParentMode) ? rcd.Mode : rcd.ParentMode,
-                SubMode = string.IsNullOrEmpty(rcd.ParentMode) ? string.Empty : rcd.Mode,
-                RstSent = rcd.ReportSent,
-                RstRcvd = rcd.ReportReceived,
-                QsoDate = rcd.DateTimeOn.ToString("yyyyMMdd"),
-                TimeOn = rcd.DateTimeOn.ToString("HHmmss"),
-                QsoDateOff = rcd.DateTimeOff.ToString("yyyyMMdd"),
-                TimeOff = rcd.DateTimeOff.ToString("HHmmss"),
-                Band = rcd.TXFrequencyInMeters,
-                Freq = (rcd.TXFrequencyInHz / 1_000_000.0).ToString("0.000000"),
-                StationCallsign = rcd.MyCall,
-                MyGridSquare = rcd.MyGrid,
-                Comment = rcd.Comments
-            });
-            return adif;
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Debug(e, "Failed to parse");
-            return null;
-        }
     }
 
     private async void _wsjtxMsgForwarder(Memory<byte> message)

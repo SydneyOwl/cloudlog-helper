@@ -807,6 +807,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select any qso first!.
+        /// </summary>
+        public static string pseselfirst {
+            get {
+                return ResourceManager.GetString("pseselfirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QSO Assistant.
         /// </summary>
         public static string qsoassistant {

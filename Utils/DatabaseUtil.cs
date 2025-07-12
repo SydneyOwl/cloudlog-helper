@@ -105,6 +105,7 @@ public class DatabaseUtil
                     db.CreateTable<CallsignDatabase>();
                     db.CreateTable<CountryDatabase>();
                     db.CreateTable<AdifModesDatabase>();
+                    db.CreateTable<IgnoredQsoDatabase>();
 
                     InitPrefixAndCountryData(db);
                     InitAdifModesDatabase(db);
@@ -311,6 +312,86 @@ public class DatabaseUtil
 
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
+    }
+
+    public static async Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            if (!await IsQsoIgnored(ignoredQso))
+            {
+                await _connSemaphore.WaitAsync();
+                await _conn!.InsertAsync(ignoredQso);
+            }
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e);
+        }
+        finally
+        {
+            _connSemaphore.Release();
+        }
+    }
+
+    /// <summary>
+    /// check if qso is marked as ignored.
+    /// </summary>
+    /// <param name="ignoredQso"></param>
+    public static async Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            var result = await FindIgnoredQso(ignoredQso);
+            if (result is null) return true;
+            if (result.Count != 0)
+            {
+                ClassLogger.Trace("We found the same ones!!!");
+                foreach (var qIgnoredQsoDatabase in result)
+                {
+                    ClassLogger.Trace(qIgnoredQsoDatabase.ToString());
+                    if (!float.TryParse(qIgnoredQsoDatabase.Freq, out var fA)) continue;
+                    if (!float.TryParse(ignoredQso.Freq, out var fB)) continue;
+                    if (qIgnoredQsoDatabase.QsoStartTime is null) continue;
+                    if (ignoredQso.QsoStartTime is null) continue;
+                    if ((Math.Abs(fB - fA) < DefaultConfigs.AllowedFreqOffsetMHz) &&
+                        (qIgnoredQsoDatabase.QsoStartTime - ignoredQso.QsoStartTime)!.Value.Minutes <
+                        DefaultConfigs.AllowedTimeOffsetMinutes)
+                    {
+                        ClassLogger.Info("Found same ignored qso. skipping...");
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e,"Failed to ignore.");
+            return true;
+        }
+    }
+
+    public static async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            await _connSemaphore.WaitAsync();
+            var result = await _conn!.QueryAsync<IgnoredQsoDatabase>(
+                "SELECT * FROM ignored_qsos WHERE de=? AND dx=? AND final_mode=? AND rst_sent=? AND rst_recv=?",
+                ignoredQso.De, ignoredQso.Dx, ignoredQso.FinalMode, ignoredQso.RstSent, ignoredQso.RstRecv);
+            return result;
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e,"Failed to ignore.");
+            return null;
+        }
+        finally
+        {
+            _connSemaphore.Release();
+        }
     }
 
     /// <summary>

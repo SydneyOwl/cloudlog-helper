@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ADIFLib;
 using Avalonia.Platform.Storage;
+using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
@@ -206,6 +207,14 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                         {
                             _logProgress(
                                 $"Found QSOs not recorded: {compareRes[i].Call} {compareRes[i].Mode}, but the station callsign does not match({compareRes[i].StationCallsign} != {stationCallsign}) so ignored.");
+                            compareRes.RemoveAt(i);
+                            continue;
+                        }
+
+                        if (await DatabaseUtil.IsQsoIgnored(
+                                IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i]))))
+                        {
+                            _logProgress($"QSO: {compareRes[i].Call} {compareRes[i].Mode} is not recorded, but it's marked as ignored.");
                             compareRes.RemoveAt(i);
                             continue;
                         }
