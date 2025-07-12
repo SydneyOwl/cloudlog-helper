@@ -333,6 +333,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         {
             ClassLogger.Info($"Logging: {recordedCallsignDetail.ToString()}");
             await DatabaseUtil.MarkQsoIgnored(IgnoredQsoDatabase.Parse(recordedCallsignDetail));
+            _allQsos.Edit(ls => ls.Remove(recordedCallsignDetail));
         } 
     }
 
