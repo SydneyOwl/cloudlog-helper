@@ -492,6 +492,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to communicate with rig!.
+        /// </summary>
+        public static string failrigcomm {
+            get {
+                return ResourceManager.GetString("failrigcomm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please complete all required fields..
         /// </summary>
         public static string fillall {
@@ -573,7 +582,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ignore this qso permanently.
+        ///   Looks up a localized string similar to Warning: Ignore this qso permanently.
         /// </summary>
         public static string ignoreqsopermanently {
             get {

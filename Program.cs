@@ -91,8 +91,18 @@ Stack：{ex.StackTrace}");
             .LogToTrace()
             .UseReactiveUI();
     }
+    
+     // Avalonia configuration, don't remove; also used by visual designer.
+    public static AppBuilder BuildAvaloniaApp()
+    {
+        return AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .WithInterFont()
+            .LogToTrace()
+            .UseReactiveUI();
+    }
 
-
+            
     private static void _initializeCulture()
     {
         ApplicationSettings.ReadSettingsFromFile();

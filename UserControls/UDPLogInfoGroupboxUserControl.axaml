@@ -135,6 +135,9 @@
                             Command="{Binding ReuploadSelectedCommand}" />
                     <Button Content="{I18N {x:Static resources:LangKeys.delsel}}"
                             Command="{Binding DeleteSelectedCommand}" />
+                    <Button Background="Orange" Command="{Binding IgnoreSelectedPermanentlyCommand}">
+                        <Image Source="avares://CloudlogHelper/Assets/MainPage/Ignore.png" Width="20"/>
+                    </Button>
                 </StackPanel>
             </Grid>
         </HeaderedContentControl>

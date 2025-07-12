@@ -26,6 +26,7 @@ public class App : Application
     private static ReactiveCommand<Unit, Unit>? _openCommand;
     public static WindowTracker WindowTracker { get; } = new();
     public static WindowNotification NotificationManager { get; private set; }
+    public static MessageBoxHelper MessageBoxHelper { get; private set; }
     public static CommandLineOptions CmdOptions { get; private set; }
 
     public App(CommandLineOptions? options)
@@ -33,6 +34,8 @@ public class App : Application
         options ??= new CommandLineOptions();
         CmdOptions = options;
     }
+    
+    public App(){}
     
     public override void Initialize()
     {
@@ -62,6 +65,7 @@ public class App : Application
             desktop.MainWindow = mainWindow;
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
             NotificationManager = new WindowNotification(mainWindow);
+            MessageBoxHelper = new MessageBoxHelper(mainWindow);
 
             _exitCommand = ReactiveCommand.Create(() =>
             {

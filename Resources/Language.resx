@@ -487,6 +487,9 @@
         <value>This QSO is ignored - Maybe none of third party log service is enabled?</value>
     </data>
     <data name="ignoreqsopermanently" xml:space="preserve">
-        <value>Ignore this qso permanently</value>
+        <value>Warning: Ignore this qso permanently</value>
+    </data>
+    <data name="failrigcomm" xml:space="preserve">
+        <value>Failed to communicate with rig!</value>
     </data>
 </root>

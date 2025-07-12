@@ -34,6 +34,4 @@ public class IgnoredQsoDatabase
     
     [Column("qso_start_time")]
     public DateTime? QsoStartTime { get; set; }
-    
-    // public bool Is
 }

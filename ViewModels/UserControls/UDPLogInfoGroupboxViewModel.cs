@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,6 +17,8 @@ using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using DynamicData;
 using DynamicData.Binding;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -70,7 +73,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
 
     private readonly ReactiveCommand<Unit, Unit> RestartUdpCommand;
     private readonly ReactiveCommand<Unit, Unit> UploadLogFromQueueCommand;
-    private readonly ReactiveCommand<Unit, Unit> IgnoreSelectedQSOPermanentlyCommand; 
 
     /// <summary>
     ///     Total decoded number.
@@ -96,6 +98,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
         ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO, _isUploadQueueEmpty.AsObservable());
         ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);
+        IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);
         DeleteSelectedCommand = ReactiveCommand.Create(() =>
         {
             _allQsos.Edit(innerList =>
@@ -107,8 +110,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         });
         RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);
         UploadLogFromQueueCommand = ReactiveCommand.CreateFromTask(_uploadQSOFromQueue);
-
-        IgnoreSelectedQSOPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);
 
         this.WhenActivated(disposables =>
         {
@@ -169,7 +170,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     await App.NotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
             
-            IgnoreSelectedQSOPermanentlyCommand.ThrownExceptions.Subscribe(async void (err) =>
+            IgnoreSelectedPermanentlyCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await App.NotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
@@ -225,6 +226,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> DeleteSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> IgnoreSelectedPermanentlyCommand { get; set; }
     
 
     public Interaction<Unit, IStorageFile?> ShowFilePickerDialog { get; }
@@ -300,6 +302,19 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
 
     private async Task _ignoreSelectedQSO()
     {
+        var result = await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>()
+        {
+            new()
+            {
+                Name = "OK",
+            },
+            new()
+            {
+                Name = "Cancel",
+                IsDefault = true,
+            }
+        }, Icon.Warning, "Warning", TranslationHelper.GetString("ignoreqsopermanently"));
+        if (result == "Cancel")return;
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
         {
             // todo 

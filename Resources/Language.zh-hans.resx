@@ -487,6 +487,9 @@
         <value>此QSO已被忽略 - 是不是把所有第三方日志的上传功能都关了？</value>
     </data>
     <data name="ignoreqsopermanently" xml:space="preserve">
-        <value>永久忽略此QSO</value>
+        <value>此操作将永久忽略选中的QSO，后续QSO助手扫描本地QSO时将忽略这些项。是否继续？</value>
+    </data>
+    <data name="failrigcomm" xml:space="preserve">
+        <value>与电台通信失败！</value>
     </data>
 </root>

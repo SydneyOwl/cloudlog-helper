@@ -492,6 +492,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 与电台通信失败！.
+        /// </summary>
+        public static string failrigcomm {
+            get {
+                return ResourceManager.GetString("failrigcomm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请完整填写所有信息！.
         /// </summary>
         public static string fillall {
@@ -573,7 +582,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 永久忽略此QSO.
+        ///   Looks up a localized string similar to 此操作将永久忽略选中的QSO，后续QSO助手扫描本地QSO时将忽略这些项。是否继续？.
         /// </summary>
         public static string ignoreqsopermanently {
             get {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -9,6 +10,8 @@ using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -138,7 +141,12 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                             _resetStatus();
                             _disposeAllTimers();
                             // popup!
-                            var choice = await ShowAskForRetryMessageBox.Handle(Unit.Default);
+                            var choice = await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>
+                            {
+                                new() { Name = "Retry", IsDefault = true },
+                                new() { Name = "Open Settings" },
+                                new() { Name = "Cancel" }
+                            }, Icon.Warning, "Warning", TranslationHelper.GetString("failrigcomm"));
                             switch (choice)
                             {
                                 case "Retry":
@@ -178,11 +186,6 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                 .DisposeWith(disposables);
         });
     }
-
-    /// <summary>
-    ///     Open messagebox in view.
-    /// </summary>
-    public Interaction<Unit, string> ShowAskForRetryMessageBox { get; } = new();
 
     /// <summary>
     ///     Open settings in view.
