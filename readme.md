@@ -237,7 +237,7 @@ cd cloudlog-helper/hamlib
 CFLAGS="-g -O2 -fPIC -fdata-sections -ffunction-sections" \
 LDFLAGS="-Wl,--gc-sections"
 
-make -j4 all
+make -j$(nproc) all
 make install-strip DESTDIR=""
 ```
 
