@@ -27,7 +27,7 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public string? CloudlogUserName { get; set; }
     [Reactive] [JsonProperty] public string? CloudlogPassword { get; set; }
     [Reactive] [JsonProperty] public ObservableCollection<string>? LocalLogPath { get; set; }
-    [Reactive] [JsonProperty] public int CloudlogQSODayRange { get; set; } = 10;
+    [Reactive] [JsonProperty] public int CloudlogQSODayRange { get; set; } = 60;
     [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 50;
 
     public bool IsQsoSyncAssistantSettingsHasErrors()
