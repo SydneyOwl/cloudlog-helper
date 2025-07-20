@@ -204,7 +204,7 @@ public class QsoSyncAssistantUtil
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
-            if (string.IsNullOrEmpty(line))continue;
+            if (string.IsNullOrWhiteSpace(line))continue;
 
             if (line.Contains("<CALL:", StringComparison.InvariantCultureIgnoreCase))
             {

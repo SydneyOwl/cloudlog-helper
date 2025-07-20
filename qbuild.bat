@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 setlocal enabledelayedexpansion
 
 set "tagName=%~1"
@@ -6,9 +6,18 @@ if "!tagName!"=="" set "tagName="
 
 for /f "delims=" %%a in ('git rev-parse --short HEAD') do set "commitHash=%%a"
 
-for /f "tokens=1-3 delims=/ " %%a in ('date /t') do set "datePart=%%c-%%b-%%a"
-for /f "tokens=1-3 delims=: " %%a in ('time /t') do set "timePart=%%a:%%b:%%c"
-set "buildTime=%datePart% %timePart%"
+for /f "tokens=1-3 delims=/ " %%a in ('date /t') do (
+    set "yyyy=%%a"
+    set "mm=%%b"
+    set "dd=%%c"
+)
+
+for /f "tokens=1-2 delims=: " %%a in ('time /t') do (
+    set "hour=%%a"
+    set "minute=%%b"
+)
+
+set "buildTime=%yyyy%%mm%%dd% %hour%%minute%00"
 
 echo building %tagName% %commitHash% %buildTime%
 
