@@ -143,12 +143,10 @@ public class DatabaseUtil
         try
         {
             await _connSemaphore.WaitAsync();
-            var quRes = await _conn!.QueryAsync<AdifModesDatabase>("SELECT * FROM adif_modes WHERE submode=? LIMIT 1",
-                mode);
-            if (quRes is null || quRes.Count == 0) return string.Empty;
-            var md = quRes[0].Mode;
-            if (string.IsNullOrEmpty(md)) return string.Empty;
-            return md;
+            var quRes = await _conn!.Table<AdifModesDatabase>().Where(x => x.SubMode == mode).FirstOrDefaultAsync();
+            if (quRes is null) return string.Empty;
+            var md = quRes.Mode;
+            return string.IsNullOrEmpty(md) ? string.Empty : md;
         }
         finally
         {
@@ -169,7 +167,13 @@ public class DatabaseUtil
         {
             await _connSemaphore.WaitAsync();
             var countriesRes = await _conn!.QueryAsync<CountryDatabase>(
-                "select a.*,b.* from callsigns as a left join countries as b on a.country_id =b.id WHERE (SUBSTR(?,1,LENGTH(callsign))=callsign) OR (callsign='='||?) order by LENGTH(callsign) desc LIMIT 1",
+                @"SELECT a.*, b.*
+                  FROM callsigns AS a
+                  LEFT JOIN countries AS b ON a.country_id =b.id
+                  WHERE (SUBSTR(?, 1, LENGTH(callsign))=callsign)
+                  OR (callsign='='||?)
+                  ORDER BY LENGTH(callsign) DESC
+                  LIMIT 1",
                 callsign, callsign);
             return countriesRes.Count == 0 ? new CountryDatabase() : countriesRes[0];
         }
@@ -378,10 +382,14 @@ public class DatabaseUtil
         try
         {
             await _connSemaphore.WaitAsync();
-            var result = await _conn!.QueryAsync<IgnoredQsoDatabase>(
-                "SELECT * FROM ignored_qsos WHERE de=? AND dx=? AND final_mode=? AND rst_sent=? AND rst_recv=?",
-                ignoredQso.De, ignoredQso.Dx, ignoredQso.FinalMode, ignoredQso.RstSent, ignoredQso.RstRecv);
-            return result;
+            var res = await _conn!.Table<IgnoredQsoDatabase>()
+                .Where(x => x.De == ignoredQso.De)
+                .Where(x => x.Dx == ignoredQso.Dx)
+                .Where(x => x.FinalMode == ignoredQso.FinalMode)
+                .Where(x => x.RstSent == ignoredQso.RstSent)
+                .Where(x => x.RstRecv == ignoredQso.RstRecv)
+                .ToListAsync();
+            return res;
         }
         catch (Exception e)
         {

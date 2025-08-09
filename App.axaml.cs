@@ -1,17 +1,25 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CloudlogHelper.Models;
+using CloudlogHelper.ThirdPartyLogService;
+using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
+using NLog.Config;
+using NLog.Targets;
 using ReactiveUI;
 using ErrorReportWindow = CloudlogHelper.Views.ErrorReportWindow;
 using MainWindow = CloudlogHelper.Views.MainWindow;
@@ -39,6 +47,23 @@ public class App : Application
     
     public override void Initialize()
     {
+        var verboseLevel = CmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
+        _initializeLogger(verboseLevel, CmdOptions.LogToFile);
+        
+        // now search for all assemblies marked as "log service"
+        var lType = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0);
+        
+        // create those types and assign back to settings...
+        var logServices = lType.Select(x =>
+        {
+            if (!typeof(ThirdPartyLogService.ThirdPartyLogService).IsAssignableFrom(x)) throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService.ThirdPartyLogService)}");
+            return Activator.CreateInstance(x)!;
+        });
+        
+        _initializeSettings(logServices);
+        _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
+        
         AvaloniaXamlLoader.Load(this);
         Name = "CloudlogHelper";
     }
@@ -126,5 +151,40 @@ public class App : Application
     public static void CleanTrayIcon()
     {
         _trayIcon?.Dispose();
+    }
+    
+            
+    private static void _initializeSettings(IEnumerable<object> logServices)
+    {
+        ApplicationSettings.ReadSettingsFromFile(logServices.ToArray());
+        var settings = ApplicationSettings.GetInstance();
+        var draftSettings = ApplicationSettings.GetDraftInstance();
+        
+        // init culture
+        if (settings.LanguageType == SupportedLanguage.NotSpecified)
+        {
+            settings.LanguageType = TranslationHelper.DetectDefaultLanguage();
+            draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
+        }
+        I18NExtension.Culture = TranslationHelper.GetCultureInfo(settings.LanguageType);
+    }
+
+    private static void _initializeLogger(LogLevel logLevel, bool writeToFile = false)
+    {
+        var config = new LoggingConfiguration();
+        var consoleTarget = new ConsoleTarget("console");
+        config.AddTarget(consoleTarget);
+        config.AddRule(logLevel, LogLevel.Fatal, consoleTarget);
+        if (writeToFile)
+        {
+            var fileTarget = new FileTarget("file")
+            {
+                FileName = "${basedir}/logs/${shortdate}.log"
+            };
+            config.AddTarget(fileTarget);
+            config.AddRule(logLevel, LogLevel.Fatal, fileTarget);
+        }
+
+        LogManager.Configuration = config;
     }
 }

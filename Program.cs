@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
+using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using CommandLine;
 using NLog;
@@ -32,13 +35,6 @@ internal sealed class Program
     {
         try
         {
-            var verboseLevel = options.Verbose ? LogLevel.Trace : LogLevel.Info;
-            _initializeLogger(verboseLevel, options.LogToFile);
-            _initializeCulture();
-
-            // To be honest, I don't know why but if this is initialized at OnFrameworkInitializationCompleted it would fail...
-            _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: options.ReinitDatabase);
-
             BuildAvaloniaApp(options)
                 .StartWithClassicDesktopLifetime(originalArgs);
         }
@@ -100,38 +96,5 @@ Stack：{ex.StackTrace}");
             .WithInterFont()
             .LogToTrace()
             .UseReactiveUI();
-    }
-
-            
-    private static void _initializeCulture()
-    {
-        ApplicationSettings.ReadSettingsFromFile();
-        var settings = ApplicationSettings.GetInstance();
-        var draftSettings = ApplicationSettings.GetDraftInstance();
-        if (settings.LanguageType == SupportedLanguage.NotSpecified)
-        {
-            settings.LanguageType = TranslationHelper.DetectDefaultLanguage();
-            draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
-        }
-        I18NExtension.Culture = TranslationHelper.GetCultureInfo(settings.LanguageType);
-    }
-
-    private static void _initializeLogger(LogLevel logLevel, bool writeToFile = false)
-    {
-        var config = new LoggingConfiguration();
-        var consoleTarget = new ConsoleTarget("console");
-        config.AddTarget(consoleTarget);
-        config.AddRule(logLevel, LogLevel.Fatal, consoleTarget);
-        if (writeToFile)
-        {
-            var fileTarget = new FileTarget("file")
-            {
-                FileName = "${basedir}/logs/${shortdate}.log"
-            };
-            config.AddTarget(fileTarget);
-            config.AddRule(logLevel, LogLevel.Fatal, fileTarget);
-        }
-
-        LogManager.Configuration = config;
     }
 }

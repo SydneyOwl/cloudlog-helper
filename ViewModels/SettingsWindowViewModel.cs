@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -12,6 +14,8 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.ThirdPartyLogService;
+using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using DynamicData;
@@ -27,11 +31,48 @@ public class SettingsWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+    
+    public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();
+
+    private void InitializeLogSystems()
+    {
+        foreach (var draftSettingsLogService in DraftSettings.LogServices)
+        {
+            var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();
+            if (classAttr == null) throw new Exception("Failed to find class attr!");
+
+            var properties = draftSettingsLogService.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.IsDefined(typeof(UserInputAttribute), false));
+
+            var fields = (from prop in properties
+            let attr = prop.GetCustomAttribute<UserInputAttribute>()!
+            select new LogSystemField
+            {
+                DisplayName = attr.DisplayName,
+                PropertyName = prop.Name,
+                Type = attr.InputType,
+                Watermark = attr.WaterMark,
+                Description = attr.Description,
+                IsRequired = attr.IsRequired,
+                Value = prop.GetValue(draftSettingsLogService)?.ToString()
+            }).ToList();
+            
+            LogSystems.Add(new LogSystemConfig()
+            {
+                DisplayName = classAttr.ServiceName,
+                Fields = fields,
+                RawType = draftSettingsLogService.GetType()
+            });
+        }
+    }
 
     public SettingsWindowViewModel()
     {
         DraftSettings = ApplicationSettings.GetDraftInstance();
 
+        InitializeLogSystems();
+        // throw new Exception();
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
@@ -349,7 +390,8 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         var anythingChanged = false;
         var cmp = ApplicationSettings.GetInstance().DeepClone();
-        DraftSettings.ApplySettings();
+
+        DraftSettings.ApplySettings(LogSystems.ToList());
         DraftSettings.WriteCurrentSettingsToFile();
         if (DraftSettings.IsCloudlogConfChanged(cmp))
         {

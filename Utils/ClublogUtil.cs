@@ -28,8 +28,7 @@ public class ClublogUtil
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
         ClassLogger.Debug($"Got response from `TestClublogConnectionAsync`: {code} {responseText}");
-        if (code == 200) return string.Empty;
-        return responseText;
+        return code == 200 ? string.Empty : responseText;
     }
 
     public static async Task<string> UploadQSOToClublogAsync(string callsign, string password, string email,
@@ -52,8 +51,7 @@ public class ClublogUtil
 
             var responseText = await result.GetStringAsync();
             var code = result.StatusCode;
-            if (code == 200) return string.Empty;
-            return responseText;
+            return code == 200 ? string.Empty : responseText;
         }
         catch (Exception e)
         {

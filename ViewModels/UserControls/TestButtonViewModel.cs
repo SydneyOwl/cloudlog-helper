@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reflection;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -28,17 +32,43 @@ public class TestButtonViewModel : ViewModelBase
     }
 
     [Reactive] public bool CheckPassed { get; set; }
-    [Reactive] public ReactiveCommand<Unit, bool>? TestCommand { get; set; }
+    [Reactive] public ReactiveCommand<Unit, Unit>? TestCommand { get; set; }
     public bool CheckExecuting => _checkExecuting.Value;
 
     public void SetTestButtonCommand(ReactiveCommand<Unit, bool> cmd)
     {
+        return;
+        // TestCommand = cmd;
+        // TestCommand?
+        //     .Where(result => result)
+        //     .Do(_ => CheckPassed = true)
+        //     .Delay(TimeSpan.FromSeconds(5))
+        //     .Subscribe(_ => CheckPassed = false)
+        //     .DisposeWith(_sharedDisposables);
+    }
+    
+    public void SetTestButtonCommand(ReactiveCommand<Unit, Unit> cmd)
+    {
         TestCommand = cmd;
         TestCommand?
-            .Where(result => result)
-            .Do(_ => CheckPassed = true)
-            .Delay(TimeSpan.FromSeconds(5))
-            .Subscribe(_ => CheckPassed = false)
+            .Subscribe(_ => 
+            {
+                CheckPassed = true;
+                Observable.Timer(TimeSpan.FromSeconds(5))
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(_ => CheckPassed = false)
+                    .DisposeWith(_sharedDisposables);
+            })
+            .DisposeWith(_sharedDisposables);
+    
+        
+        TestCommand?
+            .ThrownExceptions
+            .Subscribe(async void (ex) => 
+            {
+                CheckPassed = false;
+            })
             .DisposeWith(_sharedDisposables);
     }
+    
 }

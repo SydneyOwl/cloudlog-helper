@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using CloudlogHelper.Resources;
+using CloudlogHelper.ThirdPartyLogService;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
 using NLog;
@@ -33,6 +37,15 @@ public enum ProgramShutdownMode
 [JsonObject(MemberSerialization.OptIn)]
 public class ApplicationSettings : ReactiveValidationObject
 {
+    /// <summary>
+    /// default json serializer settings.
+    /// </summary>
+    private static JsonSerializerSettings _defaultSerializerSettings = new ()
+    {
+        TypeNameHandling = TypeNameHandling.Auto,
+        Formatting = Formatting.Indented
+    };
+    
     /// <summary>
     ///     Instance in using.
     /// </summary>
@@ -73,6 +86,13 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public CloudlogSettings CloudlogSettings { get; set; } = new();
+    
+    
+    /// <summary>
+    /// Log services like qrz and eqsl.cc
+    /// </summary>
+    [JsonProperty]
+    public List<object> LogServices { get; set; } = new();
 
     /// <summary>
     ///     Third party settings.
@@ -149,7 +169,7 @@ public class ApplicationSettings : ReactiveValidationObject
 
 
     /// <summary>
-    ///     Get an settings instance. Note this is not thread-safe.
+    ///     Get a settings instance. Note this is not thread-safe.
     /// </summary>
     /// <returns></returns>
     public static ApplicationSettings GetInstance()
@@ -165,20 +185,42 @@ public class ApplicationSettings : ReactiveValidationObject
     /// <summary>
     ///     Read settings from default position, then parse it as application-wide setting instance.
     /// </summary>
-    public static void ReadSettingsFromFile()
+    public static void ReadSettingsFromFile(object[] logServices)
     {
         try
         {
             var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
-            _currentInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
-            _draftInstance = JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf);
-            ClassLogger.Trace("Calling ->DeserializeObjectSettings successfully.");
-            ClassLogger.Trace($"_currentInstance null: {_currentInstance is null}");
+            _draftInstance =
+                JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf, _defaultSerializerSettings);
+            if (_draftInstance is null)
+            {
+                ClassLogger.Debug("Settings file not found. creating a new one instead.");
+                _draftInstance = new ApplicationSettings();
+                _draftInstance.LogServices.AddRange(logServices);
+                _currentInstance = _draftInstance.DeepClone();
+                return;
+            }
+
+            // Console.WriteLine(((ClublogThirdPartyLogService)(_draftInstance.LogServices[0])).Callsign);
+
+            var tps = _draftInstance.LogServices.Select(x => x.GetType()).ToArray();
+            foreach (var service in logServices)
+            {
+                if (tps.Contains(service.GetType())) continue;
+                ClassLogger.Debug(
+                    $"Log service not found in settings file: {service.GetType()}. Adding to instance...");
+                _draftInstance.LogServices.Add(service);
+            }
+
+            _currentInstance = _draftInstance.DeepClone();
+            ClassLogger.Trace("Config restored successfully.");
         }
         catch (Exception e1)
         {
             ClassLogger.Warn(e1, "Failed to read settings; use default settings instead.");
-            // simply ignore it
+            _draftInstance = new ApplicationSettings();
+            _draftInstance.LogServices.AddRange(logServices);
+            _currentInstance = _draftInstance.DeepClone();
         }
     }
 
@@ -190,7 +232,7 @@ public class ApplicationSettings : ReactiveValidationObject
     {
         try
         {
-            File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this, Formatting.Indented));
+            File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this, _defaultSerializerSettings));
             ClassLogger.Trace(
                 $"Calling ->WriteCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
@@ -202,11 +244,13 @@ public class ApplicationSettings : ReactiveValidationObject
 
     public ApplicationSettings DeepClone()
     {
-        return JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this))!;
+        return JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this), _defaultSerializerSettings)!;
     }
 
-    public void ApplySettings()
+    public void ApplySettings(List<LogSystemConfig>? rawConfigs = null)
     {
+        // apply changes for log services here
+        _applyLogServiceChanges(rawConfigs);
         _currentInstance!.CloudlogSettings.ApplySettingsChange(CloudlogSettings);
         _currentInstance!.ThirdPartyLogServiceSettings.ApplySettingsChange(ThirdPartyLogServiceSettings);
         _currentInstance!.HamlibSettings.ApplySettingsChange(HamlibSettings);
@@ -221,5 +265,31 @@ public class ApplicationSettings : ReactiveValidationObject
         HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
         UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);
         // _settingsInstance = _currentInstance;
+    }
+
+    private void _applyLogServiceChanges(List<LogSystemConfig>? rawConfigs = null)
+    {
+        if (rawConfigs is null) return;
+        foreach (var logService in LogServices)
+        {
+            var servType = logService.GetType();
+            var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
+            if (logSystemConfig is null)
+            {
+                ClassLogger.Warn($"Class not found for {servType.FullName}. Skipped.");
+                continue;
+            }
+
+            foreach (var logSystemField in logSystemConfig.Fields)
+            {
+                var fieldInfo = servType.GetProperty(logSystemField.PropertyName, BindingFlags.Public | BindingFlags.Instance);
+                if (fieldInfo is null)
+                {
+                    ClassLogger.Warn($"Field not found for {servType.FullName} - {logSystemField.PropertyName}. Skipped.");
+                    continue;
+                }
+                fieldInfo.SetValue(logService, logSystemField.Value);
+            }
+        }
     }
 }
