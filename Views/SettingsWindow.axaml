@@ -292,25 +292,6 @@
                             <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
                                      Text="{Binding DraftSettings.UDPSettings.UDPPort}" />
 
-                            <!-- Auto Upload -->
-                            <TextBlock Text="{I18N {x:Static resources:LangKeys.autoupload2}}" Classes="setting-label"
-                                       Grid.Row="3" Grid.Column="0" />
-                            <StackPanel Grid.Row="3" Grid.Column="1" Spacing="10">
-                                <StackPanel Orientation="Horizontal" Spacing="20">
-                                    <CheckBox Content="CloudLog" VerticalAlignment="Center"
-                                              IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}" />
-                                    <CheckBox Content="ClubLog" VerticalAlignment="Center"
-                                              IsChecked="{Binding DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.AutoQSOUploadEnabled}" />
-                                    <CheckBox Content="HamCQ" VerticalAlignment="Center"
-                                              IsChecked="{Binding DraftSettings.ThirdPartyLogServiceSettings.HamCQSettings.AutoQSOUploadEnabled}" />
-                                </StackPanel>
-                                
-                                <StackPanel Orientation="Horizontal" Spacing="20">
-                                    <CheckBox Content="eqsl.cc" VerticalAlignment="Center"
-                                              IsChecked="{Binding DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.AutoQSOUploadEnabled}" />
-                                </StackPanel>
-                            </StackPanel>
-
                             <!-- Retry Count -->
                             <TextBlock Text="{I18N {x:Static resources:LangKeys.qsoretrycount}}"
                                        Classes="setting-label" Grid.Row="4" Grid.Column="0" />

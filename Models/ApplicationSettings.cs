@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CloudlogHelper.Resources;
-using CloudlogHelper.ThirdPartyLogService;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
 using NLog;
@@ -95,12 +94,6 @@ public class ApplicationSettings : ReactiveValidationObject
     public List<object> LogServices { get; set; } = new();
 
     /// <summary>
-    ///     Third party settings.
-    /// </summary>
-    [JsonProperty]
-    public ThirdPartyLogServiceSettings ThirdPartyLogServiceSettings { get; set; } = new();
-
-    /// <summary>
     ///     Hamlib settings.
     /// </summary>
     [JsonProperty]
@@ -128,18 +121,6 @@ public class ApplicationSettings : ReactiveValidationObject
         if (compare is null) return false;
         var oldI = compare.CloudlogSettings;
         var newI = CloudlogSettings;
-        return !oldI.Equals(newI);
-    }
-
-    /// <summary>
-    ///     Check if third party configs has been changed.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsThirdPartyConfChanged(ApplicationSettings? compare)
-    {
-        if (compare is null) return false;
-        var oldI = compare.ThirdPartyLogServiceSettings;
-        var newI = ThirdPartyLogServiceSettings;
         return !oldI.Equals(newI);
     }
 
@@ -200,9 +181,7 @@ public class ApplicationSettings : ReactiveValidationObject
                 _currentInstance = _draftInstance.DeepClone();
                 return;
             }
-
-            // Console.WriteLine(((ClublogThirdPartyLogService)(_draftInstance.LogServices[0])).Callsign);
-
+            
             var tps = _draftInstance.LogServices.Select(x => x.GetType()).ToArray();
             foreach (var service in logServices)
             {
@@ -244,7 +223,8 @@ public class ApplicationSettings : ReactiveValidationObject
 
     public ApplicationSettings DeepClone()
     {
-        return JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this), _defaultSerializerSettings)!;
+        return FastDeepCloner.DeepCloner.Clone(this);
+        // return JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this), _defaultSerializerSettings)!;
     }
 
     public void ApplySettings(List<LogSystemConfig>? rawConfigs = null)
@@ -252,7 +232,6 @@ public class ApplicationSettings : ReactiveValidationObject
         // apply changes for log services here
         _applyLogServiceChanges(rawConfigs);
         _currentInstance!.CloudlogSettings.ApplySettingsChange(CloudlogSettings);
-        _currentInstance!.ThirdPartyLogServiceSettings.ApplySettingsChange(ThirdPartyLogServiceSettings);
         _currentInstance!.HamlibSettings.ApplySettingsChange(HamlibSettings);
         _currentInstance!.UDPSettings.ApplySettingsChange(UDPSettings);
         // _settingsInstance = _currentInstance;
@@ -260,35 +239,41 @@ public class ApplicationSettings : ReactiveValidationObject
 
     public void RestoreSettings()
     {
-        CloudlogSettings.ApplySettingsChange(_currentInstance!.CloudlogSettings);
-        ThirdPartyLogServiceSettings.ApplySettingsChange(_currentInstance!.ThirdPartyLogServiceSettings);
-        HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
-        UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);
+        _draftInstance = _currentInstance!.DeepClone();
+        // CloudlogSettings.ApplySettingsChange(_currentInstance!.CloudlogSettings);
+        // HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
+        // UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);
         // _settingsInstance = _currentInstance;
     }
 
     private void _applyLogServiceChanges(List<LogSystemConfig>? rawConfigs = null)
     {
         if (rawConfigs is null) return;
-        foreach (var logService in LogServices)
+        List<ApplicationSettings> settings = new(){_draftInstance!, _currentInstance!};
+        foreach (var appSet in settings)
         {
-            var servType = logService.GetType();
-            var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
-            if (logSystemConfig is null)
+            foreach (var logService in appSet!.LogServices)
             {
-                ClassLogger.Warn($"Class not found for {servType.FullName}. Skipped.");
-                continue;
-            }
-
-            foreach (var logSystemField in logSystemConfig.Fields)
-            {
-                var fieldInfo = servType.GetProperty(logSystemField.PropertyName, BindingFlags.Public | BindingFlags.Instance);
-                if (fieldInfo is null)
+                var servType = logService.GetType();
+                var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
+                if (logSystemConfig is null)
                 {
-                    ClassLogger.Warn($"Field not found for {servType.FullName} - {logSystemField.PropertyName}. Skipped.");
+                    ClassLogger.Warn($"Class not found for {servType.FullName}. Skipped.");
                     continue;
                 }
-                fieldInfo.SetValue(logService, logSystemField.Value);
+            
+                servType.GetProperty("AutoQSOUploadEnabled")?.SetValue(logService, logSystemConfig.UploadEnabled);
+
+                foreach (var logSystemField in logSystemConfig.Fields)
+                {
+                    var fieldInfo = servType.GetProperty(logSystemField.PropertyName, BindingFlags.Public | BindingFlags.Instance);
+                    if (fieldInfo is null)
+                    {
+                        ClassLogger.Warn($"Field not found for {servType.FullName} - {logSystemField.PropertyName}. Skipped.");
+                        continue;
+                    }
+                    fieldInfo.SetValue(logService, logSystemField.Value);
+                }
             }
         }
     }

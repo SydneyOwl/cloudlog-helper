@@ -1,7 +1,7 @@
 ﻿using System;
 using CloudlogHelper.Models;
 
-namespace CloudlogHelper.ThirdPartyLogService.Attributes;
+namespace CloudlogHelper.LogService.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class UserInputAttribute : Attribute

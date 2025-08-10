@@ -11,11 +11,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using CloudlogHelper.LogService;
+using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
-using CloudlogHelper.ThirdPartyLogService;
-using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using DynamicData;
@@ -62,7 +62,8 @@ public class SettingsWindowViewModel : ViewModelBase
             {
                 DisplayName = classAttr.ServiceName,
                 Fields = fields,
-                RawType = draftSettingsLogService.GetType()
+                RawType = draftSettingsLogService.GetType(),
+                UploadEnabled = ((ThirdPartyLogService)draftSettingsLogService).AutoQSOUploadEnabled
             });
         }
     }
@@ -84,18 +85,6 @@ public class SettingsWindowViewModel : ViewModelBase
             ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButton.SetTestButtonCommand(cloudCmd);
 
-        var clubCmd =
-            ReactiveCommand.CreateFromTask(_testClublogConnection);
-        ClublogTestButton.SetTestButtonCommand(clubCmd);
-
-        var hamcqCmd =
-            ReactiveCommand.CreateFromTask(_testHamCQConnection);
-        HamCQTestButton.SetTestButtonCommand(hamcqCmd);
-        
-        var eqslCmd =
-            ReactiveCommand.CreateFromTask(_testEqslConnection);
-        EqslTestButton.SetTestButtonCommand(eqslCmd);
-
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
         SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
@@ -112,17 +101,6 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
             cloudCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            clubCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
-            hamcqCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
-            eqslCmd.ThrownExceptions.Subscribe(err =>
-                {
-                    ClassLogger.Trace(err.Message);
-                    NotificationManager?.SendErrorNotificationSync(err.Message);
-                })
-                .DisposeWith(disposables);
-
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
             {
@@ -185,36 +163,6 @@ public class SettingsWindowViewModel : ViewModelBase
         }
     }
 
-    private async Task<bool> _testClublogConnection()
-    {
-        if (DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.IsClublogHasErrors())
-        {
-            NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("fillall"));
-            return false;
-        }
-
-        var res = await ClublogUtil.TestClublogConnectionAsync(DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogCallsign,
-                DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogPassword, DraftSettings.ThirdPartyLogServiceSettings.ClublogSettings.ClublogEmail);
-
-        if (string.IsNullOrEmpty(res)) return true;
-        NotificationManager?.SendErrorNotificationSync(res);
-        return false;
-    }
-
-    private async Task<bool> _testHamCQConnection()
-    {
-        if (DraftSettings.ThirdPartyLogServiceSettings.HamCQSettings.IsHamCQHasErrors())
-        {
-            NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("fillall"));
-            return false;
-        }
-
-        var res = await HamCQUtil.TestHamCQConnectionAsync(DraftSettings.ThirdPartyLogServiceSettings.HamCQSettings.HamCQAPIKey);
-        if (string.IsNullOrEmpty(res)) return true;
-        NotificationManager?.SendErrorNotificationSync(res);
-        return false;
-    }
-
     private async Task<bool> _testCloudlogConnection()
     {
         CloudlogInfoPanel.InfoMessage = string.Empty;
@@ -273,23 +221,6 @@ public class SettingsWindowViewModel : ViewModelBase
         return false;
     }
 
-    private async Task<bool> _testEqslConnection()
-    {
-        if (DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.IsEqslHasErrors())
-        {
-            NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("fillall"));
-            return false;
-        }
-
-        var res = await EqslUtil.TestEqslConnectionAsync(
-            DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.Username,
-            DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.Password,
-            DraftSettings.ThirdPartyLogServiceSettings.EqslSettings.QthNickname);
-        
-        if (string.IsNullOrEmpty(res)) return true;
-        NotificationManager?.SendErrorNotificationSync(res);
-        return false;
-    }
 
     private (string, int) _getRigctldIpAndPort()
     {
@@ -399,14 +330,7 @@ public class SettingsWindowViewModel : ViewModelBase
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
             anythingChanged = true;
         }
-
-        if (DraftSettings.IsThirdPartyConfChanged(cmp))
-        {
-            ClassLogger.Trace("ThirdPartyLogService settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.ThirdPartyLogService });
-            anythingChanged = true;
-        }
-
+        
         if (DraftSettings.IsHamlibConfChanged(cmp))
         {
             ClassLogger.Trace("hamlib settings changed");
@@ -432,24 +356,6 @@ public class SettingsWindowViewModel : ViewModelBase
     public FixedInfoPanelViewModel CloudlogInfoPanel { get; } = new();
     public TestButtonViewModel CloudlogTestButton { get; } = new();
     [Reactive] public bool ShowCloudlogStationIdCombobox { get; set; }
-
-    #endregion
-
-    #region Clublog
-
-    public TestButtonViewModel ClublogTestButton { get; } = new();
-
-    #endregion
-
-    #region HamCQ
-
-    public TestButtonViewModel HamCQTestButton { get; } = new();
-
-    #endregion
-    
-    #region EQSL
-
-    public TestButtonViewModel EqslTestButton { get; } = new();
 
     #endregion
 

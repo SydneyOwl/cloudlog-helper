@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CloudlogHelper.ThirdPartyLogService.Attributes;
+namespace CloudlogHelper.LogService.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public class LogServiceAttribute : Attribute

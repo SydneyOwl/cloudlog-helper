@@ -5,8 +5,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using CloudlogHelper.LogService;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
@@ -124,9 +126,26 @@ public class LogSystemCard : UserControl
                     grid.Children.Add(helpIconControl);
                 }
             }
+            
+            // add upload enabled checkbox
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var uploadCheckbox = new CheckBox()
+            {
+                Content = TranslationHelper.GetString("autoqsoupload"),
+                Classes = { "setting-label" },
+                [!ToggleButton.IsCheckedProperty] = new Binding("UploadEnabled")
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                }
+            };
+            Grid.SetRow(uploadCheckbox, config.Fields.Count);
+            Grid.SetColumn(uploadCheckbox, 0);
+            grid.Children.Add(uploadCheckbox);
 
             var testButtonViewModel = new TestButtonViewModel();
-            var methodInfo = config.RawType.GetMethod(nameof(ThirdPartyLogService.ThirdPartyLogService.TestConnectionAsync));
+            var methodInfo = config.RawType.GetMethod(nameof(ThirdPartyLogService.TestConnectionAsync));
             testButtonViewModel.SetTestButtonCommand( ReactiveCommand.CreateFromTask(async () =>
             {
                 try
@@ -162,7 +181,7 @@ public class LogSystemCard : UserControl
                 DataContext = testButtonViewModel
             };
             Grid.SetColumn(testButton, 3);
-            Grid.SetRow(testButton, config.Fields.Count / 2 );
+            Grid.SetRow(testButton, (config.Fields.Count) / 2 );
             grid.Children.Add(testButton);
 
             innerStack.Children.Add(grid);

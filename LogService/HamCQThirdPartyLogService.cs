@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
-using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CloudlogHelper.ThirdPartyLogService;
+namespace CloudlogHelper.LogService;
 
 [LogService("HamCQ", Description = "HamCQ Log Service")]
 public class HamCQThirdPartyLogService : ThirdPartyLogService

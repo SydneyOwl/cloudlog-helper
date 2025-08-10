@@ -11,6 +11,8 @@ public class LogSystemConfig : ReactiveObject
     
     public Type RawType { get; set; }
     
+    public bool UploadEnabled { get; set; }
+    
     [Reactive] public List<LogSystemField> Fields { get; set; } = new();
 }
 

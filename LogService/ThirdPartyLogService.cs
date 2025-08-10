@@ -1,9 +1,6 @@
-﻿using System;
-using System.Runtime;
-using System.Threading.Tasks;
-using ReactiveUI;
+﻿using System.Threading.Tasks;
 
-namespace CloudlogHelper.ThirdPartyLogService;
+namespace CloudlogHelper.LogService;
 
 public abstract class ThirdPartyLogService
 {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
-using CloudlogHelper.ThirdPartyLogService.Attributes;
 using Flurl.Http;
-using ReactiveUI.Fody.Helpers;
 
-namespace CloudlogHelper.ThirdPartyLogService;
+namespace CloudlogHelper.LogService;
 
 [LogService("Clublog", Description = "Clublog Log Service")]
 public class ClublogThirdPartyLogService : ThirdPartyLogService

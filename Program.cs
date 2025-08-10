@@ -9,7 +9,6 @@ using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
-using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using CommandLine;
 using NLog;

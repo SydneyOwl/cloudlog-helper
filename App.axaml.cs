@@ -12,9 +12,9 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using CloudlogHelper.LogService;
+using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
-using CloudlogHelper.ThirdPartyLogService;
-using CloudlogHelper.ThirdPartyLogService.Attributes;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
@@ -57,7 +57,7 @@ public class App : Application
         // create those types and assign back to settings...
         var logServices = lType.Select(x =>
         {
-            if (!typeof(ThirdPartyLogService.ThirdPartyLogService).IsAssignableFrom(x)) throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService.ThirdPartyLogService)}");
+            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x)) throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
             return Activator.CreateInstance(x)!;
         });
         

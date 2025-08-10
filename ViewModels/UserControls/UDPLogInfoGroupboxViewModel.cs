@@ -47,12 +47,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
     /// <summary>
-    ///     Settings for clublog.
-    /// </summary>
-    private readonly ThirdPartyLogServiceSettings _thirdPartySettings =
-        ApplicationSettings.GetInstance().ThirdPartyLogServiceSettings;
-
-    /// <summary>
     ///     UDP Timeout watchdog.
     /// </summary>
     private readonly Subject<Unit> _heartbeatSubject = new();
@@ -369,6 +363,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     /// </summary>
     private async Task _uploadQSOFromQueue()
     {
+        #if false
         while (true)
             try
             {
@@ -390,14 +385,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                         ClassLogger.Debug($"Auto upload to cloudlog/clublog/hamcq not enabled. ignored: {adif}.");
                         continue;
                     }
-
-                    // if (_extraCloudlogSettings.IsCloudlogHasErrors(true))
-                    // {
-                    //     rcd.UploadStatus = UploadStatus.Ignored;
-                    //     rcd.FailReason = TranslationHelper.GetString("confcloudlogfirst");
-                    //     ClassLogger.Debug($"Cloudlog conf has error. ignored: {adif}.");
-                    //     continue;
-                    // }
 
                     // do possible retry...
                     if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
@@ -520,6 +507,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             {
                 await Task.Delay(500);
             }
+#endif
     }
 
     private async void _wsjtxMsgForwarder(Memory<byte> message)

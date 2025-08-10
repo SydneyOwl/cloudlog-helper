@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
-using CloudlogHelper.ThirdPartyLogService.Attributes;
 using Flurl;
 using Flurl.Http;
 using HtmlAgilityPack;
 
-namespace CloudlogHelper.ThirdPartyLogService;
+namespace CloudlogHelper.LogService;
 
 [LogService("eqsl.cc", Description = "eqsl Log Service")]
 public class EqslThirdPartyLogService : ThirdPartyLogService
