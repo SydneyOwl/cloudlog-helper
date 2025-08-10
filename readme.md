@@ -268,10 +268,10 @@ After 1 hour, CPU and memory usage were as follows (spikes correspond to decodin
 
 ## 🙏 Acknowledgments
 
-+ [Hamlib](https://github.com/Hamlib/Hamlib): Amateur radio control library (supports radios, rotators, tuners, and
-  amplifiers).
-+ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): C# library and examples for interacting with WSJT-X via UDP in
-  .NET/.NET Framework 4.8.
++ [Hamlib](https://github.com/Hamlib/Hamlib): An amateur radio equipment control library (supports radios, rotators, tuners, and amplifiers).
++ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): A C# class library and sample code for interacting with WSJT-X via UDP interface using .NET & .NET Framework 4.8.
++ [ADIFLib](https://github.com/kv9y/ADIFLib): A C# library for reading, parsing, and writing ADIF (version 3.1.0) files.
++ [FT8CN](https://github.com/N0BOY/FT8CN): Run FT8 on Android. The call sign attribution logic and corresponding DXCC Chinese translations in this software are extracted from it.
 
 ## 📝 License
 

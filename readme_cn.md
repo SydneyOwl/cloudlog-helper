@@ -260,6 +260,7 @@ dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true --self-containe
 + [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): 基于 C# 的类库及示例代码，通过 .NET & .NET Framework 4.8 的 UDP 接口与
   WSJT-X 交互
 + [ADIFLib](https://github.com/kv9y/ADIFLib): 用于读取、解析和写入 ADIF（版本 3.1.0）文件的 C# 库。
++ [FT8CN](https://github.com/N0BOY/FT8CN): 在安卓上运行FT8。本软件的呼号归属解析逻辑以及对应的DXCC中文翻译提取自此软件。
 
 ## 📝 许可证
 
