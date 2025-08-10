@@ -52,13 +52,19 @@ public class App : Application
         
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0);
+            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
+            .ToList();
+
+        if (lType.GroupBy(n => n).Any(c => c.Count() > 1))
+        {
+            throw new Exception("Dupe log service found. This is not allowed!");
+        }
         
         // create those types and assign back to settings...
         var logServices = lType.Select(x =>
         {
             if (!typeof(ThirdPartyLogService).IsAssignableFrom(x)) throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
-            return Activator.CreateInstance(x)!;
+            return (ThirdPartyLogService)Activator.CreateInstance(x)!;
         });
         
         _initializeSettings(logServices);
@@ -154,7 +160,7 @@ public class App : Application
     }
     
             
-    private static void _initializeSettings(IEnumerable<object> logServices)
+    private static void _initializeSettings(IEnumerable<ThirdPartyLogService> logServices)
     {
         ApplicationSettings.ReadSettingsFromFile(logServices.ToArray());
         var settings = ApplicationSettings.GetInstance();

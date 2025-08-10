@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CloudlogHelper.LogService;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
@@ -91,7 +92,7 @@ public class ApplicationSettings : ReactiveValidationObject
     /// Log services like qrz and eqsl.cc
     /// </summary>
     [JsonProperty]
-    public List<object> LogServices { get; set; } = new();
+    public List<ThirdPartyLogService> LogServices { get; set; } = new();
 
     /// <summary>
     ///     Hamlib settings.
@@ -166,7 +167,7 @@ public class ApplicationSettings : ReactiveValidationObject
     /// <summary>
     ///     Read settings from default position, then parse it as application-wide setting instance.
     /// </summary>
-    public static void ReadSettingsFromFile(object[] logServices)
+    public static void ReadSettingsFromFile(ThirdPartyLogService[] logServices)
     {
         try
         {

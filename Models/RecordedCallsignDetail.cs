@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using ADIFLib;
 using CloudlogHelper.Database;
@@ -180,24 +181,9 @@ public class RecordedCallsignDetail : ReactiveObject
     public bool Checked { get; set; }
 
     /// <summary>
-    ///     Upload status of cloudlog.
+    ///     Upload status of log services.
     /// </summary>
-    public bool CloudlogUploaded { get; set; }
-
-    /// <summary>
-    ///     Upload status of clublog.
-    /// </summary>
-    public bool ClublogUploaded { get; set; }
-
-    /// <summary>
-    ///     Upload status of hamcq.
-    /// </summary>
-    public bool HamCQUploaded { get; set; }
-    
-    /// <summary>
-    ///     Upload status of eqsl.
-    /// </summary>
-    public bool EqslUploaded { get; set; }
+    public Dictionary<string, bool> UploadedServices = new();
 
     /// <summary>
     ///     Upload status of current item.
@@ -279,10 +265,6 @@ public class RecordedCallsignDetail : ReactiveObject
             RawData = info.RawData,
             FailReason = null,
             Checked = false,
-            CloudlogUploaded = false,
-            ClublogUploaded = false,
-            HamCQUploaded = false,
-            EqslUploaded = false,
             UploadStatus = UploadStatus.Pending,
             ForcedUpload = false
         };

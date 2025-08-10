@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
+using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -45,6 +46,12 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     /// </summary>
     private readonly CloudlogSettings _extraCloudlogSettings =
         ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
+
+    /// <summary>
+    ///     Settings for log services.
+    /// </summary>
+    private readonly List<ThirdPartyLogService> _logServices =
+        ApplicationSettings.GetInstance().LogServices;
 
     /// <summary>
     ///     UDP Timeout watchdog.
@@ -363,139 +370,89 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     /// </summary>
     private async Task _uploadQSOFromQueue()
     {
-        #if false
         while (true)
             try
             {
                 _isUploadQueueEmpty.OnNext(_uploadQueue.IsEmpty);
-                if (_uploadQueue.TryDequeue(out var rcd))
+                if (!_uploadQueue.TryDequeue(out var rcd)) continue;
+                var adif = rcd.RawData?.ToString()??rcd.GenerateAdif();
+                if (string.IsNullOrEmpty(adif)) continue;
+                ClassLogger.Trace($"Try Logging: {adif}");
+                if (!_logServices.Any(x=>x.AutoQSOUploadEnabled) 
+                    && !_extraCloudlogSettings.AutoQSOUploadEnabled 
+                    && !rcd.ForcedUpload)
                 {
-                    var adif = rcd.RawData?.ToString()??rcd.GenerateAdif();
-                    if (string.IsNullOrEmpty(adif)) continue;
-                    ClassLogger.Debug($"Try Logging: {adif}");
-                    if (_thirdPartySettings is
-                        {
-                            ClublogSettings.AutoQSOUploadEnabled: false, 
-                            EqslSettings.AutoQSOUploadEnabled: false,
-                            HamCQSettings.AutoQSOUploadEnabled: false
-                        } && !_extraCloudlogSettings.AutoQSOUploadEnabled && !rcd.ForcedUpload)
+                    rcd.UploadStatus = UploadStatus.Ignored;
+                    rcd.FailReason = TranslationHelper.GetString("qsouploaddisabled");
+                    ClassLogger.Debug($"Auto upload not enabled. ignored: {adif}.");
+                    continue;
+                }
+
+                // do possible retry...
+                if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
+                for (var i = 0; i < retTime; i++)
+                {
+                    rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
+                    rcd.FailReason = null;
+                    var failOutput = new StringBuilder();
+
+                    try
                     {
-                        rcd.UploadStatus = UploadStatus.Ignored;
-                        rcd.FailReason = TranslationHelper.GetString("qsouploaddisabled");
-                        ClassLogger.Debug($"Auto upload to cloudlog/clublog/hamcq not enabled. ignored: {adif}.");
-                        continue;
-                    }
-
-                    // do possible retry...
-                    if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
-                    for (var i = 0; i < retTime; i++)
-                    {
-                        rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
-                        rcd.FailReason = null;
-                        var failOutput = new StringBuilder();
-
-                        try
+                        if (!_extraCloudlogSettings.AutoQSOUploadEnabled) rcd.UploadedServices["CloudlogService"] = true;
+                        if (!rcd.UploadedServices.GetValueOrDefault("CloudlogService", false))
                         {
-                            if (!_extraCloudlogSettings.AutoQSOUploadEnabled) rcd.CloudlogUploaded = true;
-                            if (!rcd.CloudlogUploaded)
+                            var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
+                                _extraCloudlogSettings.CloudlogUrl,
+                                _extraCloudlogSettings.CloudlogApiKey,
+                                _extraCloudlogSettings.CloudlogStationInfo?.StationId!, adif);
+                            if (cloudlogResult.Status != "created")
                             {
-                                var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
-                                    _extraCloudlogSettings.CloudlogUrl,
-                                    _extraCloudlogSettings.CloudlogApiKey,
-                                    _extraCloudlogSettings.CloudlogStationInfo?.StationId!, adif);
-                                if (cloudlogResult.Status != "created")
+                                ClassLogger.Debug("A qso for cloudlog failed to upload.");
+                                rcd.UploadedServices["CloudlogService"] = false;
+                                failOutput.AppendLine("Cloudlog: "+cloudlogResult.Reason.Trim());
+                            }
+                            else
+                            {
+                                ClassLogger.Debug("Qso for cloudlog uploaded successfully.");
+                                rcd.UploadedServices["CloudlogService"] = true;
+                            }
+                        }
+
+                        foreach (var thirdPartyLogService in _logServices)
+                        {
+                            var serName = thirdPartyLogService.GetType().Name;
+                            if (!thirdPartyLogService.AutoQSOUploadEnabled) rcd.UploadedServices[serName] = true;
+                            if (!rcd.UploadedServices.GetValueOrDefault(serName, false))
+                            {
+                                try
                                 {
-                                    ClassLogger.Debug("A qso for cloudlog failed to upload.");
-                                    rcd.CloudlogUploaded = false;
-                                    failOutput.AppendLine("Cloudlog: "+cloudlogResult.Reason.Trim());
+                                    await thirdPartyLogService.UploadQSOAsync(adif);
+                                    rcd.UploadedServices[serName] = true;
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    ClassLogger.Debug("Qso for cloudlog uploaded successfully.");
-                                    rcd.CloudlogUploaded = true;
+                                    failOutput.AppendLine(serName + ex.Message);
                                 }
                             }
+                        }
 
-                            if (!_thirdPartySettings.ClublogSettings.AutoQSOUploadEnabled) rcd.ClublogUploaded = true;
-                            if (!rcd.ClublogUploaded)
-                            {
-                                var clublogResult = await ClublogUtil.UploadQSOToClublogAsync(
-                                    _thirdPartySettings.ClublogSettings.ClublogCallsign, _thirdPartySettings.ClublogSettings.ClublogPassword,
-                                    _thirdPartySettings.ClublogSettings.ClublogEmail, adif);
-
-                                if (string.IsNullOrEmpty(clublogResult))
-                                {
-                                    // success
-                                    ClassLogger.Debug("A qso for clublog uploaded succcessfully.");
-                                    rcd.ClublogUploaded = true;
-                                }
-                                else
-                                {
-                                    ClassLogger.Debug("A qso for clublog failed to upload.");
-                                    rcd.ClublogUploaded = false;
-                                    failOutput.AppendLine("Clublog: "+clublogResult.Trim());
-                                }
-                            }
-
-                            if (!_thirdPartySettings.HamCQSettings.AutoQSOUploadEnabled) rcd.HamCQUploaded = true;
-                            if (!rcd.HamCQUploaded)
-                            {
-                                var hamcqResult =
-                                    await HamCQUtil.UploadQSOToHamCQAsync(_thirdPartySettings.HamCQSettings.HamCQAPIKey, adif);
-
-                                if (string.IsNullOrEmpty(hamcqResult))
-                                {
-                                    // success
-                                    ClassLogger.Debug("A qso for hamcq uploaded succcessfully.");
-                                    rcd.HamCQUploaded = true;
-                                }
-                                else
-                                {
-                                    ClassLogger.Debug("A qso for hamcq failed to upload.");
-                                    rcd.HamCQUploaded = false;
-                                    failOutput.AppendLine("HamCQ: "+hamcqResult.Trim());
-                                }
-                            }
-
-                            if (!_thirdPartySettings.EqslSettings.AutoQSOUploadEnabled) rcd.EqslUploaded = true;
-                            if (!rcd.EqslUploaded)
-                            {
-                                var eqslResult = await EqslUtil.UploadQSOToEqslAsync(_thirdPartySettings.EqslSettings.Username,
-                                        _thirdPartySettings.EqslSettings.Password,
-                                        adif);
-
-                                if (string.IsNullOrEmpty(eqslResult))
-                                {
-                                    // success
-                                    ClassLogger.Debug("A qso for eqsl uploaded succcessfully.");
-                                    rcd.EqslUploaded = true;
-                                }
-                                else
-                                {
-                                    ClassLogger.Debug("A qso for eqsl failed to upload.");
-                                    rcd.EqslUploaded = false;
-                                    failOutput.AppendLine("eqsl: "+eqslResult.Trim());
-                                }
-                            }
-
-                            if (rcd is { CloudlogUploaded: true, ClublogUploaded: true, HamCQUploaded: true, EqslUploaded: true })
-                            {
-                                rcd.UploadStatus = UploadStatus.Success;
-                                rcd.FailReason = string.Empty;
-                                break;
-                            }
+                        if (rcd.UploadedServices.Values.Any(x => !x))
+                        {
+                            rcd.UploadStatus = UploadStatus.Success;
+                            rcd.FailReason = string.Empty;
+                            break;
+                        }
                             
-                            rcd.UploadStatus = UploadStatus.Fail;
-                            rcd.FailReason = failOutput.ToString();
+                        rcd.UploadStatus = UploadStatus.Fail;
+                        rcd.FailReason = failOutput.ToString();
 
-                            await Task.Delay(1000);
-                        }
-                        catch (Exception ex)
-                        {
-                            ClassLogger.Debug(ex, "Qso uploaded failed.");
-                            rcd.UploadStatus = UploadStatus.Fail;
-                            rcd.FailReason = ex.Message;
-                        }
+                        await Task.Delay(1000);
+                    }
+                    catch (Exception ex)
+                    {
+                        ClassLogger.Debug(ex, "Qso uploaded failed.");
+                        rcd.UploadStatus = UploadStatus.Fail;
+                        rcd.FailReason = ex.Message;
                     }
                 }
             }
@@ -507,7 +464,6 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
             {
                 await Task.Delay(500);
             }
-#endif
     }
 
     private async void _wsjtxMsgForwarder(Memory<byte> message)
