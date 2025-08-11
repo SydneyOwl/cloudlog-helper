@@ -15,8 +15,11 @@ using Avalonia.Platform;
 using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
+using CloudlogHelper.Services;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -44,8 +47,8 @@ public class App : Application
     }
     
     public App(){}
-    
-    public override void Initialize()
+
+    private void PreInit()
     {
         var verboseLevel = CmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, CmdOptions.LogToFile);
@@ -68,14 +71,23 @@ public class App : Application
         });
         
         _initializeSettings(logServices);
-        _ = DatabaseUtil.InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
-        
+    }
+    
+    public override void Initialize()
+    {
+        PreInit();
         AvaloniaXamlLoader.Load(this);
         Name = "CloudlogHelper";
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
+        var collection = new ServiceCollection();
+        collection.AddCommonServices();
+        collection.AddViewModels();
+        collection.AddExtra();
+        var provider = collection.BuildServiceProvider();
+        _ = provider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
@@ -89,10 +101,7 @@ public class App : Application
                 return;
             }
 
-            var mainWindow = new MainWindow
-            {
-                ViewModel = new MainWindowViewModel()
-            };
+            var mainWindow = provider.GetRequiredService<MainWindow>();
             desktop.MainWindow = mainWindow;
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
             NotificationManager = new WindowNotification(mainWindow);
@@ -110,12 +119,12 @@ public class App : Application
             {
                 var nmiExit = new NativeMenuItem
                 {
-                    Header = TranslationHelper.GetString("exit"),
+                    Header = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.exit)),
                     Command = _exitCommand
                 };
                 var nmiOpen = new NativeMenuItem
                 {
-                    Header = TranslationHelper.GetString("open"),
+                    Header  = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.open)),
                     Command = _openCommand
                 };
 

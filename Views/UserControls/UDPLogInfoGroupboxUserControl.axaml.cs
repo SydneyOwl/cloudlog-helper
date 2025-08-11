@@ -10,9 +10,9 @@ using Avalonia.ReactiveUI;
 using CloudlogHelper.ViewModels.UserControls;
 using ReactiveUI;
 
-namespace CloudlogHelper.UserControls;
+namespace CloudlogHelper.Views.UserControls;
 
-public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogInfoGroupboxViewModel>
+public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogInfoGroupboxUserControlViewModel>
 {
     public UDPLogInfoGroupboxUserControl()
     {

@@ -6,10 +6,10 @@
              xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CloudlogHelper.UserControls.TestButtonUserControl"
-             x:DataType="userControls:TestButtonViewModel">
+             x:Class="CloudlogHelper.Views.UserControls.TestButtonUserControl"
+             x:DataType="userControls:TestButtonUserControlViewModel">
     <Design.DataContext>
-        <userControls:TestButtonViewModel />
+        <userControls:TestButtonUserControlViewModel />
     </Design.DataContext>
     <Grid>
         <Button

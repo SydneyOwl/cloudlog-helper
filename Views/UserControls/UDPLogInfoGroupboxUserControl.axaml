@@ -5,12 +5,12 @@
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
-             xmlns:userControls1="clr-namespace:CloudlogHelper.UserControls"
+             xmlns:userControls2="clr-namespace:CloudlogHelper.Views.UserControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
-             x:Class="CloudlogHelper.UserControls.UDPLogInfoGroupboxUserControl"
-             x:DataType="userControls:UDPLogInfoGroupboxViewModel">
+             x:Class="CloudlogHelper.Views.UserControls.UDPLogInfoGroupboxUserControl"
+             x:DataType="userControls:UDPLogInfoGroupboxUserControlViewModel">
     <Design.DataContext>
-        <userControls:UDPLogInfoGroupboxViewModel />
+        <userControls:UDPLogInfoGroupboxUserControlViewModel />
     </Design.DataContext>
     <UserControl.Resources>
         <converters:StringToColorConverter x:Key="StatusToColor" />
@@ -30,7 +30,7 @@
                            Margin="0,0,0,10" />
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,15">
                     <TextBlock Text="{Binding QsAvgMin}" VerticalAlignment="Center" />
-                    <userControls1:TipIconUserControl
+                    <userControls2:TipIconUserControl
                         TooltipText="{I18N {x:Static resources:LangKeys.within5min}}" VerticalAlignment="Center" />
                 </StackPanel>
 

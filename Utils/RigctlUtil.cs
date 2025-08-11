@@ -171,7 +171,7 @@ public class RigctldUtil
 
 
             if (!_onetimeRigctldClient.Start())
-                return (false, TranslationHelper.GetString("inithamlibfailed"));
+                return (false, TranslationHelper.GetString(LangKeys.inithamlibfailed));
 
             _onetimeRigctldClient.BeginOutputReadLine();
             _onetimeRigctldClient.BeginErrorReadLine();
@@ -382,7 +382,7 @@ public class RigctldUtil
         }
         catch (OperationCanceledException e)
         {
-            throw new Exception(TranslationHelper.GetString("rigtimeout"));
+            throw new Exception(TranslationHelper.GetString(LangKeys.rigtimeout));
         }
         finally
         {
@@ -396,14 +396,14 @@ public class RigctldUtil
         var raw = await ExecuteCommandInScheduler(ip, port, "f", false);
         var freqStr = raw.Split("\n")[0];
         if (!long.TryParse(freqStr, out var freq))
-            throw new Exception(TranslationHelper.GetString("unsupportedrigfreq") + freqStr);
+            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
         testbk.FrequencyRx = freq;
         testbk.FrequencyTx = freq;
 
         raw = await ExecuteCommandInScheduler(ip, port, "m", false);
         var mode = raw.Split("\n")[0];
         if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-            throw new Exception(TranslationHelper.GetString("unsupportedrigmode") + mode);
+            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
         testbk.ModeRx = mode;
         testbk.ModeTx = mode;
 
@@ -432,14 +432,14 @@ public class RigctldUtil
                         raw = await ExecuteCommandInScheduler(ip, port, "i", false);
                         var txfreqStr = raw.Split("\n")[0];
                         if (!long.TryParse(txfreqStr, out var freqtx))
-                            throw new Exception(TranslationHelper.GetString("unsupportedrigfreq") + freqStr);
+                            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
                         testbk.FrequencyTx = freqtx;
 
                         // fetch spilt tx mode 
                         raw = await ExecuteCommandInScheduler(ip, port, "x", false);
                         var modetx = raw.Split("\n")[0];
                         if (!DefaultConfigs.AvailableRigModes.Contains(modetx))
-                            throw new Exception(TranslationHelper.GetString("unsupportedrigmode") + mode);
+                            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
                         testbk.ModeTx = modetx;
                     }
                 }

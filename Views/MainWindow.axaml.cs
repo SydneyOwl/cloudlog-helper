@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
@@ -22,8 +23,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private bool _isManualClosing;
 
-    public MainWindow()
+    public MainWindow(MainWindowViewModel mainWindowViewModel, QsoSyncAssistantViewModel qsoSyncAssistantViewModel)
     {
+        DataContext = mainWindowViewModel;
         InitializeComponent();
         this.WhenActivated(disposables =>
         {
@@ -75,10 +77,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             // Start qso assistant, if required.
             if (ApplicationSettings.GetInstance().QsoSyncAssistantSettings.ExecuteOnStart)
             {
-                App.NotificationManager.SendInfoNotificationSync(TranslationHelper.GetString("qsosyncing"));
-                var vm = new QsoSyncAssistantViewModel();
-                vm.EnableExecuteOnStart();
-                var qsoWindow = new QsoSyncAssistantWindow { DataContext = vm };
+                App.NotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing));
+                qsoSyncAssistantViewModel.EnableExecuteOnStart();
+                var qsoWindow = new QsoSyncAssistantWindow { DataContext = qsoSyncAssistantViewModel };
                 App.WindowTracker.Track(qsoWindow);
                 qsoWindow.ShowInTaskbar = false; 
                 qsoWindow.WindowState = WindowState.Minimized;

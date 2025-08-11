@@ -5,11 +5,11 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class FixedInfoPanelViewModel : ViewModelBase
+public class FixedInfoPanelUserControlViewModel : ViewModelBase
 {
     private ObservableAsPropertyHelper<bool> _showFixedInfoPanel;
 
-    public FixedInfoPanelViewModel()
+    public FixedInfoPanelUserControlViewModel()
     {
         this.WhenActivated(disposables =>
         {

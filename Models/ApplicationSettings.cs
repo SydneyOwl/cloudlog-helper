@@ -6,6 +6,7 @@ using System.Reflection;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
+using Force.DeepCloner;
 using Newtonsoft.Json;
 using NLog;
 using ReactiveUI.Fody.Helpers;
@@ -222,11 +223,6 @@ public class ApplicationSettings : ReactiveValidationObject
         }
     }
 
-    public ApplicationSettings DeepClone()
-    {
-        return FastDeepCloner.DeepCloner.Clone(this);
-        // return JsonConvert.DeserializeObject<ApplicationSettings>(JsonConvert.SerializeObject(this), _defaultSerializerSettings)!;
-    }
 
     public void ApplySettings(List<LogSystemConfig>? rawConfigs = null)
     {

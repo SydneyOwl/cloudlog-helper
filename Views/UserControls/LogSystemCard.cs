@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive;
 using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
@@ -16,7 +14,7 @@ using CloudlogHelper.ViewModels.UserControls;
 using NLog;
 using ReactiveUI;
 
-namespace CloudlogHelper.UserControls;
+namespace CloudlogHelper.Views.UserControls;
 
 public class LogSystemCard : UserControl
 {    
@@ -132,7 +130,7 @@ public class LogSystemCard : UserControl
 
             var uploadCheckbox = new CheckBox()
             {
-                Content = TranslationHelper.GetString("autoqsoupload"),
+                Content =TranslationHelper.GetString("autoqsoupload"),
                 Classes = { "setting-label" },
                 [!ToggleButton.IsCheckedProperty] = new Binding("UploadEnabled")
                 {
@@ -144,7 +142,7 @@ public class LogSystemCard : UserControl
             Grid.SetColumn(uploadCheckbox, 0);
             grid.Children.Add(uploadCheckbox);
 
-            var testButtonViewModel = new TestButtonViewModel();
+            var testButtonViewModel = new TestButtonUserControlViewModel();
             var methodInfo = config.RawType.GetMethod(nameof(ThirdPartyLogService.TestConnectionAsync));
             testButtonViewModel.SetTestButtonCommand( ReactiveCommand.CreateFromTask(async () =>
             {

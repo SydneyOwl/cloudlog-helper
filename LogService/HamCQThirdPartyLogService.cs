@@ -41,7 +41,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
         var code = result.StatusCode;
         if (responseText == "Pass") return;
         var res = JsonConvert.DeserializeObject<JObject>(responseText);
-        if (res is null) throw new Exception($"HamCQ Error: {TranslationHelper.GetString("invalidapikey")}({responseText})");
-        throw new Exception($"HamCQ Error: {TranslationHelper.GetString("invalidapikey")} ({res["message"]})");
+        if (res is null) throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)}({responseText})");
+        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)} ({res["message"]})");
     }
 }

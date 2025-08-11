@@ -61,7 +61,6 @@ Stack：{ex.StackTrace}");
         {
             App.CleanTrayIcon();
             RigctldUtil.CleanUp();
-            DatabaseUtil.Cleanup();
             UDPServerUtil.TerminateUDPServer();
         }
     }

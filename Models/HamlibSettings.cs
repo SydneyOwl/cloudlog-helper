@@ -18,19 +18,19 @@ public class HamlibSettings : ReactiveValidationObject
     {
         this.ValidationRule(x => x.SelectedRigInfo,
             st => st?.Id is not null,
-            TranslationHelper.GetString("notnull")
+            TranslationHelper.GetString(LangKeys.notnull)
         );
         this.ValidationRule(x => x.SelectedPort,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString("notnull")
+            TranslationHelper.GetString(LangKeys.notnull)
         );
         this.ValidationRule(x => x.ExternalRigctldHostAddress,
             IPAddrUtil.CheckAddress!,
-            TranslationHelper.GetString("invalidaddr")
+            TranslationHelper.GetString(LangKeys.invalidaddr)
         );
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString("pollintervalreq")
+            TranslationHelper.GetString(LangKeys.pollintervalreq)
         );
     }
 

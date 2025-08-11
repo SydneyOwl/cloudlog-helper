@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:userControls1="clr-namespace:CloudlogHelper.UserControls"
+             xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CloudlogHelper.UserControls.TipIconUserControl"
-             x:DataType="userControls1:TipIconUserControl">
+             x:Class="CloudlogHelper.Views.UserControls.TipIconUserControl"
+             x:DataType="userControls:TipIconUserControl">
     <Image Margin="5,0,0,0"
            Width="20"
            Height="20"

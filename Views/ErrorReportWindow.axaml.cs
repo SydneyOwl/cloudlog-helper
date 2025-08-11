@@ -3,6 +3,7 @@ using System.IO;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 
@@ -47,7 +48,7 @@ public partial class ErrorReportWindow : ReactiveWindow<ErrorReportWindowViewMod
             new FilePickerSaveOptions
             {
                 SuggestedFileName = "CrashLog-" + ts + ".log",
-                Title = TranslationHelper.GetString("savelogto")
+                Title = TranslationHelper.GetString(LangKeys.savelogto)
             });
         if (file is not null)
         {

@@ -1,9 +1,9 @@
 using Avalonia.ReactiveUI;
 using CloudlogHelper.ViewModels.UserControls;
 
-namespace CloudlogHelper.UserControls;
+namespace CloudlogHelper.Views.UserControls;
 
-public partial class ClosableErrorPanelUserControl : ReactiveUserControl<ClosableErrorPanelViewModel>
+public partial class ClosableErrorPanelUserControl : ReactiveUserControl<ClosableErrorPanelUserControlViewModel>
 {
     public ClosableErrorPanelUserControl()
     {

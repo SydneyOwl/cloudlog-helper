@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using CloudlogHelper.Resources;
 using NLog;
 
 namespace CloudlogHelper.Utils;

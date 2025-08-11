@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.Threading;
+using CloudlogHelper.Resources;
 using Notification = Avalonia.Controls.Notifications.Notification;
 
 namespace CloudlogHelper.Utils;
@@ -29,41 +30,41 @@ public class WindowNotification
 
     public async Task SendInfoNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString("titleinfo"), message, NotificationType.Information);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titleinfo), message, NotificationType.Information);
     }
 
     public async Task SendSuccessNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString("titlesuccess"), message, NotificationType.Success);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titlesuccess), message, NotificationType.Success);
     }
 
     public async Task SendWarningNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString("titlewarning"), message, NotificationType.Warning);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titlewarning), message, NotificationType.Warning);
     }
 
     public async Task SendErrorNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString("titleerror"), message, NotificationType.Error);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titleerror), message, NotificationType.Error);
     }
 
     public void SendInfoNotificationSync(string message)
     {
-        SendNotificationSync(TranslationHelper.GetString("titleinfo"), message, NotificationType.Information);
+        SendNotificationSync(TranslationHelper.GetString(LangKeys.titleinfo), message, NotificationType.Information);
     }
 
     public void SendSuccessNotificationSync(string message)
     {
-        SendNotificationSync(TranslationHelper.GetString("titlesuccess"), message, NotificationType.Success);
+        SendNotificationSync(TranslationHelper.GetString(LangKeys.titlesuccess), message, NotificationType.Success);
     }
 
     public void SendWarningNotificationSync(string message)
     {
-        SendNotificationSync(TranslationHelper.GetString("titlewarning"), message, NotificationType.Warning);
+        SendNotificationSync(TranslationHelper.GetString(LangKeys.titlewarning), message, NotificationType.Warning);
     }
 
     public void SendErrorNotificationSync(string message)
     {
-        SendNotificationSync(TranslationHelper.GetString("titleerror"), message, NotificationType.Error);
+        SendNotificationSync(TranslationHelper.GetString(LangKeys.titleerror), message, NotificationType.Error);
     }
 }

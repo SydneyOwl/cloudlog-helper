@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
 using Newtonsoft.Json;
@@ -14,12 +15,12 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
     {
         this.ValidationRule(x => x.CloudlogUserName,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString("notnull")
+            TranslationHelper.GetString(LangKeys.notnull)
         );
 
         this.ValidationRule(x => x.CloudlogPassword,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString("notnull")
+            TranslationHelper.GetString(LangKeys.notnull)
         );
     }
 

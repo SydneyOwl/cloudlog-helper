@@ -5,11 +5,11 @@
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="CloudlogHelper.UserControls.UserBasicDataGroupboxUserControl"
-             x:DataType="userControls:UserBasicDataGroupboxViewModel">
+             x:Class="CloudlogHelper.Views.UserControls.UserBasicDataGroupboxUserControl"
+             x:DataType="userControls:UserBasicDataGroupboxUserControlViewModel">
 
     <Design.DataContext>
-        <userControls:UserBasicDataGroupboxViewModel />
+        <userControls:UserBasicDataGroupboxUserControlViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Horizontal" Margin="10">
         <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}">

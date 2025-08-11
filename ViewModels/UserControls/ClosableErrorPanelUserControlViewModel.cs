@@ -6,11 +6,11 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class ClosableErrorPanelViewModel : ViewModelBase
+public class ClosableErrorPanelUserControlViewModel : ViewModelBase
 {
     private ObservableAsPropertyHelper<bool> _showErrorPanel;
 
-    public ClosableErrorPanelViewModel()
+    public ClosableErrorPanelUserControlViewModel()
     {
         CloseErrorPanelCommand = ReactiveCommand.Create(() => { ErrorMessage = string.Empty; });
         this.WhenActivated(disposables =>

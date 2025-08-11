@@ -5,11 +5,11 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class ErrorPanelViewModel : ViewModelBase
+public class ErrorPanelUserControlViewModel : ViewModelBase
 {
     private ObservableAsPropertyHelper<bool> _showErrorPanel;
 
-    public ErrorPanelViewModel()
+    public ErrorPanelUserControlViewModel()
     {
         this.WhenActivated(disposables =>
         {

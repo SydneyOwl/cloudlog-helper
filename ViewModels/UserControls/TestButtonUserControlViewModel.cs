@@ -11,14 +11,14 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class TestButtonViewModel : ViewModelBase
+public class TestButtonUserControlViewModel : ViewModelBase
 {
     //shared with SetTestButtonCommand
     private readonly CompositeDisposable _sharedDisposables = new();
 
     private ObservableAsPropertyHelper<bool> _checkExecuting;
 
-    public TestButtonViewModel()
+    public TestButtonUserControlViewModel()
     {
         this.WhenActivated(disposables =>
         {

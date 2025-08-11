@@ -6,10 +6,10 @@
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CloudlogHelper.UserControls.RIGDataGroupboxUserControl"
-             x:DataType="userControls:RIGDataGroupboxViewModel">
+             x:Class="CloudlogHelper.Views.UserControls.RIGDataGroupboxUserControl"
+             x:DataType="userControls:RIGDataGroupboxUserControlViewModel">
     <Design.DataContext>
-        <userControls:RIGDataGroupboxViewModel />
+        <userControls:RIGDataGroupboxUserControlViewModel />
     </Design.DataContext>
 
     <UserControl.Styles>

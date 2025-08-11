@@ -273,6 +273,10 @@ public class RecordedCallsignDetail : ReactiveObject
     public string? GenerateAdif()
     {
         var rcd = this;
+        // from qso assistant
+        if (rcd.RawData is not null) return rcd.RawData.ToString();
+        
+        // from realtime udp
         try
         {
             var adif = AdifUtil.GenerateAdifLog(new AdifLog

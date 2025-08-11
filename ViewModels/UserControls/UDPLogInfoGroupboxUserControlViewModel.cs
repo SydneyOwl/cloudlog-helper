@@ -16,6 +16,7 @@ using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services;
 using CloudlogHelper.Utils;
 using DynamicData;
 using DynamicData.Binding;
@@ -29,7 +30,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class UDPLogInfoGroupboxViewModel : ViewModelBase
+public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
 {
     /// <summary>
     ///     Logger for the class.
@@ -91,8 +92,11 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
     /// </summary>
     private uint _qsosCount;
 
-    public UDPLogInfoGroupboxViewModel()
+    private IDatabaseService databaseService;
+
+    public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService)
     {
+        databaseService = dbService;
         _isUploadQueueEmpty = new BehaviorSubject<bool>(_uploadQueue.IsEmpty);
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _settings.EnableUDPServer;
@@ -267,7 +271,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
         {
             UDPServerUtil.TerminateUDPServer();
             WaitFirstConn = false;
-            throw new Exception(TranslationHelper.GetString("invalidudpconf"));
+            throw new Exception(TranslationHelper.GetString(LangKeys.invalidudpconf));
         }
 
         _ = UDPServerUtil.RestartUDPServerAsync(
@@ -314,7 +318,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     Name = "OK",
                     IsDefault = true,
                 }
-            }, Icon.Info, "Notice", TranslationHelper.GetString("pseselfirst"));
+            }, Icon.Info, "Notice", TranslationHelper.GetString(LangKeys.pseselfirst));
             return;
         }
         var result = await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>()
@@ -328,12 +332,12 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                 Name = "Cancel",
                 IsDefault = true,
             }
-        }, Icon.Warning, "Warning", TranslationHelper.GetString("ignoreqsopermanently"));
+        }, Icon.Warning, "Warning", TranslationHelper.GetString(LangKeys.ignoreqsopermanently));
         if (result == "Cancel")return;
         foreach (var recordedCallsignDetail in candidate)
         {
             ClassLogger.Info($"Logging: {recordedCallsignDetail.ToString()}");
-            await DatabaseUtil.MarkQsoIgnored(IgnoredQsoDatabase.Parse(recordedCallsignDetail));
+            await databaseService.MarkQsoIgnored(IgnoredQsoDatabase.Parse(recordedCallsignDetail));
             _allQsos.Edit(ls => ls.Remove(recordedCallsignDetail));
         } 
     }
@@ -366,8 +370,10 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
 
 
     /// <summary>
-    ///     Note that cloudlog seems to process qsos single-thread...
+    ///     Upload QSOs from queue.
+    ///
     /// </summary>
+    ///     ///     todo: LANGKEYS
     private async Task _uploadQSOFromQueue()
     {
         while (true)
@@ -383,7 +389,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     && !rcd.ForcedUpload)
                 {
                     rcd.UploadStatus = UploadStatus.Ignored;
-                    rcd.FailReason = TranslationHelper.GetString("qsouploaddisabled");
+                    rcd.FailReason = TranslationHelper.GetString(LangKeys.qsouploaddisabled);
                     ClassLogger.Debug($"Auto upload not enabled. ignored: {adif}.");
                     continue;
                 }
@@ -492,9 +498,9 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     _qsosCount += 1;
                     // process message
                     var msg = (QsoLogged)message;
-                    var cty = await DatabaseUtil.GetCallsignDetailAsync(msg.DXCall);
+                    var cty = await databaseService.GetCallsignDetailAsync(msg.DXCall);
                     var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg);
-                    rcd.ParentMode = await DatabaseUtil.GetParentModeAsync(rcd.Mode);
+                    rcd.ParentMode = await databaseService.GetParentModeAsync(rcd.Mode);
                     // log it into that
                     _allQsos.Add(rcd);
                     _checkAndEnqueueQSO(rcd);
@@ -506,7 +512,7 @@ public class UDPLogInfoGroupboxViewModel : ViewModelBase
                     var stat = (Status)message;
                     TxStatus = stat.Transmitting;
                     MsgSending = string.IsNullOrEmpty(stat.TXMessage)
-                        ? TranslationHelper.GetString("txing")
+                        ? TranslationHelper.GetString(LangKeys.txing)
                         : stat.TXMessage;
                     break;
             }

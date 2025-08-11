@@ -25,19 +25,23 @@ public class MainWindowViewModel : ViewModelBase
     private bool _isRigctldUsingExternal;
     public bool UdpLogOnly { get; private set; }
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(SettingsWindowViewModel settingsWindowViewModel, 
+        AboutWindowViewModel aboutWindowViewModel,
+        QsoSyncAssistantViewModel qsoSyncAssistantViewModel,
+        UDPLogInfoGroupboxUserControlViewModel udpLogInfoGroupboxUserControlViewModel,
+        RIGDataGroupboxUserControlViewModel rigdataGroupboxUserControlViewModel
+        )
     {
         UdpLogOnly = App.CmdOptions.AutoUdpLogUploadOnly;
-        OpenSettingsWindow = ReactiveCommand.CreateFromTask(OpenWindow<SettingsWindowViewModel>);
-        OpenAboutWindow = ReactiveCommand.CreateFromTask(OpenWindow<AboutWindowViewModel>);
-        OpenQSOAssistantWindow = ReactiveCommand.CreateFromTask(OpenWindow<QsoSyncAssistantViewModel>);
+        OpenSettingsWindow = ReactiveCommand.CreateFromTask(()=>OpenWindow(settingsWindowViewModel));
+        OpenAboutWindow = ReactiveCommand.CreateFromTask(()=>OpenWindow(aboutWindowViewModel));
+        OpenQSOAssistantWindow = ReactiveCommand.CreateFromTask(()=>OpenWindow(qsoSyncAssistantViewModel));
         SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
-
-        UserBasicDataGroupboxVM = UserBasicDataGroupboxViewModel.Create(UdpLogOnly);
-        RigDataGroupboxVM = RIGDataGroupboxViewModel.Create(UdpLogOnly);
         
-        UDPLogInfoGroupboxVm = new UDPLogInfoGroupboxViewModel();
+        UserBasicDataGroupboxUserControlVm = UserBasicDataGroupboxUserControlViewModel.Create(UdpLogOnly);
+        RigDataGroupboxUserControlVm = rigdataGroupboxUserControlViewModel;
+        UDPLogInfoGroupboxUserControlVm = udpLogInfoGroupboxUserControlViewModel;
 
         this.WhenActivated(disposables =>
         {
@@ -78,19 +82,19 @@ public class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SwitchLightTheme { get; }
     public ReactiveCommand<Unit, Unit> SwitchDarkTheme { get; }
 
-    public UserBasicDataGroupboxViewModel UserBasicDataGroupboxVM { get; set; }
-    public RIGDataGroupboxViewModel RigDataGroupboxVM { get; set; }
-    public UDPLogInfoGroupboxViewModel UDPLogInfoGroupboxVm { get; set; }
+    public UserBasicDataGroupboxUserControlViewModel UserBasicDataGroupboxUserControlVm { get; set; }
+    public RIGDataGroupboxUserControlViewModel RigDataGroupboxUserControlVm { get; set; }
+    public UDPLogInfoGroupboxUserControlViewModel UDPLogInfoGroupboxUserControlVm { get; set; }
 
-    private async Task OpenWindow<T>() where T : ViewModelBase, new()
+    private async Task OpenWindow(ViewModelBase vm)
     {
         try
         {
-            await ShowNewWindow.Handle(new T());
+            await ShowNewWindow.Handle(vm);
         }
         catch (Exception ex)
         {
-            ClassLogger.Error($"open failed:{typeof(T).Name}, {ex.Message}");
+            ClassLogger.Error($"open failed:{vm.GetType().Name}, {ex.Message}");
             throw;
         }
     }
@@ -127,7 +131,7 @@ public class MainWindowViewModel : ViewModelBase
                 else
                 {
                     CurrentRigctldAddress = "(?)";
-                    throw new Exception(TranslationHelper.GetString("failextractinfo"));
+                    throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
                 }
 
                 var matchPort = Regex.Match(_settings.OverrideCommandlineArg, @"-t\s+(\S+)");
@@ -138,7 +142,7 @@ public class MainWindowViewModel : ViewModelBase
                 else
                 {
                     CurrentRigctldAddress = "(?)";
-                    throw new Exception(TranslationHelper.GetString("failextractinfo"));
+                    throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
                 }
 
                 CurrentRigctldAddress = $"({ip}:{port})";

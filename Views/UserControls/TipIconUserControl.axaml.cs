@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 
-namespace CloudlogHelper.UserControls;
+namespace CloudlogHelper.Views.UserControls;
 
 public partial class TipIconUserControl : UserControl
 {

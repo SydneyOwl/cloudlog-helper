@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         x:Class="CloudlogHelper.Views.SettingsWindow"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
-        xmlns:userControls="clr-namespace:CloudlogHelper.UserControls"
+        xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         mc:Ignorable="d"
         d:DesignWidth="800" d:DesignHeight="700"
         x:DataType="viewModels:SettingsWindowViewModel"
@@ -122,18 +122,18 @@
                                 <TextBox Classes="setting-control"
                                          Text="{Binding DraftSettings.CloudlogSettings.CloudlogUrl}"
                                          Watermark="{I18N {x:Static resources:LangKeys.urlexample}}" />
-                                <userControls:TipIconUserControl
+                                <userControls1:TipIconUserControl
                                     TooltipText="{I18N {x:Static resources:LangKeys.cloudlogurlhelp}}" />
                             </StackPanel>
-                            <userControls:TestButtonUserControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
-                                                                DataContext="{Binding CloudlogTestButton}" />
+                            <userControls1:TestButtonUserControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                                DataContext="{Binding CloudlogTestButtonUserControl}" />
 
                             <!-- API Key -->
                             <TextBlock Text="Cloudlog APIKey" Classes="setting-label" Grid.Row="1" Grid.Column="0" />
                             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Spacing="8">
                                 <TextBox Classes="setting-control"
                                          Text="{Binding DraftSettings.CloudlogSettings.CloudlogApiKey}" />
-                                <userControls:TipIconUserControl
+                                <userControls1:TipIconUserControl
                                     TooltipText="{I18N {x:Static resources:LangKeys.cloudlogapihelp}}" />
                             </StackPanel>
 
@@ -155,19 +155,19 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <userControls:TipIconUserControl
+                                <userControls1:TipIconUserControl
                                     TooltipText="{I18N {x:Static resources:LangKeys.cloudlogstationid}}" />
                             </StackPanel>
                         </Grid>
 
-                        <userControls:FixedInfoPanelUserControl Margin="0 12 0 0"
-                                                                DataContext="{Binding CloudlogInfoPanel}" />
+                        <userControls1:FixedInfoPanelUserControl Margin="0 12 0 0"
+                                                                DataContext="{Binding CloudlogInfoPanelUserControl}" />
                     </StackPanel>
                 </Border>
 
                 <!-- Third-party Log Systems -->
                 <Border Classes="setting-card">
-                    <userControls:LogSystemCard DataContext="{Binding }"/>
+                    <userControls1:LogSystemCard DataContext="{Binding }"/>
                 </Border>
 
                 <!-- HamLib Settings -->
@@ -263,8 +263,8 @@
                                 </StackPanel>
                             </Expander>
 
-                            <userControls:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
-                                                                DataContext="{Binding HamlibTestButton}" />
+                            <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
+                                                                DataContext="{Binding HamlibTestButtonUserControl}" />
                         </Grid>
 
                         <TextBlock Text="{Binding HamlibVersion}" Margin="0 12 0 0" FontStyle="Italic" />

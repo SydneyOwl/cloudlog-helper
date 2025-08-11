@@ -19,6 +19,7 @@ using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using DynamicData;
+using Force.DeepCloner;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -77,13 +78,13 @@ public class SettingsWindowViewModel : ViewModelBase
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
-        HamlibTestButton.SetTestButtonCommand(hamlibCmd);
+        HamlibTestButtonUserControl.SetTestButtonCommand(hamlibCmd);
 
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
 
         var cloudCmd =
             ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
-        CloudlogTestButton.SetTestButtonCommand(cloudCmd);
+        CloudlogTestButtonUserControl.SetTestButtonCommand(cloudCmd);
 
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
@@ -165,7 +166,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task<bool> _testCloudlogConnection()
     {
-        CloudlogInfoPanel.InfoMessage = string.Empty;
+        CloudlogInfoPanelUserControl.InfoMessage = string.Empty;
         try
         {
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
@@ -181,7 +182,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 DraftSettings.CloudlogSettings.CloudlogApiKey);
             if (stationInfo.Count == 0)
             {
-                NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString("failedstationinfo"));
+                NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString(LangKeys.failedstationinfo));
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
                 DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
                 ShowCloudlogStationIdCombobox = false;
@@ -208,7 +209,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl);
             // instanceuncompitable
             if (instType != ServerInstanceType.Cloudlog)
-                CloudlogInfoPanel.InfoMessage = TranslationHelper.GetString("instanceuncompitable")
+                CloudlogInfoPanelUserControl.InfoMessage = TranslationHelper.GetString(LangKeys.instanceuncompitable)
                     .Replace("{replace01}", instType.ToString());
 
             return true;
@@ -242,7 +243,7 @@ public class SettingsWindowViewModel : ViewModelBase
             }
             else
             {
-                throw new Exception(TranslationHelper.GetString("failextractinfo"));
+                throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
             }
         }
 
@@ -353,8 +354,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
     #region CloudlogAPI
 
-    public FixedInfoPanelViewModel CloudlogInfoPanel { get; } = new();
-    public TestButtonViewModel CloudlogTestButton { get; } = new();
+    public FixedInfoPanelUserControlViewModel CloudlogInfoPanelUserControl { get; } = new();
+    public TestButtonUserControlViewModel CloudlogTestButtonUserControl { get; } = new();
     [Reactive] public bool ShowCloudlogStationIdCombobox { get; set; }
 
     #endregion
@@ -364,7 +365,7 @@ public class SettingsWindowViewModel : ViewModelBase
     [Reactive] public bool HamlibInitPassed { get; set; }
     public ReactiveCommand<Unit, Unit> RefreshPort { get; }
 
-    public TestButtonViewModel HamlibTestButton { get; } = new();
+    public TestButtonUserControlViewModel HamlibTestButtonUserControl { get; } = new();
 
     [Reactive] public List<string> Ports { get; set; }
     [Reactive] public string HamlibVersion { get; set; } = "Unknown hamlib version";

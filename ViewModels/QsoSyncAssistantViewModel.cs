@@ -13,6 +13,8 @@ using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
+using CloudlogHelper.Services;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
 using NLog;
@@ -31,9 +33,12 @@ public class QsoSyncAssistantViewModel : ViewModelBase
     private bool _executeOnStart;
 
     private CancellationTokenSource _source = new();
+    
+    private IDatabaseService _dbService;
 
-    public QsoSyncAssistantViewModel()
+    public QsoSyncAssistantViewModel(IDatabaseService dbService)
     {
+        _dbService = dbService;
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
         StartSyncCommand =
@@ -211,7 +216,7 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                             continue;
                         }
 
-                        if (await DatabaseUtil.IsQsoIgnored(
+                        if (await _dbService.IsQsoIgnored(
                                 IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i]))))
                         {
                             _logProgress($"QSO: {compareRes[i].Call} {compareRes[i].Mode} is not recorded, but it's marked as ignored.");
@@ -249,17 +254,17 @@ public class QsoSyncAssistantViewModel : ViewModelBase
 
             if (errorOccurred)
                 throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
-            _logProgress(TranslationHelper.GetString("qsosyncsucc"), 100);
+            _logProgress(TranslationHelper.GetString(LangKeys.qsosyncsucc), 100);
             if (_executeOnStart)
                 await App.NotificationManager.SendSuccessNotificationAsync(
-                    $"{TranslationHelper.GetString("qsosyncsucc")}");
+                    $"{TranslationHelper.GetString(LangKeys.qsosyncsucc)}");
         }
         catch (Exception ex)
         {
             _logProgress($"Failed to sync QSOs: {ex.Message}", 100);
             if (_executeOnStart)
                 await App.NotificationManager.SendErrorNotificationAsync(
-                    $"{TranslationHelper.GetString("failedsyncqso")}{ex.Message}");
+                    $"{TranslationHelper.GetString(LangKeys.failedsyncqso)}{ex.Message}");
         }
         finally
         {

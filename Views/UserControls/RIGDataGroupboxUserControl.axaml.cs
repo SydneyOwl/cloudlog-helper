@@ -1,24 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using Avalonia.Threading;
 using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.UserControls;
-using CloudlogHelper.Views;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Dto;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
 
-namespace CloudlogHelper.UserControls;
+namespace CloudlogHelper.Views.UserControls;
 
-public partial class RIGDataGroupboxUserControl : ReactiveUserControl<RIGDataGroupboxViewModel>
+public partial class RIGDataGroupboxUserControl : ReactiveUserControl<RIGDataGroupboxUserControlViewModel>
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 

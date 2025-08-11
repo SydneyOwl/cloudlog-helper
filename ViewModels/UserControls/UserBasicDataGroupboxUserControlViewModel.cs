@@ -13,7 +13,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class UserBasicDataGroupboxViewModel : ViewModelBase
+public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
 {
     /// <summary>
     ///     Logger for the class.
@@ -25,11 +25,11 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
     private readonly CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
     public bool InitSkipped { get; private set; }
-    public UserBasicDataGroupboxViewModel(){}
+    public UserBasicDataGroupboxUserControlViewModel(){}
     
-    public static UserBasicDataGroupboxViewModel Create(bool skipInit = false)
+    public static UserBasicDataGroupboxUserControlViewModel Create(bool skipInit = false)
     {
-        var vm = new UserBasicDataGroupboxViewModel();
+        var vm = new UserBasicDataGroupboxUserControlViewModel();
         vm.InitSkipped = skipInit;
         if (!skipInit)
         {
@@ -63,11 +63,11 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
 
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
-                    OP = TranslationHelper.GetString("unknown");
-                    GridSquare = TranslationHelper.GetString("unknown");
-                    QsToday = TranslationHelper.GetString("unknown");
-                    QsMonth = TranslationHelper.GetString("unknown");
-                    QsYear = TranslationHelper.GetString("unknown");
+                    OP = TranslationHelper.GetString(LangKeys.unknown);
+                    GridSquare = TranslationHelper.GetString(LangKeys.unknown);
+                    QsToday = TranslationHelper.GetString(LangKeys.unknown);
+                    QsMonth = TranslationHelper.GetString(LangKeys.unknown);
+                    QsYear = TranslationHelper.GetString(LangKeys.unknown);
                     await App.NotificationManager.SendErrorNotificationAsync(err.Message);
                     // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
@@ -80,29 +80,27 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
         });
     }
 
-    [Reactive] public string? OP { get; set; } = TranslationHelper.GetString("unknown");
-    [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString("unknown");
-    [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString("unknown");
-    [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString("unknown");
+    [Reactive] public string? OP { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
 
-    [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString("unknown");
-    // [Reactive] public string? QsAvgMin { get; set; } = TranslationHelper.GetString("calculating");
-    // [Reactive] public string? QsAvgHour { get; set; } = TranslationHelper.GetString("calculating");
+    [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    // [Reactive] public string? QsAvgMin { get; set; } = LangKeys.calculating;
+    // [Reactive] public string? QsAvgHour { get; set; } = LangKeys.calculating;
 
     private async Task _refreshUserBasicData()
     {
         // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
         ClassLogger.Debug("Refreshing userbasic data....");
         if (_settings.IsCloudlogHasErrors(true))
-            throw new Exception(TranslationHelper.GetString("confcloudlogfirst"));
+            throw new Exception(TranslationHelper.GetString(LangKeys.confcloudlogfirst));
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
             _settings.CloudlogStationInfo?.StationId!);
         if (info is null)
         {
-            // todo tell main viewmodel that exception occurred...
-            throw new Exception(TranslationHelper.GetString("failedstationinfo"));
-            return;
+            throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
         }
 
         OP = info.Value.StationCallsign;
@@ -112,7 +110,7 @@ public class UserBasicDataGroupboxViewModel : ViewModelBase
         var statistic = await CloudlogUtil.GetStationStatisticsAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey);
         if (statistic is null)
         {
-            throw new Exception(TranslationHelper.GetString("failedstationstat"));
+            throw new Exception(TranslationHelper.GetString(LangKeys.failedstationstat));
             return;
         }
 

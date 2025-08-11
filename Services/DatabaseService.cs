@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
@@ -11,43 +10,43 @@ using Newtonsoft.Json;
 using NLog;
 using SQLite;
 
-namespace CloudlogHelper.Utils;
+namespace CloudlogHelper.Services;
 
-/// <summary>
-///     Tools for handling db connection. Maybe someday I'll turn it into a service.
-/// </summary>
-public class DatabaseUtil
+public class DatabaseService : IDatabaseService, IDisposable
 {
     /// <summary>
     ///     Connection to the sqlite database.
     /// </summary>
-    private static SQLiteAsyncConnection? _conn;
-
-
+    private SQLiteAsyncConnection? _conn;
+    
     /// <summary>
     ///     Map English country names to Chinese. Only used when initializing database.
     /// </summary>
-    private static Dictionary<string, string> _countries = new();
+    private Dictionary<string, string> _countries = new();
 
     /// <summary>
     ///     Logger for the class.
     /// </summary>
-    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-
+    private readonly ILogger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    ///     Semaphore to protect access to _conn (thread-safe initialization and operations).
+    /// Whether this is inited or not.
     /// </summary>
-    private static readonly SemaphoreSlim _connSemaphore = new(1, 1);
-
+    private bool _inited;
+    
+    /// <summary>
+    /// Whether this is disposed or not.
+    /// </summary>
+    private bool _disposed;
 
     /// <summary>
     ///     Check if database is already initialized; if not, init it.
     /// </summary>
     /// <param name="dbPath"></param>
     /// <param name="forceInitDatabase"></param>
-    public static async Task InitDatabaseAsync(string dbPath = "", bool forceInitDatabase = false)
+    public async Task InitDatabaseAsync(string dbPath = "", bool forceInitDatabase = false)
     {
+        if (_inited) return;
         dbPath = string.IsNullOrEmpty(dbPath) ? DefaultConfigs.DefaultDatabaseFile : dbPath;
         var connectionString = new SQLiteConnectionString(dbPath,
             SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite |
@@ -64,7 +63,6 @@ public class DatabaseUtil
                     // ignored...
                 }
 
-            await _connSemaphore.WaitAsync();
             _conn = new SQLiteAsyncConnection(connectionString);
             ClassLogger.Info("Creating/Migrating database...");
 
@@ -127,10 +125,7 @@ public class DatabaseUtil
         {
             ClassLogger.Warn(e, "Failed to initialize database. Ignored.");
         }
-        finally
-        {
-            _connSemaphore.Release();
-        }
+        _inited = true;
     }
 
     /// <summary>
@@ -138,22 +133,13 @@ public class DatabaseUtil
     /// </summary>
     /// <param name="mode"></param>
     /// <returns></returns>
-    public static async Task<string> GetParentModeAsync(string mode)
+    public async Task<string> GetParentModeAsync(string mode)
     {
-        try
-        {
-            await _connSemaphore.WaitAsync();
-            var quRes = await _conn!.Table<AdifModesDatabase>().Where(x => x.SubMode == mode).FirstOrDefaultAsync();
-            if (quRes is null) return string.Empty;
-            var md = quRes.Mode;
-            return string.IsNullOrEmpty(md) ? string.Empty : md;
-        }
-        finally
-        {
-            _connSemaphore.Release();
-        }
+        var quRes = await _conn!.Table<AdifModesDatabase>().Where(x => x.SubMode == mode).FirstOrDefaultAsync();
+        if (quRes is null) return string.Empty;
+        var md = quRes.Mode;
+        return string.IsNullOrEmpty(md) ? string.Empty : md;
     }
-
 
     /// <summary>
     ///     Query country info of specified callsign.
@@ -161,34 +147,25 @@ public class DatabaseUtil
     /// </summary>
     /// <param name="callsign"></param>
     /// <returns></returns>
-    public static async Task<CountryDatabase> GetCallsignDetailAsync(string callsign)
+    public async Task<CountryDatabase> GetCallsignDetailAsync(string callsign)
     {
-        try
-        {
-            await _connSemaphore.WaitAsync();
-            var countriesRes = await _conn!.QueryAsync<CountryDatabase>(
-                @"SELECT a.*, b.*
-                  FROM callsigns AS a
-                  LEFT JOIN countries AS b ON a.country_id =b.id
-                  WHERE (SUBSTR(?, 1, LENGTH(callsign))=callsign)
-                  OR (callsign='='||?)
-                  ORDER BY LENGTH(callsign) DESC
-                  LIMIT 1",
-                callsign, callsign);
-            return countriesRes.Count == 0 ? new CountryDatabase() : countriesRes[0];
-        }
-        finally
-        {
-            _connSemaphore.Release();
-        }
+        var countriesRes = await _conn!.QueryAsync<CountryDatabase>(
+            @"SELECT a.*, b.*
+              FROM callsigns AS a
+              LEFT JOIN countries AS b ON a.country_id =b.id
+              WHERE (SUBSTR(?, 1, LENGTH(callsign))=callsign)
+              OR (callsign='='||?)
+              ORDER BY LENGTH(callsign) DESC
+              LIMIT 1",
+            callsign, callsign);
+        return countriesRes.Count == 0 ? new CountryDatabase() : countriesRes[0];
     }
-
-
+    
     /// <summary>
     ///     Init _countries dict.
     /// </summary>
     /// <returns></returns>
-    private static Task InitCountryDicAsync()
+    private Task InitCountryDicAsync()
     {
         try
         {
@@ -215,7 +192,7 @@ public class DatabaseUtil
     /// </summary>
     /// <param name="country"></param>
     /// <returns></returns>
-    private static string SearchEnForCountryNameCn(string country)
+    private string SearchEnForCountryNameCn(string country)
     {
         return _countries.TryGetValue(country, out var cnCountry) ? cnCountry : string.Empty;
     }
@@ -224,7 +201,7 @@ public class DatabaseUtil
     ///     Init adif modes
     /// </summary>
     /// <param name="conn"></param>
-    private static void InitAdifModesDatabase(SQLiteConnection conn)
+    private void InitAdifModesDatabase(SQLiteConnection conn)
     {
         try
         {
@@ -235,15 +212,13 @@ public class DatabaseUtil
         catch (Exception e)
         {
             ClassLogger.Warn(e, "Failed to InitAdifModesDatabase. Ignored.");
-            // Console.WriteLine(e.Message);
-            //ignored
         }
     }
 
     /// <summary>
     ///     Init prefix data
     /// </summary>
-    private static void InitPrefixAndCountryData(SQLiteConnection conn)
+    private void InitPrefixAndCountryData(SQLiteConnection conn)
     {
         try
         {
@@ -304,7 +279,7 @@ public class DatabaseUtil
     /// </summary>
     /// <param name="resourcePath"></param>
     /// <returns></returns>
-    private static string ReadEmbeddedFileAsString(string resourcePath)
+    private string ReadEmbeddedFileAsString(string resourcePath)
     {
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(resourcePath);
@@ -318,13 +293,12 @@ public class DatabaseUtil
         return reader.ReadToEnd();
     }
 
-    public static async Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso)
+    public async Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso)
     {
         try
         {
             if (!await IsQsoIgnored(ignoredQso))
             {
-                await _connSemaphore.WaitAsync();
                 await _conn!.InsertAsync(ignoredQso);
             }
         }
@@ -332,17 +306,13 @@ public class DatabaseUtil
         {
             ClassLogger.Warn(e);
         }
-        finally
-        {
-            _connSemaphore.Release();
-        }
     }
 
     /// <summary>
     /// check if qso is marked as ignored.
     /// </summary>
     /// <param name="ignoredQso"></param>
-    public static async Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso)
+    public async Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso)
     {
         try
         {
@@ -377,11 +347,10 @@ public class DatabaseUtil
         }
     }
 
-    public static async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
+    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
     {
         try
         {
-            await _connSemaphore.WaitAsync();
             var res = await _conn!.Table<IgnoredQsoDatabase>()
                 .Where(x => x.De == ignoredQso.De)
                 .Where(x => x.Dx == ignoredQso.Dx)
@@ -396,25 +365,21 @@ public class DatabaseUtil
             ClassLogger.Warn(e,"Failed to ignore.");
             return null;
         }
-        finally
+    }
+    
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        if (disposing)
         {
-            _connSemaphore.Release();
+            _conn?.CloseAsync().GetAwaiter().GetResult();
         }
+        _disposed = true;
     }
 
-    /// <summary>
-    ///     Clean up!
-    /// </summary>
-    public static void Cleanup()
+    public void Dispose()
     {
-        _conn?.CloseAsync().GetAwaiter().GetResult();
-    }
-
-    public static void TestIt()
-    {
-        // InitDatabaseAsync("/home/sydneycat/Desktop/cloudlog-helper/bin/Debug/net6.0/cloudlog-helper.db").GetAwaiter().GetResult();
-        // Console.Write(GetParentModeAsync("PAC4").Result.ToString());
-        // InitCountryDicAsync().GetAwaiter().GetResult();
-        // InitCountryData().GetAwaiter().GetResult();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

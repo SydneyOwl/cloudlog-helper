@@ -18,7 +18,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class RIGDataGroupboxViewModel : ViewModelBase
+public class RIGDataGroupboxUserControlViewModel : ViewModelBase
 {
     /// <summary>
     ///     Logger for the class.
@@ -67,11 +67,11 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     /// </summary>
     public bool InitSkipped { get; private set; }
 
-    public RIGDataGroupboxViewModel() { }
+    public RIGDataGroupboxUserControlViewModel() { }
     
-    public static RIGDataGroupboxViewModel Create(bool skipInit = false)
+    public static RIGDataGroupboxUserControlViewModel Create(bool skipInit = false)
     {
-        var vm = new RIGDataGroupboxViewModel();
+        var vm = new RIGDataGroupboxUserControlViewModel();
         vm.InitSkipped = skipInit;
         if (!skipInit)
         {
@@ -146,7 +146,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                                 new() { Name = "Retry", IsDefault = true },
                                 new() { Name = "Open Settings" },
                                 new() { Name = "Cancel" }
-                            }, Icon.Warning, "Warning", TranslationHelper.GetString("failrigcomm"));
+                            }, Icon.Warning, "Warning", TranslationHelper.GetString(LangKeys.failrigcomm));
                             switch (choice)
                             {
                                 case "Retry":
@@ -201,8 +201,8 @@ public class RIGDataGroupboxViewModel : ViewModelBase
     [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
 
     [Reactive] public bool IsSplit { get; set; }
-    [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString("unknown");
-    [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString("unknown");
+    [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
 
     // the endpoint we're sending requests to.
     // the ip is always 127.0.0.1 expect useing external rigctld.
@@ -225,7 +225,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
             }
             else
             {
-                throw new Exception(TranslationHelper.GetString("failextractinfo"));
+                throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
             }
         }
 
@@ -244,13 +244,13 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         CurrentTxMode = string.Empty;
 
         IsSplit = false;
-        UploadStatus = TranslationHelper.GetString("unknown");
-        NextUploadTime = TranslationHelper.GetString("unknown");
+        UploadStatus = TranslationHelper.GetString(LangKeys.unknown);
+        NextUploadTime = TranslationHelper.GetString(LangKeys.unknown);
     }
 
     private async Task _defaultExceptionHandler(string exceptionMsg)
     {
-        UploadStatus = TranslationHelper.GetString("failed");
+        UploadStatus = TranslationHelper.GetString(LangKeys.failed);
         CurrentRxFrequency = "ERROR";
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
@@ -281,7 +281,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
         if (_settings.IsHamlibHasErrors())
         {
             _rigConnFailedTimes = 0;
-            throw new Exception(TranslationHelper.GetString("confhamlibfirst"));
+            throw new Exception(TranslationHelper.GetString(LangKeys.confhamlibfirst));
         }
 
         // check rigctld background
@@ -313,23 +313,23 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                     _settings.SelectedRigInfo!.Model!, allInfo);
                 if (result.Status == "success")
                 {
-                    UploadStatus = TranslationHelper.GetString("success");
+                    UploadStatus = TranslationHelper.GetString(LangKeys.success);
                 }
                 else
                 {
-                    UploadStatus = TranslationHelper.GetString("failed");
+                    UploadStatus = TranslationHelper.GetString(LangKeys.failed);
                     ClassLogger.Warn($"Failed to update rig info: {result.Reason}");
                 }
             }
             catch (Exception ex)
             {
-                UploadStatus = TranslationHelper.GetString("failed");
+                UploadStatus = TranslationHelper.GetString(LangKeys.failed);
                 ClassLogger.Warn(ex, "Failed to upload rig info");
             }
         }
         else
         {
-            UploadStatus = TranslationHelper.GetString("failed");
+            UploadStatus = TranslationHelper.GetString(LangKeys.failed);
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
         }
     }
@@ -356,7 +356,7 @@ public class RIGDataGroupboxViewModel : ViewModelBase
                         if (!_settings.PollAllowed || _rigConnFailedTimes < 0) return;
                         if (sec == 0)
                         {
-                            NextUploadTime = TranslationHelper.GetString("gettinginfo");
+                            NextUploadTime = TranslationHelper.GetString(LangKeys.gettinginfo);
                             return;
                         }
 
