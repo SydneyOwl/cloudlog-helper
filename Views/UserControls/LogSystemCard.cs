@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -7,10 +8,12 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using CloudlogHelper.LogService;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.UserControls;
+using Flurl.Http;
 using NLog;
 using ReactiveUI;
 
@@ -20,8 +23,19 @@ public class LogSystemCard : UserControl
 {    
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private CancellationTokenSource _source;
+    
+    
     public LogSystemCard()
     {
+        _source = new CancellationTokenSource();
+        MessageBus.Current.Listen<SettingsChanged>().Subscribe(res =>
+        {
+            if (res.Part == ChangedPart.NothingJustClosed)
+            {
+                _source.Cancel();
+            }
+        });
         InitializeComponent();
     }
 
@@ -162,10 +176,18 @@ public class LogSystemCard : UserControl
                             .SetValue(instance, logSystemField.Value);
                     }
                     
-                    await (Task)methodInfo?.Invoke(instance, null)!;
+                    await (Task)methodInfo?.Invoke(instance, new object[]{_source.Token})!;
                 }
                 catch (Exception ex)
                 {
+                    if (ex is FlurlHttpException && ex.InnerException is TaskCanceledException)
+                    {
+                        if (_source.IsCancellationRequested)
+                        {
+                            ClassLogger.Trace("User closed settings window. QSO service test cancelled.");
+                            return;
+                        }
+                    }
                     var actualEx = ex is TargetInvocationException tie ? tie.InnerException ?? tie : ex;
                     ClassLogger.Error(ex, "failed to test connection");
                     await ((SettingsWindowViewModel)DataContext!).NotificationManager.SendErrorNotificationAsync(

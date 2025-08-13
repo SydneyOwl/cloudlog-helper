@@ -60,8 +60,6 @@ Stack：{ex.StackTrace}");
         finally
         {
             App.CleanTrayIcon();
-            RigctldUtil.CleanUp();
-            UDPServerUtil.TerminateUDPServer();
         }
     }
     

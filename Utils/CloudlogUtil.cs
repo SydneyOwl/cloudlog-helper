@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -26,7 +27,7 @@ public class CloudlogUtil
     ///     Determinate whether this is a cloudlog server or not(wavelog)
     /// </summary>
     /// <returns></returns>
-    public static async Task<ServerInstanceType> GetCurrentServerInstanceTypeAsync(string url)
+    public static async Task<ServerInstanceType> GetCurrentServerInstanceTypeAsync(string url, CancellationToken token)
     {
         try
         {
@@ -34,7 +35,7 @@ public class CloudlogUtil
                 .AppendPathSegments(DefaultConfigs.CloudOrWaveCheckEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                 .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-                .GetStringAsync();
+                .GetStringAsync(cancellationToken:token);
             var pp = JsonConvert.DeserializeObject<JObject>(result)!;
             var instanceName = pp.GetValue("name")!.ToString();
             return instanceName switch
@@ -57,13 +58,13 @@ public class CloudlogUtil
     /// <param name="url">URL of the cloudlog server.</param>
     /// <param name="key">APIKEY</param>
     /// <returns></returns>
-    public static async Task<string> TestCloudlogConnectionAsync(string url, string key)
+    public static async Task<string> TestCloudlogConnectionAsync(string url, string key, CancellationToken token)
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogTestAPIEndpoint, key)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetStringAsync();
+            .GetStringAsync(cancellationToken:token);
 
         if (!result.Contains("<auth>"))
         {
@@ -101,13 +102,13 @@ public class CloudlogUtil
     /// <param name="url">Cloudlog url</param>
     /// <param name="key">key</param>
     /// <returns></returns>
-    public static async Task<StationStatistics?> GetStationStatisticsAsync(string url, string key)
+    public static async Task<StationStatistics?> GetStationStatisticsAsync(string url, string key, CancellationToken token)
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationStatisticsAPIEndpoint, key)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetStringAsync();
+            .GetStringAsync(cancellationToken:token);
         var rawResult = JsonConvert.DeserializeObject<StationStatistics>(result);
         return rawResult;
     }
@@ -118,13 +119,13 @@ public class CloudlogUtil
     /// <param name="url">url</param>
     /// <param name="key">key</param>
     /// <returns></returns>
-    public static async Task<List<StationInfo>> GetStationInfoAsync(string url, string key)
+    public static async Task<List<StationInfo>> GetStationInfoAsync(string url, string key, CancellationToken token)
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationInfoAPIEndpoint, key)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetStringAsync();
+            .GetStringAsync(cancellationToken:token);
         var rawResult = JsonConvert.DeserializeObject<List<StationInfo>>(result)
                         ?? new List<StationInfo>();
         return rawResult;
@@ -137,9 +138,9 @@ public class CloudlogUtil
     /// <param name="key"></param>
     /// <param name="stationId"></param>
     /// <returns></returns>
-    public static async Task<StationInfo?> GetStationInfoAsync(string url, string key, string stationId)
+    public static async Task<StationInfo?> GetStationInfoAsync(string url, string key, string stationId, CancellationToken token)
     {
-        var result = await GetStationInfoAsync(url, key);
+        var result = await GetStationInfoAsync(url, key, token);
         if (result.Count == 0) return null;
         foreach (var stationInfo in result)
             if (stationInfo.StationId == stationId)
@@ -157,7 +158,7 @@ public class CloudlogUtil
     /// <param name="data"></param>
     /// <returns></returns>
     public static async Task<CommonCloudlogResp> UploadRigInfoAsync(string url, string key, string rigName,
-        RadioData data)
+        RadioData data, CancellationToken token)
     {
         var payloadI = new RadioApiCallV2
         {
@@ -173,13 +174,13 @@ public class CloudlogUtil
             .AppendPathSegments(DefaultConfigs.CloudlogRadioAPICallV2Endpoint)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .PostStringAsync(JsonConvert.SerializeObject(payloadI))
+            .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken:token)
             .ReceiveString();
         return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
     }
 
     public static async Task<CommonCloudlogResp> UploadAdifLogAsync(string url, string key, string profileId,
-        string adifLog)
+        string adifLog, CancellationToken token)
     {
         try
         {
@@ -195,7 +196,7 @@ public class CloudlogUtil
                 .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                 .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-                .PostStringAsync(JsonConvert.SerializeObject(payloadI))
+                .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken:token)
                 .ReceiveString();
             return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
         }

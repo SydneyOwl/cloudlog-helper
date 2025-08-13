@@ -1,0 +1,44 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:converters="clr-namespace:CloudlogHelper.Converters"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             x:Class="CloudlogHelper.Views.UserControls.StatusLightUserControl"
+             x:DataType="userControls:StatusLightUserControlViewModel">
+    
+    <UserControl.Resources>
+        <converters:BoolToColorConverter x:Key="BoolToColor" />
+    </UserControl.Resources>
+    
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                HorizontalAlignment="Right" Spacing="30"
+                IsVisible="{Binding !InitSkipped}">
+        <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
+            <!-- rigctld -->
+            <Ellipse Width="20" Height="20"
+                     Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
+                     VerticalAlignment="Center"
+                     Stroke="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
+                     StrokeThickness="2" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontWeight="Bold" Text="Rigctld" />
+                <TextBlock FontWeight="DemiBold" Text="{Binding CurrentRigctldAddress}" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+            <!-- udp -->
+            <Ellipse Width="20" Height="20"
+                     Fill="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
+                     VerticalAlignment="Center"
+                     Stroke="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
+                     StrokeThickness="2" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontWeight="Bold" Text="UDP Server" />
+                <TextBlock FontWeight="DemiBold" Text="{Binding CurrentUDPServerAddress}" />
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

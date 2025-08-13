@@ -2,10 +2,12 @@ using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
 using ReactiveUI;
@@ -24,19 +26,21 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
 
     private readonly CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
-    public bool InitSkipped { get; private set; }
-    public UserBasicDataGroupboxUserControlViewModel(){}
+    private IWindowNotificationManagerService _windowNotificationManager;
     
-    public static UserBasicDataGroupboxUserControlViewModel Create(bool skipInit = false)
+    public bool InitSkipped { get; private set; }
+
+    public UserBasicDataGroupboxUserControlViewModel(CommandLineOptions cmd,
+        IWindowNotificationManagerService windowNotificationManager)
     {
-        var vm = new UserBasicDataGroupboxUserControlViewModel();
-        vm.InitSkipped = skipInit;
-        if (!skipInit)
+        _windowNotificationManager = windowNotificationManager;
+        InitSkipped = cmd.AutoUdpLogUploadOnly;
+        if (!InitSkipped)
         {
-            vm.Initialize(); 
+            Initialize(); 
         }
-        return vm;
     }
+    
     
     private void Initialize()
     {
@@ -68,7 +72,7 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
                     QsToday = TranslationHelper.GetString(LangKeys.unknown);
                     QsMonth = TranslationHelper.GetString(LangKeys.unknown);
                     QsYear = TranslationHelper.GetString(LangKeys.unknown);
-                    await App.NotificationManager.SendErrorNotificationAsync(err.Message);
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message);
                     // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
                 .DisposeWith(disposables);
@@ -97,7 +101,7 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
             throw new Exception(TranslationHelper.GetString(LangKeys.confcloudlogfirst));
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
-            _settings.CloudlogStationInfo?.StationId!);
+            _settings.CloudlogStationInfo?.StationId!, CancellationToken.None);
         if (info is null)
         {
             throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
@@ -107,7 +111,8 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
         GridSquare = info.Value.StationGridsquare;
 
         // polling statstics
-        var statistic = await CloudlogUtil.GetStationStatisticsAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey);
+        var statistic = await CloudlogUtil.GetStationStatisticsAsync(_settings.CloudlogUrl,
+            _settings.CloudlogApiKey, CancellationToken.None);
         if (statistic is null)
         {
             throw new Exception(TranslationHelper.GetString(LangKeys.failedstationstat));

@@ -17,6 +17,7 @@ using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,10 +36,7 @@ public class App : Application
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
-    public static WindowTracker WindowTracker { get; } = new();
-    public static WindowNotification NotificationManager { get; private set; }
-    public static MessageBoxHelper MessageBoxHelper { get; private set; }
-    public static CommandLineOptions CmdOptions { get; private set; }
+    private CommandLineOptions CmdOptions { get; set; }
 
     public App(CommandLineOptions? options)
     {
@@ -86,13 +84,19 @@ public class App : Application
         collection.AddCommonServices();
         collection.AddViewModels();
         collection.AddExtra();
-        var provider = collection.BuildServiceProvider();
-        _ = provider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
+        collection.AddSingleton<CommandLineOptions>(p => CmdOptions);
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
+            
+            collection.AddSingleton<IWindowManagerService, WindowManagerService>(provider => new WindowManagerService(provider, desktop));
+            collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ => new WindowNotificationManagerService(desktop));
+            collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
+            
+            var provider = collection.BuildServiceProvider();
             
             if (!string.IsNullOrEmpty(CmdOptions.CrashReportFile))
             {
@@ -100,12 +104,12 @@ public class App : Application
                     { ViewModel = new ErrorReportWindowViewModel() };
                 return;
             }
+            
+            _ = provider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
 
             var mainWindow = provider.GetRequiredService<MainWindow>();
             desktop.MainWindow = mainWindow;
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            NotificationManager = new WindowNotification(mainWindow);
-            MessageBoxHelper = new MessageBoxHelper(mainWindow);
 
             _exitCommand = ReactiveCommand.Create(() =>
             {

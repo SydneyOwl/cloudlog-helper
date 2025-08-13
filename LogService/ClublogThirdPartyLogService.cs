@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
@@ -25,7 +26,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
     public string Email { get; set; } 
     
     
-    public override async Task TestConnectionAsync()
+    public override async Task TestConnectionAsync(CancellationToken token)
     {
         var result = await ClublogTestEndpoint
             .AllowHttpStatus(200, 400, 500, 403)
@@ -39,7 +40,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 type = "dxqsl",
                 startyear = 1999,
                 endyear = 1999
-            });
+            }, cancellationToken:token);
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
         if (code == 200)return;
@@ -48,7 +49,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
             : responseText);
     }
 
-    public override async Task UploadQSOAsync(string? adif)
+    public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
         var result = await ClublogQsoUploadEndpoint
             .AllowHttpStatus(200, 400, 500, 403)
@@ -61,7 +62,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 callsign = Callsign,
                 adif = adif,
                 api = DefaultConfigs.Clkk
-            });
+            }, cancellationToken:token);
 
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;

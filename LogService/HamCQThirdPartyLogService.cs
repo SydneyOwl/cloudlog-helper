@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
@@ -17,12 +18,12 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
     [UserInput("API Key")]
     public string ApiKey { get; set; }
     
-    public override Task TestConnectionAsync()
+    public override Task TestConnectionAsync(CancellationToken token)
     {
-        return UploadQSOAsync(null);
+        return UploadQSOAsync(null, token);
     }
 
-    public override async Task UploadQSOAsync(string? adif)
+    public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
         var reqJson = new JObject { { "key", ApiKey } };
         if (adif is not null)
@@ -36,7 +37,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithHeader("Content-Type", "application/json")
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .PostStringAsync(reqJson.ToString());
+            .PostStringAsync(reqJson.ToString(), cancellationToken:token);
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
         if (responseText == "Pass") return;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,70 +9,74 @@ using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
 using NLog;
 
-namespace CloudlogHelper.Utils;
+namespace CloudlogHelper.Services;
 
-/// <summary>
-///     Utils for rig communication. Supports both remote and local service.
-/// </summary>
-public class RigctldUtil
+public class RigctldService:IRigctldService, IDisposable
 {
     /// <summary>
+    /// Whether this is disposed or not.
+    /// </summary>
+    private bool _disposed;
+    
+     /// <summary>
     ///     Rigctld processes residing in the background.
     /// </summary>
-    private static Process? _backgroundProcess;
+    private Process? _backgroundProcess;
 
     /// <summary>
     ///     Semaphore for controlling access to the background process.
     /// </summary>
-    private static readonly SemaphoreSlim _backgroundProcessSemaphore = new(1, 1);
+    private readonly SemaphoreSlim BackgroundProcessSemaphore = new(1, 1);
 
     /// <summary>
     ///     One-time rigctld client process.
     /// </summary>
-    private static Process? _onetimeRigctldClient;
+    private Process? _onetimeRigctldClient;
 
     /// <summary>
     ///     Semaphore for controlling access to the one-time process.
     /// </summary>
-    private static readonly SemaphoreSlim _onetimeSemaphore = new(1, 1);
+    private readonly SemaphoreSlim OnetimeSemaphore = new(1, 1);
 
     /// <summary>
     ///     Simple scheduler for rigctld requests.
     /// </summary>
-    private static RigctldScheduler _scheduler;
+    private RigctldScheduler _scheduler;
 
     /// <summary>
     ///     Semaphore for controlling access to ExecuteCommand.
     /// </summary>
-    private static readonly SemaphoreSlim _schedulerSemaphore = new(1, 1);
+    private readonly SemaphoreSlim SchedulerSemaphore = new(1, 1);
 
     /// <summary>
     ///     Log buffer of rigctld.
     /// </summary>
-    private static readonly Queue<string> _rigctldLogBuffer = new();
+    private readonly Queue<string> RigctldLogBuffer = new();
 
     /// <summary>
     ///     AppendRigctldLog lock.
     /// </summary>
-    private static readonly object _lock = new();
+    private readonly object Lock = new();
 
     /// <summary>
     ///     Keep-alive tcp client for rigctld communications.
     /// </summary>
-    private static TcpClient? _tcpClient;
+    private TcpClient? _tcpClient;
 
-    private static string? _currentRigctldIp;
+    private string? _currentRigctldIp;
 
-    private static int? _currentRigctldPort;
+    private int? _currentRigctldPort;
 
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    public static void InitScheduler()
+    public void InitScheduler()
     {
         _scheduler = new RigctldScheduler();
     }
@@ -81,7 +85,7 @@ public class RigctldUtil
     ///     Checks if any rigctld client is currently running, including _onetimeRigctldClient and _backgroundProcess.
     /// </summary>
     /// <returns>True if either background or one-time process is running, false otherwise.</returns>
-    public static bool IsRigctldClientRunning()
+    public bool IsRigctldClientRunning()
     {
         try
         {
@@ -98,7 +102,7 @@ public class RigctldUtil
         }
     }
 
-    private static void AppendRigctldLog(string? log)
+    private void AppendRigctldLog(string? log)
     {
         if (string.IsNullOrEmpty(log)) return;
         if (!log.EndsWith("\n")) log += "\n";
@@ -111,22 +115,22 @@ public class RigctldUtil
 
         if (DefaultConfigs.MaxRigctldOutputLineCount == 0) return;
 
-        lock (_lock)
+        lock (Lock)
         {
-            _rigctldLogBuffer.Enqueue(log);
-            while (_rigctldLogBuffer.Count > DefaultConfigs.MaxRigctldOutputLineCount)
-                _rigctldLogBuffer.TryDequeue(out _);
+            RigctldLogBuffer.Enqueue(log);
+            while (RigctldLogBuffer.Count > DefaultConfigs.MaxRigctldOutputLineCount)
+                RigctldLogBuffer.TryDequeue(out _);
         }
     }
 
-    private static string ReadAndClearRigctldLog()
+    private string ReadAndClearRigctldLog()
     {
         if (DefaultConfigs.MaxRigctldOutputLineCount <= 0)
             return "Seems like rigctld logging is disabled in default config.\n";
-        lock (_lock)
+        lock (Lock)
         {
-            var snapShot = _rigctldLogBuffer.ToArray();
-            _rigctldLogBuffer.Clear();
+            var snapShot = RigctldLogBuffer.ToArray();
+            RigctldLogBuffer.Clear();
             return string.Join(string.Empty, snapShot);
         }
     }
@@ -137,11 +141,11 @@ public class RigctldUtil
     /// <param name="args">Command line arguments for rigctld.</param>
     /// <param name="timeoutMilliseconds">Timeout in milliseconds for process execution.</param>
     /// <returns>Tuple containing success status and output/error message.</returns>
-    public static async Task<(bool, string)> StartOnetimeRigctldAsync(string args,
+    public async Task<(bool, string)> StartOnetimeRigctldAsync(string args,
         int timeoutMilliseconds = 5000)
     {
         var outputBuilder = new StringBuilder();
-        await _onetimeSemaphore.WaitAsync();
+        await OnetimeSemaphore.WaitAsync();
         try
         {
             TerminateOnetimeProcess();
@@ -200,7 +204,7 @@ public class RigctldUtil
         finally
         {
             TerminateOnetimeProcess();
-            _onetimeSemaphore.Release();
+            OnetimeSemaphore.Release();
         }
     }
 
@@ -212,7 +216,7 @@ public class RigctldUtil
     /// <param name="ignoreIfRunning">If true, won't restart if process is already running.</param>
     /// <param name="timeoutMilliseconds">Timeout in milliseconds for process execution.</param>
     /// <returns>Tuple containing success status and output/error message.</returns>
-    public static async Task<(bool, string)> RestartRigctldBackgroundProcessAsync(string args,
+    public async Task<(bool, string)> RestartRigctldBackgroundProcessAsync(string args,
         bool ignoreIfRunning = false,
         int timeoutMilliseconds = 5000)
     {
@@ -227,7 +231,7 @@ public class RigctldUtil
         var readyTcs = new TaskCompletionSource<(bool, string)>();
         var timeoutCts = new CancellationTokenSource(timeoutMilliseconds);
 
-        await _backgroundProcessSemaphore.WaitAsync();
+        await BackgroundProcessSemaphore.WaitAsync();
 
         // find a available port for rigctld
         _backgroundProcess = new Process
@@ -300,7 +304,7 @@ public class RigctldUtil
         {
             timeoutCts.Dispose();
             // TerminateBackgroundProcess();
-            _backgroundProcessSemaphore.Release();
+            BackgroundProcessSemaphore.Release();
         }
     }
 
@@ -312,7 +316,7 @@ public class RigctldUtil
     /// <param name="cmd"></param>
     /// <param name="highPriority"></param>
     /// <returns></returns>
-    public static async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority)
+    public async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority)
     {
         if (highPriority)
             return await _scheduler?.EnqueueHighPriorityRequest(() => ExecuteCommand(host, port, cmd, false))!;
@@ -329,11 +333,11 @@ public class RigctldUtil
     /// <param name="throwExceptionIfRprtError"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    private static async Task<string> ExecuteCommand(string host, int port, string cmd,
+    private async Task<string> ExecuteCommand(string host, int port, string cmd,
         bool throwExceptionIfRprtError = true)
     {
         using var cts = new CancellationTokenSource(DefaultConfigs.RigctldSocketTimeout);
-        await _schedulerSemaphore.WaitAsync(cts.Token);
+        await SchedulerSemaphore.WaitAsync(cts.Token);
         try
         {
             if (_tcpClient is null || !_tcpClient.Connected)
@@ -386,116 +390,123 @@ public class RigctldUtil
         }
         finally
         {
-            _schedulerSemaphore.Release();
+            SchedulerSemaphore.Release();
         }
     }
 
-    public static async Task<RadioData> GetAllRigInfo(string ip, int port, bool reportRFPower, bool reportSplitInfo)
+    public async Task<RadioData> GetAllRigInfo(string ip, int port, bool reportRfPower, bool reportSplitInfo, CancellationToken token)
     {
-        var testbk = new RadioData();
-        var raw = await ExecuteCommandInScheduler(ip, port, "f", false);
-        var freqStr = raw.Split("\n")[0];
-        if (!long.TryParse(freqStr, out var freq))
-            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
-        testbk.FrequencyRx = freq;
-        testbk.FrequencyTx = freq;
-
-        raw = await ExecuteCommandInScheduler(ip, port, "m", false);
-        var mode = raw.Split("\n")[0];
-        if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
-        testbk.ModeRx = mode;
-        testbk.ModeTx = mode;
-
-        // IT's possible that some rigs does not support spilt / pwr report at all!
-        // on my xiegu g90n it can't get the split status...
         try
         {
-            #region spilt
+            var testbk = new RadioData();
+            var raw = await ExecuteCommandInScheduler(ip, port, "f", false);
+            var freqStr = raw.Split("\n")[0];
+            if (!long.TryParse(freqStr, out var freq))
+                throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
+            testbk.FrequencyRx = freq;
+            testbk.FrequencyTx = freq;
 
-            if (reportSplitInfo)
+            raw = await ExecuteCommandInScheduler(ip, port, "m", false);
+            var mode = raw.Split("\n")[0];
+            if (!DefaultConfigs.AvailableRigModes.Contains(mode))
+                throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
+            testbk.ModeRx = mode;
+            testbk.ModeTx = mode;
+
+            // IT's possible that some rigs does not support spilt / pwr report at all!
+            // on my xiegu g90n it can't get the split status...
+            try
             {
-                raw = await ExecuteCommandInScheduler(ip, port, "s", false);
-                var splitStatus = raw.Split("\n")[0];
-                if (splitStatus is "0" or "1")
+                #region spilt
+
+                if (reportSplitInfo)
                 {
-                    if (splitStatus == "0")
+                    raw = await ExecuteCommandInScheduler(ip, port, "s", false);
+                    var splitStatus = raw.Split("\n")[0];
+                    if (splitStatus is "0" or "1")
                     {
-                        // tx == rx
-                        ClassLogger.Trace("Spilt mode off.");
+                        if (splitStatus == "0")
+                        {
+                            // tx == rx
+                            ClassLogger.Trace("Spilt mode off.");
+                        }
+                        else
+                        {
+                            ClassLogger.Trace("Spilt mode on.");
+                            testbk.IsSplit = true;
+                            // fetch spilt tx freq
+                            raw = await ExecuteCommandInScheduler(ip, port, "i", false);
+                            var txfreqStr = raw.Split("\n")[0];
+                            if (!long.TryParse(txfreqStr, out var freqtx))
+                                throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
+                            testbk.FrequencyTx = freqtx;
+
+                            // fetch spilt tx mode 
+                            raw = await ExecuteCommandInScheduler(ip, port, "x", false);
+                            var modetx = raw.Split("\n")[0];
+                            if (!DefaultConfigs.AvailableRigModes.Contains(modetx))
+                                throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
+                            testbk.ModeTx = modetx;
+                        }
                     }
                     else
                     {
-                        ClassLogger.Trace("Spilt mode on.");
-                        testbk.IsSplit = true;
-                        // fetch spilt tx freq
-                        raw = await ExecuteCommandInScheduler(ip, port, "i", false);
-                        var txfreqStr = raw.Split("\n")[0];
-                        if (!long.TryParse(txfreqStr, out var freqtx))
-                            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
-                        testbk.FrequencyTx = freqtx;
-
-                        // fetch spilt tx mode 
-                        raw = await ExecuteCommandInScheduler(ip, port, "x", false);
-                        var modetx = raw.Split("\n")[0];
-                        if (!DefaultConfigs.AvailableRigModes.Contains(modetx))
-                            throw new Exception(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
-                        testbk.ModeTx = modetx;
+                        // ignore it
+                        ClassLogger.Trace($"Seems like this rig does not support split mode: {splitStatus}.");
                     }
                 }
-                else
+
+                #endregion
+
+                // then, try to fetch power status...
+                // add a "m" to make sure stream ends successfully.
+                if (reportRfPower)
                 {
-                    // ignore it
-                    ClassLogger.Trace($"Seems like this rig does not support split mode: {splitStatus}.");
+                    raw = await ExecuteCommandInScheduler(ip, port, "l RFPOWER", false);
+                    var pwrStr = raw.Split("\n")[0];
+                    if (!float.TryParse(pwrStr, out var pwr))
+                    {
+                        ClassLogger.Debug($"Seems like this rig does not support RFPOWER reading: {pwrStr}");
+                        return testbk;
+                    }
+
+                    if (pwr < 0)
+                    {
+                        ClassLogger.Debug(
+                            $"Seems like this rig does not support RFPOWER reading, the reading is negative: {pwrStr}");
+                        return testbk;
+                    }
+
+                    raw = await ExecuteCommandInScheduler(ip, port,
+                        $"\\power2mW {pwr} {testbk.FrequencyTx} {testbk.ModeTx}", false);
+                    var pwrmWStr = raw.Split("\n")[0];
+                    if (!float.TryParse(pwrmWStr, out var pwrmw))
+                    {
+                        ClassLogger.Debug($"Seems like this rig does not support RFPOWER power2mW: {pwrStr}");
+                        return testbk;
+                    }
+
+                    if (pwrmw < 0)
+                    {
+                        ClassLogger.Debug(
+                            $"Seems like this rig does not support RFPOWER power2mW, the reading is negative: {pwrStr}");
+                        return testbk;
+                    }
+
+                    testbk.Power = (float)Math.Round(pwrmw / 1000, 2);
                 }
             }
-
-            #endregion
-
-            // then, try to fetch power status...
-            // add a "m" to make sure stream ends successfully.
-            if (reportRFPower)
+            catch (Exception e)
             {
-                raw = await ExecuteCommandInScheduler(ip, port, "l RFPOWER", false);
-                var pwrStr = raw.Split("\n")[0];
-                if (!float.TryParse(pwrStr, out var pwr))
-                {
-                    ClassLogger.Debug($"Seems like this rig does not support RFPOWER reading: {pwrStr}");
-                    return testbk;
-                }
-
-                if (pwr < 0)
-                {
-                    ClassLogger.Debug(
-                        $"Seems like this rig does not support RFPOWER reading, the reading is negative: {pwrStr}");
-                    return testbk;
-                }
-
-                raw = await ExecuteCommandInScheduler(ip, port,
-                    $"\\power2mW {pwr} {testbk.FrequencyTx} {testbk.ModeTx}", false);
-                var pwrmWStr = raw.Split("\n")[0];
-                if (!float.TryParse(pwrmWStr, out var pwrmw))
-                {
-                    ClassLogger.Debug($"Seems like this rig does not support RFPOWER power2mW: {pwrStr}");
-                    return testbk;
-                }
-
-                if (pwrmw < 0)
-                {
-                    ClassLogger.Debug(
-                        $"Seems like this rig does not support RFPOWER power2mW, the reading is negative: {pwrStr}");
-                    return testbk;
-                }
-
-                testbk.Power = (float)Math.Round(pwrmw / 1000, 2);
+                ClassLogger.Debug($"Seems like this rig has unsupported feature: {e.Message}");
             }
+            return testbk;
         }
         catch (Exception e)
         {
-            ClassLogger.Debug($"Seems like this rig has unsupported feature: {e.Message}");
+            if (token.IsCancellationRequested) return new RadioData();
+            throw;
         }
-
-        return testbk;
     }
 
     /// <summary>
@@ -503,7 +514,7 @@ public class RigctldUtil
     /// </summary>
     /// <param name="rawOutput">The raw output string from hamlib.</param>
     /// <returns>Dictionary mapping model names to their IDs.</returns>
-    public static List<RigInfo> ParseAllModelsFromRawOutput(string rawOutput)
+    public List<RigInfo> ParseAllModelsFromRawOutput(string rawOutput)
     {
         var result = new List<RigInfo>();
         // Dynamically calculate extraction length based on the header row
@@ -564,7 +575,7 @@ public class RigctldUtil
         return "Failed to init hamlib!";
     }
 
-    public static string GenerateRigctldCmdArgs(string radioId, string port, bool disablePTT = false,
+    public string GenerateRigctldCmdArgs(string radioId, string port, bool disablePtt = false,
         bool allowExternal = false)
     {
         var args = new StringBuilder();
@@ -575,7 +586,7 @@ public class RigctldUtil
         if (allowExternal) defaultHost = IPAddress.Any.ToString();
         args.Append($"-T {defaultHost} -t {DefaultConfigs.RigctldDefaultPort} ");
 
-        if (disablePTT) args.Append(@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" ");
+        if (disablePtt) args.Append(@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" ");
 
         args.Append("-vvvvv");
         return args.ToString();
@@ -585,7 +596,7 @@ public class RigctldUtil
     ///     Checks for processes that might conflict with rigctld.
     /// </summary>
     /// <returns>Name of the first conflicting process found, or empty string if none.</returns>
-    public static string GetPossibleConflictProcess()
+    public string GetPossibleConflictProcess()
     {
         // check if jtdx/wsjtx/Rigctld running in background
         var localAllProcesses = Process.GetProcesses().Select(x => x.ProcessName).ToList();
@@ -602,7 +613,7 @@ public class RigctldUtil
     /// <summary>
     ///     Terminates the background rigctld process if running.
     /// </summary>
-    public static void TerminateBackgroundProcess()
+    public void TerminateBackgroundProcess()
     {
         if (_backgroundProcess is null) return;
         try
@@ -627,7 +638,7 @@ public class RigctldUtil
     /// <summary>
     ///     Terminates the one-time rigctld process if running.
     /// </summary>
-    public static void TerminateOnetimeProcess()
+    public void TerminateOnetimeProcess()
     {
         if (_onetimeRigctldClient is null) return;
         try
@@ -644,12 +655,25 @@ public class RigctldUtil
         }
     }
 
-    /// <summary>
-    ///     Cleans up all rigctld processes (both background and one-time).
-    /// </summary>
-    public static void CleanUp()
+    protected virtual void Dispose(bool disposing)
     {
-        TerminateBackgroundProcess();
-        TerminateOnetimeProcess();
+        if (_disposed) return;
+        if (disposing)
+        {
+            _backgroundProcess?.Dispose();
+            BackgroundProcessSemaphore.Dispose();
+            _onetimeRigctldClient?.Dispose();
+            OnetimeSemaphore.Dispose();
+            _scheduler.Dispose();
+            SchedulerSemaphore.Dispose();
+            _tcpClient?.Dispose();
+        }
+        _disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

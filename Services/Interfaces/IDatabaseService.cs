@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 
-namespace CloudlogHelper.Services;
+namespace CloudlogHelper.Services.Interfaces;
 
 public interface IDatabaseService
 {

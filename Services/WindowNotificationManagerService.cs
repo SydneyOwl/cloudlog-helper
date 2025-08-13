@@ -1,17 +1,41 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
 using Avalonia.Threading;
 using CloudlogHelper.Resources;
-using Notification = Avalonia.Controls.Notifications.Notification;
+using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
+using NLog;
 
-namespace CloudlogHelper.Utils;
+namespace CloudlogHelper.Services;
 
-public class WindowNotification
+public class WindowNotificationManagerService:IWindowNotificationManagerService, IDisposable
 {
-    private readonly WindowNotificationManager _manager;
+    private WindowNotificationManager? _manager;
+    private Logger _classLoggger =  LogManager.GetCurrentClassLogger();
 
-    public WindowNotification(Window topLevel)
+    public WindowNotificationManagerService(IClassicDesktopStyleApplicationLifetime topLevel)
+    {
+        Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            try
+            {
+                while (topLevel.MainWindow is null)
+                {
+                    await Task.Delay(100);
+                }
+                _manager = new WindowNotificationManager(topLevel.MainWindow);
+            }
+            catch (Exception e)
+            {
+                _classLoggger.Error(e);
+            }
+        });
+    }
+    
+    public WindowNotificationManagerService(Window topLevel)
     {
         _manager = new WindowNotificationManager(topLevel);
     }
@@ -66,5 +90,10 @@ public class WindowNotification
     public void SendErrorNotificationSync(string message)
     {
         SendNotificationSync(TranslationHelper.GetString(LangKeys.titleerror), message, NotificationType.Error);
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
     }
 }

@@ -34,18 +34,6 @@ public class TestButtonUserControlViewModel : ViewModelBase
     [Reactive] public bool CheckPassed { get; set; }
     [Reactive] public ReactiveCommand<Unit, Unit>? TestCommand { get; set; }
     public bool CheckExecuting => _checkExecuting.Value;
-
-    public void SetTestButtonCommand(ReactiveCommand<Unit, bool> cmd)
-    {
-        return;
-        // TestCommand = cmd;
-        // TestCommand?
-        //     .Where(result => result)
-        //     .Do(_ => CheckPassed = true)
-        //     .Delay(TimeSpan.FromSeconds(5))
-        //     .Subscribe(_ => CheckPassed = false)
-        //     .DisposeWith(_sharedDisposables);
-    }
     
     public void SetTestButtonCommand(ReactiveCommand<Unit, Unit> cmd)
     {

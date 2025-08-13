@@ -6,11 +6,6 @@ public enum ChangedPart
     ///     Sent when setting window is closed and Cloudlog config changed.
     /// </summary>
     Cloudlog,
-    
-    /// <summary>
-    ///     Sent when setting window is closed and Third party config changed.
-    /// </summary>
-    ThirdPartyLogService,
 
     /// <summary>
     ///     Sent when setting window is closed and Hamlib config changed.

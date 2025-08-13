@@ -12,10 +12,10 @@
         Icon="avares://CloudlogHelper/Assets/icon.png"
         Title="QSO Sync Assistant"
         Width="600" Height="720"
-        x:DataType="viewModels:QsoSyncAssistantViewModel">
+        x:DataType="viewModels:QsoSyncAssistantWindowViewModel">
 
     <Design.DataContext>
-        <viewModels:QsoSyncAssistantViewModel />
+        <viewModels:QsoSyncAssistantWindowViewModel />
     </Design.DataContext>
 
     <Window.Resources>

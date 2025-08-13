@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
@@ -29,7 +30,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
     public string QTHNickname { get; set; } 
     
     
-    public override async Task TestConnectionAsync()
+    public override async Task TestConnectionAsync(CancellationToken token)
     {
         var defaultParam =
             $"UserName={Uri.EscapeDataString(Username)}&Password={Uri.EscapeDataString(Password)}&LimitDateHi={Uri.EscapeDataString("01/01/1990")}";
@@ -38,7 +39,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             .AppendQueryParam(defaultParam)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetAsync();
+            .GetAsync(cancellationToken:token);
         var responseText = await result.GetStringAsync();
         if (!string.IsNullOrEmpty(responseText) && (responseText.Contains("Your ADIF log file has been built") ||
                                                     responseText.Contains("You have no log entries")))
@@ -58,7 +59,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
         throw new Exception(string.IsNullOrEmpty(bodyText) ? "Unknown error occurred while testing eqsl connection!" : bodyText);
     }
 
-    public override async Task UploadQSOAsync(string? adif)
+    public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
         // optional;
         var header = new StringBuilder()
@@ -73,7 +74,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             .AppendQueryParam(param)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetAsync();
+            .GetAsync(cancellationToken:token);
         var responseText = await results.GetStringAsync();
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(responseText);

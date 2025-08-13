@@ -8,6 +8,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -16,9 +17,11 @@ using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using DynamicData;
+using Flurl.Http;
 using Force.DeepCloner;
 using NLog;
 using ReactiveUI;
@@ -34,6 +37,12 @@ public class SettingsWindowViewModel : ViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     
     public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();
+
+    private bool initSkipped;
+
+    private IRigctldService rigctldService;
+
+    private CancellationTokenSource _source;
 
     private void InitializeLogSystems()
     {
@@ -69,10 +78,13 @@ public class SettingsWindowViewModel : ViewModelBase
         }
     }
 
-    public SettingsWindowViewModel()
+    public SettingsWindowViewModel(CommandLineOptions cmd, IRigctldService rs)
     {
+        rigctldService = rs;
+        initSkipped = cmd.AutoUdpLogUploadOnly;
         DraftSettings = ApplicationSettings.GetDraftInstance();
 
+        _source = new CancellationTokenSource();
         InitializeLogSystems();
         // throw new Exception();
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
@@ -127,13 +139,13 @@ public class SettingsWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
     
-    public WindowNotification NotificationManager { get; set; }
+    public IWindowNotificationManagerService NotificationManager { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
 
     private async Task _initializeHamlibAsync()
     {
-        if (App.CmdOptions.AutoUdpLogUploadOnly)return;
-        var (result, output) = await RigctldUtil.StartOnetimeRigctldAsync("--version");
+        if (initSkipped)return;
+        var (result, output) = await rigctldService.StartOnetimeRigctldAsync("--version");
         // init hamlib
         if (result)
         {
@@ -145,10 +157,10 @@ public class SettingsWindowViewModel : ViewModelBase
             return;
         }
 
-        var (listResult, opt) = await RigctldUtil.StartOnetimeRigctldAsync("--list");
+        var (listResult, opt) = await rigctldService.StartOnetimeRigctldAsync("--list");
         if (listResult)
         {
-            SupportedModels = RigctldUtil.ParseAllModelsFromRawOutput(opt)
+            SupportedModels = rigctldService.ParseAllModelsFromRawOutput(opt)
                 .OrderBy(x => x.Model)
                 .ToList();
 
@@ -164,29 +176,27 @@ public class SettingsWindowViewModel : ViewModelBase
         }
     }
 
-    private async Task<bool> _testCloudlogConnection()
+    private async Task _testCloudlogConnection()
     {
-        CloudlogInfoPanelUserControl.InfoMessage = string.Empty;
         try
         {
+            CloudlogInfoPanelUserControl.InfoMessage = string.Empty;
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                DraftSettings.CloudlogSettings.CloudlogApiKey);
+                DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
 
             if (!string.IsNullOrEmpty(msg))
             {
-                NotificationManager?.SendErrorNotificationSync(msg);
-                return false;
+                throw new Exception(msg);
             }
 
             var stationInfo = await CloudlogUtil.GetStationInfoAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                DraftSettings.CloudlogSettings.CloudlogApiKey);
+                DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
             if (stationInfo.Count == 0)
             {
-                NotificationManager?.SendErrorNotificationSync(TranslationHelper.GetString(LangKeys.failedstationinfo));
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
                 DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
                 ShowCloudlogStationIdCombobox = false;
-                return false;
+                throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
             }
 
             var oldVal = DraftSettings.CloudlogSettings.CloudlogStationInfo;
@@ -206,20 +216,18 @@ public class SettingsWindowViewModel : ViewModelBase
             }
 
             var instType =
-                await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl);
+                await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
+                    _source.Token);
             // instanceuncompitable
             if (instType != ServerInstanceType.Cloudlog)
                 CloudlogInfoPanelUserControl.InfoMessage = TranslationHelper.GetString(LangKeys.instanceuncompitable)
                     .Replace("{replace01}", instType.ToString());
-
-            return true;
         }
-        catch (Exception e)
+        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException)
         {
-            NotificationManager?.SendErrorNotificationSync(e.Message);
+            ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }
-
-        return false;
+       
     }
 
 
@@ -250,18 +258,18 @@ public class SettingsWindowViewModel : ViewModelBase
         return (ip, port);
     }
 
-    private async Task<bool> _testHamlib()
+    private async Task _testHamlib()
     {
         var (ip, port) = _getRigctldIpAndPort();
         if (DraftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
         {
-            var defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
+            var defaultArgs = rigctldService.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
                 DraftSettings.HamlibSettings.SelectedPort);
 
             if (DraftSettings.HamlibSettings.UseRigAdvanced)
             {
                 if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.OverrideCommandlineArg))
-                    defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
+                    defaultArgs = rigctldService.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
                         DraftSettings.HamlibSettings.SelectedPort,
                         DraftSettings.HamlibSettings.DisablePTT,
                         DraftSettings.HamlibSettings.AllowExternalControl);
@@ -270,31 +278,19 @@ public class SettingsWindowViewModel : ViewModelBase
             }
 
             var (res, des) =
-                await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs);
+                await rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs);
             if (!res)
             {
-                NotificationManager?.SendErrorNotificationSync(des);
-                return false;
+                throw new Exception(des);
             }
         }
         else
         {
-            RigctldUtil.TerminateBackgroundProcess();
+            rigctldService.TerminateBackgroundProcess();
         }
 
-        // send freq request to test
-        try
-        {
-            _ = await RigctldUtil.GetAllRigInfo(ip, port, DraftSettings.HamlibSettings.ReportRFPower,
-                DraftSettings.HamlibSettings.ReportSplitInfo);
-        }
-        catch (Exception e)
-        {
-            NotificationManager?.SendErrorNotificationSync(e.Message);
-            return false;
-        }
-
-        return true;
+        _ = await rigctldService.GetAllRigInfo(ip, port, DraftSettings.HamlibSettings.ReportRFPower,
+            DraftSettings.HamlibSettings.ReportSplitInfo, _source.Token);
     }
 
     private async Task _refreshPort()
@@ -315,28 +311,27 @@ public class SettingsWindowViewModel : ViewModelBase
         if (Design.IsDesignMode)return;
         ClassLogger.Trace("Discarding confse");
         DraftSettings.RestoreSettings();
+        _source.Cancel();
         MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     private void _saveAndApplyConf()
     {
-        var anythingChanged = false;
         var cmp = ApplicationSettings.GetInstance().DeepClone();
 
         DraftSettings.ApplySettings(LogSystems.ToList());
         DraftSettings.WriteCurrentSettingsToFile();
+        _source.Cancel();
         if (DraftSettings.IsCloudlogConfChanged(cmp))
         {
             ClassLogger.Trace("Cloudlog settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
-            anythingChanged = true;
         }
         
         if (DraftSettings.IsHamlibConfChanged(cmp))
         {
             ClassLogger.Trace("hamlib settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
-            anythingChanged = true;
         }
 
         if (DraftSettings.IsUDPConfChanged(cmp))
@@ -344,12 +339,9 @@ public class SettingsWindowViewModel : ViewModelBase
             ClassLogger.Trace("udp settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged
                 { Part = ChangedPart.UDPServer });
-            anythingChanged = true;
         }
 
         MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
-        if (anythingChanged) return;
-        // MessageBus.Current.SendMessage(part);
     }
 
     #region CloudlogAPI

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services.Interfaces;
 using Newtonsoft.Json;
 using NLog;
 using SQLite;

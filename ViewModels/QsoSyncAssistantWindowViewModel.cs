@@ -15,6 +15,7 @@ using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
 using NLog;
@@ -23,7 +24,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels;
 
-public class QsoSyncAssistantViewModel : ViewModelBase
+public class QsoSyncAssistantWindowViewModel : ViewModelBase
 {
     /// <summary>
     ///     Logger for the class.
@@ -36,9 +37,13 @@ public class QsoSyncAssistantViewModel : ViewModelBase
     
     private IDatabaseService _dbService;
 
-    public QsoSyncAssistantViewModel(IDatabaseService dbService)
+    private IWindowNotificationManagerService _windowNotificationManager;
+
+    public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
+        IWindowNotificationManagerService winNotification)
     {
         _dbService = dbService;
+        _windowNotificationManager = winNotification;
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
         StartSyncCommand =
@@ -55,7 +60,15 @@ public class QsoSyncAssistantViewModel : ViewModelBase
 
         this.WhenActivated(disposable =>
         {
-            if (_executeOnStart) StartSyncCommand.Execute().Subscribe().DisposeWith(disposable);
+            if (_executeOnStart)
+            {
+                Observable
+                    .Timer(TimeSpan.FromMilliseconds(2000))
+                    .Select(_ => Unit.Default)
+                    .Do(_ => _windowNotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing)))
+                    .InvokeCommand(this, x => x.StartSyncCommand)
+                    .DisposeWith(disposable);
+            }
         });
     }
 
@@ -256,18 +269,19 @@ public class QsoSyncAssistantViewModel : ViewModelBase
                 throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
             _logProgress(TranslationHelper.GetString(LangKeys.qsosyncsucc), 100);
             if (_executeOnStart)
-                await App.NotificationManager.SendSuccessNotificationAsync(
+                await _windowNotificationManager.SendSuccessNotificationAsync(
                     $"{TranslationHelper.GetString(LangKeys.qsosyncsucc)}");
         }
         catch (Exception ex)
         {
             _logProgress($"Failed to sync QSOs: {ex.Message}", 100);
             if (_executeOnStart)
-                await App.NotificationManager.SendErrorNotificationAsync(
+                await _windowNotificationManager.SendErrorNotificationAsync(
                     $"{TranslationHelper.GetString(LangKeys.failedsyncqso)}{ex.Message}");
         }
         finally
         {
+            _executeOnStart = false;
             SyncStarted = false;
         }
     }

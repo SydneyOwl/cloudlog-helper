@@ -4,6 +4,8 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.VisualTree;
+using CloudlogHelper.Services;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
@@ -18,7 +20,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private static WindowNotification _notificationManager;
+    private IWindowNotificationManagerService _notificationManager;
 
     private bool _triggerByClickingButton;
 
@@ -28,7 +30,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
 
         this.WhenActivated(disposables =>
         {
-            _notificationManager = new WindowNotification(this);
+            _notificationManager = new WindowNotificationManagerService(this);
             // seems like linux does not support dpi reading...
             if (!Design.IsDesignMode)
                 try

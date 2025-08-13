@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
-        xmlns:userControls="clr-namespace:CloudlogHelper.Views.us"
         xmlns:converters="clr-namespace:CloudlogHelper.Converters"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
@@ -86,42 +85,17 @@
                               Margin="2">
                     <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20" />
                 </ToggleButton>
-                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center"
-                            HorizontalAlignment="Right"
-                            IsVisible="{Binding !UdpLogOnly}"
-                            Margin="10,0,10,0" Spacing="30">
-                    <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
-                        <!-- rigctld -->
-                        <Ellipse Width="20" Height="20"
-                                 Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                                 VerticalAlignment="Center"
-                                 Stroke="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                                 StrokeThickness="2" />
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock FontWeight="Bold" Text="Rigctld" />
-                            <TextBlock FontWeight="DemiBold" Text="{Binding CurrentRigctldAddress}" />
-                        </StackPanel>
-                    </StackPanel>
-
-                    <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
-                        <!-- udp -->
-                        <Ellipse Width="20" Height="20"
-                                 Fill="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
-                                 VerticalAlignment="Center"
-                                 Stroke="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
-                                 StrokeThickness="2" />
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock FontWeight="Bold" Text="UDP Server" />
-                            <TextBlock FontWeight="DemiBold" Text="{Binding CurrentUDPServerAddress}" />
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                <userControls1:StatusLightUserControl Grid.Column="1" Grid.Row="0"
+                                                      DataContext="{Binding StatusLightUserControlViewModel}"
+                                                      ViewModel="{Binding}"
+                                                      Margin="10,0,10,0" />
             </Grid>
         </StackPanel>
 
         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
             <userControls1:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="0"
                                                            IsVisible="{Binding !InitSkipped}"
+                                                           ViewModel="{Binding}"
                                                            DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
             <userControls1:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="1"
                                                      IsVisible="{Binding !InitSkipped}"

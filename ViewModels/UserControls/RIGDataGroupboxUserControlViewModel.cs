@@ -5,10 +5,12 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
@@ -67,17 +69,26 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     public bool InitSkipped { get; private set; }
 
-    public RIGDataGroupboxUserControlViewModel() { }
-    
-    public static RIGDataGroupboxUserControlViewModel Create(bool skipInit = false)
+    private IRigctldService rigctldService;
+    private IWindowManagerService windowManagerService;
+    private IWindowNotificationManagerService _windowNotificationManager;
+    private IMessageBoxManagerService _messageBoxManagerService;
+
+    public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd, 
+        IRigctldService rs,
+        IWindowNotificationManagerService ws,
+        IWindowManagerService wm,
+        IMessageBoxManagerService mm)
     {
-        var vm = new RIGDataGroupboxUserControlViewModel();
-        vm.InitSkipped = skipInit;
-        if (!skipInit)
+        _messageBoxManagerService = mm;
+        windowManagerService = wm;
+        rigctldService = rs;
+        _windowNotificationManager = ws;
+        InitSkipped = cmd.AutoUdpLogUploadOnly;
+        if (!InitSkipped)
         {
-            vm.Initialize(); 
+            Initialize(); 
         }
-        return vm;
     }
     
     private void Initialize(){
@@ -85,7 +96,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
         this.WhenActivated(disposables =>
         {
-            RigctldUtil.InitScheduler();
+            rigctldService.InitScheduler();
             _cancel = new Subject<Unit>().DisposeWith(disposables);
             MessageBus.Current.Listen<SettingsChanged>()
                 .SelectMany(async x =>
@@ -102,7 +113,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                             if (_settings is { UseExternalRigctld: false })
                                 await _restartRigctldStrict(false);
                             else
-                                RigctldUtil.TerminateBackgroundProcess();
+                                rigctldService.TerminateBackgroundProcess();
                         }
 
                         _oldSettings = _settings.DeepClone();
@@ -113,8 +124,11 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                         _rigConnFailedTimes = 0;
                         _holdRigUpdate = false;
                         if (!_settings.PollAllowed)
+                        {
                             // shut every service down
-                            RigctldUtil.CleanUp();
+                            rigctldService.TerminateBackgroundProcess();
+                            rigctldService.TerminateOnetimeProcess();
+                        }
                     }
 
                     return Unit.Default;
@@ -141,7 +155,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                             _resetStatus();
                             _disposeAllTimers();
                             // popup!
-                            var choice = await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>
+                            var choice = await _messageBoxManagerService.DoShowMessageboxAsync(new List<ButtonDefinition>
                             {
                                 new() { Name = "Retry", IsDefault = true },
                                 new() { Name = "Open Settings" },
@@ -158,7 +172,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                                     _createNewTimer().DisposeWith(disposables);
                                     break;
                                 case "Open Settings":
-                                    await OpenSettingsWindow.Handle(Unit.Default);
+                                    await windowManagerService.CreateOrShowWindowByVm(typeof(SettingsWindowViewModel));
                                     break;
                                 case "Cancel":
                                     break;
@@ -186,11 +200,6 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                 .DisposeWith(disposables);
         });
     }
-
-    /// <summary>
-    ///     Open settings in view.
-    /// </summary>
-    public Interaction<Unit, Unit> OpenSettingsWindow { get; } = new();
 
     [Reactive] public string? CurrentRxFrequency { get; set; } = "-------";
     [Reactive] public string? CurrentRxFrequencyInMeters { get; set; } = string.Empty;
@@ -255,7 +264,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
         CurrentRxMode = string.Empty;
-        await App.NotificationManager.SendErrorNotificationAsync(exceptionMsg);
+        await _windowNotificationManager.SendErrorNotificationAsync(exceptionMsg);
         ClassLogger.Error(exceptionMsg);
     }
 
@@ -289,7 +298,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
 
         // parse addr
         var (ip, port) = _getRigctldIpAndPort();
-        var allInfo = await RigctldUtil.GetAllRigInfo(ip, port, _settings.ReportRFPower, _settings.ReportSplitInfo);
+        var allInfo = await rigctldService.GetAllRigInfo(ip, port, _settings.ReportRFPower, _settings.ReportSplitInfo, CancellationToken.None);
         ClassLogger.Debug(allInfo.ToString());
         CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);
         CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
@@ -310,7 +319,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
             {
                 var result = await CloudlogUtil.UploadRigInfoAsync(_extraSettings.CloudlogUrl,
                     _extraSettings.CloudlogApiKey,
-                    _settings.SelectedRigInfo!.Model!, allInfo);
+                    _settings.SelectedRigInfo!.Model!, allInfo, CancellationToken.None);
                 if (result.Status == "success")
                 {
                     UploadStatus = TranslationHelper.GetString(LangKeys.success);
@@ -387,12 +396,12 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
             if (!string.IsNullOrEmpty(_settings.SelectedRigInfo?.Id))
             {
                 var defaultArgs =
-                    RigctldUtil.GenerateRigctldCmdArgs(_settings.SelectedRigInfo.Id, _settings.SelectedPort);
+                    rigctldService.GenerateRigctldCmdArgs(_settings.SelectedRigInfo.Id, _settings.SelectedPort);
 
                 if (_settings.UseRigAdvanced)
                 {
                     if (string.IsNullOrEmpty(_settings.OverrideCommandlineArg))
-                        defaultArgs = RigctldUtil.GenerateRigctldCmdArgs(_settings.SelectedRigInfo.Id,
+                        defaultArgs = rigctldService.GenerateRigctldCmdArgs(_settings.SelectedRigInfo.Id,
                             _settings.SelectedPort,
                             _settings.DisablePTT,
                             _settings.AllowExternalControl);
@@ -400,11 +409,11 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                         defaultArgs = _settings.OverrideCommandlineArg;
                 }
 
-                return (await RigctldUtil.RestartRigctldBackgroundProcessAsync(defaultArgs, ignoreIfRunning)).Item1;
+                return (await rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs, ignoreIfRunning)).Item1;
             }
 
         ClassLogger.Debug("Errors in hamlib confs. Shutting down rigctld and ignoring _restartRigctldStrict");
-        RigctldUtil.TerminateBackgroundProcess();
+        rigctldService.TerminateBackgroundProcess();
         return false;
     }
 }

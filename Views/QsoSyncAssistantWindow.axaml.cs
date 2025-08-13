@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
+using Avalonia.Threading;
 using CloudlogHelper.ViewModels;
 using ReactiveUI;
 
 namespace CloudlogHelper.Views;
 
-public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantViewModel>
+public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantWindowViewModel>
 {
     private bool _closeRequestedBefore;
 
@@ -52,7 +53,10 @@ public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantVie
             ViewModel!.ShowFileSelectWindow.RegisterHandler(ShowFilePickerDialog).DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.ViewModel!.CurrentInfo)
-                .Subscribe(_ => { currentInfoTextBlock.ScrollToEnd(); })
+                .Subscribe(_ =>
+                {
+                    Dispatcher.UIThread.Invoke(()=>currentInfoTextBlock.ScrollToEnd());
+                })
                 .DisposeWith(disposables);
         });
     }

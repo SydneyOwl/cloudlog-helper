@@ -9,6 +9,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
@@ -17,6 +18,7 @@ using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using DynamicData;
 using DynamicData.Binding;
@@ -92,11 +94,20 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     private uint _qsosCount;
 
-    private IDatabaseService databaseService;
+    private IDatabaseService _databaseService;
+    private IWindowNotificationManagerService _windowNotificationManager;
+    private IMessageBoxManagerService _messageBoxManagerService;
+    private IUdpServerService _udpServerService;
 
-    public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService)
+    public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
+        IWindowNotificationManagerService windowNotificationManager,
+        IMessageBoxManagerService messageBoxManagerService,
+        IUdpServerService udpServerService)
     {
-        databaseService = dbService;
+        _udpServerService =  udpServerService;
+        _databaseService = dbService;
+        _messageBoxManagerService = messageBoxManagerService;
+        _windowNotificationManager = windowNotificationManager;
         _isUploadQueueEmpty = new BehaviorSubject<bool>(_uploadQueue.IsEmpty);
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _settings.EnableUDPServer;
@@ -173,19 +184,19 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                 }).DisposeWith(disposables);
 
             RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
             
             IgnoreSelectedPermanentlyCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await App.NotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             // refresh cloudlog infos immediately if settings changed.
@@ -254,7 +265,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     {
         if (!_settings.EnableUDPServer)
         {
-            UDPServerUtil.TerminateUDPServer();
+            _udpServerService.TerminateUDPServer();
             return Disposable.Empty;
         }
 
@@ -269,12 +280,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         // create a default handler here
         if (_settings.IsUDPConfigHasErrors())
         {
-            UDPServerUtil.TerminateUDPServer();
+            _udpServerService.TerminateUDPServer();
             WaitFirstConn = false;
             throw new Exception(TranslationHelper.GetString(LangKeys.invalidudpconf));
         }
 
-        _ = UDPServerUtil.RestartUDPServerAsync(
+        _ = _udpServerService.RestartUDPServerAsync(
             _settings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
             int.Parse(_settings.UDPPort),
             _wsjtxMsgHandler,
@@ -311,7 +322,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         var candidate = _allQsos.Items.Where(x => x.Checked).ToList();
         if (!candidate.Any())
         {
-            await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>()
+            await _messageBoxManagerService.DoShowMessageboxAsync(new List<ButtonDefinition>()
             {
                 new()
                 {
@@ -321,7 +332,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
             }, Icon.Info, "Notice", TranslationHelper.GetString(LangKeys.pseselfirst));
             return;
         }
-        var result = await App.MessageBoxHelper.DoShowMessageboxAsync(new List<ButtonDefinition>()
+        var result = await _messageBoxManagerService.DoShowMessageboxAsync(new List<ButtonDefinition>()
         {
             new()
             {
@@ -337,7 +348,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         foreach (var recordedCallsignDetail in candidate)
         {
             ClassLogger.Info($"Logging: {recordedCallsignDetail.ToString()}");
-            await databaseService.MarkQsoIgnored(IgnoredQsoDatabase.Parse(recordedCallsignDetail));
+            await _databaseService.MarkQsoIgnored(IgnoredQsoDatabase.Parse(recordedCallsignDetail));
             _allQsos.Edit(ls => ls.Remove(recordedCallsignDetail));
         } 
     }
@@ -410,7 +421,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                             var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
                                 _extraCloudlogSettings.CloudlogUrl,
                                 _extraCloudlogSettings.CloudlogApiKey,
-                                _extraCloudlogSettings.CloudlogStationInfo?.StationId!, adif);
+                                _extraCloudlogSettings.CloudlogStationInfo?.StationId!,
+                                adif,
+                                CancellationToken.None);
                             if (cloudlogResult.Status != "created")
                             {
                                 ClassLogger.Debug("A qso for cloudlog failed to upload.");
@@ -432,7 +445,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                             {
                                 try
                                 {
-                                    await thirdPartyLogService.UploadQSOAsync(adif);
+                                    await thirdPartyLogService.UploadQSOAsync(adif, CancellationToken.None);
                                     rcd.UploadedServices[serName] = true;
                                 }
                                 catch (Exception ex)
@@ -478,7 +491,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         {
             if (_settings.ForwardMessage)
                 // ClassLogger.Trace(message.DeserializeWsjtxMessage().MessageType);
-                await UDPServerUtil.ForwardMessageAsync(message, IPEndPoint.Parse(_settings.ForwardAddress));
+                await _udpServerService.ForwardMessageAsync(message, IPEndPoint.Parse(_settings.ForwardAddress));
         }
         catch (Exception e)
         {
@@ -498,9 +511,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     _qsosCount += 1;
                     // process message
                     var msg = (QsoLogged)message;
-                    var cty = await databaseService.GetCallsignDetailAsync(msg.DXCall);
+                    var cty = await _databaseService.GetCallsignDetailAsync(msg.DXCall);
                     var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg);
-                    rcd.ParentMode = await databaseService.GetParentModeAsync(rcd.Mode);
+                    rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
                     // log it into that
                     _allQsos.Add(rcd);
                     _checkAndEnqueueQSO(rcd);
@@ -531,6 +544,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private void _wsjtxMsgLogger(LogLevel level, string message)
     {
         if (level < LogLevel.Error) return;
-        App.NotificationManager.SendWarningNotificationSync(message);
+        _windowNotificationManager.SendWarningNotificationSync(message);
     }
 }
