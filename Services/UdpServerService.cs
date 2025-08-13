@@ -25,6 +25,8 @@ public class UdpServerService : IUdpServerService, IDisposable
 
     private readonly object _syncLock = new();
 
+    private bool _closing;
+
     /// <summary>
     ///     Logger for the class.
     /// </summary>
@@ -71,7 +73,7 @@ public class UdpServerService : IUdpServerService, IDisposable
     {
         try
         {
-            TerminateUDPServer();
+            await TerminateUDPServerAsync();
             _cts = new CancellationTokenSource();
             // Small delay to ensure OS releases resources
             await Task.Delay(500);
@@ -91,26 +93,35 @@ public class UdpServerService : IUdpServerService, IDisposable
     }
     
 
-    public void TerminateUDPServer()
+    public Task TerminateUDPServerAsync()
     {
-        if (_udpServer is null) return;
-        try
+        if (_udpServer is null) return Task.CompletedTask;
+        if (_closing)return Task.CompletedTask;
+        return Task.Run(() =>
         {
-            ClassLogger.Debug("Shutting down udp...");
-            if (!_cts.IsCancellationRequested) _cts.Cancel();
-            if (_udpServer.IsRunning) _udpServer?.Stop();
-            if (!_udpServer!.IsDisposed) _udpServer?.Dispose();
-            _forwardedClient?.Dispose();
-            _forwardedClient = null;
-            _currentEndpoint = null;
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Warn(e, "Error occurred while shutting down udp server");
-            // ignored...
-        }
+            try
+            {
+                _closing = true;
+                ClassLogger.Debug("Shutting down udp...");
+                if (!_cts.IsCancellationRequested) _cts.Cancel();
+                if (_udpServer.IsRunning) _udpServer?.Stop();
+                if (!_udpServer!.IsDisposed) _udpServer?.Dispose();
+                _forwardedClient?.Dispose();
+                _forwardedClient = null;
+                _currentEndpoint = null;
+            }
+            catch (Exception e)
+            {
+                ClassLogger.Warn(e, "Error occurred while shutting down udp server");
+                // ignored...
+            }
+            finally
+            {
+                _closing = false;
+            }
 
-        _udpServer = null;
+            _udpServer = null;
+        });
     }
 
 

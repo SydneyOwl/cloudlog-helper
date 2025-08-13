@@ -17,5 +17,5 @@ public interface IUdpServerService
         Action<Memory<byte>> rawhandler,
         Action<LogLevel, string>? udpLogger = null);
 
-    void TerminateUDPServer();
+    Task TerminateUDPServerAsync();
 }

@@ -265,7 +265,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     {
         if (!_settings.EnableUDPServer)
         {
-            _udpServerService.TerminateUDPServer();
+            _ = _udpServerService.TerminateUDPServerAsync();
             return Disposable.Empty;
         }
 
@@ -276,11 +276,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private async Task _restartUdp()
     {
         ClassLogger.Debug("trying to start UDP...");
-        // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
         // create a default handler here
         if (_settings.IsUDPConfigHasErrors())
         {
-            _udpServerService.TerminateUDPServer();
+            _ = _udpServerService.TerminateUDPServerAsync();
             WaitFirstConn = false;
             throw new Exception(TranslationHelper.GetString(LangKeys.invalidudpconf));
         }
