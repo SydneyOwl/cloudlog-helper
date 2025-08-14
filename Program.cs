@@ -74,7 +74,7 @@ Stack：{ex.StackTrace}");
         Environment.Exit(1);
     }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
+    // Avalonia configuration
     public static AppBuilder BuildAvaloniaApp(CommandLineOptions? options)
     {
         return AppBuilder.Configure(()=> new App(options))
@@ -84,7 +84,7 @@ Stack：{ex.StackTrace}");
             .UseReactiveUI();
     }
     
-     // Avalonia configuration, don't remove; also used by visual designer.
+     // Used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
         return AppBuilder.Configure<App>()

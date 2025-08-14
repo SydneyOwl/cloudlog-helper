@@ -2,6 +2,7 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+using Avalonia.Controls;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -30,6 +31,10 @@ public class StatusLightUserControlViewModel : ViewModelBase
     private static IRigctldService _rigctldService;
     private static IUdpServerService _udpServerService;
 
+    public StatusLightUserControlViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+    }
 
     public StatusLightUserControlViewModel(IRigctldService rSer,
         IUdpServerService uSer,

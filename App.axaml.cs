@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -20,6 +21,7 @@ using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using CloudlogHelper.Views;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Config;
@@ -43,8 +45,11 @@ public class App : Application
         options ??= new CommandLineOptions();
         CmdOptions = options;
     }
-    
-    public App(){}
+
+    public App()
+    {
+        CmdOptions ??= new CommandLineOptions();
+    }
 
     private void PreInit()
     {
@@ -73,84 +78,95 @@ public class App : Application
     
     public override void Initialize()
     {
-        PreInit();
         AvaloniaXamlLoader.Load(this);
         Name = "CloudlogHelper";
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var collection = new ServiceCollection();
-        collection.AddCommonServices();
-        collection.AddViewModels();
-        collection.AddExtra();
-        collection.AddSingleton<CommandLineOptions>(p => CmdOptions);
-        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             
-            collection.AddSingleton<IWindowManagerService, WindowManagerService>(provider => new WindowManagerService(provider, desktop));
-            collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ => new WindowNotificationManagerService(desktop));
-            collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
+            ServiceProvider? provider = null;
             
-            var provider = collection.BuildServiceProvider();
+            desktop.MainWindow = new SplashWindow(async () =>
+            {
+                PreInit();
+                var collection = new ServiceCollection();
+                collection.AddCommonServices();
+                collection.AddViewModels();
+                collection.AddExtra();
+                collection.AddSingleton<CommandLineOptions>(p => CmdOptions);
+                collection.AddSingleton<IWindowManagerService, WindowManagerService>(provider => new WindowManagerService(provider, desktop));
+                collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ => new WindowNotificationManagerService(desktop));
+                collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
             
-            if (!string.IsNullOrEmpty(CmdOptions.CrashReportFile))
-            {
-                desktop.MainWindow = new ErrorReportWindow(CmdOptions.CrashReportFile)
-                    { ViewModel = new ErrorReportWindowViewModel() };
-                return;
-            }
+                provider = collection.BuildServiceProvider();
             
-            _ = provider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
-
-            var mainWindow = provider.GetRequiredService<MainWindow>();
-            desktop.MainWindow = mainWindow;
-            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
-
-            _exitCommand = ReactiveCommand.Create(() =>
-            {
-                mainWindow.CloseDirectly();
-                desktop.Shutdown();
-            });
-            _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
-
-            // create trayicon
-            try
-            {
-                var nmiExit = new NativeMenuItem
+                if (!string.IsNullOrEmpty(CmdOptions.CrashReportFile))
                 {
-                    Header = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.exit)),
-                    Command = _exitCommand
-                };
-                var nmiOpen = new NativeMenuItem
+                    desktop.MainWindow = new ErrorReportWindow(CmdOptions.CrashReportFile)
+                        { ViewModel = new ErrorReportWindowViewModel() };
+                    return;
+                }
+            
+                await provider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
+            }, () =>
                 {
-                    Header  = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.open)),
-                    Command = _openCommand
-                };
+                    if (provider is null) throw new Exception("Provider not initialized");
+                    var mainWindow = provider.GetRequiredService<MainWindow>();
+                    mainWindow.Show();
+                    mainWindow.Focus();
+                    desktop.MainWindow = mainWindow;
+                    desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-                using var stream = AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/icon.png"));
-                var bitmap = new Bitmap(stream);
-
-                _trayIcon = new TrayIcon
-                {
-                    ToolTipText = "CloudlogHelper",
-                    Icon = new WindowIcon(bitmap),
-                    Menu = new NativeMenu
+                    _exitCommand = ReactiveCommand.Create(() =>
                     {
-                        nmiExit,
-                        nmiOpen
+                        mainWindow.CloseDirectly();
+                        desktop.Shutdown();
+                    });
+                    _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
+
+                    // create trayicon
+                    try
+                    {
+                        var nmiExit = new NativeMenuItem
+                        {
+                            Header = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.exit)),
+                            Command = _exitCommand
+                        };
+                        var nmiOpen = new NativeMenuItem
+                        {
+                            Header  = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.open)),
+                            Command = _openCommand
+                        };
+
+                        using var stream = AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/icon.png"));
+                        var bitmap = new Bitmap(stream);
+
+                        _trayIcon = new TrayIcon
+                        {
+                            ToolTipText = "CloudlogHelper",
+                            Icon = new WindowIcon(bitmap),
+                            Menu = new NativeMenu
+                            {
+                                nmiExit,
+                                nmiOpen
+                            }
+                        };
                     }
-                };
-            }
-            catch (Exception ex)
-            {
-                // this may fail on Windows 7
-                ClassLogger.Warn(ex);
-            }
+                    catch (Exception ex)
+                    {
+                        // this may fail on Windows 7
+                        ClassLogger.Warn(ex);
+                    }
+
+                    return Task.CompletedTask;
+                }
+            );
         }
 
         base.OnFrameworkInitializationCompleted();

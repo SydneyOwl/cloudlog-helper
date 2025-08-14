@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Styling;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -25,6 +26,15 @@ public class MainWindowViewModel : ViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private bool _isRigctldUsingExternal;
     private IWindowManagerService windowManager;
+
+    public MainWindowViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        UserBasicDataGroupboxUserControlVm = new UserBasicDataGroupboxUserControlViewModel();
+        RigDataGroupboxUserControlVm = new RIGDataGroupboxUserControlViewModel();
+        UDPLogInfoGroupboxUserControlVm = new UDPLogInfoGroupboxUserControlViewModel();
+        StatusLightUserControlViewModel = new StatusLightUserControlViewModel();
+    }
 
     public MainWindowViewModel(
         UDPLogInfoGroupboxUserControlViewModel udpLogInfoGroupboxUserControlViewModel,

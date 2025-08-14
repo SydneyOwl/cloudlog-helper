@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -73,6 +74,11 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
     private IWindowManagerService windowManagerService;
     private IWindowNotificationManagerService _windowNotificationManager;
     private IMessageBoxManagerService _messageBoxManagerService;
+
+    public RIGDataGroupboxUserControlViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+    }
 
     public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd, 
         IRigctldService rs,

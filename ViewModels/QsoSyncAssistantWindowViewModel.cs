@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ADIFLib;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
@@ -38,6 +39,13 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     private IDatabaseService _dbService;
 
     private IWindowNotificationManagerService _windowNotificationManager;
+
+    public QsoSyncAssistantWindowViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        StartSyncCommand =  ReactiveCommand.Create(()=>{});
+        StopSyncCommand = ReactiveCommand.Create(()=>{});
+    }
 
     public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
         IWindowNotificationManagerService winNotification)

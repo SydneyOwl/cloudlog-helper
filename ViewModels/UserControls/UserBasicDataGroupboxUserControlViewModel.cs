@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -30,6 +31,11 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
     
     public bool InitSkipped { get; private set; }
 
+    public UserBasicDataGroupboxUserControlViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+    }
+    
     public UserBasicDataGroupboxUserControlViewModel(CommandLineOptions cmd,
         IWindowNotificationManagerService windowNotificationManager)
     {

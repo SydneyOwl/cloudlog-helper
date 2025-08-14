@@ -78,6 +78,16 @@ public class SettingsWindowViewModel : ViewModelBase
         }
     }
 
+    public SettingsWindowViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        DraftSettings = ApplicationSettings.GetDraftInstance();
+        DiscardConf = ReactiveCommand.Create(()=>{});
+        SaveAndApplyConf = ReactiveCommand.Create(()=>{});
+        // InitializeLogSystems();
+    }
+    
+
     public SettingsWindowViewModel(CommandLineOptions cmd, IRigctldService rs)
     {
         rigctldService = rs;
@@ -127,7 +137,6 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
         });
         
-        if (Design.IsDesignMode)return;
         _ = _initializeHamlibAsync();
         MessageBus.Current.SendMessage(new SettingsChanged
         {

@@ -11,6 +11,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
 using CloudlogHelper.LogService;
@@ -98,6 +99,19 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private IWindowNotificationManagerService _windowNotificationManager;
     private IMessageBoxManagerService _messageBoxManagerService;
     private IUdpServerService _udpServerService;
+
+    public UDPLogInfoGroupboxUserControlViewModel()
+    {
+        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        SelectAllCommand = ReactiveCommand.Create(() => { });
+        ReuploadSelectedCommand = ReactiveCommand.Create(()=>{});
+        ExportSelectedToAdiCommand = ReactiveCommand.Create(()=>{});
+        IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(()=>{});
+        DeleteSelectedCommand = ReactiveCommand.Create(()=>{});
+        RestartUdpCommand = ReactiveCommand.Create(()=>{});
+        UploadLogFromQueueCommand = ReactiveCommand.Create(()=>{});
+        ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
+    }
 
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
         IWindowNotificationManagerService windowNotificationManager,

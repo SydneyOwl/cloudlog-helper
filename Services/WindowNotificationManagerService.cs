@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using CloudlogHelper.Views;
 using NLog;
 
 namespace CloudlogHelper.Services;
@@ -22,7 +23,7 @@ public class WindowNotificationManagerService:IWindowNotificationManagerService,
         {
             try
             {
-                while (topLevel.MainWindow is null)
+                while (topLevel.MainWindow is not MainWindow)
                 {
                     await Task.Delay(100);
                 }

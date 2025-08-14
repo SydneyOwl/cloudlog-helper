@@ -8,7 +8,7 @@
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         x:DataType="viewModels:AboutWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.about}}"
-        Height="230" Width="370"
+        Height="230" Width="380"
         Icon="avares://CloudlogHelper/Assets/icon.png"
         WindowStartupLocation="CenterScreen">
 
