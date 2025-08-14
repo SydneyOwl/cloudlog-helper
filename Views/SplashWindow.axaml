@@ -2,18 +2,39 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+        mc:Ignorable="d" d:DesignWidth="370" d:DesignHeight="200"
         x:Class="CloudlogHelper.Views.SplashWindow"
-        Width="300" Height="200"
+        Width="370" Height="200"
         WindowStartupLocation="CenterScreen"
         SystemDecorations="None"
+        Topmost="True"
+        Focusable="True"
+        Background="Black"
         Title="SplashScreen">
+    
     <Panel>
-        <Border BorderBrush="Black" BorderThickness="2">
-            <TextBlock FontWeight="Bold" 
-                       FontSize="30"
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center">CloudlogHelper</TextBlock>
+        <Border BorderBrush="rgba(192,193,193,0.4)" BorderThickness="2">
+            <Canvas>
+                <StackPanel Orientation="Horizontal" Spacing="10" Canvas.Top="55" Canvas.Left="20"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="avares://CloudlogHelper/Assets/icon.png" Width="80"/>
+                    <TextBlock FontWeight="Bold"
+                               FontSize="30"
+                               VerticalAlignment="Center"
+                               Foreground="White"
+                               HorizontalAlignment="Center">CloudlogHelper</TextBlock>
+                </StackPanel>
+                <avaloniaProgressRing:ProgressRing
+                    Canvas.Bottom="15" Canvas.Right="15"                                
+                                                    Width="28" 
+                                                   Height="28"
+                                                   IsActive="True"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top"
+                                                   Foreground="Green"
+                                                   Margin="10,20,0,0"/>
+            </Canvas>
         </Border>
     </Panel>
 </Window>

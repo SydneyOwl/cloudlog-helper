@@ -16,6 +16,7 @@ public partial class SplashWindow : Window
     public SplashWindow()
     {        
         if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        InitializeComponent();
     }
 
     public SplashWindow(Func<Task?> workload, Func<Task?> mainAction)
@@ -30,6 +31,7 @@ public partial class SplashWindow : Window
         LoadAndInit();
     }
 
+    // ReSharper disable once AsyncVoidMethod
     private async void LoadAndInit()
     {
         if (Design.IsDesignMode)return;
