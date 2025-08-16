@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Resources;
 
 public class DefaultConfigs
 {
+    public static readonly string MutexId = "{A5E98F80-B924-4CFF-A370-C992FDCC833D}";
+    
     /// <summary>
     ///     Repo address.
     /// </summary>
@@ -252,12 +255,12 @@ public class DefaultConfigs
     /// <summary>
     ///     Default path to SQLite database file.
     /// </summary>
-    public static string DefaultDatabaseFile => Path.Join(AppContext.BaseDirectory, "cloudlog-helper.db");
+    public static string DefaultDatabaseFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "cloudlog-helper.db");
 
     /// <summary>
     ///     Default path to the settings file.
     /// </summary>
-    public static string DefaultSettingsFile => Path.Join(AppContext.BaseDirectory, "settings.json");
+    public static string DefaultSettingsFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "settings.json");
 
     /// <summary>
     ///     Path to Rigctld executable file.

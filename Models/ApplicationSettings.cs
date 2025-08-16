@@ -165,11 +165,24 @@ public class ApplicationSettings : ReactiveValidationObject
         return _draftInstance ??= new ApplicationSettings();
     }
 
+    private static void InitEmptySettings(ThirdPartyLogService[] logServices)
+    {
+        _draftInstance = new ApplicationSettings();
+        _draftInstance.LogServices.AddRange(logServices);
+        _currentInstance = _draftInstance.DeepClone();
+    }
+
     /// <summary>
     ///     Read settings from default position, then parse it as application-wide setting instance.
     /// </summary>
-    public static void ReadSettingsFromFile(ThirdPartyLogService[] logServices)
+    public static void ReadSettingsFromFile(ThirdPartyLogService[] logServices, bool reinit)
     {
+        if (reinit)
+        {
+            InitEmptySettings(logServices);
+            return;
+        }
+
         try
         {
             var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
@@ -178,9 +191,7 @@ public class ApplicationSettings : ReactiveValidationObject
             if (_draftInstance is null)
             {
                 ClassLogger.Debug("Settings file not found. creating a new one instead.");
-                _draftInstance = new ApplicationSettings();
-                _draftInstance.LogServices.AddRange(logServices);
-                _currentInstance = _draftInstance.DeepClone();
+                InitEmptySettings(logServices);
                 return;
             }
             
@@ -199,9 +210,7 @@ public class ApplicationSettings : ReactiveValidationObject
         catch (Exception e1)
         {
             ClassLogger.Warn(e1, "Failed to read settings; use default settings instead.");
-            _draftInstance = new ApplicationSettings();
-            _draftInstance.LogServices.AddRange(logServices);
-            _currentInstance = _draftInstance.DeepClone();
+            InitEmptySettings(logServices);
         }
     }
 

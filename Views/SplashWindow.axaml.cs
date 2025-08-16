@@ -4,14 +4,20 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Threading;
+using CloudlogHelper.Resources;
+using CloudlogHelper.Utils;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 
 namespace CloudlogHelper.Views;
 
 public partial class SplashWindow : Window
 {
-    private readonly Func<Task?> _mainAction;
-    private readonly Func<Task?> _workLoad;
+    private readonly Func<Task?> _postExec;
+    private readonly Func<Task?> _workload;
+    private readonly Func<Task?> _preCheck;
 
     public SplashWindow()
     {        
@@ -19,11 +25,12 @@ public partial class SplashWindow : Window
         InitializeComponent();
     }
 
-    public SplashWindow(Func<Task?> workload, Func<Task?> mainAction)
+    public SplashWindow(Func<Task?> preCheck, Func<Task?> workload, Func<Task?> postExec)
     {
         InitializeComponent();
-        _workLoad = workload;
-        _mainAction = mainAction;
+        _preCheck = preCheck;
+        _workload = workload;
+        _postExec = postExec;
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
@@ -35,11 +42,44 @@ public partial class SplashWindow : Window
     private async void LoadAndInit()
     {
         if (Design.IsDesignMode)return;
-        await _workLoad?.Invoke()!; 
-         _ = Dispatcher.UIThread.InvokeAsync(async () =>
+        try
         {
-            await _mainAction?.Invoke()!;
-            Close();
-        });
+            statusText.Text = "Executing Pre-Check...";
+            statusTextDetailed.Text = "Checking for dupe process";
+            await _preCheck?.Invoke()!;
+            
+            statusText.Text = "Initialization in progress...";
+            statusTextDetailed.Text = "Database / Log services initialization";
+            var workloadTask = Task.Run(async () =>
+            {
+                await _workload?.Invoke()!;
+            });
+            await workloadTask.ConfigureAwait(false);
+            
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                statusText.Text = "Loading Window...";
+                statusTextDetailed.Text = "Executing post-exec...";
+                await _postExec?.Invoke()!;
+                Close();
+            });
+        }
+        catch(Exception ex)
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                Topmost = false;
+                statusTextDetailed.Text = "ERROR: " + ex.Message;
+                statusTextDetailed.Background = Brushes.Orange;
+                statusTextDetailed.Foreground = Brushes.Black;
+                var wResult = await MessageBoxManager.GetMessageBoxStandard("Error", TranslationHelper.GetString(LangKeys.bootfail) , ButtonEnum.OkAbort,
+                    MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
+                if (wResult == ButtonResult.Ok)
+                {
+                    ApplicationStartUpUtil.RestartApplicationWithArgs("--reinit-db --reinit-settings");
+                }
+            });
+            Environment.Exit(0);
+        }
     }
 }

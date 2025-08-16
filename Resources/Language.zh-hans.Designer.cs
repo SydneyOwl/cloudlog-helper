@@ -150,6 +150,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 启动失败！是否尝试重置所有设置？.
+        /// </summary>
+        public static string bootfail {
+            get {
+                return ResourceManager.GetString("bootfail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 计算中....
         /// </summary>
         public static string calculating {
@@ -353,6 +362,15 @@ namespace CloudlogHelper.Resources {
         public static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 程序已在运行！.
+        /// </summary>
+        public static string dupeinstance {
+            get {
+                return ResourceManager.GetString("dupeinstance", resourceCulture);
             }
         }
         

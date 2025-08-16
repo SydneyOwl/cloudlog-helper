@@ -495,4 +495,10 @@
     <data name="pseselfirst" xml:space="preserve">
         <value>请先勾选QSO!</value>
     </data>
+    <data name="dupeinstance" xml:space="preserve">
+        <value>程序已在运行！</value>
+    </data>
+    <data name="bootfail" xml:space="preserve">
+        <value>启动失败！是否尝试重置所有设置？</value>
+    </data>
 </root>

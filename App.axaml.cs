@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -34,28 +36,33 @@ namespace CloudlogHelper;
 
 public class App : Application
 {
+    private static Mutex? _mutex;
+
+    private static ServiceProvider? _servProvider;
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
-    private CommandLineOptions CmdOptions { get; set; }
+    private static CommandLineOptions _cmdOptions { get; set; }
 
     public App(CommandLineOptions? options)
     {
         options ??= new CommandLineOptions();
-        CmdOptions = options;
+        _cmdOptions = options;
+        Console.WriteLine(options.ReinitSettings);
+        Console.WriteLine(options.ReinitDatabase);
     }
 
     public App()
     {
-        CmdOptions ??= new CommandLineOptions();
+        _cmdOptions ??= new CommandLineOptions();
     }
 
     private void PreInit()
     {
-        var verboseLevel = CmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
-        _initializeLogger(verboseLevel, CmdOptions.LogToFile);
-        
+        var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
+        _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
+
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
@@ -65,21 +72,104 @@ public class App : Application
         {
             throw new Exception("Dupe log service found. This is not allowed!");
         }
-        
+
         // create those types and assign back to settings...
         var logServices = lType.Select(x =>
         {
-            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x)) throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
+            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x))
+                throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
             return (ThirdPartyLogService)Activator.CreateInstance(x)!;
         });
-        
+
         _initializeSettings(logServices);
     }
-    
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
         Name = "CloudlogHelper";
+    }
+
+    private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        PreInit();
+        var collection = new ServiceCollection();
+        collection.AddCommonServices();
+        collection.AddViewModels();
+        collection.AddExtra();
+        collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
+        collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov => new WindowManagerService(prov, desktop));
+        collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ => new WindowNotificationManagerService(desktop));
+        collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
+                
+        _servProvider = collection.BuildServiceProvider();
+        await _servProvider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
+    }
+
+    private Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        if (_servProvider is null) throw new Exception("Provider not initialized");
+        var mainWindow = _servProvider.GetRequiredService<MainWindow>();
+        mainWindow.Show();
+        mainWindow.Focus();
+        desktop.MainWindow = mainWindow;
+        desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+        _exitCommand = ReactiveCommand.Create(() =>
+        {
+            mainWindow.CloseDirectly();
+            desktop.Shutdown();
+        });
+        _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
+
+        // create trayicon
+        try
+        {
+            var nmiExit = new NativeMenuItem
+            {
+                Header = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.exit)),
+                Command = _exitCommand
+            };
+            var nmiOpen = new NativeMenuItem
+            {
+                Header  = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.open)),
+                Command = _openCommand
+            };
+
+            using var stream = AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/icon.png"));
+            var bitmap = new Bitmap(stream);
+
+            _trayIcon = new TrayIcon
+            {
+                ToolTipText = "CloudlogHelper",
+                Icon = new WindowIcon(bitmap),
+                Menu = new NativeMenu
+                {
+                    nmiExit,
+                    nmiOpen
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            // this may fail on Windows 7
+            ClassLogger.Warn(ex);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task PreExec(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        Directory.CreateDirectory(ApplicationStartUpUtil.GetConfigDir());
+        _mutex = new Mutex(true, DefaultConfigs.MutexId, out var createdNew);
+        // check if init is allowed?
+        if (!createdNew)
+        {
+            throw new Exception(TranslationHelper.GetString(LangKeys.dupeinstance));
+        }
+        
+        return Task.CompletedTask;
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -90,83 +180,15 @@ public class App : Application
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             
-            ServiceProvider? provider = null;
-            
-            desktop.MainWindow = new SplashWindow(async () =>
+            if (!string.IsNullOrEmpty(_cmdOptions.CrashReportFile))
             {
-                PreInit();
-                var collection = new ServiceCollection();
-                collection.AddCommonServices();
-                collection.AddViewModels();
-                collection.AddExtra();
-                collection.AddSingleton<CommandLineOptions>(p => CmdOptions);
-                collection.AddSingleton<IWindowManagerService, WindowManagerService>(provider => new WindowManagerService(provider, desktop));
-                collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ => new WindowNotificationManagerService(desktop));
-                collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
-            
-                provider = collection.BuildServiceProvider();
-            
-                if (!string.IsNullOrEmpty(CmdOptions.CrashReportFile))
-                {
-                    desktop.MainWindow = new ErrorReportWindow(CmdOptions.CrashReportFile)
-                        { ViewModel = new ErrorReportWindowViewModel() };
-                    return;
-                }
-            
-                await provider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: CmdOptions.ReinitDatabase);
-            }, () =>
-                {
-                    if (provider is null) throw new Exception("Provider not initialized");
-                    var mainWindow = provider.GetRequiredService<MainWindow>();
-                    mainWindow.Show();
-                    mainWindow.Focus();
-                    desktop.MainWindow = mainWindow;
-                    desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
-
-                    _exitCommand = ReactiveCommand.Create(() =>
-                    {
-                        mainWindow.CloseDirectly();
-                        desktop.Shutdown();
-                    });
-                    _openCommand = ReactiveCommand.Create(() => mainWindow.Show());
-
-                    // create trayicon
-                    try
-                    {
-                        var nmiExit = new NativeMenuItem
-                        {
-                            Header = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.exit)),
-                            Command = _exitCommand
-                        };
-                        var nmiOpen = new NativeMenuItem
-                        {
-                            Header  = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.open)),
-                            Command = _openCommand
-                        };
-
-                        using var stream = AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/icon.png"));
-                        var bitmap = new Bitmap(stream);
-
-                        _trayIcon = new TrayIcon
-                        {
-                            ToolTipText = "CloudlogHelper",
-                            Icon = new WindowIcon(bitmap),
-                            Menu = new NativeMenu
-                            {
-                                nmiExit,
-                                nmiOpen
-                            }
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        // this may fail on Windows 7
-                        ClassLogger.Warn(ex);
-                    }
-
-                    return Task.CompletedTask;
-                }
-            );
+                desktop.MainWindow = new ErrorReportWindow(_cmdOptions.CrashReportFile)
+                    { ViewModel = new ErrorReportWindowViewModel() };
+            }
+            else
+            {
+                desktop.MainWindow = new SplashWindow(() => PreExec(desktop), () => Workload(desktop), () => PostExec(desktop));
+            }
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -183,15 +205,17 @@ public class App : Application
         foreach (var plugin in dataValidationPluginsToRemove) BindingPlugins.DataValidators.Remove(plugin);
     }
 
-    public static void CleanTrayIcon()
+    public static void CleanUp()
     {
+        _servProvider?.Dispose();
+        _mutex?.ReleaseMutex();
         _trayIcon?.Dispose();
     }
     
             
     private static void _initializeSettings(IEnumerable<ThirdPartyLogService> logServices)
     {
-        ApplicationSettings.ReadSettingsFromFile(logServices.ToArray());
+        ApplicationSettings.ReadSettingsFromFile(logServices.ToArray(), _cmdOptions.ReinitSettings);
         var settings = ApplicationSettings.GetInstance();
         var draftSettings = ApplicationSettings.GetDraftInstance();
         

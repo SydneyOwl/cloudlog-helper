@@ -150,6 +150,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to start applicaiton. Would you like to reset application?.
+        /// </summary>
+        public static string bootfail {
+            get {
+                return ResourceManager.GetString("bootfail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calcing...
         /// </summary>
         public static string calculating {
@@ -353,6 +362,15 @@ namespace CloudlogHelper.Resources {
         public static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Program is already running!.
+        /// </summary>
+        public static string dupeinstance {
+            get {
+                return ResourceManager.GetString("dupeinstance", resourceCulture);
             }
         }
         

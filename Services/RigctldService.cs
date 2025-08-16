@@ -660,11 +660,11 @@ public class RigctldService:IRigctldService, IDisposable
         if (_disposed) return;
         if (disposing)
         {
-            _backgroundProcess?.Dispose();
-            BackgroundProcessSemaphore.Dispose();
-            _onetimeRigctldClient?.Dispose();
-            OnetimeSemaphore.Dispose();
+            TerminateBackgroundProcess();
+            TerminateOnetimeProcess();
             _scheduler.Dispose();
+            BackgroundProcessSemaphore.Dispose();
+            OnetimeSemaphore.Dispose();
             SchedulerSemaphore.Dispose();
             _tcpClient?.Dispose();
         }

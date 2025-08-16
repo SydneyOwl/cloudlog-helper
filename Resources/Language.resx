@@ -495,4 +495,10 @@
     <data name="pseselfirst" xml:space="preserve">
         <value>Please select any qso first!</value>
     </data>
+    <data name="dupeinstance" xml:space="preserve">
+        <value>Program is already running!</value>
+    </data>
+    <data name="bootfail" xml:space="preserve">
+        <value>Failed to start applicaiton. Would you like to reset application?</value>
+    </data>
 </root>

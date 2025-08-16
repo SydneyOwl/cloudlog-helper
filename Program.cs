@@ -40,26 +40,17 @@ internal sealed class Program
         catch (Exception ex)
         {
             if (options.DeveloperMode) throw;
-            if (string.IsNullOrEmpty(options.CrashReportFile)) return;
+            if (!string.IsNullOrEmpty(options.CrashReportFile)) return;
             var tmp = Path.GetTempFileName();
-            // Console.WriteLine(tmp);
             File.WriteAllText(tmp,
                 $@"Environment: {RuntimeInformation.RuntimeIdentifier}, {RuntimeInformation.OSDescription}
 Type：{ex.Message}
 Stack：{ex.StackTrace}");
-            var executablePath = Process.GetCurrentProcess().MainModule!.FileName;
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = executablePath,
-                Arguments = $"--crash-report {tmp}",
-                UseShellExecute = true
-            };
-            Process.Start(startInfo);
-            Environment.Exit(0);
+            ApplicationStartUpUtil.RestartApplicationWithArgs($"--crash-report {tmp}");
         }
         finally
         {
-            App.CleanTrayIcon();
+            App.CleanUp();
         }
     }
     

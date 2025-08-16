@@ -3,38 +3,88 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
-        mc:Ignorable="d" d:DesignWidth="370" d:DesignHeight="200"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="300"
         x:Class="CloudlogHelper.Views.SplashWindow"
-        Width="370" Height="200"
+        Width="450" Height="300"
         WindowStartupLocation="CenterScreen"
         SystemDecorations="None"
         Topmost="True"
         Focusable="True"
-        Background="Black"
+        Background="#1A1A1A"
         Title="SplashScreen">
     
-    <Panel>
-        <Border BorderBrush="rgba(192,193,193,0.4)" BorderThickness="2">
-            <Canvas>
-                <StackPanel Orientation="Horizontal" Spacing="10" Canvas.Top="55" Canvas.Left="20"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="avares://CloudlogHelper/Assets/icon.png" Width="80"/>
-                    <TextBlock FontWeight="Bold"
-                               FontSize="30"
-                               VerticalAlignment="Center"
-                               Foreground="White"
-                               HorizontalAlignment="Center">CloudlogHelper</TextBlock>
-                </StackPanel>
-                <avaloniaProgressRing:ProgressRing
-                    Canvas.Bottom="15" Canvas.Right="15"                                
-                                                    Width="28" 
-                                                   Height="28"
-                                                   IsActive="True"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Top"
-                                                   Foreground="Green"
-                                                   Margin="10,20,0,0"/>
-            </Canvas>
+    <Grid>
+        <!-- 背景渐变层 -->
+        <Border Background="#1A1A1A" CornerRadius="8">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" Color="#40000000" Opacity="0.8"/>
+            </Border.Effect>
         </Border>
-    </Panel>
+        
+        <!-- 主内容 -->
+        <Border BorderBrush="#404040" BorderThickness="1" CornerRadius="8">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- 应用标题和图标 -->
+                <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="avares://CloudlogHelper/Assets/icon.png" Width="60" Height="60"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock FontFamily="Segoe UI, Arial" 
+                                   FontWeight="SemiBold"
+                                   FontSize="28"
+                                   Foreground="White"
+                                   Text="CloudlogHelper"/>
+                        <TextBlock FontFamily="Segoe UI, Arial"
+                                   FontSize="12"
+                                   Foreground="#A0A0A0"
+                                   Margin="0,5,0,0"
+                                   Text="Lightweight Cloudlog/Wavelog tool☁️"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- 进度指示器 -->
+                <Grid Grid.Row="1" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Spacing="15">
+                        <avaloniaProgressRing:ProgressRing
+                            Width="40" 
+                            Height="40"
+                            IsActive="True"
+                            Foreground="#4CAF50"/>
+                        <TextBlock x:Name="statusText"
+                                   FontFamily="Segoe UI, Arial"
+                                   FontSize="12"
+                                   Foreground="#CCCCCC"
+                                   HorizontalAlignment="Center"
+                                   Text="Initializing application..."/>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- 底部状态栏 -->
+                <Border Grid.Row="2" Background="#252525" CornerRadius="0,0,6,6" Height="30">
+                    <Grid>
+                        <TextBlock FontFamily="Segoe UI, Arial"
+                                   FontSize="10"
+                                   Foreground="#A0A0A0"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0,0,0"
+                                   x:Name="statusTextDetailed"
+                                   Text="Loading components..."/>
+                        <TextBlock FontFamily="Segoe UI, Arial"
+                                   FontSize="10"
+                                   Foreground="#A0A0A0"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   Margin="0,0,10,0"
+                                   Text="{x:Static resources:VersionInfo.Version}"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

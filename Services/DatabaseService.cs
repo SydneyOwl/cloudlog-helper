@@ -52,80 +52,84 @@ public class DatabaseService : IDatabaseService, IDisposable
         var connectionString = new SQLiteConnectionString(dbPath,
             SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite |
             SQLiteOpenFlags.SharedCache, true);
-        try
+        
+        if (forceInitDatabase)
+            try
+            {
+                File.Delete(dbPath);
+            }
+            catch
+            {
+                // ignored...
+            }
+
+        _conn = new SQLiteAsyncConnection(connectionString);
+        ClassLogger.Info("Creating/Migrating database...");
+
+        // Check if version number exists
+        await _conn.CreateTableAsync<ApplicationVersionDatabase>();
+        var dbVer = await _conn.Table<ApplicationVersionDatabase>().FirstOrDefaultAsync() ??
+                    ApplicationVersionDatabase.NewDefaultAppVersion();
+        var dbVersion = new Version(dbVer.CurrentVersion!);
+
+        // NEVER USE `Assembly.GetEntryAssembly()?.GetName().Version`: SEEMS LIKE IT'LL CHANGE AFTER AVALONIA FULLY INITIALIZED!
+        var appVer = VersionInfo.Version;
+        var formalRelease = true;
+        // for xxx-rc1
+        if (appVer.Contains('-'))
         {
-            if (forceInitDatabase)
-                try
-                {
-                    File.Delete(dbPath);
-                }
-                catch
-                {
-                    // ignored...
-                }
-
-            _conn = new SQLiteAsyncConnection(connectionString);
-            ClassLogger.Info("Creating/Migrating database...");
-
-            // Check if version number exists
-            await _conn.CreateTableAsync<ApplicationVersionDatabase>();
-            var dbVer = await _conn.Table<ApplicationVersionDatabase>().FirstOrDefaultAsync() ??
-                        ApplicationVersionDatabase.NewDefaultAppVersion();
-            var dbVersion = new Version(dbVer.CurrentVersion!);
-
-            // NEVER USE `Assembly.GetEntryAssembly()?.GetName().Version`: SEEMS LIKE IT'LL CHANGE AFTER AVALONIA FULLY INITIALIZED!
-            var appVer = VersionInfo.Version;
-            var formalRelease = true;
-            // for xxx-rc1
-            if (appVer.Contains('-'))
-            {
-                formalRelease = false;
-                appVer = appVer.Split("-").FirstOrDefault();
-            }
-
-            var appVersion = new Version("0.0.0");
-            if (!forceInitDatabase) appVersion = new Version(appVer);
-            ClassLogger.Trace($"DBVer:{dbVersion}");
-            ClassLogger.Trace($"appVersion:{appVersion}");
-
-            if (appVersion > dbVersion || forceInitDatabase || !formalRelease)
-            {
-                ClassLogger.Trace($"upgrading {dbVersion} => {appVersion}");
-                await InitCountryDicAsync();
-                await _conn.RunInTransactionAsync(db =>
-                {
-                    ClassLogger.Trace($"Running transaction: {dbVersion} => {appVersion}");
-                    // just truncate here
-                    // country id is (maybe) not fixed here; so we just truncate it. won't take much time!
-                    db.DropTable<CallsignDatabase>();
-                    db.DropTable<CountryDatabase>();
-                    db.DropTable<AdifModesDatabase>();
-
-                    db.CreateTable<CallsignDatabase>();
-                    db.CreateTable<CountryDatabase>();
-                    db.CreateTable<AdifModesDatabase>();
-                    db.CreateTable<IgnoredQsoDatabase>();
-
-                    InitPrefixAndCountryData(db);
-                    InitAdifModesDatabase(db);
-                    db.InsertOrReplace(
-                        ApplicationVersionDatabase.NewAppVersionWithVersionNumber(appVersion.ToString()));
-                    ClassLogger.Trace($"Tansaction done: {dbVersion} => {appVersion}");
-                });
-            }
-            else
-            {
-                ClassLogger.Info(
-                    $"Current app version is same of less then db version: {dbVersion} => {appVersion}. Creating/Migrating skipped");
-            }
-
-            ClassLogger.Info("Creating/Migrating done.");
-            await _conn.EnableWriteAheadLoggingAsync();
+            formalRelease = false;
+            appVer = appVer.Split("-").FirstOrDefault();
         }
-        catch (Exception e)
+
+        var appVersion = new Version("0.0.0");
+        if (!forceInitDatabase)
         {
-            ClassLogger.Warn(e, "Failed to initialize database. Ignored.");
+            try
+            {
+                appVersion = new Version(appVer);
+            }
+            catch (Exception e)
+            {
+                ClassLogger.Error(e, "failed to parse version - ignored.");
+            }
         }
+        ClassLogger.Trace($"DBVer:{dbVersion}");
+        ClassLogger.Trace($"appVersion:{appVersion}");
+
+        if (appVersion > dbVersion || forceInitDatabase || !formalRelease)
+        {
+            ClassLogger.Trace($"upgrading {dbVersion} => {appVersion}");
+            await InitCountryDicAsync();
+            await _conn.RunInTransactionAsync(db =>
+            {
+                ClassLogger.Trace($"Running transaction: {dbVersion} => {appVersion}");
+                // just truncate here
+                // country id is (maybe) not fixed here; so we just truncate it. won't take much time!
+                db.DropTable<CallsignDatabase>();
+                db.DropTable<CountryDatabase>();
+                db.DropTable<AdifModesDatabase>();
+
+                db.CreateTable<CallsignDatabase>();
+                db.CreateTable<CountryDatabase>();
+                db.CreateTable<AdifModesDatabase>();
+                db.CreateTable<IgnoredQsoDatabase>();
+
+                InitPrefixAndCountryData(db);
+                InitAdifModesDatabase(db);
+                db.InsertOrReplace(
+                    ApplicationVersionDatabase.NewAppVersionWithVersionNumber(appVersion.ToString()));
+                ClassLogger.Trace($"Tansaction done: {dbVersion} => {appVersion}");
+            });
+        }
+        else
+        {
+            ClassLogger.Info(
+                $"Current app version is same of less then db version: {dbVersion} => {appVersion}. Creating/Migrating skipped");
+        }
+
+        ClassLogger.Info("Creating/Migrating done.");
+        await _conn.EnableWriteAheadLoggingAsync();
         _inited = true;
     }
 
@@ -363,7 +367,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
         catch (Exception e)
         {
-            ClassLogger.Warn(e,"Failed to ignore.");
+            ClassLogger.Warn(e,"Failed to find ignored.");
             return null;
         }
     }
