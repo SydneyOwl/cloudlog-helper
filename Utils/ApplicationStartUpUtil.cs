@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CloudlogHelper.Utils;
@@ -47,4 +48,11 @@ public class ApplicationStartUpUtil
         throw new PlatformNotSupportedException("Unsupported OS");
     }
 
+    public static Stream? GetResourceStream(string name)
+    {
+        var assemblyNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+        var path = assemblyNames.First(x => x.Contains(name));
+        if (string.IsNullOrEmpty(path))throw new Exception("Resource not found: " + name);
+        return Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+    }
 }

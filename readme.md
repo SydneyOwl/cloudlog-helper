@@ -26,7 +26,7 @@ Helper a try!
 ## 💻 Supported Platforms
 
 + Windows 7 SP1+
-+ Ubuntu 20.04+ or other mainstream Linux distributions
++ [TESTING] Ubuntu 20.04+ or other mainstream Linux distributions
 + macOS support is in progress...
 
 ## ⚡️ Quick Start!

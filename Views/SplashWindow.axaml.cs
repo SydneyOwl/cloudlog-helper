@@ -66,6 +66,7 @@ public partial class SplashWindow : Window
         }
         catch(Exception ex)
         {
+            Console.WriteLine(ex);
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 Topmost = false;
@@ -76,7 +77,7 @@ public partial class SplashWindow : Window
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
                 if (wResult == ButtonResult.Ok)
                 {
-                    ApplicationStartUpUtil.RestartApplicationWithArgs("--reinit-db --reinit-settings");
+                    ApplicationStartUpUtil.RestartApplicationWithArgs("--reinit-db --reinit-settings --reinit-hamlib");
                 }
             });
             Environment.Exit(0);

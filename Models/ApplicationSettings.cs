@@ -179,6 +179,7 @@ public class ApplicationSettings : ReactiveValidationObject
     {
         if (reinit)
         {
+            ClassLogger.Debug("Settings reinitializing");
             InitEmptySettings(logServices);
             return;
         }

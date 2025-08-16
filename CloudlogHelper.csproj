@@ -6,7 +6,9 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-
+        
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        
         <PackageIcon>Assets\icon.png</PackageIcon>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <MacOSAppIcon>Assets/icon.icns</MacOSAppIcon>
@@ -68,6 +70,18 @@
         <EmbeddedResource Remove="Hamlib\**"/>
         <None Remove="Hamlib\**"/>
         <None Remove="cloudlog-helper.zip" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x86\*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-x64\*" />
     </ItemGroup>
 
     <ItemGroup>

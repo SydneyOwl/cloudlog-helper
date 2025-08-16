@@ -18,17 +18,17 @@ public class DefaultConfigs
     /// <summary>
     ///     Embedded resource filename for the country code mapping (English to Chinese).
     /// </summary>
-    public static readonly string EmbeddedCountryEn2cnFilename = "CloudlogHelper.Resources.country_en2cn.dat";
+    public static readonly string EmbeddedCountryEn2cnFilename = "country_en2cn.dat";
 
     /// <summary>
     ///     Embedded resource filename for the CTY (Country) data file.
     /// </summary>
-    public static readonly string EmbeddedCtyFilename = "CloudlogHelper.Resources.cty.dat";
+    public static readonly string EmbeddedCtyFilename = "cty.dat";
 
     /// <summary>
     ///     Embedded resource filename for the adif_modes data file. This file comes from sql of cloudlog.
     /// </summary>
-    public static readonly string EmbeddedeAdifModeFilename = "CloudlogHelper.Resources.adif_modes.dat";
+    public static readonly string EmbeddedeAdifModeFilename = "adif_modes.dat";
 
     /// <summary>
     ///     Default timeout (in seconds) for HTTP(s) requests.
@@ -261,10 +261,35 @@ public class DefaultConfigs
     ///     Default path to the settings file.
     /// </summary>
     public static string DefaultSettingsFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "settings.json");
+    
+    /// <summary>
+    ///     Default Hamlib files for windows
+    /// </summary>
+    public static List<string> DefaultWindowsHamlibFiles = new()
+    {
+        "libgcc_s_dw2-1.dll",
+        "libhamlib-4.dll",
+        "libusb-1.0.dll",
+        "libwinpthread-1.dll",
+        "rigctld.exe"
+    };
+    
+    /// <summary>
+    ///     Default Hamlib files for windows
+    /// </summary>
+    public static List<string> DefaultLinuxHamlibFiles = new()
+    {
+        "rigctld"
+    };
+
+    public static string HamlibFilePath = Path.Join(
+        ApplicationStartUpUtil.GetConfigDir(),
+        "hamlib");
 
     /// <summary>
     ///     Path to Rigctld executable file.
     /// </summary>
-    public static string ExecutableRigctldPath => Path.Join(AppContext.BaseDirectory,
+    public static string ExecutableRigctldPath => Path.Join(
+        HamlibFilePath,
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "rigctld.exe" : "rigctld");
 }

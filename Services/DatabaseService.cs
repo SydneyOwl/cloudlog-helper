@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
 using Newtonsoft.Json;
 using NLog;
 using SQLite;
@@ -284,13 +285,12 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// </summary>
     /// <param name="resourcePath"></param>
     /// <returns></returns>
-    private string ReadEmbeddedFileAsString(string resourcePath)
+    private string ReadEmbeddedFileAsString(string name)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream(resourcePath);
+        var stream = ApplicationStartUpUtil.GetResourceStream(name);
         if (stream == null)
         {
-            ClassLogger.Warn("Embeeded file is null: {msg}", resourcePath);
+            ClassLogger.Warn("Embeeded file is null: {msg}", name);
             return "";
         }
 

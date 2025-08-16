@@ -49,8 +49,6 @@ public class App : Application
     {
         options ??= new CommandLineOptions();
         _cmdOptions = options;
-        Console.WriteLine(options.ReinitSettings);
-        Console.WriteLine(options.ReinitDatabase);
     }
 
     public App()
@@ -62,6 +60,7 @@ public class App : Application
     {
         var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
+        _releaseDepFiles(_cmdOptions.ReinitHamlib);
 
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
@@ -81,7 +80,7 @@ public class App : Application
             return (ThirdPartyLogService)Activator.CreateInstance(x)!;
         });
 
-        _initializeSettings(logServices);
+        _initializeSettings(logServices, _cmdOptions.ReinitSettings);
     }
 
     public override void Initialize()
@@ -213,9 +212,9 @@ public class App : Application
     }
     
             
-    private static void _initializeSettings(IEnumerable<ThirdPartyLogService> logServices)
+    private static void _initializeSettings(IEnumerable<ThirdPartyLogService> logServices, bool reinit = false)
     {
-        ApplicationSettings.ReadSettingsFromFile(logServices.ToArray(), _cmdOptions.ReinitSettings);
+        ApplicationSettings.ReadSettingsFromFile(logServices.ToArray(), reinit);
         var settings = ApplicationSettings.GetInstance();
         var draftSettings = ApplicationSettings.GetDraftInstance();
         
@@ -245,5 +244,32 @@ public class App : Application
         }
 
         LogManager.Configuration = config;
+    }
+
+    private static void _releaseDepFiles(bool reinit = false)
+    {
+        if (reinit)
+        {
+            Directory.Delete(DefaultConfigs.HamlibFilePath,true);
+        }
+        Directory.CreateDirectory(DefaultConfigs.HamlibFilePath);
+        foreach (var defaultWindowsHamlibFile in DefaultConfigs.DefaultWindowsHamlibFiles)
+        {
+            var tPath = Path.Join(DefaultConfigs.HamlibFilePath, defaultWindowsHamlibFile);
+            if (File.Exists(tPath))
+            {
+                ClassLogger.Debug($"{tPath} exists. skipping...");
+                continue;
+            }
+            
+            ClassLogger.Debug($"releasing {tPath} ..");
+            var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultWindowsHamlibFile);
+            if (resourceFileStream is null) throw new Exception($"Stream is empty: {defaultWindowsHamlibFile}");
+            
+            using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
+            resourceFileStream.Seek(0, SeekOrigin.Begin);
+            resourceFileStream.CopyTo(fileStream);
+            fileStream.Flush(); 
+        }
     }
 }

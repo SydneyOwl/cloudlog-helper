@@ -14,8 +14,11 @@ public class CommandLineOptions
     [Option("reinit-db", HelpText = "Force reinitialize the database.")]
     public bool ReinitDatabase { get; set; }
     
-    [Option("reinit-settings", HelpText = "Force reinitialize settings.", Hidden = false)]
+    [Option("reinit-settings", HelpText = "Force reinitialize settings.")]
     public bool ReinitSettings { get; set; }
+    
+    [Option("reinit-hamlib", HelpText = "Force reinitialize hamlib.")]
+    public bool ReinitHamlib { get; set; }
 
     [Option("dev", HelpText = "Developer mode (throw exceptions).")]
     public bool DeveloperMode { get; set; }

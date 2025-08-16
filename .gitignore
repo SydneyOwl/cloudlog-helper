@@ -3,3 +3,6 @@
 bin/
 obj/
 *.user
+**/*.exe
+**/*.dll
+**/rigctld
