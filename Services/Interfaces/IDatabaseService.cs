@@ -7,6 +7,7 @@ namespace CloudlogHelper.Services.Interfaces;
 public interface IDatabaseService
 {
     Task InitDatabaseAsync(string dbPath = "", bool forceInitDatabase = false);
+    bool IsUpgradeNeeded();
     Task<string> GetParentModeAsync(string mode);
     Task<CountryDatabase> GetCallsignDetailAsync(string callsign);
     Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso);

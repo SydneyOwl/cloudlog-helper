@@ -56,11 +56,10 @@ public class App : Application
         _cmdOptions ??= new CommandLineOptions();
     }
 
-    private void PreInit()
+    private void _preInit()
     {
         var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
-        _releaseDepFiles(_cmdOptions.ReinitHamlib);
 
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
@@ -91,7 +90,7 @@ public class App : Application
 
     private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        PreInit();
+        _preInit();
         var collection = new ServiceCollection();
         collection.AddCommonServices();
         collection.AddViewModels();
@@ -102,7 +101,9 @@ public class App : Application
         collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
                 
         _servProvider = collection.BuildServiceProvider();
-        await _servProvider.GetRequiredService<IDatabaseService>().InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
+        var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
+        await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
+        _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
     }
 
     private Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
@@ -126,12 +127,12 @@ public class App : Application
         {
             var nmiExit = new NativeMenuItem
             {
-                Header = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.exit)),
+                Header = TranslationHelper.GetString(LangKeys.exit),
                 Command = _exitCommand
             };
             var nmiOpen = new NativeMenuItem
             {
-                Header  = TranslationHelper.GetString(TranslationHelper.GetString(LangKeys.open)),
+                Header  = TranslationHelper.GetString(LangKeys.open),
                 Command = _openCommand
             };
 

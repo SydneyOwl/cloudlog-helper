@@ -460,15 +460,17 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                                 {
                                     await thirdPartyLogService.UploadQSOAsync(adif, CancellationToken.None);
                                     rcd.UploadedServices[serName] = true;
+                                    ClassLogger.Info($"Qso for {serName} uploaded successfully.");
                                 }
                                 catch (Exception ex)
                                 {
+                                    ClassLogger.Error(ex, $"Qso for {serName} uploaded failed.");
                                     failOutput.AppendLine(serName + ex.Message);
                                 }
                             }
                         }
 
-                        if (rcd.UploadedServices.Values.Any(x => !x))
+                        if (rcd.UploadedServices.Values.All(x => x))
                         {
                             rcd.UploadStatus = UploadStatus.Success;
                             rcd.FailReason = string.Empty;

@@ -30,6 +30,12 @@ public class DatabaseService : IDatabaseService, IDisposable
     ///     Logger for the class.
     /// </summary>
     private readonly ILogger ClassLogger = LogManager.GetCurrentClassLogger();
+    
+    
+    /// <summary>
+    /// Indicates if current version is lower than target version.
+    /// </summary>
+    private bool _upgradeNeeded = false;
 
     /// <summary>
     /// Whether this is inited or not.
@@ -100,6 +106,7 @@ public class DatabaseService : IDatabaseService, IDisposable
 
         if (appVersion > dbVersion || forceInitDatabase || !formalRelease)
         {
+            _upgradeNeeded = true;
             ClassLogger.Trace($"upgrading {dbVersion} => {appVersion}");
             await InitCountryDicAsync();
             await _conn.RunInTransactionAsync(db =>
@@ -132,6 +139,15 @@ public class DatabaseService : IDatabaseService, IDisposable
         ClassLogger.Info("Creating/Migrating done.");
         await _conn.EnableWriteAheadLoggingAsync();
         _inited = true;
+    }
+
+    /// <summary>
+    /// Do we need upgrade?
+    /// </summary>
+    /// <returns></returns>
+    public bool IsUpgradeNeeded()
+    {
+        return _upgradeNeeded;
     }
 
     /// <summary>
