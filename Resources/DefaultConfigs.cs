@@ -243,7 +243,7 @@ public class DefaultConfigs
     /// <summary>
     ///     Maximum error count of rigctld communication. A msgbox will popup If exceeded.
     /// </summary>
-    public static readonly int MaxRigctldErrorCount = 3;
+    public static int MaxRigctldErrorCount = 3;
 
     /// <summary>
     ///     Expiry time (in seconds) for UDP client connections.

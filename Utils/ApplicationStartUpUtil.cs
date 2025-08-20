@@ -9,6 +9,11 @@ namespace CloudlogHelper.Utils;
 
 public class ApplicationStartUpUtil
 {
+    public static void ResetApplication()
+    {
+        RestartApplicationWithArgs("--reinit-db --reinit-settings --reinit-hamlib");
+    }
+    
     public static void RestartApplicationWithArgs(params string[] args)
     {
         var executablePath = Process.GetCurrentProcess().MainModule!.FileName;
@@ -51,7 +56,7 @@ public class ApplicationStartUpUtil
     public static Stream? GetResourceStream(string name)
     {
         var assemblyNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-        var path = assemblyNames.First(x => x.Contains(name));
+        var path = assemblyNames.FirstOrDefault(x => x.Contains(name), null);
         if (string.IsNullOrEmpty(path))throw new Exception("Resource not found: " + name);
         return Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
     }

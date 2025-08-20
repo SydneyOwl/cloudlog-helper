@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -77,10 +79,18 @@ public partial class SplashWindow : Window
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
                 if (wResult == ButtonResult.Ok)
                 {
-                    ApplicationStartUpUtil.RestartApplicationWithArgs("--reinit-db --reinit-settings --reinit-hamlib");
+                    ApplicationStartUpUtil.ResetApplication();
                 }
             });
             Environment.Exit(0);
         }
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        // trigger application restart
+        if (e.Key != Key.RightCtrl)return;
+        ApplicationStartUpUtil.ResetApplication();
+        base.OnKeyDown(e);
     }
 }

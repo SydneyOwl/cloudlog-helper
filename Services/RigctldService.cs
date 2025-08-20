@@ -160,7 +160,8 @@ public class RigctldService:IRigctldService, IDisposable
                     CreateNoWindow = true,
                     StandardOutputEncoding = Encoding.UTF8,
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = DefaultConfigs.HamlibFilePath
                 },
                 EnableRaisingEvents = true
             };
@@ -245,7 +246,8 @@ public class RigctldService:IRigctldService, IDisposable
                 StandardOutputEncoding = Encoding.UTF8,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
-                RedirectStandardInput = true
+                RedirectStandardInput = true,
+                WorkingDirectory = DefaultConfigs.HamlibFilePath
             },
             EnableRaisingEvents = true
         };

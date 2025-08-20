@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -25,6 +26,7 @@ using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using CloudlogHelper.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Mono.Unix;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -58,6 +60,7 @@ public class App : Application
 
     private void _preInit()
     {
+        if (_cmdOptions.Verbose) DefaultConfigs.MaxRigctldErrorCount = 100;
         var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
 
@@ -187,7 +190,9 @@ public class App : Application
             }
             else
             {
-                desktop.MainWindow = new SplashWindow(() => PreExec(desktop), () => Workload(desktop), () => PostExec(desktop));
+                desktop.MainWindow = new SplashWindow(() => PreExec(desktop), 
+                    () => Workload(desktop),
+                    () => PostExec(desktop));
             }
         }
 
@@ -251,12 +256,21 @@ public class App : Application
     {
         if (reinit)
         {
-            Directory.Delete(DefaultConfigs.HamlibFilePath,true);
+            try
+            {
+                Directory.Delete(DefaultConfigs.HamlibFilePath, true);
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Warn(ex);
+            }
         }
         Directory.CreateDirectory(DefaultConfigs.HamlibFilePath);
-        foreach (var defaultWindowsHamlibFile in DefaultConfigs.DefaultWindowsHamlibFiles)
+        var hamlibRelease = DefaultConfigs.DefaultWindowsHamlibFiles;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) hamlibRelease = DefaultConfigs.DefaultLinuxHamlibFiles;
+        foreach (var defaultHamlibFile in hamlibRelease)
         {
-            var tPath = Path.Join(DefaultConfigs.HamlibFilePath, defaultWindowsHamlibFile);
+            var tPath = Path.Join(DefaultConfigs.HamlibFilePath, defaultHamlibFile);
             if (File.Exists(tPath))
             {
                 ClassLogger.Debug($"{tPath} exists. skipping...");
@@ -264,13 +278,28 @@ public class App : Application
             }
             
             ClassLogger.Debug($"releasing {tPath} ..");
-            var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultWindowsHamlibFile);
-            if (resourceFileStream is null) throw new Exception($"Stream is empty: {defaultWindowsHamlibFile}");
+            var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
+            if (resourceFileStream is null)
+            {
+                ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
+                continue;
+            }
             
             using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
             resourceFileStream.Seek(0, SeekOrigin.Begin);
             resourceFileStream.CopyTo(fileStream);
             fileStream.Flush(); 
+            fileStream.Close();
+            
+            // make it executable on linux
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var fileInfo = new UnixFileInfo(tPath);
+                fileInfo.FileAccessPermissions |= 
+                    FileAccessPermissions.UserExecute | 
+                    FileAccessPermissions.GroupExecute | 
+                    FileAccessPermissions.OtherExecute;
+            }
         }
     }
 }
