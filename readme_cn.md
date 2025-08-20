@@ -21,7 +21,7 @@
 ## 💻 支持的平台
 
 + Windows 7 SP1+
-+ 【测试中】Ubuntu 20.04+ 或其他主流发行版
++ Debian 9+或其他发行版
 + 正在适配macOS...
 
 ## ⚡️ 快速开始!
@@ -46,17 +46,13 @@
 
 ### 📌 Clublog配置
 
-+ 输入您在Clublog上注册时使用的呼号、邮箱和密码。
++ 输入您在Clublog上注册时使用的呼号、邮箱和密码，并点击“测试”。
 
   ![image-20250615191934943](./md_assets/image-20250615191934943.png)
 
-+ 点击“测试”，如测试通过，您可以在“UDP设置”中启用“自动上传QSO到Clublog”。
-
-  ![image-20250615191954681](./md_assets/image-20250615191954681.png)
-
 ### 📌 HamCQ配置
 
-[HamCQ](https://forum.hamcq.cn)社区是国内的业余无线电爱好者交流社区。本软件集成了HamCQ社区的日志上传功能，您只需在对应输入框中填写HamCQ的apikey即可。
+[HamCQ](https://forum.hamcq.cn)社区是国内的业余无线电爱好者交流社区。本软件集成了HamCQ社区的日志上传功能，您只需在通过社区的执照认证，获取apikey后在软件对应输入框中填写即可。
 
   <img src="./md_assets/image-20250602140113552.png" alt="image-20250602140113552" width="60%" />
 
@@ -186,19 +182,27 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 
 #### ⚙️ 命令行参数
 
-| 配置项              | 说明                            |
-|------------------|-------------------------------|
-| `--verbose`      | 打印Trace级别的日志。                 |
-| `--log2file`     | 将日志记录到文件。路径为`./log/xxxx`      |
-| `--reinit-db`    | 重新初始化数据库。                     |
-| `--dev`          | 不启动崩溃日志搜集窗口。                  |
-| `--udp-log-only` | 只启用UDP日志上传功能，其他功能隐藏。          |
-| `--crash-report` | 指定崩溃日志收集模块读取临时日志的目录。仅供程序内部调用。 |
+| 配置项                 | 说明                            |
+|---------------------|-------------------------------|
+| `--verbose`         | 打印Trace级别的日志。                 |
+| `--log2file`        | 将日志记录到文件。路径为`./log/xxxx`      |
+| `--reinit-db`       | 重新初始化数据库。                     |
+| `--reinit-settings` | 重新初始化设置。                      |
+| `--reinit-hamlib`   | 重新初始化hamlib。                  |
+| `--dev`             | 不启动崩溃日志搜集窗口。                  |
+| `--udp-log-only`    | 只启用UDP日志上传功能，其他功能隐藏。          |
+| `--crash-report`    | 指定崩溃日志收集模块读取临时日志的目录。仅供程序内部调用。 |
+
+#### ⚙️ 快捷键
+
+| 按键       | 说明                                                       |
+| ---------- | ---------------------------------------------------------- |
+| Right Ctrl | 在启动页面消失前按下右Ctrl，程序将删除所有设置并重新初始化 |
+
 
 ## 🛠️ 编译
 
-请首先确保编译环境已具备`.net 6.0`(或以上) 以及`gcc`。以下步骤仅适用于Linux x64环境，其他系统环境可参考
-`.github/workflows/build.yml`。
+请首先确保编译环境已具备`.net 6.0`(或以上) 以及`gcc`。以下步骤仅适用于Linux x64环境。
 
 首先，克隆本仓库：
 
@@ -214,7 +218,7 @@ git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 
 ```shell
 # 依赖安装
-sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev
+sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev autoconf automake libtool
 
 cd cloudlog-helper/hamlib
 ./bootstrap
@@ -224,11 +228,11 @@ cd cloudlog-helper/hamlib
 CFLAGS="-g -O2 -fPIC -fdata-sections -ffunction-sections" \
 LDFLAGS="-Wl,--gc-sections"
 
-make -j4 all
+make -j$(nproc) all
 make install-strip DESTDIR=""
 ```
 
-编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`。
+编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`。请将它放到Resources/Dependencies/hamlib/linux-64中，后续rigctld将嵌入到编译的软件中。您也可以从[hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild)直接下载对应架构的rigctld。
 
 ### 🔨 编译软件本体
 
@@ -237,10 +241,11 @@ make install-strip DESTDIR=""
 ```shell
 cd cloudlog-helper
 dotnet restore -r linux-x64
-dotnet publish -c Release -r linux-x64 /p:PublishSingleFile=true --self-contained true
+dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true \
+--self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true
 ```
 
-编译完成后，您应该可以在`bin/Release/net6.0/linux-64`找到编译的软件.把上文提到的`rigctld`(如有)复制到此文件夹中，即完成软件的编译。
+编译完成后，您应该可以在`bin/Release/net6.0/linux-64`找到编译的软件.
 
 ## ✨ 其他
 
