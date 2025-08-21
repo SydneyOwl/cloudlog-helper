@@ -25,13 +25,13 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private bool _isManualClosing;
 
-    private IWindowManagerService windowManager;
+    private IWindowNotificationManagerService windowNotificationManager;
 
     public MainWindow(MainWindowViewModel mainWindowViewModel, 
         QsoSyncAssistantWindowViewModel qsoSyncAssistantWindowViewModel,
-        IWindowManagerService wm)
+        IWindowNotificationManagerService wm)
     {
-        windowManager = wm;
+        windowNotificationManager = wm;
         DataContext = mainWindowViewModel;
         InitializeComponent();
         this.WhenActivated(disposables =>
@@ -81,12 +81,18 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             if (ApplicationSettings.GetInstance().QsoSyncAssistantSettings.ExecuteOnStart)
             {
                 qsoSyncAssistantWindowViewModel.EnableExecuteOnStart();
-                var qsoWindow = new QsoSyncAssistantWindow { DataContext = qsoSyncAssistantWindowViewModel };
-                windowManager.Track(qsoWindow);
-                qsoWindow.ShowInTaskbar = false; 
-                qsoWindow.WindowState = WindowState.Normal;
-                qsoWindow.Show(this);
-                qsoWindow.Hide();
+
+                Observable.Timer(TimeSpan.FromMilliseconds(2000))
+                    .Select(_ => Unit.Default)
+                    .Do(_ => windowNotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing)))
+                    .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
+                    .DisposeWith(disposables);
+                // var qsoWindow = new QsoSyncAssistantWindow { DataContext = qsoSyncAssistantWindowViewModel };
+                // windowManager.Track(qsoWindow);
+                // qsoWindow.ShowInTaskbar = false; 
+                // qsoWindow.WindowState = WindowState.Normal;
+                // qsoWindow.Show(this);
+                // qsoWindow.Hide();
             }
         });
     }

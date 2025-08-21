@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using ADIFLib;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -66,18 +67,18 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         AddLogPathCommand = ReactiveCommand.CreateFromTask(AddLogPath);
         Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
 
-        this.WhenActivated(disposable =>
-        {
-            if (_executeOnStart)
-            {
-                Observable
-                    .Timer(TimeSpan.FromMilliseconds(2000))
-                    .Select(_ => Unit.Default)
-                    .Do(_ => _windowNotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing)))
-                    .InvokeCommand(this, x => x.StartSyncCommand)
-                    .DisposeWith(disposable);
-            }
-        });
+        // this.WhenActivated(disposable =>
+        // {
+        //     if (_executeOnStart)
+        //     {
+        //         Observable
+        //             .Timer(TimeSpan.FromMilliseconds(2000))
+        //             .Select(_ => Unit.Default)
+        //             .Do(_ => _windowNotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing)))
+        //             .InvokeCommand(this, x => x.StartSyncCommand)
+        //             .DisposeWith(disposable);
+        //     }
+        // });
     }
 
     public ReactiveCommand<Unit, Unit> SaveConf { get; }
@@ -121,12 +122,12 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private void _logProgress(string info, float? progress = null)
     {
-        // Dispatcher.UIThread.Invoke(() =>
-        // {
-        if (progress is not null) CurrentProgress = progress.Value;
-        if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
-        ClassLogger.Debug(info);
-        // });
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            if (progress is not null) CurrentProgress = progress.Value;
+            if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
+            ClassLogger.Debug(info);
+        });
     }
 
     private async Task _stopSync()
@@ -283,6 +284,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logProgress($"Failed to sync QSOs: {ex.Message}", 100);
+            ClassLogger.Error(ex);
             if (_executeOnStart)
                 await _windowNotificationManager.SendErrorNotificationAsync(
                     $"{TranslationHelper.GetString(LangKeys.failedsyncqso)}{ex.Message}");
