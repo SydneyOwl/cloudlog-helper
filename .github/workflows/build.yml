@@ -31,7 +31,7 @@ jobs:
           if ([string]::IsNullOrEmpty($tagName)) {
             $tagName = "dev"
           }
-          ./build.ps1 -tagName "$tagName"
+          ./ci-build.ps1 -tagName "$tagName"
 
       - name: Release UNIVERSAL
         uses: softprops/action-gh-release@v2
