@@ -49,15 +49,12 @@ public partial class SplashWindow : Window
             statusText.Text = "Executing Pre-Check...";
             statusTextDetailed.Text = "Checking for dupe process";
             await _preCheck?.Invoke()!;
-            
+
             statusText.Text = "Initialization in progress...";
             statusTextDetailed.Text = "Database / Log services initialization";
-            var workloadTask = Task.Run(async () =>
-            {
-                await _workload?.Invoke()!;
-            });
+            var workloadTask = Task.Run(async () => { await _workload?.Invoke()!; });
             await workloadTask.ConfigureAwait(false);
-            
+
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 statusText.Text = "Loading Window...";
@@ -65,6 +62,19 @@ public partial class SplashWindow : Window
                 await _postExec?.Invoke()!;
                 Close();
             });
+        }
+        catch (DuplicateWaitObjectException e)
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                Topmost = false;
+                statusTextDetailed.Text = "ERROR: " + e.Message;
+                statusTextDetailed.Background = Brushes.Orange;
+                statusTextDetailed.Foreground = Brushes.Black;
+                await MessageBoxManager.GetMessageBoxStandard("Error", TranslationHelper.GetString(LangKeys.dupeinstance) , ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
+            });
+            Environment.Exit(0);
         }
         catch(Exception ex)
         {

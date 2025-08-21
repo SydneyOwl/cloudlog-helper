@@ -105,4 +105,8 @@
         <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="tmp\" />
+    </ItemGroup>
+
 </Project>

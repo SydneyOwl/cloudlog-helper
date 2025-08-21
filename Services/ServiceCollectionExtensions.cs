@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions {
         // Register all view models as singletons
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<SettingsWindowViewModel>();
-        services.AddTransient<QsoSyncAssistantWindowViewModel>();
+        services.AddSingleton<QsoSyncAssistantWindowViewModel>();
         services.AddTransient<AskExitOrMinimizeWindowViewModel>();
         services.AddSingleton<AboutWindowViewModel>();
         services.AddSingleton<UDPLogInfoGroupboxUserControlViewModel>();

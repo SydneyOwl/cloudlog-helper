@@ -169,7 +169,7 @@ public class App : Application
         // check if init is allowed?
         if (!createdNew)
         {
-            throw new Exception(TranslationHelper.GetString(LangKeys.dupeinstance));
+            throw new DuplicateWaitObjectException(TranslationHelper.GetString(LangKeys.dupeinstance));
         }
         
         return Task.CompletedTask;
