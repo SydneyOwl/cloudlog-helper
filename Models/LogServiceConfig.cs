@@ -8,11 +8,11 @@ namespace CloudlogHelper.Models;
 public class LogSystemConfig : ReactiveObject
 {
     public string DisplayName { get; set; }
-    
+
     public Type RawType { get; set; }
-    
+
     public bool UploadEnabled { get; set; }
-    
+
     [Reactive] public List<LogSystemField> Fields { get; set; } = new();
 }
 
@@ -24,9 +24,8 @@ public class LogSystemField : ReactiveObject
     public string? Watermark { get; set; }
     public string? Description { get; set; }
     public bool IsRequired { get; set; }
-    
-    [Reactive] public string? Value { get; set; }
 
+    [Reactive] public string? Value { get; set; }
 }
 
 public enum FieldType

@@ -519,6 +519,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to upload rig info to {addr}. See logs for more!.
+        /// </summary>
+        public static string failuploadriginfoto {
+            get {
+                return ResourceManager.GetString("failuploadriginfoto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please complete all required fields..
         /// </summary>
         public static string fillall {
@@ -1095,6 +1104,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Split by semicolon.
+        /// </summary>
+        public static string spiltby {
+            get {
+                return ResourceManager.GetString("spiltby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Some radios do not support reading the split data, or the data read may be incorrect. Therefore, this feature is disabled by default..
         /// </summary>
         public static string splithelp {
@@ -1145,6 +1163,15 @@ namespace CloudlogHelper.Resources {
         public static string successqso {
             get {
                 return ResourceManager.GetString("successqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Also upload info to.
+        /// </summary>
+        public static string syncrigto {
+            get {
+                return ResourceManager.GetString("syncrigto", resourceCulture);
             }
         }
         

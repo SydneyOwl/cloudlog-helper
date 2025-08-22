@@ -23,31 +23,35 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private ReactiveCommand<Unit, Unit> _pollCommand;
-
     private readonly CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
-    private IWindowNotificationManagerService _windowNotificationManager;
-    
-    public bool InitSkipped { get; private set; }
+    private readonly IWindowNotificationManagerService _windowNotificationManager;
+
+    private ReactiveCommand<Unit, Unit> _pollCommand;
 
     public UserBasicDataGroupboxUserControlViewModel()
     {
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
     }
-    
+
     public UserBasicDataGroupboxUserControlViewModel(CommandLineOptions cmd,
         IWindowNotificationManagerService windowNotificationManager)
     {
         _windowNotificationManager = windowNotificationManager;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
-        if (!InitSkipped)
-        {
-            Initialize(); 
-        }
+        if (!InitSkipped) Initialize();
     }
-    
-    
+
+    public bool InitSkipped { get; }
+
+    [Reactive] public string? OP { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+
+    [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+
+
     private void Initialize()
     {
         // poll it!
@@ -89,13 +93,6 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
                 .DisposeWith(disposables);
         });
     }
-
-    [Reactive] public string? OP { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-    [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-    [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-    [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-
-    [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     // [Reactive] public string? QsAvgMin { get; set; } = LangKeys.calculating;
     // [Reactive] public string? QsAvgHour { get; set; } = LangKeys.calculating;
 
@@ -108,10 +105,7 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
             _settings.CloudlogStationInfo?.StationId!, CancellationToken.None);
-        if (info is null)
-        {
-            throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
-        }
+        if (info is null) throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
 
         OP = info.Value.StationCallsign;
         GridSquare = info.Value.StationGridsquare;

@@ -18,8 +18,9 @@ public interface IRigctldService
         int timeoutMilliseconds = 5000);
 
     Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority);
-    
-    Task<RadioData> GetAllRigInfo(string ip, int port, bool reportRfPower, bool reportSplitInfo, CancellationToken token);
+
+    Task<RadioData> GetAllRigInfo(string ip, int port, bool reportRfPower, bool reportSplitInfo,
+        CancellationToken token);
 
     List<RigInfo> ParseAllModelsFromRawOutput(string rawOutput);
 

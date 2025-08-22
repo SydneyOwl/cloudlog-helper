@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CloudlogHelper.Services.Interfaces;
-using CloudlogHelper.ViewModels;
-using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 
@@ -16,14 +14,19 @@ public class WindowManagerService : IWindowManagerService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private readonly List<WeakReference<Window>> _windows = new();
-    private IClassicDesktopStyleApplicationLifetime desktop;
-    private IServiceProvider provider;
+    private readonly IClassicDesktopStyleApplicationLifetime desktop;
+    private readonly IServiceProvider provider;
 
     public WindowManagerService(IServiceProvider prov,
         IClassicDesktopStyleApplicationLifetime desk)
     {
         provider = prov;
         desktop = desk;
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
     }
 
     public void Track(Window window)
@@ -67,18 +70,19 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         var viewPath = vmType!.FullName!.Replace(finalName, "")
             .Replace("ViewModel", "View", StringComparison.Ordinal);
         viewPath += pFinalName;
-        
-        
+
+
         var winType = Type.GetType(viewPath);
 
         if (winType == null) throw new Exception($"Windows not found for {viewPath}");
-        
+
         if (TryGetWindow(winType, out var target))
         {
             target!.Show();
             target.Activate();
             return Task.CompletedTask;
         }
+
         //
         var topLevel = desktop.MainWindow;
         if (topLevel is Window window)
@@ -90,15 +94,12 @@ public class WindowManagerService : IWindowManagerService, IDisposable
             Track(wd);
             return wd.ShowDialog(window);
         }
+
         return Task.CompletedTask;
     }
 
     private void AutoRemove()
     {
         _windows.RemoveAll(wr => !wr.TryGetTarget(out var res));
-    }
-    public void Dispose()
-    {
-        // TODO release managed resources here
     }
 }

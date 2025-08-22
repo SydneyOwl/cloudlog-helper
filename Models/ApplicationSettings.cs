@@ -39,14 +39,14 @@ public enum ProgramShutdownMode
 public class ApplicationSettings : ReactiveValidationObject
 {
     /// <summary>
-    /// default json serializer settings.
+    ///     default json serializer settings.
     /// </summary>
-    private static JsonSerializerSettings _defaultSerializerSettings = new ()
+    private static JsonSerializerSettings _defaultSerializerSettings = new()
     {
         TypeNameHandling = TypeNameHandling.Auto,
         Formatting = Formatting.Indented
     };
-    
+
     /// <summary>
     ///     Instance in using.
     /// </summary>
@@ -87,10 +87,10 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public CloudlogSettings CloudlogSettings { get; set; } = new();
-    
-    
+
+
     /// <summary>
-    /// Log services like qrz and eqsl.cc
+    ///     Log services like qrz and eqsl.cc
     /// </summary>
     [JsonProperty]
     public List<ThirdPartyLogService> LogServices { get; set; } = new();
@@ -195,7 +195,7 @@ public class ApplicationSettings : ReactiveValidationObject
                 InitEmptySettings(logServices);
                 return;
             }
-            
+
             var tps = _draftInstance.LogServices.Select(x => x.GetType()).ToArray();
             foreach (var service in logServices)
             {
@@ -223,7 +223,8 @@ public class ApplicationSettings : ReactiveValidationObject
     {
         try
         {
-            File.WriteAllText(DefaultConfigs.DefaultSettingsFile, JsonConvert.SerializeObject(this, _defaultSerializerSettings));
+            File.WriteAllText(DefaultConfigs.DefaultSettingsFile,
+                JsonConvert.SerializeObject(this, _defaultSerializerSettings));
             ClassLogger.Trace(
                 $"Calling ->WriteCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
@@ -256,31 +257,32 @@ public class ApplicationSettings : ReactiveValidationObject
     private void _applyLogServiceChanges(List<LogSystemConfig>? rawConfigs = null)
     {
         if (rawConfigs is null) return;
-        List<ApplicationSettings> settings = new(){_draftInstance!, _currentInstance!};
+        List<ApplicationSettings> settings = new() { _draftInstance!, _currentInstance! };
         foreach (var appSet in settings)
+        foreach (var logService in appSet!.LogServices)
         {
-            foreach (var logService in appSet!.LogServices)
+            var servType = logService.GetType();
+            var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
+            if (logSystemConfig is null)
             {
-                var servType = logService.GetType();
-                var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
-                if (logSystemConfig is null)
+                ClassLogger.Warn($"Class not found for {servType.FullName}. Skipped.");
+                continue;
+            }
+
+            servType.GetProperty("AutoQSOUploadEnabled")?.SetValue(logService, logSystemConfig.UploadEnabled);
+
+            foreach (var logSystemField in logSystemConfig.Fields)
+            {
+                var fieldInfo = servType.GetProperty(logSystemField.PropertyName,
+                    BindingFlags.Public | BindingFlags.Instance);
+                if (fieldInfo is null)
                 {
-                    ClassLogger.Warn($"Class not found for {servType.FullName}. Skipped.");
+                    ClassLogger.Warn(
+                        $"Field not found for {servType.FullName} - {logSystemField.PropertyName}. Skipped.");
                     continue;
                 }
-            
-                servType.GetProperty("AutoQSOUploadEnabled")?.SetValue(logService, logSystemConfig.UploadEnabled);
 
-                foreach (var logSystemField in logSystemConfig.Fields)
-                {
-                    var fieldInfo = servType.GetProperty(logSystemField.PropertyName, BindingFlags.Public | BindingFlags.Instance);
-                    if (fieldInfo is null)
-                    {
-                        ClassLogger.Warn($"Field not found for {servType.FullName} - {logSystemField.PropertyName}. Skipped.");
-                        continue;
-                    }
-                    fieldInfo.SetValue(logService, logSystemField.Value);
-                }
+                fieldInfo.SetValue(logService, logSystemField.Value);
             }
         }
     }

@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Styling;
-using CloudlogHelper.Messages;
-using CloudlogHelper.Models;
-using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
-using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using NLog;
 using ReactiveUI;
@@ -24,12 +17,13 @@ public class MainWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    private readonly IWindowManagerService windowManager;
     private bool _isRigctldUsingExternal;
-    private IWindowManagerService windowManager;
 
     public MainWindowViewModel()
     {
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         UserBasicDataGroupboxUserControlVm = new UserBasicDataGroupboxUserControlViewModel();
         RigDataGroupboxUserControlVm = new RIGDataGroupboxUserControlViewModel();
         UDPLogInfoGroupboxUserControlVm = new UDPLogInfoGroupboxUserControlViewModel();
@@ -42,12 +36,13 @@ public class MainWindowViewModel : ViewModelBase
         UserBasicDataGroupboxUserControlViewModel userBasicDataGroupboxUserControlViewModel,
         StatusLightUserControlViewModel statusLightUserControlViewModel,
         IWindowManagerService wm
-        )
+    )
     {
         windowManager = wm;
-        OpenSettingsWindow = ReactiveCommand.CreateFromTask(()=>OpenWindow(typeof(SettingsWindowViewModel)));
-        OpenAboutWindow = ReactiveCommand.CreateFromTask(()=>OpenWindow(typeof(AboutWindowViewModel)));
-        OpenQSOAssistantWindow = ReactiveCommand.CreateFromTask(()=>OpenWindow(typeof(QsoSyncAssistantWindowViewModel)));
+        OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel)));
+        OpenAboutWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(AboutWindowViewModel)));
+        OpenQSOAssistantWindow =
+            ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(QsoSyncAssistantWindowViewModel)));
         SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
 

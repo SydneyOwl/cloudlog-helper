@@ -9,28 +9,34 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using WsjtxUtilsPatch.WsjtxUdpServer;
-using LogLevel = NLog.LogLevel;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace CloudlogHelper.Services;
 
 public class UdpServerService : IUdpServerService, IDisposable
 {
-    private WsjtxUdpServer? _udpServer;
-
-    private UdpClient? _forwardedClient;
-
-    private CancellationTokenSource _cts = new();
-
-    private IPEndPoint _currentEndpoint;
-
     private readonly object _syncLock = new();
-
-    private bool _closing;
 
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    private bool _closing;
+
+    private CancellationTokenSource _cts = new();
+
+    private IPEndPoint _currentEndpoint;
+
+    private UdpClient? _forwardedClient;
+    private WsjtxUdpServer? _udpServer;
+
+    public void Dispose()
+    {
+        _udpServer?.Dispose();
+        _forwardedClient?.Dispose();
+        _cts.Dispose();
+    }
 
     public bool IsUdpServerRunning()
     {
@@ -67,9 +73,9 @@ public class UdpServerService : IUdpServerService, IDisposable
     }
 
     public async Task RestartUDPServerAsync(IPAddress ip,
-        int port, Action<WsjtxMessage> handler, 
-        Action<Memory<byte>> rawhandler, 
-        Action<Microsoft.Extensions.Logging.LogLevel, string>? udpLogger = null)
+        int port, Action<WsjtxMessage> handler,
+        Action<Memory<byte>> rawhandler,
+        Action<LogLevel, string>? udpLogger = null)
     {
         try
         {
@@ -88,15 +94,15 @@ public class UdpServerService : IUdpServerService, IDisposable
         catch (Exception e)
         {
             ClassLogger.Error(e, "Error starting udp.");
-            udpLogger?.Invoke(Microsoft.Extensions.Logging.LogLevel.Error, e.Message);
+            udpLogger?.Invoke(LogLevel.Error, e.Message);
         }
     }
-    
+
 
     public Task TerminateUDPServerAsync()
     {
         if (_udpServer is null) return Task.CompletedTask;
-        if (_closing)return Task.CompletedTask;
+        if (_closing) return Task.CompletedTask;
         return Task.Run(() =>
         {
             try
@@ -127,9 +133,9 @@ public class UdpServerService : IUdpServerService, IDisposable
 
     private sealed class UDPServerLogger : ILogger<WsjtxUdpServer>
     {
-        private readonly Action<Microsoft.Extensions.Logging.LogLevel, string>? _logIt;
+        private readonly Action<LogLevel, string>? _logIt;
 
-        public UDPServerLogger(Action<Microsoft.Extensions.Logging.LogLevel, string>? callback)
+        public UDPServerLogger(Action<LogLevel, string>? callback)
         {
             _logIt = callback;
         }
@@ -139,13 +145,13 @@ public class UdpServerService : IUdpServerService, IDisposable
             return default!;
         }
 
-        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
+        public bool IsEnabled(LogLevel logLevel)
         {
             return true;
         }
 
         public void Log<TState>(
-            Microsoft.Extensions.Logging.LogLevel logLevel,
+            LogLevel logLevel,
             EventId eventId,
             TState state,
             Exception? exception,
@@ -157,12 +163,5 @@ public class UdpServerService : IUdpServerService, IDisposable
             // ClassLogger.Log(NLog.LogLevel.FromOrdinal((int)logLevel), msg);
             _logIt?.Invoke(logLevel, msg);
         }
-    }
-
-    public void Dispose()
-    {
-        _udpServer?.Dispose();
-        _forwardedClient?.Dispose();
-        _cts.Dispose();
     }
 }

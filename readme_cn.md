@@ -3,15 +3,16 @@
 
 # Cloudlog Helper
 
-![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=for-the-badge&logo=dotnet)
+![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=for-the-badge)
 ![avalonia](https://img.shields.io/badge/AvaloniaUI-11.2.6-0d6efd?style=for-the-badge)
 ![license](https://img.shields.io/badge/license-Unlicense-3451b2?style=for-the-badge&logo=none)<br />
-![windows](https://img.shields.io/badge/Windows-7_SP1+-green?style=for-the-badge&logo=none)
-![linux](https://img.shields.io/badge/Ubuntu-20.04+-green?style=for-the-badge&logo=none)<br />
-![stage](https://img.shields.io/badge/Stage-UNDER_TESTING-orange?style=for-the-badge&logo=none)
+![windows](https://img.shields.io/badge/Windows-7_SP1+-green?style=for-the-badge)
+![linux](https://img.shields.io/badge/Debian-9+-green?style=for-the-badge&logo=linux)<br />
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=for-the-badge)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
 
-轻量级的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息以及实时QSO数据，支持大部分主流电台以及与`JTDX`/`WSJT-X`等软件协同工作！
+轻量级、跨平台的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息以及实时QSO数据，支持大部分主流电台以及与`JTDX`/`WSJT-X`
+等软件协同工作！
 
 如果您的电脑性能捉襟见肘，或单纯需要一个自动化QSO/电台信息上传工具，不妨来试试`Cloudlog Helper`！
 
@@ -21,7 +22,7 @@
 ## 💻 支持的平台
 
 + Windows 7 SP1+
-+ Debian 9+或其他发行版
++ Debian 9+ / Ubuntu 18.04+ / 其他发行版(glibc >= 2.24)
 + 正在适配macOS...
 
 ## ⚡️ 快速开始!
@@ -50,11 +51,17 @@
 
   ![image-20250615191934943](./md_assets/image-20250615191934943.png)
 
+### 📌 eqsl配置
+
++ 输入您在eqsl.cc上注册时使用的呼号、邮箱和QTH昵称（可选），并点击“测试”。
+
+  ![img.png](./md_assets/img-eqsl.png)
+
 ### 📌 HamCQ配置
 
 [HamCQ](https://forum.hamcq.cn)社区是国内的业余无线电爱好者交流社区。本软件集成了HamCQ社区的日志上传功能，您只需在通过社区的执照认证，获取apikey后在软件对应输入框中填写即可。
 
-  <img src="./md_assets/image-20250602140113552.png" alt="image-20250602140113552" width="60%" />
+![img.png](./md_assets/image-20250602140113552.png)
 
 ### 📌 Hamlib配置
 
@@ -154,19 +161,20 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 
 #### ⚙️ Hamlib配置
 
-| 配置项               | 说明                                                                                                                                                |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| 电台数据自动上报          | 如此项被勾选，软件将自动上传获取到的电台信息到指定的cloudlog服务器。                                                                                                            |
-| 轮询间隔              | 指定向rigctld后端获取电台数据的时间间隔。默认为9秒。                                                                                                                    |
-| 电台型号              | 目前使用电台的型号。型号列表从rigctld中读取，因此理论上只要hamlib支持的电台本软件均支持。                                                                                               |
-| 设备端口              | 电台所在的端口。                                                                                                                                          |
-| 报告异频信息            | 在轮询时向rigctld请求异频（在接收和发射时使用不同频率）信息。部分电台不支持此功能或读取的数据有误。                                                                                             |
-| 报告发射功率            | 在轮询时向rigctld请求当前的发射功率。部分电台不支持此功能或读取的数据有误。                                                                                                         |
+| 配置项              | 说明                                                                                                                                               |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| 电台数据自动上报         | 如此项被勾选，软件将自动上传获取到的电台信息到指定的cloudlog服务器。                                                                                                           |
+| 轮询间隔             | 指定向rigctld后端获取电台数据的时间间隔。默认为9秒。                                                                                                                   |
+| 电台型号             | 目前使用电台的型号。型号列表从rigctld中读取，因此理论上只要hamlib支持的电台本软件均支持。                                                                                              |
+| 设备端口             | 电台所在的端口。                                                                                                                                         |
+| 报告异频信息           | 在轮询时向rigctld请求异频（在接收和发射时使用不同频率）信息。部分电台不支持此功能或读取的数据有误。                                                                                            |
+| 报告发射功率           | 在轮询时向rigctld请求当前的发射功率。部分电台不支持此功能或读取的数据有误。                                                                                                        |
 | 高级设置-rigctld命令行参数 | 手动指定启动rigctld后端的命令行参数。此项具有最高的优先级，如果此项不为空，其他相关配置（禁用PTT控制/允许外部控制）均会被忽略。**如果您选择手动指定命令行参数，则必须显式指定rigctld的ip地址和端口（-T <ip> -t <port>）,软件将从命令行参数中port。** |
-| 高级设置-禁用PTT控制      | 在启动时禁用rts和dtr控制（增加参数`--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" `）。仅在部分Lnux上需要启用。如需与JTDX等第三方软件协同工作，此选项不应该勾选。                       |
-| 高级设置-允许外部控制       | 允许从localhost以外的设备与rigctld后端交互（增加参数 `-T 0.0.0.0` ）。                                                                                                |
-| ~~高级设置-允许请求代理~~   | ~~启动一个代理服务器，可以将外部的请求代理至软件中，由软件按照优先级按顺序自动发送至rigctld。~~                                                                                             |
-| 使用外部rigctld服务     | 使用外部的rigctld作为软件的rigctld后端。例如您手动启动了一个rigctld实例，就可以勾选此选项，配置软件使用您指定的rigctld后端。                                                                      |
+| 高级设置-禁用PTT控制     | 在启动时禁用rts和dtr控制（增加参数`--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" `）。仅在部分Lnux上需要启用。如需与JTDX等第三方软件协同工作，此选项不应该勾选。                      |
+| 高级设置-允许外部控制      | 允许从localhost以外的设备与rigctld后端交互（增加参数 `-T 0.0.0.0` ）。                                                                                               |
+| ~~高级设置-允许请求代理~~  | ~~启动一个代理服务器，可以将外部的请求代理至软件中，由软件按照优先级按顺序自动发送至rigctld。~~                                                                                            |
+| 使用外部rigctld服务    | 使用外部的rigctld作为软件的rigctld后端。例如您手动启动了一个rigctld实例，就可以勾选此选项，配置软件使用您指定的rigctld后端。                                                                     |
+| 同时报告电台信息         | 将获取到的电台信息同时上报到指定URL。可以同时输入多个，用分号分开，例如“http://a.com/api;http://b.com/rig;http://c.cn/a”。详见 `高级` -> `报告电台信息`                                       |
 
 #### ⚙️ UDP服务器配置
 
@@ -195,10 +203,9 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 
 #### ⚙️ 快捷键
 
-| 按键       | 说明                                                       |
-| ---------- | ---------------------------------------------------------- |
-| Right Ctrl | 在启动页面消失前按下右Ctrl，程序将删除所有设置并重新初始化 |
-
+| 按键   | 说明                                  |
+|------|-------------------------------------|
+| Ctrl | 在启动页面消失前快速按下3次Ctrl，程序将删除所有设置并重新初始化。 |
 
 ## 🛠️ 编译
 
@@ -232,7 +239,9 @@ make -j$(nproc) all
 make install-strip DESTDIR=""
 ```
 
-编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`。请将它放到Resources/Dependencies/hamlib/linux-64中，后续rigctld将嵌入到编译的软件中。您也可以从[hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild)直接下载对应架构的rigctld。
+编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`
+。请将它放到Resources/Dependencies/hamlib/linux-64中，后续rigctld将嵌入到编译的软件中。
+您也可以从[hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild)直接下载对应架构的rigctld。
 
 ### 🔨 编译软件本体
 
@@ -248,6 +257,49 @@ dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true \
 编译完成后，您应该可以在`bin/Release/net6.0/linux-64`找到编译的软件.
 
 ## ✨ 其他
+
+### ⬆️ 升级Cloudlog Helper
+
++ v0.2.0及之后： 无需其他操作，直接下载最新版的Cloudlog Helper，双击打开即可。
+
+
++ v0.1.5及以前： 如果您需要保留之前的数据，请将软件产生的数据库文件(cloudlog-helper.db)和设置文件(settings.json)复制到新的配置目录（不存在请新建，对于windows，这个目录在`C:\Users\<用户名>\AppData\Local\CloudlogHelper`，Linux则在
+  `/home/<用户名>/.config/CloudlogHelper`)。
+  由于版本变动较大，设置中可能仍有部分字段缺失，请您手动补全~
+
+### 🔍 集成其他日志系统
+
+如果您有集成其他日志系统到软件中的需求，可参考`LogService`中的相关配置。
+如您有过C#开发经验，应该能够轻松地完成新配置的添加。
+（添加后可以考虑提个PR~）
+
+CloudlogHelper 使用基于属性的系统来定义日志服务，使开发者能够轻松地添加新的日志服务。每个日志服务都继承自
+`ThirdPartyLogService`，并使用特定的Attribute来定义其配置。
+程序会自动发现带有 LogServiceAttribute 的类，同时UI会自动生成配置界面（UserInputAttribute 标注的字段）。简单来说，您只需完成这三步：
+
++ 创建继承自`ThirdPartyLogService`的类，并用 `[LogService("服务名")]` 标注。
++ 为每个需要用户配置的字段（如API密钥、用户名等）添加属性，并用 `[UserInput("显示名")]` 标注。
++ 实现两个方法，用于测试与服务端的连接是否正常 以及 将QSO数据上传到日志服务。您可以不用处理方法中可能出现的异常。
+
+### 📡 自定义后端支持
+
+除了上报到 Cloudlog，还可将电台实时数据（频率、模式等）同时推送至您自己的服务器或 API，满足您二次开发的需求。
+数据格式如下（json）:
+```json5
+{
+  "key": null, // 保留字段 请忽略
+  "radio": "G90", // 电台名称
+  "frequency": 14020000,// （以Hz为单位的）发射频率
+  "mode": "CW", // 发射模式
+  "frequencyRx": 14020000, // 接收频率，仅当“报告异频”启用时，否则为null
+  "modeRx": "CW", // 接收模式，仅当“报告异频”启用时，否则为null
+  "power": 10.0 // 发射功率，仅当“报告功率”启用时，否则为null
+}
+```
+
+收到数据后，您应当以字符串形式回复"OK"，否则软件将视为数据推送失败并提示。
+
+您可以在“Demo”文件夹中查看示例。
 
 ### 🐆 性能分析
 

@@ -119,7 +119,8 @@ public class CloudlogSettings : ReactiveValidationObject
     protected bool Equals(CloudlogSettings other)
     {
         return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
-               CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId && AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
+               CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId &&
+               AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
     }
 
     public override bool Equals(object? obj)
@@ -132,6 +133,6 @@ public class CloudlogSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo,AutoQSOUploadEnabled);
+        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled);
     }
 }

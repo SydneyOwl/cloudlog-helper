@@ -6,7 +6,6 @@ using Avalonia.ReactiveUI;
 using Avalonia.VisualTree;
 using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
-using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using NLog;
 using ReactiveUI;
@@ -57,7 +56,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                 }
             else
                 Height = 800;
-            
+
             ViewModel!.NotificationManager = _notificationManager;
 
             ViewModel!.DiscardConf

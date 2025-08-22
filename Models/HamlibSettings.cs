@@ -3,6 +3,7 @@ using System.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
+using Force.DeepCloner;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -57,6 +58,8 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
 
+    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
+
     [Reactive]
     [JsonProperty]
     public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
@@ -99,6 +102,7 @@ public class HamlibSettings : ReactiveValidationObject
         OverrideCommandlineArg = settings.OverrideCommandlineArg;
         UseExternalRigctld = settings.UseExternalRigctld;
         ExternalRigctldHostAddress = settings.ExternalRigctldHostAddress;
+        SyncRigInfoAddress = settings.SyncRigInfoAddress;
     }
 
     private bool IsPropertyHasErrors(string propertyName)
@@ -127,11 +131,6 @@ public class HamlibSettings : ReactiveValidationObject
         return this;
     }
 
-    public HamlibSettings DeepClone()
-    {
-        return JsonConvert.DeserializeObject<HamlibSettings>(JsonConvert.SerializeObject(this))!;
-    }
-
     protected bool Equals(HamlibSettings other)
     {
         return SelectedRigInfo != null &&
@@ -142,7 +141,8 @@ public class HamlibSettings : ReactiveValidationObject
                AllowExternalControl == other.AllowExternalControl &&
                OverrideCommandlineArg == other.OverrideCommandlineArg &&
                UseExternalRigctld == other.UseExternalRigctld &&
-               ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
+               ExternalRigctldHostAddress == other.ExternalRigctldHostAddress &&
+               SyncRigInfoAddress == other.SyncRigInfoAddress;
     }
 
     public override bool Equals(object? obj)
@@ -168,6 +168,7 @@ public class HamlibSettings : ReactiveValidationObject
         hashCode.Add(OverrideCommandlineArg);
         hashCode.Add(UseExternalRigctld);
         hashCode.Add(ExternalRigctldHostAddress);
+        hashCode.Add(SyncRigInfoAddress);
         return hashCode.ToHashCode();
     }
 }

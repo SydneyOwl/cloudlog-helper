@@ -53,10 +53,7 @@ public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantWin
             ViewModel!.ShowFileSelectWindow.RegisterHandler(ShowFilePickerDialog).DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.ViewModel!.CurrentInfo)
-                .Subscribe(_ =>
-                {
-                    Dispatcher.UIThread.Invoke(()=>currentInfoTextBlock.ScrollToEnd());
-                })
+                .Subscribe(_ => { Dispatcher.UIThread.Invoke(() => currentInfoTextBlock.ScrollToEnd()); })
                 .DisposeWith(disposables);
         });
     }

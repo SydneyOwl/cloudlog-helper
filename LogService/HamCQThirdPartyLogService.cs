@@ -15,9 +15,8 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
 {
     private const string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
-    [UserInput("API Key")]
-    public string ApiKey { get; set; }
-    
+    [UserInput("API Key")] public string ApiKey { get; set; }
+
     public override Task TestConnectionAsync(CancellationToken token)
     {
         return UploadQSOAsync(null, token);
@@ -37,12 +36,13 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithHeader("Content-Type", "application/json")
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .PostStringAsync(reqJson.ToString(), cancellationToken:token);
+            .PostStringAsync(reqJson.ToString(), cancellationToken: token);
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
         if (responseText == "Pass") return;
         var res = JsonConvert.DeserializeObject<JObject>(responseText);
-        if (res is null) throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)}({responseText})");
+        if (res is null)
+            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)}({responseText})");
         throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)} ({res["message"]})");
     }
 }

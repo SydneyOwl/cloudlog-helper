@@ -12,10 +12,10 @@ using NLog;
 
 namespace CloudlogHelper.Services;
 
-public class WindowNotificationManagerService:IWindowNotificationManagerService, IDisposable
+public class WindowNotificationManagerService : IWindowNotificationManagerService, IDisposable
 {
+    private readonly Logger _classLoggger = LogManager.GetCurrentClassLogger();
     private WindowNotificationManager? _manager;
-    private Logger _classLoggger =  LogManager.GetCurrentClassLogger();
 
     public WindowNotificationManagerService(IClassicDesktopStyleApplicationLifetime topLevel)
     {
@@ -23,10 +23,7 @@ public class WindowNotificationManagerService:IWindowNotificationManagerService,
         {
             try
             {
-                while (topLevel.MainWindow is not MainWindow)
-                {
-                    await Task.Delay(100);
-                }
+                while (topLevel.MainWindow is not MainWindow) await Task.Delay(100);
                 _manager = new WindowNotificationManager(topLevel.MainWindow);
             }
             catch (Exception e)
@@ -35,37 +32,33 @@ public class WindowNotificationManagerService:IWindowNotificationManagerService,
             }
         });
     }
-    
+
     public WindowNotificationManagerService(Window topLevel)
     {
         _manager = new WindowNotificationManager(topLevel);
     }
 
-    private async Task SendNotificationAsync(string title, string message, NotificationType tp)
+    public void Dispose()
     {
-        if (string.IsNullOrEmpty(message))return;
-        await Dispatcher.UIThread.InvokeAsync(() => { _manager?.Show(new Notification(title, message, tp)); });
-    }
-
-    private void SendNotificationSync(string title, string message, NotificationType tp)
-    {
-        if (string.IsNullOrEmpty(message))return;
-        Dispatcher.UIThread.Invoke(() => { _manager?.Show(new Notification(title, message, tp)); });
+        // TODO release managed resources here
     }
 
     public async Task SendInfoNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titleinfo), message, NotificationType.Information);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titleinfo), message,
+            NotificationType.Information);
     }
 
     public async Task SendSuccessNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titlesuccess), message, NotificationType.Success);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titlesuccess), message,
+            NotificationType.Success);
     }
 
     public async Task SendWarningNotificationAsync(string message)
     {
-        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titlewarning), message, NotificationType.Warning);
+        await SendNotificationAsync(TranslationHelper.GetString(LangKeys.titlewarning), message,
+            NotificationType.Warning);
     }
 
     public async Task SendErrorNotificationAsync(string message)
@@ -93,8 +86,15 @@ public class WindowNotificationManagerService:IWindowNotificationManagerService,
         SendNotificationSync(TranslationHelper.GetString(LangKeys.titleerror), message, NotificationType.Error);
     }
 
-    public void Dispose()
+    private async Task SendNotificationAsync(string title, string message, NotificationType tp)
     {
-        // TODO release managed resources here
+        if (string.IsNullOrEmpty(message)) return;
+        await Dispatcher.UIThread.InvokeAsync(() => { _manager?.Show(new Notification(title, message, tp)); });
+    }
+
+    private void SendNotificationSync(string title, string message, NotificationType tp)
+    {
+        if (string.IsNullOrEmpty(message)) return;
+        Dispatcher.UIThread.Invoke(() => { _manager?.Show(new Notification(title, message, tp)); });
     }
 }

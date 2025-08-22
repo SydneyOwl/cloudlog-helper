@@ -2,7 +2,6 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CloudlogHelper.Models;
-using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Converters;
 

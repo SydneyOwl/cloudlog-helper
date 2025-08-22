@@ -20,21 +20,18 @@ using ReactiveUI;
 namespace CloudlogHelper.Views.UserControls;
 
 public class LogSystemCard : UserControl
-{    
+{
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private CancellationTokenSource _source;
-    
-    
+    private readonly CancellationTokenSource _source;
+
+
     public LogSystemCard()
     {
         _source = new CancellationTokenSource();
         MessageBus.Current.Listen<SettingsChanged>().Subscribe(res =>
         {
-            if (res.Part == ChangedPart.NothingJustClosed)
-            {
-                _source.Cancel();
-            }
+            if (res.Part == ChangedPart.NothingJustClosed) _source.Cancel();
         });
         InitializeComponent();
     }
@@ -42,9 +39,9 @@ public class LogSystemCard : UserControl
     private void InitializeComponent()
     {
         var stackPanel = new StackPanel { Spacing = 15 };
-        
-        var title = new TextBlock 
-        { 
+
+        var title = new TextBlock
+        {
             Text = TranslationHelper.GetString("thirdpartylogsys"),
             Classes = { "section-title" }
         };
@@ -54,22 +51,25 @@ public class LogSystemCard : UserControl
         itemsControl.Bind(ItemsControl.ItemsSourceProperty, new Binding("LogSystems"));
         itemsControl.ItemTemplate = new FuncDataTemplate<LogSystemConfig>((config, _) =>
         {
-            var border = new Border { Classes = { "subsection-card" },
+            var border = new Border
+            {
+                Classes = { "subsection-card" },
                 Padding = new Thickness(12),
-                Margin = new Thickness(5,5,5,10) };
+                Margin = new Thickness(5, 5, 5, 10)
+            };
             var innerStack = new StackPanel { Spacing = 10 };
-            
-            var header = new TextBlock 
-            { 
+
+            var header = new TextBlock
+            {
                 Text = config.DisplayName,
                 Classes = { "subsection-title" }
             };
             innerStack.Children.Add(header);
 
-            var grid = new Grid 
-            { 
-                ColumnDefinitions = 
-                { 
+            var grid = new Grid
+            {
+                ColumnDefinitions =
+                {
                     new ColumnDefinition { Width = GridLength.Auto },
                     new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
                     new ColumnDefinition { Width = GridLength.Auto },
@@ -79,12 +79,12 @@ public class LogSystemCard : UserControl
                 RowSpacing = 5
             };
 
-            for (int i = 0; i < config.Fields.Count; i++)
+            for (var i = 0; i < config.Fields.Count; i++)
             {
                 grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                
-                var label = new TextBlock 
-                { 
+
+                var label = new TextBlock
+                {
                     Text = config.Fields[i].DisplayName,
                     Classes = { "setting-label" }
                 };
@@ -94,10 +94,10 @@ public class LogSystemCard : UserControl
 
                 Control inputControl = config.Fields[i].Type switch
                 {
-                    FieldType.Text => new TextBox 
-                    { 
+                    FieldType.Text => new TextBox
+                    {
                         Classes = { "setting-control" },
-                        DataContext = config.Fields[i], 
+                        DataContext = config.Fields[i],
                         Watermark = config.Fields[i].Watermark ?? string.Empty,
                         [!TextBox.TextProperty] = new Binding("Value")
                         {
@@ -105,12 +105,12 @@ public class LogSystemCard : UserControl
                             UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                         }
                     },
-                    FieldType.Password => new TextBox 
-                    { 
+                    FieldType.Password => new TextBox
+                    {
                         Classes = { "setting-control" },
                         PasswordChar = '•',
                         DataContext = config.Fields[i],
-                        [!TextBox.TextProperty] = new Binding("Value") 
+                        [!TextBox.TextProperty] = new Binding("Value")
                         {
                             Mode = BindingMode.TwoWay,
                             UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
@@ -122,15 +122,15 @@ public class LogSystemCard : UserControl
                 Grid.SetColumn(inputControl, 1);
                 Grid.SetRow(inputControl, i);
                 grid.Children.Add(inputControl);
-                
-                
+
+
                 // help button
                 var cont = config.Fields[i].Description;
                 if (!string.IsNullOrEmpty(cont))
                 {
                     var helpIconControl = new TipIconUserControl
                     {
-                        Margin = new Thickness(5,0,0,0),
+                        Margin = new Thickness(5, 0, 0, 0),
                         TooltipText = cont
                     };
                     Grid.SetColumn(helpIconControl, 2);
@@ -138,13 +138,13 @@ public class LogSystemCard : UserControl
                     grid.Children.Add(helpIconControl);
                 }
             }
-            
+
             // add upload enabled checkbox
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            var uploadCheckbox = new CheckBox()
+            var uploadCheckbox = new CheckBox
             {
-                Content =TranslationHelper.GetString("autoqsoupload"),
+                Content = TranslationHelper.GetString("autoqsoupload"),
                 Classes = { "setting-label" },
                 [!ToggleButton.IsCheckedProperty] = new Binding("UploadEnabled")
                 {
@@ -158,7 +158,7 @@ public class LogSystemCard : UserControl
 
             var testButtonViewModel = new TestButtonUserControlViewModel();
             var methodInfo = config.RawType.GetMethod(nameof(ThirdPartyLogService.TestConnectionAsync));
-            testButtonViewModel.SetTestButtonCommand( ReactiveCommand.CreateFromTask(async () =>
+            testButtonViewModel.SetTestButtonCommand(ReactiveCommand.CreateFromTask(async () =>
             {
                 try
                 {
@@ -168,26 +168,23 @@ public class LogSystemCard : UserControl
                     {
                         // check required fields
                         if (logSystemField.IsRequired && string.IsNullOrWhiteSpace(logSystemField.Value))
-                        {
                             throw new ArgumentException(TranslationHelper.GetString("fillall"));
-                        }
                         config.RawType
                             .GetProperty(logSystemField.PropertyName)!
                             .SetValue(instance, logSystemField.Value);
                     }
-                    
-                    await (Task)methodInfo?.Invoke(instance, new object[]{_source.Token})!;
+
+                    await (Task)methodInfo?.Invoke(instance, new object[] { _source.Token })!;
                 }
                 catch (Exception ex)
                 {
                     if (ex is FlurlHttpException && ex.InnerException is TaskCanceledException)
-                    {
                         if (_source.IsCancellationRequested)
                         {
                             ClassLogger.Trace("User closed settings window. QSO service test cancelled.");
                             return;
                         }
-                    }
+
                     var actualEx = ex is TargetInvocationException tie ? tie.InnerException ?? tie : ex;
                     ClassLogger.Error(ex, "failed to test connection");
                     await ((SettingsWindowViewModel)DataContext!).NotificationManager.SendErrorNotificationAsync(
@@ -201,12 +198,12 @@ public class LogSystemCard : UserControl
                 DataContext = testButtonViewModel
             };
             Grid.SetColumn(testButton, 3);
-            Grid.SetRow(testButton, (config.Fields.Count) / 2 );
+            Grid.SetRow(testButton, config.Fields.Count / 2);
             grid.Children.Add(testButton);
 
             innerStack.Children.Add(grid);
             border.Child = innerStack;
-            
+
             return border;
         });
 

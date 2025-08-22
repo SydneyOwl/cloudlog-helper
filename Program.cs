@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Avalonia;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
 using CommandLine;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
 
 namespace CloudlogHelper;
 
@@ -30,7 +23,7 @@ internal sealed class Program
             .WithNotParsed(HandleParseErrors);
     }
 
-    private static void RunWithOptions(CommandLineOptions options, string[] originalArgs )
+    private static void RunWithOptions(CommandLineOptions options, string[] originalArgs)
     {
         try
         {
@@ -53,29 +46,26 @@ Stack：{ex.StackTrace}");
             App.CleanUp();
         }
     }
-    
+
     private static void HandleParseErrors(IEnumerable<Error> errors)
     {
         // Handle command line parsing errors here
         // For example, you might want to display help text or exit
-        foreach (var error in errors)
-        {
-            Console.WriteLine($@"Error while parsing args: {error}");
-        }
+        foreach (var error in errors) Console.WriteLine($@"Error while parsing args: {error}");
         Environment.Exit(1);
     }
 
     // Avalonia configuration
     public static AppBuilder BuildAvaloniaApp(CommandLineOptions? options)
     {
-        return AppBuilder.Configure(()=> new App(options))
+        return AppBuilder.Configure(() => new App(options))
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
             .UseReactiveUI();
     }
-    
-     // Used by visual designer.
+
+    // Used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
         return AppBuilder.Configure<App>()

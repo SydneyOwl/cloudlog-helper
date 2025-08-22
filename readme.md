@@ -122,14 +122,14 @@ accidentally interrupted, this tool will help recover those unuploaded QSOs.
 
   <img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
 
-| Configuration Item          | Description                                                                                                                                                      |
-|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Execute sync on startup | If checked, the tool will automatically launch and start syncing every time the software starts.                                                                                                                     |
-| Username                | Your Cloudlog login username.                                                                                                                                         |
-| Password                | Your Cloudlog password.                                                                                                                                            |
+| Configuration Item      | Description                                                                                                                                                                                                                                                                                                                                                                                     |
+|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Execute sync on startup | If checked, the tool will automatically launch and start syncing every time the software starts.                                                                                                                                                                                                                                                                                                |
+| Username                | Your Cloudlog login username.                                                                                                                                                                                                                                                                                                                                                                   |
+| Password                | Your Cloudlog password.                                                                                                                                                                                                                                                                                                                                                                         |
 | Cloud Sample (days)     | The number of recent QSOs downloaded from Cloudlog by day, which will be used as reference data for comparison with local QSOs.<br/>Adjust this based on your needs. If you have fewer QSOs, set a higher value to ensure enough sample data is downloaded to cover local QSOs. **For example, setting it to `10` means the tool will fetch the latest 10 days of QSO records from the cloud.** |
-| Local Sample (QSOs)     | The number of recent QSO records loaded from the local log file for comparison with cloud records. For example, setting it to `50` means the tool will check whether the latest 50 local QSOs have been uploaded to the cloud (i.e., whether they exist in the cloud's latest QSOs, as defined by the Cloud Sample setting).                                        |
-| Local Log Paths         | Path(s) to your local log file(s). |
+| Local Sample (QSOs)     | The number of recent QSO records loaded from the local log file for comparison with cloud records. For example, setting it to `50` means the tool will check whether the latest 50 local QSOs have been uploaded to the cloud (i.e., whether they exist in the cloud's latest QSOs, as defined by the Cloud Sample setting).                                                                    |
+| Local Log Paths         | Path(s) to your local log file(s).                                                                                                                                                                                                                                                                                                                                                              |
 
 ## 🚀 Advanced
 
@@ -199,14 +199,14 @@ Here's a more polished and natural version for a README file:
 
 #### ⚙️ Command Line Options
 
-| Option             | Description                                                                 |  
-|--------------------|-----------------------------------------------------------------------------|  
-| `--verbose`        | Enable verbose logging (Trace level)                                        |  
-| `--log2file`       | Save logs to file (stored in `./log/xxxx`)                                  |  
-| `--reinit-db`      | Force database reinitialization                                             |  
-| `--dev`            | Developer mode - disables crash reporting dialog                            |  
-| `--udp-log-only`   | Minimal UI mode - only shows UDP log upload functionality                   |  
-| `--crash-report`   | [Internal] Specify crash log directory (used by error reporting system)     |  
+| Option           | Description                                                             |  
+|------------------|-------------------------------------------------------------------------|  
+| `--verbose`      | Enable verbose logging (Trace level)                                    |  
+| `--log2file`     | Save logs to file (stored in `./log/xxxx`)                              |  
+| `--reinit-db`    | Force database reinitialization                                         |  
+| `--dev`          | Developer mode - disables crash reporting dialog                        |  
+| `--udp-log-only` | Minimal UI mode - only shows UDP log upload functionality               |  
+| `--crash-report` | [Internal] Specify crash log directory (used by error reporting system) |  
 
 ## 🛠️ Compilation
 
@@ -268,10 +268,13 @@ After 1 hour, CPU and memory usage were as follows (spikes correspond to decodin
 
 ## 🙏 Acknowledgments
 
-+ [Hamlib](https://github.com/Hamlib/Hamlib): An amateur radio equipment control library (supports radios, rotators, tuners, and amplifiers).
-+ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): A C# class library and sample code for interacting with WSJT-X via UDP interface using .NET & .NET Framework 4.8.
++ [Hamlib](https://github.com/Hamlib/Hamlib): An amateur radio equipment control library (supports radios, rotators,
+  tuners, and amplifiers).
++ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): A C# class library and sample code for interacting with WSJT-X via
+  UDP interface using .NET & .NET Framework 4.8.
 + [ADIFLib](https://github.com/kv9y/ADIFLib): A C# library for reading, parsing, and writing ADIF (version 3.1.0) files.
-+ [FT8CN](https://github.com/N0BOY/FT8CN): Run FT8 on Android. The call sign attribution logic and corresponding DXCC Chinese translations in this software are extracted from it.
++ [FT8CN](https://github.com/N0BOY/FT8CN): Run FT8 on Android. The call sign attribution logic and corresponding DXCC
+  Chinese translations in this software are extracted from it.
 
 ## 📝 License
 

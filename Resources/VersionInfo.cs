@@ -2,9 +2,9 @@ namespace CloudlogHelper.Resources;
 
 public class VersionInfo
 {
-    public static readonly string Version = "0.2.0";
+    public static readonly string Version = "@INTERNAL_VERSION";
 
-    public static readonly string Commit = "57b8b7e";
+    public static readonly string Commit = "@INTERNAL_COMMIT@";
 
-    public static readonly string BuildTime = "20250819 165800";
+    public static readonly string BuildTime = "@INTERNAL_TIME@";
 }

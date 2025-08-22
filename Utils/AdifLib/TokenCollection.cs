@@ -61,7 +61,7 @@ public class TokenCollection : List<Token>
     private void InternalPullApart(string LineToPullApart, bool IsHeader)
     {
         // Do the heavy lifting of pulling apart the line and parsing into individual tokens.
-        string[] tokenStrings = LineToPullApart.Split(new[] { '<' }, StringSplitOptions.RemoveEmptyEntries);
+        var tokenStrings = LineToPullApart.Split(new[] { '<' }, StringSplitOptions.RemoveEmptyEntries);
 
         // loop through each token
         foreach (var tokenString in tokenStrings)

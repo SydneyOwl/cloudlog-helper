@@ -14,8 +14,8 @@ $versionInfoPath = "Resources/VersionInfo.cs"
 $content = Get-Content $versionInfoPath -Raw
 
 $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
-                   -replace '@INTERNAL_TIME@', $buildTime `
-                   -replace '@INTERNAL_VERSION@', $tagName
+                    -replace '@INTERNAL_TIME@', $buildTime `
+                    -replace '@INTERNAL_VERSION@', $tagName
 
 Set-Content $versionInfoPath -Value $content -NoNewline
 
@@ -54,7 +54,8 @@ Copy-Item -Path "./tmp/hamlib-linux-x64/bin/rigctld" -Destination "./Resources/D
 ########################
 
 
-function Build-And-Package {
+function Build-And-Package
+{
     param(
         [string]$runtime,
         [string]$archName,
@@ -72,10 +73,13 @@ function Build-And-Package {
         -p:IncludeNativeLibrariesForSelfExtract=true
 
     $publishPath = "bin/Release/net6.0/$runtime/publish/$exeName"
-    $zipName = if ($tagName) { 
-        "bin/CloudlogHelper-v$tagName-$archName.zip" 
-    } else { 
-        "bin/CloudlogHelper-$archName.zip" 
+    $zipName = if ($tagName)
+    {
+        "bin/CloudlogHelper-v$tagName-$archName.zip"
+    }
+    else
+    {
+        "bin/CloudlogHelper-$archName.zip"
     }
 
     Compress-Archive -Path $publishPath -DestinationPath $zipName -Force
@@ -83,7 +87,7 @@ function Build-And-Package {
 }
 
 Build-And-Package -runtime "win-x64" -archName "windows-x64"
-Build-And-Package -runtime "win-x86" -archName "windows-x86" 
+Build-And-Package -runtime "win-x86" -archName "windows-x86"
 Build-And-Package -runtime "linux-x64" -archName "linux-x64" -exeName "CloudlogHelper"
 
 Write-Host "-------------------------->  Build completed successfully!"

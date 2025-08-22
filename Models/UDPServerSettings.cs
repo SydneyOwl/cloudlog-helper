@@ -23,7 +23,6 @@ public class UDPServerSettings : ReactiveValidationObject
                 if (!int.TryParse(st, out var res)) return false;
                 return res is <= 65535 and >= 0;
             },
-            
             TranslationHelper.GetString(LangKeys.invalidport)
         );
         this.ValidationRule(
@@ -78,12 +77,6 @@ public class UDPServerSettings : ReactiveValidationObject
     {
         return this;
         // return JsonConvert.DeserializeObject<UDPServerSettings>(JsonConvert.SerializeObject(this))!;
-    }
-
-    public UDPServerSettings DeepClone()
-    {
-        // return this;
-        return JsonConvert.DeserializeObject<UDPServerSettings>(JsonConvert.SerializeObject(this))!;
     }
 
     protected bool Equals(UDPServerSettings other)

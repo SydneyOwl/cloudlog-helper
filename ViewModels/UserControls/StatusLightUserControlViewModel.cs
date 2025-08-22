@@ -20,20 +20,15 @@ public class StatusLightUserControlViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    [Reactive] public string CurrentRigctldAddress { get; set; } = "(?)";
-    [Reactive] public string CurrentUDPServerAddress { get; set; } = "(?)";
-    [Reactive] public bool IsRigctldRunning { get; set; }
-    [Reactive] public bool IsUdpServerRunning { get; set; }
-    [Reactive]public bool InitSkipped { get; set; }
-    
-    private bool _isRigctldUsingExternal;
 
     private static IRigctldService _rigctldService;
     private static IUdpServerService _udpServerService;
 
+    private bool _isRigctldUsingExternal;
+
     public StatusLightUserControlViewModel()
     {
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
     }
 
     public StatusLightUserControlViewModel(IRigctldService rSer,
@@ -43,12 +38,15 @@ public class StatusLightUserControlViewModel : ViewModelBase
         _udpServerService = uSer;
         _rigctldService = rSer;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
-        if (!InitSkipped)
-        {
-            Initialize(); 
-        }
+        if (!InitSkipped) Initialize();
     }
-    
+
+    [Reactive] public string CurrentRigctldAddress { get; set; } = "(?)";
+    [Reactive] public string CurrentUDPServerAddress { get; set; } = "(?)";
+    [Reactive] public bool IsRigctldRunning { get; set; }
+    [Reactive] public bool IsUdpServerRunning { get; set; }
+    [Reactive] public bool InitSkipped { get; set; }
+
     private void Initialize()
     {
         this.WhenActivated(disposables =>
@@ -72,7 +70,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 IsRigctldRunning = _rigctldService.IsRigctldClientRunning() || _isRigctldUsingExternal;
             }).DisposeWith(disposables);
         });
-        
+
         _updateUdpServerListeningAddress();
         _updateRigctldListeningAddress();
     }

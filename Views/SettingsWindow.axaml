@@ -69,18 +69,18 @@
             <Setter Property="Padding" Value="16 8" />
             <Setter Property="MinWidth" Value="120" />
         </Style>
-        
+
         <Style Selector="Border.subsection-card">
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         </Style>
 
         <Style Selector="TextBlock.subsection-title">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0 0 0 4"/>
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0 0 0 4" />
         </Style>
     </Window.Styles>
 
@@ -126,7 +126,7 @@
                                     TooltipText="{I18N {x:Static resources:LangKeys.cloudlogurlhelp}}" />
                             </StackPanel>
                             <userControls1:TestButtonUserControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
-                                                                DataContext="{Binding CloudlogTestButtonUserControl}" />
+                                                                 DataContext="{Binding CloudlogTestButtonUserControl}" />
 
                             <!-- API Key -->
                             <TextBlock Text="Cloudlog APIKey" Classes="setting-label" Grid.Row="1" Grid.Column="0" />
@@ -161,13 +161,13 @@
                         </Grid>
 
                         <userControls1:FixedInfoPanelUserControl Margin="0 12 0 0"
-                                                                DataContext="{Binding CloudlogInfoPanelUserControl}" />
+                                                                 DataContext="{Binding CloudlogInfoPanelUserControl}" />
                     </StackPanel>
                 </Border>
 
                 <!-- Third-party Log Systems -->
                 <Border Classes="setting-card">
-                    <userControls1:LogSystemCard DataContext="{Binding }"/>
+                    <userControls1:LogSystemCard DataContext="{Binding }" />
                 </Border>
 
                 <!-- HamLib Settings -->
@@ -225,6 +225,14 @@
                             <Expander Header="{I18N {x:Static resources:LangKeys.advancedsettings}}" Grid.Row="5"
                                       Grid.Column="0" Grid.ColumnSpan="3">
                                 <StackPanel Spacing="12" Margin="0 12 0 0">
+                                    <Grid ColumnDefinitions="Auto,*" Margin="0 0 0 0">
+                                        <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
+                                                   Classes="setting-label" />
+                                        <TextBox Classes="setting-control" Grid.Column="1"
+                                                 Text="{Binding DraftSettings.HamlibSettings.SyncRigInfoAddress}"
+                                                 Watermark="{I18N {x:Static resources:LangKeys.spiltby}}" />
+                                    </Grid>
+
                                     <CheckBox Content="{I18N {x:Static resources:LangKeys.enableadvanced}}"
                                               x:Name="advancedRig"
                                               IsChecked="{Binding DraftSettings.HamlibSettings.UseRigAdvanced}" />
@@ -264,7 +272,7 @@
                             </Expander>
 
                             <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
-                                                                DataContext="{Binding HamlibTestButtonUserControl}" />
+                                                                 DataContext="{Binding HamlibTestButtonUserControl}" />
                         </Grid>
 
                         <TextBlock Text="{Binding HamlibVersion}" Margin="0 12 0 0" FontStyle="Italic" />

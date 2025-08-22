@@ -9,7 +9,7 @@ namespace CloudlogHelper.Services.Interfaces;
 public interface IUdpServerService
 {
     bool IsUdpServerRunning();
-    
+
     Task ForwardMessageAsync(Memory<byte> message, IPEndPoint endPoint);
 
     Task RestartUDPServerAsync(IPAddress ip, int port,

@@ -21,7 +21,7 @@ public struct WorkItem
 /// <summary>
 ///     Priority-based task scheduler for rigctld commands. Not very useful so far.
 /// </summary>
-public class RigctldScheduler:IDisposable
+public class RigctldScheduler : IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
@@ -36,6 +36,14 @@ public class RigctldScheduler:IDisposable
     {
         // Console.WriteLine("Well now started..");
         Task.Run(() => ProcessRequestsAsync(_cts.Token));
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Stop();
+        _cts.Dispose();
+        _workAvailable.Dispose();
     }
 
     public Task<string> EnqueueHighPriorityRequest(Func<Task<string>> work)
@@ -110,13 +118,5 @@ public class RigctldScheduler:IDisposable
             _lowPriorityQueue.TryDequeue(out var item);
             item.TaskCompletionSource.TrySetCanceled();
         }
-    }
-
-    public void Dispose()
-    {  
-        GC.SuppressFinalize(this);
-        Stop();
-        _cts.Dispose();
-        _workAvailable.Dispose();
     }
 }

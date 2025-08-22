@@ -35,58 +35,23 @@ public class SettingsWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
-    public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();
 
-    private bool initSkipped;
+    private readonly CancellationTokenSource _source;
 
-    private IRigctldService rigctldService;
+    private readonly bool initSkipped;
 
-    private CancellationTokenSource _source;
-
-    private void InitializeLogSystems()
-    {
-        foreach (var draftSettingsLogService in DraftSettings.LogServices)
-        {
-            var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();
-            if (classAttr == null) throw new Exception("Failed to find class attr!");
-
-            var properties = draftSettingsLogService.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.IsDefined(typeof(UserInputAttribute), false));
-
-            var fields = (from prop in properties
-            let attr = prop.GetCustomAttribute<UserInputAttribute>()!
-            select new LogSystemField
-            {
-                DisplayName = attr.DisplayName,
-                PropertyName = prop.Name,
-                Type = attr.InputType,
-                Watermark = attr.WaterMark,
-                Description = attr.Description,
-                IsRequired = attr.IsRequired,
-                Value = prop.GetValue(draftSettingsLogService)?.ToString()
-            }).ToList();
-            
-            LogSystems.Add(new LogSystemConfig()
-            {
-                DisplayName = classAttr.ServiceName,
-                Fields = fields,
-                RawType = draftSettingsLogService.GetType(),
-                UploadEnabled = ((ThirdPartyLogService)draftSettingsLogService).AutoQSOUploadEnabled
-            });
-        }
-    }
+    private readonly IRigctldService rigctldService;
 
     public SettingsWindowViewModel()
     {
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         DraftSettings = ApplicationSettings.GetDraftInstance();
-        DiscardConf = ReactiveCommand.Create(()=>{});
-        SaveAndApplyConf = ReactiveCommand.Create(()=>{});
+        DiscardConf = ReactiveCommand.Create(() => { });
+        SaveAndApplyConf = ReactiveCommand.Create(() => { });
+        HamlibInitPassed = true;
         // InitializeLogSystems();
     }
-    
+
 
     public SettingsWindowViewModel(CommandLineOptions cmd, IRigctldService rs)
     {
@@ -122,7 +87,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
             hamlibCmd.ThrownExceptions.Subscribe(err => NotificationManager?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            cloudCmd.ThrownExceptions.Subscribe(err =>  NotificationManager?.SendErrorNotificationSync(err.Message))
+            cloudCmd.ThrownExceptions.Subscribe(err => NotificationManager?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
@@ -136,7 +101,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 .InvokeCommand(RefreshPort)
                 .DisposeWith(disposables);
         });
-        
+
         _ = _initializeHamlibAsync();
         MessageBus.Current.SendMessage(new SettingsChanged
         {
@@ -144,16 +109,52 @@ public class SettingsWindowViewModel : ViewModelBase
         });
     }
 
+    public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();
+
 
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
-    
+
     public IWindowNotificationManagerService NotificationManager { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
 
+    private void InitializeLogSystems()
+    {
+        foreach (var draftSettingsLogService in DraftSettings.LogServices)
+        {
+            var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();
+            if (classAttr == null) throw new Exception("Failed to find class attr!");
+
+            var properties = draftSettingsLogService.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.IsDefined(typeof(UserInputAttribute), false));
+
+            var fields = (from prop in properties
+                let attr = prop.GetCustomAttribute<UserInputAttribute>()!
+                select new LogSystemField
+                {
+                    DisplayName = attr.DisplayName,
+                    PropertyName = prop.Name,
+                    Type = attr.InputType,
+                    Watermark = attr.WaterMark,
+                    Description = attr.Description,
+                    IsRequired = attr.IsRequired,
+                    Value = prop.GetValue(draftSettingsLogService)?.ToString()
+                }).ToList();
+
+            LogSystems.Add(new LogSystemConfig
+            {
+                DisplayName = classAttr.ServiceName,
+                Fields = fields,
+                RawType = draftSettingsLogService.GetType(),
+                UploadEnabled = ((ThirdPartyLogService)draftSettingsLogService).AutoQSOUploadEnabled
+            });
+        }
+    }
+
     private async Task _initializeHamlibAsync()
     {
-        if (initSkipped)return;
+        if (initSkipped) return;
         var (result, output) = await rigctldService.StartOnetimeRigctldAsync("--version");
         // init hamlib
         if (result)
@@ -193,10 +194,7 @@ public class SettingsWindowViewModel : ViewModelBase
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
 
-            if (!string.IsNullOrEmpty(msg))
-            {
-                throw new Exception(msg);
-            }
+            if (!string.IsNullOrEmpty(msg)) throw new Exception(msg);
 
             var stationInfo = await CloudlogUtil.GetStationInfoAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
@@ -236,7 +234,6 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }
-       
     }
 
 
@@ -288,10 +285,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
             var (res, des) =
                 await rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs);
-            if (!res)
-            {
-                throw new Exception(des);
-            }
+            if (!res) throw new Exception(des);
         }
         else
         {
@@ -317,7 +311,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private void _discardConf()
     {
         // resume settings
-        if (Design.IsDesignMode)return;
+        if (Design.IsDesignMode) return;
         ClassLogger.Trace("Discarding confse");
         DraftSettings.RestoreSettings();
         _source.Cancel();
@@ -336,7 +330,7 @@ public class SettingsWindowViewModel : ViewModelBase
             ClassLogger.Trace("Cloudlog settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
         }
-        
+
         if (DraftSettings.IsHamlibConfChanged(cmp))
         {
             ClassLogger.Trace("hamlib settings changed");

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +15,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using CloudlogHelper.Exceptions;
 using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
@@ -45,7 +45,6 @@ public class App : Application
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
-    private static CommandLineOptions _cmdOptions { get; set; }
 
     public App(CommandLineOptions? options)
     {
@@ -57,6 +56,8 @@ public class App : Application
     {
         _cmdOptions ??= new CommandLineOptions();
     }
+
+    private static CommandLineOptions _cmdOptions { get; set; }
 
     private void _preInit()
     {
@@ -70,9 +71,7 @@ public class App : Application
             .ToList();
 
         if (lType.GroupBy(n => n).Any(c => c.Count() > 1))
-        {
-            throw new Exception("Dupe log service found. This is not allowed!");
-        }
+            throw new InvalidOperationException("Dupe log service found. This is not allowed!");
 
         // create those types and assign back to settings...
         var logServices = lType.Select(x =>
@@ -99,10 +98,13 @@ public class App : Application
         collection.AddViewModels();
         collection.AddExtra();
         collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
-        collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov => new WindowManagerService(prov, desktop));
-        collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ => new WindowNotificationManagerService(desktop));
-        collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ => new MessageBoxManagerService(desktop));
-                
+        collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
+            new WindowManagerService(prov, desktop));
+        collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ =>
+            new WindowNotificationManagerService(desktop));
+        collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
+            new MessageBoxManagerService(desktop));
+
         _servProvider = collection.BuildServiceProvider();
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
@@ -111,7 +113,7 @@ public class App : Application
 
     private Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        if (_servProvider is null) throw new Exception("Provider not initialized");
+        if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
         var mainWindow = _servProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
         mainWindow.Focus();
@@ -135,7 +137,7 @@ public class App : Application
             };
             var nmiOpen = new NativeMenuItem
             {
-                Header  = TranslationHelper.GetString(LangKeys.open),
+                Header = TranslationHelper.GetString(LangKeys.open),
                 Command = _openCommand
             };
 
@@ -167,11 +169,8 @@ public class App : Application
         Directory.CreateDirectory(ApplicationStartUpUtil.GetConfigDir());
         _mutex = new Mutex(true, DefaultConfigs.MutexId, out var createdNew);
         // check if init is allowed?
-        if (!createdNew)
-        {
-            throw new DuplicateWaitObjectException(TranslationHelper.GetString(LangKeys.dupeinstance));
-        }
-        
+        if (!createdNew) throw new DuplicateProcessException(TranslationHelper.GetString(LangKeys.dupeinstance));
+
         return Task.CompletedTask;
     }
 
@@ -182,18 +181,14 @@ public class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            
+
             if (!string.IsNullOrEmpty(_cmdOptions.CrashReportFile))
-            {
                 desktop.MainWindow = new ErrorReportWindow(_cmdOptions.CrashReportFile)
                     { ViewModel = new ErrorReportWindowViewModel() };
-            }
             else
-            {
-                desktop.MainWindow = new SplashWindow(() => PreExec(desktop), 
+                desktop.MainWindow = new SplashWindow(() => PreExec(desktop),
                     () => Workload(desktop),
                     () => PostExec(desktop));
-            }
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -216,20 +211,21 @@ public class App : Application
         _mutex?.ReleaseMutex();
         _trayIcon?.Dispose();
     }
-    
-            
+
+
     private static void _initializeSettings(IEnumerable<ThirdPartyLogService> logServices, bool reinit = false)
     {
         ApplicationSettings.ReadSettingsFromFile(logServices.ToArray(), reinit);
         var settings = ApplicationSettings.GetInstance();
         var draftSettings = ApplicationSettings.GetDraftInstance();
-        
+
         // init culture
         if (settings.LanguageType == SupportedLanguage.NotSpecified)
         {
             settings.LanguageType = TranslationHelper.DetectDefaultLanguage();
             draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         }
+
         I18NExtension.Culture = TranslationHelper.GetCultureInfo(settings.LanguageType);
     }
 
@@ -255,7 +251,6 @@ public class App : Application
     private static void _releaseDepFiles(bool reinit = false)
     {
         if (reinit)
-        {
             try
             {
                 Directory.Delete(DefaultConfigs.HamlibFilePath, true);
@@ -264,7 +259,7 @@ public class App : Application
             {
                 ClassLogger.Warn(ex);
             }
-        }
+
         Directory.CreateDirectory(DefaultConfigs.HamlibFilePath);
         var hamlibRelease = DefaultConfigs.DefaultWindowsHamlibFiles;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) hamlibRelease = DefaultConfigs.DefaultLinuxHamlibFiles;
@@ -276,7 +271,7 @@ public class App : Application
                 ClassLogger.Debug($"{tPath} exists. skipping...");
                 continue;
             }
-            
+
             ClassLogger.Debug($"releasing {tPath} ..");
             var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
             if (resourceFileStream is null)
@@ -284,20 +279,20 @@ public class App : Application
                 ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
                 continue;
             }
-            
+
             using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
             resourceFileStream.Seek(0, SeekOrigin.Begin);
             resourceFileStream.CopyTo(fileStream);
-            fileStream.Flush(); 
+            fileStream.Flush();
             fileStream.Close();
-            
+
             // make it executable on linux
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 var fileInfo = new UnixFileInfo(tPath);
-                fileInfo.FileAccessPermissions |= 
-                    FileAccessPermissions.UserExecute | 
-                    FileAccessPermissions.GroupExecute | 
+                fileInfo.FileAccessPermissions |=
+                    FileAccessPermissions.UserExecute |
+                    FileAccessPermissions.GroupExecute |
                     FileAccessPermissions.OtherExecute;
             }
         }

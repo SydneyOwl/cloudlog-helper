@@ -1,6 +1,4 @@
-﻿
-
-/// <summary>
+﻿/// <summary>
 /// ADIF QSO Class
 /// </summary>
 

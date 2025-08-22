@@ -13,8 +13,11 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Flurl.Http;
+using Force.DeepCloner;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
+using Newtonsoft.Json;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -34,15 +37,22 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
     private readonly CloudlogSettings
         _extraSettings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
-    /// <summary>
-    ///     Command for polling data(mode and frequency)
-    /// </summary>
-    private ReactiveCommand<Unit, Unit> _pollCommand;
+    private readonly IMessageBoxManagerService _messageBoxManagerService;
 
     /// <summary>
     ///     Settings for hamlib.
     /// </summary>
     private readonly HamlibSettings _settings = ApplicationSettings.GetInstance().HamlibSettings.GetReference();
+
+    /// <summary>
+    ///     Target address for rig info syncing.
+    /// </summary>
+    private readonly List<string> _syncRigInfoAddr = new();
+
+    private readonly IWindowNotificationManagerService _windowNotificationManager;
+
+    private readonly IRigctldService rigctldService;
+    private readonly IWindowManagerService windowManagerService;
 
     /// <summary>
     ///     observable sequence. Whether to cancel the timer or not.
@@ -61,26 +71,21 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
     private HamlibSettings _oldSettings = ApplicationSettings.GetInstance().HamlibSettings.DeepClone();
 
     /// <summary>
+    ///     Command for polling data(mode and frequency)
+    /// </summary>
+    private ReactiveCommand<Unit, Unit> _pollCommand;
+
+    /// <summary>
     ///     Accumulative rig connection failed times.
     /// </summary>
     private int _rigConnFailedTimes;
-    
-    /// <summary>
-    /// Indicates if the initialization is skipped...
-    /// </summary>
-    public bool InitSkipped { get; private set; }
-
-    private IRigctldService rigctldService;
-    private IWindowManagerService windowManagerService;
-    private IWindowNotificationManagerService _windowNotificationManager;
-    private IMessageBoxManagerService _messageBoxManagerService;
 
     public RIGDataGroupboxUserControlViewModel()
     {
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
     }
 
-    public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd, 
+    public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd,
         IRigctldService rs,
         IWindowNotificationManagerService ws,
         IWindowManagerService wm,
@@ -91,17 +96,33 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         rigctldService = rs;
         _windowNotificationManager = ws;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
-        if (!InitSkipped)
-        {
-            Initialize(); 
-        }
+        if (!InitSkipped) Initialize();
     }
-    
-    private void Initialize(){
-    // check if conf is available, then start rigctld
+
+    /// <summary>
+    ///     Indicates if the initialization is skipped...
+    /// </summary>
+    public bool InitSkipped { get; }
+
+    [Reactive] public string? CurrentRxFrequency { get; set; } = "-------";
+    [Reactive] public string? CurrentRxFrequencyInMeters { get; set; } = string.Empty;
+    [Reactive] public string? CurrentRxMode { get; set; } = string.Empty;
+
+    [Reactive] public string? CurrentTxFrequency { get; set; } = "-------";
+    [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
+    [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
+
+    [Reactive] public bool IsSplit { get; set; }
+    [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+
+    private void Initialize()
+    {
+        // check if conf is available, then start rigctld
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
         this.WhenActivated(disposables =>
         {
+            _syncRigInfoAddr.AddRange(_settings.SyncRigInfoAddress.Split(";"));
             rigctldService.InitScheduler();
             _cancel = new Subject<Unit>().DisposeWith(disposables);
             MessageBus.Current.Listen<SettingsChanged>()
@@ -123,6 +144,8 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                         }
 
                         _oldSettings = _settings.DeepClone();
+                        _syncRigInfoAddr.Clear();
+                        _syncRigInfoAddr.AddRange(_settings.SyncRigInfoAddress.Split(";"));
                     }
 
                     if (x.Part == ChangedPart.NothingJustClosed)
@@ -161,12 +184,13 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                             _resetStatus();
                             _disposeAllTimers();
                             // popup!
-                            var choice = await _messageBoxManagerService.DoShowMessageboxAsync(new List<ButtonDefinition>
-                            {
-                                new() { Name = "Retry", IsDefault = true },
-                                new() { Name = "Open Settings" },
-                                new() { Name = "Cancel" }
-                            }, Icon.Warning, "Warning", TranslationHelper.GetString(LangKeys.failrigcomm));
+                            var choice = await _messageBoxManagerService.DoShowMessageboxAsync(
+                                new List<ButtonDefinition>
+                                {
+                                    new() { Name = "Retry", IsDefault = true },
+                                    new() { Name = "Open Settings" },
+                                    new() { Name = "Cancel" }
+                                }, Icon.Warning, "Warning", TranslationHelper.GetString(LangKeys.failrigcomm));
                             switch (choice)
                             {
                                 case "Retry":
@@ -206,18 +230,6 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                 .DisposeWith(disposables);
         });
     }
-
-    [Reactive] public string? CurrentRxFrequency { get; set; } = "-------";
-    [Reactive] public string? CurrentRxFrequencyInMeters { get; set; } = string.Empty;
-    [Reactive] public string? CurrentRxMode { get; set; } = string.Empty;
-
-    [Reactive] public string? CurrentTxFrequency { get; set; } = "-------";
-    [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
-    [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
-
-    [Reactive] public bool IsSplit { get; set; }
-    [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-    [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
 
     // the endpoint we're sending requests to.
     // the ip is always 127.0.0.1 expect useing external rigctld.
@@ -304,7 +316,8 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
 
         // parse addr
         var (ip, port) = _getRigctldIpAndPort();
-        var allInfo = await rigctldService.GetAllRigInfo(ip, port, _settings.ReportRFPower, _settings.ReportSplitInfo, CancellationToken.None);
+        var allInfo = await rigctldService.GetAllRigInfo(ip, port, _settings.ReportRFPower, _settings.ReportSplitInfo,
+            CancellationToken.None);
         ClassLogger.Debug(allInfo.ToString());
         CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);
         CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
@@ -327,19 +340,15 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                     _extraSettings.CloudlogApiKey,
                     _settings.SelectedRigInfo!.Model!, allInfo, CancellationToken.None);
                 if (result.Status == "success")
-                {
                     UploadStatus = TranslationHelper.GetString(LangKeys.success);
-                }
                 else
-                {
-                    UploadStatus = TranslationHelper.GetString(LangKeys.failed);
-                    ClassLogger.Warn($"Failed to update rig info: {result.Reason}");
-                }
+                    throw new Exception(result.Reason);
             }
             catch (Exception ex)
             {
                 UploadStatus = TranslationHelper.GetString(LangKeys.failed);
                 ClassLogger.Warn(ex, "Failed to upload rig info");
+                await _windowNotificationManager.SendWarningNotificationAsync(ex.Message);
             }
         }
         else
@@ -347,6 +356,21 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
             UploadStatus = TranslationHelper.GetString(LangKeys.failed);
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
         }
+
+        // finally we sync rig info to user-specified addresses.
+        foreach (var se in _syncRigInfoAddr)
+            try
+            {
+                if (string.IsNullOrWhiteSpace(se)) continue;
+                await UploadRigInfoToUserSpecifiedAddressAsync(se, _settings.SelectedRigInfo!.Model!, allInfo,
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, "Failed to upload rig info");
+                await _windowNotificationManager.SendErrorNotificationAsync(TranslationHelper
+                    .GetString(LangKeys.failuploadriginfoto).Replace("{addr}", se));
+            }
     }
 
     private IDisposable _createNewTimer()
@@ -421,5 +445,29 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         ClassLogger.Debug("Errors in hamlib confs. Shutting down rigctld and ignoring _restartRigctldStrict");
         rigctldService.TerminateBackgroundProcess();
         return false;
+    }
+
+    public async Task UploadRigInfoToUserSpecifiedAddressAsync(string url, string rigName,
+        RadioData data, CancellationToken token)
+    {
+        var payloadI = new RadioApiCallV2
+        {
+            Radio = rigName,
+            Frequency = data.FrequencyTx,
+            Mode = data.ModeTx,
+            FrequencyRx = data.FrequencyRx,
+            ModeRx = data.ModeRx,
+            Power = data.Power
+        };
+        
+        var results = await url
+            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+            .WithHeader("Content-Type", "application/json")
+            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
+            .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
+            .ReceiveString();
+
+        if (results != "OK")
+            throw new Exception($"Result does not return as expected: expect \"OK\" but we got {results}");
     }
 }

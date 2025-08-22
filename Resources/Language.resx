@@ -501,4 +501,13 @@
     <data name="bootfail" xml:space="preserve">
         <value>Failed to start applicaiton. Would you like to reset application?</value>
     </data>
+    <data name="syncrigto" xml:space="preserve">
+        <value>Also upload info to</value>
+    </data>
+    <data name="spiltby" xml:space="preserve">
+        <value>Split by semicolon</value>
+    </data>
+    <data name="failuploadriginfoto" xml:space="preserve">
+        <value>Failed to upload rig info to {addr}. See logs for more!</value>
+    </data>
 </root>

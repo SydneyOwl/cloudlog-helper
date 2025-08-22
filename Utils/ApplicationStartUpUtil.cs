@@ -13,7 +13,7 @@ public class ApplicationStartUpUtil
     {
         RestartApplicationWithArgs("--reinit-db --reinit-settings --reinit-hamlib");
     }
-    
+
     public static void RestartApplicationWithArgs(params string[] args)
     {
         var executablePath = Process.GetCurrentProcess().MainModule!.FileName;
@@ -26,7 +26,7 @@ public class ApplicationStartUpUtil
         Process.Start(startInfo);
         Environment.Exit(0);
     }
-    
+
     public static string GetConfigDir()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -34,14 +34,16 @@ public class ApplicationStartUpUtil
             var winPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             return Path.Combine(winPath, "CloudlogHelper");
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            var linuxPath = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ?? 
-                   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
-            
+            var linuxPath = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ??
+                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
+
             return Path.Combine(linuxPath, "CloudlogHelper");
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             var macPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
@@ -50,6 +52,7 @@ public class ApplicationStartUpUtil
             );
             return Path.Combine(macPath, "CloudlogHelper");
         }
+
         throw new PlatformNotSupportedException("Unsupported OS");
     }
 
@@ -57,7 +60,7 @@ public class ApplicationStartUpUtil
     {
         var assemblyNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
         var path = assemblyNames.FirstOrDefault(x => x.Contains(name), null);
-        if (string.IsNullOrEmpty(path))throw new Exception("Resource not found: " + name);
+        if (string.IsNullOrEmpty(path)) throw new FileNotFoundException("Resource not found: " + name);
         return Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
     }
 }

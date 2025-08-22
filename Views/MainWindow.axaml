@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
-        xmlns:converters="clr-namespace:CloudlogHelper.Converters"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
         SizeToContent="WidthAndHeight"
@@ -20,7 +19,6 @@
     </Design.DataContext>
 
     <Window.Resources>
-        <converters:BoolToColorConverter x:Key="BoolToColor" />
     </Window.Resources>
 
     <StackPanel>
@@ -94,16 +92,16 @@
 
         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
             <userControls1:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="0"
-                                                           IsVisible="{Binding !InitSkipped}"
-                                                           ViewModel="{Binding}"
-                                                           DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
+                                                            IsVisible="{Binding !InitSkipped}"
+                                                            ViewModel="{Binding}"
+                                                            DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
             <userControls1:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="1"
-                                                     IsVisible="{Binding !InitSkipped}"
-                                                     DataContext="{Binding RigDataGroupboxUserControlVm}"
-                                                     ViewModel="{Binding }" />
+                                                      IsVisible="{Binding !InitSkipped}"
+                                                      DataContext="{Binding RigDataGroupboxUserControlVm}"
+                                                      ViewModel="{Binding }" />
             <userControls1:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                                                        DataContext="{Binding UDPLogInfoGroupboxUserControlVm}" 
-                                                        ViewModel="{Binding }"/>
+                                                         DataContext="{Binding UDPLogInfoGroupboxUserControlVm}"
+                                                         ViewModel="{Binding }" />
         </Grid>
     </StackPanel>
 

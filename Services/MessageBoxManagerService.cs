@@ -13,17 +13,22 @@ using NLog;
 
 namespace CloudlogHelper.Services;
 
-public class MessageBoxManagerService:IMessageBoxManagerService, IDisposable
+public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
 {
-    private IClassicDesktopStyleApplicationLifetime desktop;
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+    private readonly IClassicDesktopStyleApplicationLifetime desktop;
 
     public MessageBoxManagerService(IClassicDesktopStyleApplicationLifetime topLevel)
     {
         desktop = topLevel;
     }
-     
-    public async Task<string> DoShowMessageboxAsync(List<ButtonDefinition>  buttons, Icon iconType,
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
+    }
+
+    public async Task<string> DoShowMessageboxAsync(List<ButtonDefinition> buttons, Icon iconType,
         string title, string message)
     {
         var result = string.Empty;
@@ -31,7 +36,7 @@ public class MessageBoxManagerService:IMessageBoxManagerService, IDisposable
         {
             try
             {
-                if (desktop.MainWindow is null)return;
+                if (desktop.MainWindow is null) return;
                 result = await MessageBoxManager.GetMessageBoxCustom(
                     new MessageBoxCustomParams
                     {
@@ -51,10 +56,5 @@ public class MessageBoxManagerService:IMessageBoxManagerService, IDisposable
             }
         });
         return result;
-    }
-
-    public void Dispose()
-    {
-        // TODO release managed resources here
     }
 }

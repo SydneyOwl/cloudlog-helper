@@ -15,17 +15,16 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
 
     private const string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
-    
+
     [UserInput("Callsign", Description = "Enter your callsign registered at clublog.")]
-    public string Callsign { get; set; } 
-    
+    public string Callsign { get; set; }
+
     [UserInput("Password", InputType = FieldType.Password)]
-    public string Password { get; set; } 
-    
-    [UserInput("Email")]
-    public string Email { get; set; } 
-    
-    
+    public string Password { get; set; }
+
+    [UserInput("Email")] public string Email { get; set; }
+
+
     public override async Task TestConnectionAsync(CancellationToken token)
     {
         var result = await ClublogTestEndpoint
@@ -40,12 +39,12 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 type = "dxqsl",
                 startyear = 1999,
                 endyear = 1999
-            }, cancellationToken:token);
+            }, cancellationToken: token);
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
-        if (code == 200)return;
-        throw new Exception(string.IsNullOrWhiteSpace(responseText) 
-            ? $"Failed to test connection. Resp code: {code}" 
+        if (code == 200) return;
+        throw new Exception(string.IsNullOrWhiteSpace(responseText)
+            ? $"Failed to test connection. Resp code: {code}"
             : responseText);
     }
 
@@ -60,13 +59,13 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 email = Email,
                 password = Password,
                 callsign = Callsign,
-                adif = adif,
+                adif,
                 api = DefaultConfigs.Clkk
-            }, cancellationToken:token);
+            }, cancellationToken: token);
 
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;
-        if (code == 200)return;
+        if (code == 200) return;
         throw new Exception(responseText);
     }
 }

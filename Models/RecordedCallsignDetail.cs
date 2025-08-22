@@ -23,6 +23,11 @@ public enum UploadStatus
 public class RecordedCallsignDetail : ReactiveObject
 {
     /// <summary>
+    ///     Upload status of log services.
+    /// </summary>
+    public Dictionary<string, bool> UploadedServices = new();
+
+    /// <summary>
     ///     Localized country names.
     /// </summary>
     public string LocalizedCountryName { get; set; }
@@ -81,7 +86,7 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     TX Frequency (Hz)
     /// </summary>
     public ulong TXFrequencyInHz { get; set; }
-    
+
     /// <summary>
     ///     Tx frequency in meters like `20m`
     /// </summary>
@@ -161,10 +166,10 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Client ID sent by client, e.g. `JTDX` `WSJT-X`
     /// </summary>
     public string ClientId { get; set; }
-    
-    
+
+
     /// <summary>
-    /// Original adif data.
+    ///     Original adif data.
     /// </summary>
     public ADIFQSO? RawData { get; set; }
 
@@ -179,11 +184,6 @@ public class RecordedCallsignDetail : ReactiveObject
     /// </summary>
     [Reactive]
     public bool Checked { get; set; }
-
-    /// <summary>
-    ///     Upload status of log services.
-    /// </summary>
-    public Dictionary<string, bool> UploadedServices = new();
 
     /// <summary>
     ///     Upload status of current item.
@@ -246,21 +246,19 @@ public class RecordedCallsignDetail : ReactiveObject
     public static RecordedCallsignDetail Parse(AdifLog info, bool markAsOldQso = true)
     {
         ulong hzValue = 0;
-        if (double.TryParse(info.Freq, out var mhzValue))
-        {
-            hzValue = (ulong)(mhzValue * 1_000_000);
-        }
+        if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
-            LocalizedCountryName = markAsOldQso?"Local Log":"?",
+            LocalizedCountryName = markAsOldQso ? "Local Log" : "?",
             DXCall = info.Call!,
             MyCall = info.StationCallsign,
             ReportSent = info.RstSent!,
             ReportReceived = info.RstRcvd!,
             TXFrequencyInMeters = info.Band!,
             TXFrequencyInHz = hzValue,
-            DateTimeOn = DateTime.ParseExact($"{info.QsoDate} {info.TimeOn}","yyyyMMdd HHmmss",CultureInfo.InvariantCulture),
-            Mode = string.IsNullOrEmpty(info.SubMode)?info.Mode:info.SubMode,
+            DateTimeOn = DateTime.ParseExact($"{info.QsoDate} {info.TimeOn}", "yyyyMMdd HHmmss",
+                CultureInfo.InvariantCulture),
+            Mode = string.IsNullOrEmpty(info.SubMode) ? info.Mode : info.SubMode,
             ClientId = "LOCAL",
             RawData = info.RawData,
             FailReason = null,
@@ -275,7 +273,7 @@ public class RecordedCallsignDetail : ReactiveObject
         var rcd = this;
         // from qso assistant
         if (rcd.RawData is not null) return rcd.RawData.ToString();
-        
+
         // from realtime udp
         try
         {

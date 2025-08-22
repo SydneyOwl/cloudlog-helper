@@ -6,13 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CloudlogHelper.Services;
 
-public static class ServiceCollectionExtensions {
-    public static void AddCommonServices(this IServiceCollection services) {
+public static class ServiceCollectionExtensions
+{
+    public static void AddCommonServices(this IServiceCollection services)
+    {
         services.AddSingleton<IDatabaseService, DatabaseService>();
         services.AddSingleton<IRigctldService, RigctldService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
     }
-    
+
     public static void AddViewModels(this IServiceCollection services)
     {
         // Register all view models as singletons
@@ -26,6 +28,7 @@ public static class ServiceCollectionExtensions {
         services.AddSingleton<UserBasicDataGroupboxUserControlViewModel>();
         services.AddSingleton<StatusLightUserControlViewModel>();
     }
+
     public static void AddExtra(this IServiceCollection services)
     {
         // Register all view models as singletons

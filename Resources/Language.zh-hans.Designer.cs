@@ -519,6 +519,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 无法上传到{addr}，请查看日志！.
+        /// </summary>
+        public static string failuploadriginfoto {
+            get {
+                return ResourceManager.GetString("failuploadriginfoto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请完整填写所有信息！.
         /// </summary>
         public static string fillall {
@@ -1095,6 +1104,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 用分号分隔的地址.
+        /// </summary>
+        public static string spiltby {
+            get {
+                return ResourceManager.GetString("spiltby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 部分电台不支持读取异频信息或读取的数据错误，因此本功能默认未开启。.
         /// </summary>
         public static string splithelp {
@@ -1145,6 +1163,15 @@ namespace CloudlogHelper.Resources {
         public static string successqso {
             get {
                 return ResourceManager.GetString("successqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 同时报告电台信息到.
+        /// </summary>
+        public static string syncrigto {
+            get {
+                return ResourceManager.GetString("syncrigto", resourceCulture);
             }
         }
         

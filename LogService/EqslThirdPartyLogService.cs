@@ -16,20 +16,19 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 {
     private const string EqslTestEndpoint =
         "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
-    
+
     private const string EqslQsoUploadEndpoint =
         "https://www.eQSL.cc/qslcard/importADIF.cfm";
-    
-    [UserInput("Username")]
-    public string Username { get; set; } 
-    
+
+    [UserInput("Username")] public string Username { get; set; }
+
     [UserInput("Password", InputType = FieldType.Password)]
-    public string Password { get; set; } 
-    
+    public string Password { get; set; }
+
     [UserInput("QTH Nickname", IsRequired = false)]
-    public string QTHNickname { get; set; } 
-    
-    
+    public string QTHNickname { get; set; }
+
+
     public override async Task TestConnectionAsync(CancellationToken token)
     {
         var defaultParam =
@@ -39,15 +38,14 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             .AppendQueryParam(defaultParam)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetAsync(cancellationToken:token);
+            .GetAsync(cancellationToken: token);
         var responseText = await result.GetStringAsync();
         if (!string.IsNullOrEmpty(responseText) && (responseText.Contains("Your ADIF log file has been built") ||
                                                     responseText.Contains("You have no log entries")))
-        {
             return;
-        }
 
-        if (string.IsNullOrEmpty(responseText)) throw new Exception("Unknown error occurred while testing eqsl connection!");
+        if (string.IsNullOrEmpty(responseText))
+            throw new Exception("Unknown error occurred while testing eqsl connection!");
 
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(responseText);
@@ -56,7 +54,9 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 
         if (bodyNode is null) throw new Exception("Unknown error occurred while testing eqsl connection!");
         var bodyText = bodyNode.InnerText.Trim();
-        throw new Exception(string.IsNullOrEmpty(bodyText) ? "Unknown error occurred while testing eqsl connection!" : bodyText);
+        throw new Exception(string.IsNullOrEmpty(bodyText)
+            ? "Unknown error occurred while testing eqsl connection!"
+            : bodyText);
     }
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
@@ -74,7 +74,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             .AppendQueryParam(param)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetAsync(cancellationToken:token);
+            .GetAsync(cancellationToken: token);
         var responseText = await results.GetStringAsync();
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(responseText);

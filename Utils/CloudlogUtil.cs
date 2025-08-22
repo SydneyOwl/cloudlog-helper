@@ -35,7 +35,7 @@ public class CloudlogUtil
                 .AppendPathSegments(DefaultConfigs.CloudOrWaveCheckEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                 .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-                .GetStringAsync(cancellationToken:token);
+                .GetStringAsync(cancellationToken: token);
             var pp = JsonConvert.DeserializeObject<JObject>(result)!;
             var instanceName = pp.GetValue("name")!.ToString();
             return instanceName switch
@@ -64,7 +64,7 @@ public class CloudlogUtil
             .AppendPathSegments(DefaultConfigs.CloudlogTestAPIEndpoint, key)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetStringAsync(cancellationToken:token);
+            .GetStringAsync(cancellationToken: token);
 
         if (!result.Contains("<auth>"))
         {
@@ -102,13 +102,14 @@ public class CloudlogUtil
     /// <param name="url">Cloudlog url</param>
     /// <param name="key">key</param>
     /// <returns></returns>
-    public static async Task<StationStatistics?> GetStationStatisticsAsync(string url, string key, CancellationToken token)
+    public static async Task<StationStatistics?> GetStationStatisticsAsync(string url, string key,
+        CancellationToken token)
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationStatisticsAPIEndpoint, key)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetStringAsync(cancellationToken:token);
+            .GetStringAsync(cancellationToken: token);
         var rawResult = JsonConvert.DeserializeObject<StationStatistics>(result);
         return rawResult;
     }
@@ -125,7 +126,7 @@ public class CloudlogUtil
             .AppendPathSegments(DefaultConfigs.CloudlogStationInfoAPIEndpoint, key)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .GetStringAsync(cancellationToken:token);
+            .GetStringAsync(cancellationToken: token);
         var rawResult = JsonConvert.DeserializeObject<List<StationInfo>>(result)
                         ?? new List<StationInfo>();
         return rawResult;
@@ -138,7 +139,8 @@ public class CloudlogUtil
     /// <param name="key"></param>
     /// <param name="stationId"></param>
     /// <returns></returns>
-    public static async Task<StationInfo?> GetStationInfoAsync(string url, string key, string stationId, CancellationToken token)
+    public static async Task<StationInfo?> GetStationInfoAsync(string url, string key, string stationId,
+        CancellationToken token)
     {
         var result = await GetStationInfoAsync(url, key, token);
         if (result.Count == 0) return null;
@@ -174,7 +176,7 @@ public class CloudlogUtil
             .AppendPathSegments(DefaultConfigs.CloudlogRadioAPICallV2Endpoint)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-            .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken:token)
+            .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
             .ReceiveString();
         return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
     }
@@ -196,7 +198,7 @@ public class CloudlogUtil
                 .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                 .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
-                .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken:token)
+                .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
                 .ReceiveString();
             return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
         }

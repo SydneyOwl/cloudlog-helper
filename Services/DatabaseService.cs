@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
@@ -17,35 +16,35 @@ namespace CloudlogHelper.Services;
 public class DatabaseService : IDatabaseService, IDisposable
 {
     /// <summary>
+    ///     Logger for the class.
+    /// </summary>
+    private readonly ILogger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    /// <summary>
     ///     Connection to the sqlite database.
     /// </summary>
     private SQLiteAsyncConnection? _conn;
-    
+
     /// <summary>
     ///     Map English country names to Chinese. Only used when initializing database.
     /// </summary>
     private Dictionary<string, string> _countries = new();
 
     /// <summary>
-    ///     Logger for the class.
-    /// </summary>
-    private readonly ILogger ClassLogger = LogManager.GetCurrentClassLogger();
-    
-    
-    /// <summary>
-    /// Indicates if current version is lower than target version.
-    /// </summary>
-    private bool _upgradeNeeded = false;
-
-    /// <summary>
-    /// Whether this is inited or not.
-    /// </summary>
-    private bool _inited;
-    
-    /// <summary>
-    /// Whether this is disposed or not.
+    ///     Whether this is disposed or not.
     /// </summary>
     private bool _disposed;
+
+    /// <summary>
+    ///     Whether this is inited or not.
+    /// </summary>
+    private bool _inited;
+
+
+    /// <summary>
+    ///     Indicates if current version is lower than target version.
+    /// </summary>
+    private bool _upgradeNeeded;
 
     /// <summary>
     ///     Check if database is already initialized; if not, init it.
@@ -59,7 +58,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         var connectionString = new SQLiteConnectionString(dbPath,
             SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite |
             SQLiteOpenFlags.SharedCache, true);
-        
+
         if (forceInitDatabase)
             try
             {
@@ -91,7 +90,6 @@ public class DatabaseService : IDatabaseService, IDisposable
 
         var appVersion = new Version("0.0.0");
         if (!forceInitDatabase)
-        {
             try
             {
                 appVersion = new Version(appVer);
@@ -100,7 +98,7 @@ public class DatabaseService : IDatabaseService, IDisposable
             {
                 ClassLogger.Error(e, "failed to parse version - ignored.");
             }
-        }
+
         ClassLogger.Trace($"DBVer:{dbVersion}");
         ClassLogger.Trace($"appVersion:{appVersion}");
 
@@ -142,7 +140,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     }
 
     /// <summary>
-    /// Do we need upgrade?
+    ///     Do we need upgrade?
     /// </summary>
     /// <returns></returns>
     public bool IsUpgradeNeeded()
@@ -182,7 +180,84 @@ public class DatabaseService : IDatabaseService, IDisposable
             callsign, callsign);
         return countriesRes.Count == 0 ? new CountryDatabase() : countriesRes[0];
     }
-    
+
+    public async Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            if (!await IsQsoIgnored(ignoredQso)) await _conn!.InsertAsync(ignoredQso);
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e);
+        }
+    }
+
+    /// <summary>
+    ///     check if qso is marked as ignored.
+    /// </summary>
+    /// <param name="ignoredQso"></param>
+    public async Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            var result = await FindIgnoredQso(ignoredQso);
+            if (result is null) return true;
+            if (result.Count != 0)
+            {
+                ClassLogger.Trace("We found the same ones!!!");
+                foreach (var qIgnoredQsoDatabase in result)
+                {
+                    ClassLogger.Trace(qIgnoredQsoDatabase.ToString());
+                    if (!float.TryParse(qIgnoredQsoDatabase.Freq, out var fA)) continue;
+                    if (!float.TryParse(ignoredQso.Freq, out var fB)) continue;
+                    if (qIgnoredQsoDatabase.QsoStartTime is null) continue;
+                    if (ignoredQso.QsoStartTime is null) continue;
+                    if (Math.Abs(fB - fA) < DefaultConfigs.AllowedFreqOffsetMHz &&
+                        (qIgnoredQsoDatabase.QsoStartTime - ignoredQso.QsoStartTime)!.Value.Minutes <
+                        DefaultConfigs.AllowedTimeOffsetMinutes)
+                    {
+                        ClassLogger.Info("Found same ignored qso. skipping...");
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e, "Failed to ignore.");
+            return true;
+        }
+    }
+
+    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            var res = await _conn!.Table<IgnoredQsoDatabase>()
+                .Where(x => x.De == ignoredQso.De)
+                .Where(x => x.Dx == ignoredQso.Dx)
+                .Where(x => x.FinalMode == ignoredQso.FinalMode)
+                .Where(x => x.RstSent == ignoredQso.RstSent)
+                .Where(x => x.RstRecv == ignoredQso.RstRecv)
+                .ToListAsync();
+            return res;
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e, "Failed to find ignored.");
+            return null;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     /// <summary>
     ///     Init _countries dict.
     /// </summary>
@@ -314,93 +389,10 @@ public class DatabaseService : IDatabaseService, IDisposable
         return reader.ReadToEnd();
     }
 
-    public async Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso)
-    {
-        try
-        {
-            if (!await IsQsoIgnored(ignoredQso))
-            {
-                await _conn!.InsertAsync(ignoredQso);
-            }
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Warn(e);
-        }
-    }
-
-    /// <summary>
-    /// check if qso is marked as ignored.
-    /// </summary>
-    /// <param name="ignoredQso"></param>
-    public async Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso)
-    {
-        try
-        {
-            var result = await FindIgnoredQso(ignoredQso);
-            if (result is null) return true;
-            if (result.Count != 0)
-            {
-                ClassLogger.Trace("We found the same ones!!!");
-                foreach (var qIgnoredQsoDatabase in result)
-                {
-                    ClassLogger.Trace(qIgnoredQsoDatabase.ToString());
-                    if (!float.TryParse(qIgnoredQsoDatabase.Freq, out var fA)) continue;
-                    if (!float.TryParse(ignoredQso.Freq, out var fB)) continue;
-                    if (qIgnoredQsoDatabase.QsoStartTime is null) continue;
-                    if (ignoredQso.QsoStartTime is null) continue;
-                    if ((Math.Abs(fB - fA) < DefaultConfigs.AllowedFreqOffsetMHz) &&
-                        (qIgnoredQsoDatabase.QsoStartTime - ignoredQso.QsoStartTime)!.Value.Minutes <
-                        DefaultConfigs.AllowedTimeOffsetMinutes)
-                    {
-                        ClassLogger.Info("Found same ignored qso. skipping...");
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Warn(e,"Failed to ignore.");
-            return true;
-        }
-    }
-
-    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
-    {
-        try
-        {
-            var res = await _conn!.Table<IgnoredQsoDatabase>()
-                .Where(x => x.De == ignoredQso.De)
-                .Where(x => x.Dx == ignoredQso.Dx)
-                .Where(x => x.FinalMode == ignoredQso.FinalMode)
-                .Where(x => x.RstSent == ignoredQso.RstSent)
-                .Where(x => x.RstRecv == ignoredQso.RstRecv)
-                .ToListAsync();
-            return res;
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Warn(e,"Failed to find ignored.");
-            return null;
-        }
-    }
-    
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed) return;
-        if (disposing)
-        {
-            _conn?.CloseAsync().GetAwaiter().GetResult();
-        }
+        if (disposing) _conn?.CloseAsync().GetAwaiter().GetResult();
         _disposed = true;
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 }

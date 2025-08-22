@@ -13,58 +13,59 @@
         Focusable="True"
         Background="#1A1A1A"
         Title="SplashScreen">
-    
+
     <Grid>
         <!-- 背景渐变层 -->
         <Border Background="#1A1A1A" CornerRadius="8">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="20" Color="#40000000" Opacity="0.8"/>
+                <DropShadowEffect BlurRadius="20" Color="#40000000" Opacity="0.8" />
             </Border.Effect>
         </Border>
-        
+
         <!-- 主内容 -->
         <Border BorderBrush="#404040" BorderThickness="1" CornerRadius="8">
             <Grid Margin="20">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                
+
                 <!-- 应用标题和图标 -->
-                <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="avares://CloudlogHelper/Assets/icon.png" Width="60" Height="60"/>
+                <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Image Source="avares://CloudlogHelper/Assets/icon.png" Width="60" Height="60" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock FontFamily="Segoe UI, Arial" 
+                        <TextBlock FontFamily="Segoe UI, Arial"
                                    FontWeight="SemiBold"
                                    FontSize="28"
                                    Foreground="White"
-                                   Text="CloudlogHelper"/>
+                                   Text="CloudlogHelper" />
                         <TextBlock FontFamily="Segoe UI, Arial"
                                    FontSize="12"
                                    Foreground="#A0A0A0"
                                    Margin="0,5,0,0"
-                                   Text="Lightweight Cloudlog/Wavelog tool☁️"/>
+                                   Text="Lightweight Cloudlog/Wavelog tool☁️" />
                     </StackPanel>
                 </StackPanel>
-                
+
                 <!-- 进度指示器 -->
                 <Grid Grid.Row="1" VerticalAlignment="Center">
                     <StackPanel HorizontalAlignment="Center" Spacing="15">
                         <avaloniaProgressRing:ProgressRing
-                            Width="40" 
+                            Width="40"
                             Height="40"
                             IsActive="True"
-                            Foreground="#4CAF50"/>
+                            Foreground="#4CAF50" />
                         <TextBlock x:Name="statusText"
                                    FontFamily="Segoe UI, Arial"
                                    FontSize="12"
                                    Foreground="#CCCCCC"
                                    HorizontalAlignment="Center"
-                                   Text="Initializing application..."/>
+                                   Text="Initializing application..." />
                     </StackPanel>
                 </Grid>
-                
+
                 <!-- 底部状态栏 -->
                 <Border Grid.Row="2" Background="#252525" CornerRadius="0,0,6,6" Height="30">
                     <Grid>
@@ -74,14 +75,14 @@
                                    VerticalAlignment="Center"
                                    Margin="10,0,0,0"
                                    x:Name="statusTextDetailed"
-                                   Text="Loading components..."/>
+                                   Text="Loading components..." />
                         <TextBlock FontFamily="Segoe UI, Arial"
                                    FontSize="10"
                                    Foreground="#A0A0A0"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
                                    Margin="0,0,10,0"
-                                   Text="{x:Static resources:VersionInfo.Version}"/>
+                                   Text="{x:Static resources:VersionInfo.Version}" />
                     </Grid>
                 </Border>
             </Grid>

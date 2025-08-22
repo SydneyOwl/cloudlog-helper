@@ -39,9 +39,4 @@ public class RigInfo
     {
         return HashCode.Combine(Id, Manufacturer, Model, Version, Status, Macro);
     }
-
-    public RigInfo DeepClone()
-    {
-        return JsonConvert.DeserializeObject<RigInfo>(JsonConvert.SerializeObject(this))!;
-    }
 }

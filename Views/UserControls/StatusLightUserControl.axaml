@@ -7,11 +7,11 @@
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              x:Class="CloudlogHelper.Views.UserControls.StatusLightUserControl"
              x:DataType="userControls:StatusLightUserControlViewModel">
-    
+
     <UserControl.Resources>
         <converters:BoolToColorConverter x:Key="BoolToColor" />
     </UserControl.Resources>
-    
+
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                 HorizontalAlignment="Right" Spacing="30"
                 IsVisible="{Binding !InitSkipped}">
@@ -28,18 +28,18 @@
                 <TextBlock FontWeight="DemiBold" Text="{Binding CurrentUDPServerAddress}" />
             </StackPanel>
         </StackPanel>
-        
+
         <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
-         <!-- rigctld -->
-         <Ellipse Width="20" Height="20"
-                  Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                  VerticalAlignment="Center"
-                  Stroke="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                  StrokeThickness="2" />
-             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                 <TextBlock FontWeight="Bold" Text="Rigctld" />
-                 <TextBlock FontWeight="DemiBold" Text="{Binding CurrentRigctldAddress}" />
-             </StackPanel>
+            <!-- rigctld -->
+            <Ellipse Width="20" Height="20"
+                     Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
+                     VerticalAlignment="Center"
+                     Stroke="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
+                     StrokeThickness="2" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontWeight="Bold" Text="Rigctld" />
+                <TextBlock FontWeight="DemiBold" Text="{Binding CurrentRigctldAddress}" />
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </UserControl>

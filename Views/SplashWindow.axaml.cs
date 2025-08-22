@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
+using CloudlogHelper.Exceptions;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using MsBox.Avalonia;
@@ -18,12 +16,14 @@ namespace CloudlogHelper.Views;
 public partial class SplashWindow : Window
 {
     private readonly Func<Task?> _postExec;
-    private readonly Func<Task?> _workload;
     private readonly Func<Task?> _preCheck;
+    private readonly Func<Task?> _workload;
+
+    private int _ctrlPressCount;
 
     public SplashWindow()
-    {        
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
+    {
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         InitializeComponent();
     }
 
@@ -43,7 +43,7 @@ public partial class SplashWindow : Window
     // ReSharper disable once AsyncVoidMethod
     private async void LoadAndInit()
     {
-        if (Design.IsDesignMode)return;
+        if (Design.IsDesignMode) return;
         try
         {
             statusText.Text = "Executing Pre-Check...";
@@ -54,6 +54,9 @@ public partial class SplashWindow : Window
             statusTextDetailed.Text = "Database / Log services initialization";
             var workloadTask = Task.Run(async () => { await _workload?.Invoke()!; });
             await workloadTask.ConfigureAwait(false);
+             
+            // wait for user to press ctrl...
+            await Task.Delay(600);
 
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
@@ -63,7 +66,7 @@ public partial class SplashWindow : Window
                 Close();
             });
         }
-        catch (DuplicateWaitObjectException e)
+        catch (DuplicateProcessException e)
         {
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
@@ -71,12 +74,13 @@ public partial class SplashWindow : Window
                 statusTextDetailed.Text = "ERROR: " + e.Message;
                 statusTextDetailed.Background = Brushes.Orange;
                 statusTextDetailed.Foreground = Brushes.Black;
-                await MessageBoxManager.GetMessageBoxStandard("Error", TranslationHelper.GetString(LangKeys.dupeinstance) , ButtonEnum.Ok,
+                await MessageBoxManager.GetMessageBoxStandard("Error",
+                    TranslationHelper.GetString(LangKeys.dupeinstance), ButtonEnum.Ok,
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
             });
             Environment.Exit(0);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex);
             await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -85,12 +89,10 @@ public partial class SplashWindow : Window
                 statusTextDetailed.Text = "ERROR: " + ex.Message;
                 statusTextDetailed.Background = Brushes.Orange;
                 statusTextDetailed.Foreground = Brushes.Black;
-                var wResult = await MessageBoxManager.GetMessageBoxStandard("Error", TranslationHelper.GetString(LangKeys.bootfail) , ButtonEnum.OkAbort,
+                var wResult = await MessageBoxManager.GetMessageBoxStandard("Error",
+                    TranslationHelper.GetString(LangKeys.bootfail), ButtonEnum.OkAbort,
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
-                if (wResult == ButtonResult.Ok)
-                {
-                    ApplicationStartUpUtil.ResetApplication();
-                }
+                if (wResult == ButtonResult.Ok) ApplicationStartUpUtil.ResetApplication();
             });
             Environment.Exit(0);
         }
@@ -98,9 +100,11 @@ public partial class SplashWindow : Window
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        // trigger application restart
-        if (e.Key != Key.RightCtrl)return;
-        ApplicationStartUpUtil.ResetApplication();
-        base.OnKeyDown(e);
+        if (e.Key is not (Key.RightCtrl or Key.LeftCtrl)) return;
+        if (++_ctrlPressCount >= 3)
+        {
+            _ctrlPressCount = int.MinValue;
+            ApplicationStartUpUtil.ResetApplication();
+        }
     }
 }

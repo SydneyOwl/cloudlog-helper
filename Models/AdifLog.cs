@@ -26,6 +26,8 @@ public class AdifLog
 
     public ADIFQSO RawData { get; set; }
 
+    public static IEqualityComparer<AdifLog> AdifLogComparer { get; } = new AdifLogEqualityComparer();
+
     public static AdifLog Parse(ADIFQSO adif)
     {
         var tmp = new AdifLog();
@@ -118,6 +120,4 @@ public class AdifLog
             return hashCode.ToHashCode();
         }
     }
-
-    public static IEqualityComparer<AdifLog> AdifLogComparer { get; } = new AdifLogEqualityComparer();
 }

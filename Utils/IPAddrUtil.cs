@@ -12,13 +12,13 @@ public class IPAddrUtil
     /// <returns></returns>
     public static (string, int) ParseAddress(string address)
     {
-        if (string.IsNullOrEmpty(address)) throw new Exception("Invalid address format");
+        if (string.IsNullOrEmpty(address)) throw new ArgumentException("Invalid address format");
         var serverAddr = address.Split(":");
         if (serverAddr.Length != 2 || !int.TryParse(serverAddr[1], out var serverPort))
-            throw new Exception("Invalid address format");
-        if (serverPort is not (> 0 and < 65535)) throw new Exception("Invalid address format");
+            throw new ArgumentException("Invalid address format");
+        if (serverPort is not (> 0 and < 65535)) throw new ArgumentException("Invalid address format");
         var serverIp = serverAddr[0];
-        if (!IPAddress.TryParse(serverIp, out _)) throw new Exception("Invalid address format");
+        if (!IPAddress.TryParse(serverIp, out _)) throw new ArgumentException("Invalid address format");
         return (serverIp, serverPort);
     }
 

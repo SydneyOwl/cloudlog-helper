@@ -6,9 +6,9 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        
+
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-        
+
         <PackageIcon>Assets\icon.png</PackageIcon>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <MacOSAppIcon>Assets/icon.icns</MacOSAppIcon>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Antelcat.I18N.Avalonia" Version="1.1.2" />
+        <PackageReference Include="Antelcat.I18N.Avalonia" Version="1.1.2"/>
         <PackageReference Include="Avalonia" Version="11.3.1"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.3.1"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1"/>
@@ -33,14 +33,14 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.1"/>
-        <PackageReference Include="CommandLineParser" Version="2.9.1" />
+        <PackageReference Include="CommandLineParser" Version="2.9.1"/>
         <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.10"/>
-        <PackageReference Include="DeepCloner" Version="0.10.4" />
+        <PackageReference Include="DeepCloner" Version="0.10.4"/>
         <PackageReference Include="Flurl.Http" Version="4.0.2"/>
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1"/>
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
+        <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="NLog" Version="5.4.0"/>
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41"/>
@@ -70,19 +70,19 @@
         <EmbeddedResource Include="Resources\adif_modes.dat"/>
         <EmbeddedResource Remove="Hamlib\**"/>
         <None Remove="Hamlib\**"/>
-        <None Remove="cloudlog-helper.zip" />
+        <None Remove="cloudlog-helper.zip"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*" />
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x86\*" />
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x86\*"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-x64\*" />
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-x64\*"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -95,18 +95,18 @@
 
     <ItemGroup>
         <AdditionalFiles Remove="Hamlib\**"/>
-        <AdditionalFiles Include="Views\UserControls\ClosableErrorPanelUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\ErrorPanelUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\FixedInfoPanelUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\RIGDataGroupboxUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\TestButtonUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\TipIconUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\UDPLogInfoGroupboxUserControl.axaml" />
-        <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml" />
+        <AdditionalFiles Include="Views\UserControls\ClosableErrorPanelUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\ErrorPanelUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\FixedInfoPanelUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\RIGDataGroupboxUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\TestButtonUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\TipIconUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\UDPLogInfoGroupboxUserControl.axaml"/>
+        <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="tmp\" />
+        <Folder Include="tmp\"/>
     </ItemGroup>
 
 </Project>

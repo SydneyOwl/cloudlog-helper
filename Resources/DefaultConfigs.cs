@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using CloudlogHelper.Utils;
@@ -9,7 +8,7 @@ namespace CloudlogHelper.Resources;
 public class DefaultConfigs
 {
     public static readonly string MutexId = "{A5E98F80-B924-4CFF-A370-C992FDCC833D}";
-    
+
     /// <summary>
     ///     Repo address.
     /// </summary>
@@ -70,7 +69,7 @@ public class DefaultConfigs
     ///     QSODayRangeChoice
     /// </summary>
     public static List<int> QSODayRangeChoice = new() { 10, 30, 60, 120, 240, 365, 720, 1000, 2000 };
-    
+
     /// <summary>
     ///     API endpoint for Checking whether this is a wavelog instance or not (by checking manifest.json)
     ///     Maybe someday I'll call it cloudwave helper. haha!
@@ -147,7 +146,7 @@ public class DefaultConfigs
     /// </summary>
     public static readonly string EqslTestEndpoint =
         "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
-    
+
     /// <summary>
     ///     QSO Upload api endpoint for eqsl
     /// </summary>
@@ -161,15 +160,15 @@ public class DefaultConfigs
     public static readonly string Clkk = ("afce|ce|4" + "6e95|||83d99af3|9851" + "429d18dade6670278").Replace("|", "");
 
     /// <summary>
-    /// Allowed freq offset when comparing qso.
+    ///     Allowed freq offset when comparing qso.
     /// </summary>
     public static readonly float AllowedFreqOffsetMHz = 0.1f;
-    
+
     /// <summary>
-    /// Allowed time offset when comparing qso.
+    ///     Allowed time offset when comparing qso.
     /// </summary>
     public static readonly int AllowedTimeOffsetMinutes = 10;
-    
+
     /// <summary>
     ///     Default host address for Rigctld.
     /// </summary>
@@ -253,16 +252,6 @@ public class DefaultConfigs
     public static readonly int UDPServerDefaultPort = 2237;
 
     /// <summary>
-    ///     Default path to SQLite database file.
-    /// </summary>
-    public static string DefaultDatabaseFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "cloudlog-helper.db");
-
-    /// <summary>
-    ///     Default path to the settings file.
-    /// </summary>
-    public static string DefaultSettingsFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "settings.json");
-    
-    /// <summary>
     ///     Default Hamlib files for windows
     /// </summary>
     public static List<string> DefaultWindowsHamlibFiles = new()
@@ -273,7 +262,7 @@ public class DefaultConfigs
         "libwinpthread-1.dll",
         "rigctld.exe"
     };
-    
+
     /// <summary>
     ///     Default Hamlib files for windows
     /// </summary>
@@ -285,6 +274,16 @@ public class DefaultConfigs
     public static string HamlibFilePath = Path.Join(
         ApplicationStartUpUtil.GetConfigDir(),
         "hamlib");
+
+    /// <summary>
+    ///     Default path to SQLite database file.
+    /// </summary>
+    public static string DefaultDatabaseFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "cloudlog-helper.db");
+
+    /// <summary>
+    ///     Default path to the settings file.
+    /// </summary>
+    public static string DefaultSettingsFile => Path.Join(ApplicationStartUpUtil.GetConfigDir(), "settings.json");
 
     /// <summary>
     ///     Path to Rigctld executable file.

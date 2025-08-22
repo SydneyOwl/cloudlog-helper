@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ADIFLib;
@@ -16,10 +13,8 @@ using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
-using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using Newtonsoft.Json;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -33,19 +28,19 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private readonly IDatabaseService _dbService;
+
+    private readonly IWindowNotificationManagerService _windowNotificationManager;
+
     private bool _executeOnStart;
 
     private CancellationTokenSource _source = new();
-    
-    private IDatabaseService _dbService;
-
-    private IWindowNotificationManagerService _windowNotificationManager;
 
     public QsoSyncAssistantWindowViewModel()
     {
-        if (!Design.IsDesignMode) throw new Exception("This should be called from designer only.");
-        StartSyncCommand =  ReactiveCommand.Create(()=>{});
-        StopSyncCommand = ReactiveCommand.Create(()=>{});
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
+        StartSyncCommand = ReactiveCommand.Create(() => { });
+        StopSyncCommand = ReactiveCommand.Create(() => { });
     }
 
     public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
@@ -193,7 +188,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
             var cloudParsed = cloudParser.TheQSOs
                 .Select(AdifLog.Parse)
                 .ToList();
-            
+
             if (Settings.QsoSyncAssistantSettings.LocalLogPath!.Count == 0)
                 throw new Exception("Please select ur local logs.");
 
@@ -241,7 +236,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                         if (await _dbService.IsQsoIgnored(
                                 IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i]))))
                         {
-                            _logProgress($"QSO: {compareRes[i].Call} {compareRes[i].Mode} is not recorded, but it's marked as ignored.");
+                            _logProgress(
+                                $"QSO: {compareRes[i].Call} {compareRes[i].Mode} is not recorded, but it's marked as ignored.");
                             compareRes.RemoveAt(i);
                             continue;
                         }

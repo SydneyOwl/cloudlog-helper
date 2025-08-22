@@ -2,12 +2,10 @@ using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
-using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
@@ -23,11 +21,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private readonly IWindowNotificationManagerService windowNotificationManager;
+
     private bool _isManualClosing;
 
-    private IWindowNotificationManagerService windowNotificationManager;
-
-    public MainWindow(MainWindowViewModel mainWindowViewModel, 
+    public MainWindow(MainWindowViewModel mainWindowViewModel,
         QsoSyncAssistantWindowViewModel qsoSyncAssistantWindowViewModel,
         IWindowNotificationManagerService wm)
     {
@@ -84,7 +82,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
-                    .Do(_ => windowNotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing)))
+                    .Do(_ => windowNotificationManager.SendInfoNotificationSync(
+                        TranslationHelper.GetString(LangKeys.qsosyncing)))
                     .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
                     .DisposeWith(disposables);
                 // var qsoWindow = new QsoSyncAssistantWindow { DataContext = qsoSyncAssistantWindowViewModel };

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,7 +46,7 @@ public class QsoSyncAssistantUtil
         var result = await loginRequest
             .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
         var redirectUrl = result.Headers.FirstOrDefault("Location");
-        if (!redirectUrl.Contains("dashboard")) throw new Exception("Incorrect username or password");
+        if (!redirectUrl.Contains("dashboard")) throw new InvalidOperationException("Incorrect username or password");
         if (cancellationToken.IsCancellationRequested)
             throw new OperationCanceledException("Operation(LoginAndGetCookies) was canceled.");
         return result.Cookies;
@@ -58,9 +57,9 @@ public class QsoSyncAssistantUtil
     {
         var today = DateTime.Today.ToString("yyyy-MM-dd");
         var nDaysBefore = DateTime.Today.AddDays(dateRange * -1).ToString("yyyy-MM-dd");
-        
+
         var response = await baseurl
-            .AppendPathSegments(DefaultConfigs.ExportCustomAdifLogs) 
+            .AppendPathSegments(DefaultConfigs.ExportCustomAdifLogs)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
             .WithCookies(cookies)
@@ -69,9 +68,9 @@ public class QsoSyncAssistantUtil
                 .AddString("from", nDaysBefore)
                 .AddString("to", today), cancellationToken: cancellationToken)
             .ReceiveBytes();
-        
+
         return Encoding.UTF8.GetString(response);
-   }
+    }
 
     public static async Task<string> DownloadQSOs(string baseurl, string stationCallsign,
         int stationId, int qsoCount, IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
@@ -136,6 +135,7 @@ public class QsoSyncAssistantUtil
             tmp.Add("contest", "");
             tmp.Add("comment", "");
         }
+
         var recentQs = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogQSOAdvancedEndpoint)
             .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
@@ -204,20 +204,17 @@ public class QsoSyncAssistantUtil
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
-            if (string.IsNullOrWhiteSpace(line))continue;
+            if (string.IsNullOrWhiteSpace(line)) continue;
 
-            if (line.Contains("<CALL:", StringComparison.InvariantCultureIgnoreCase))
-            {
-                logFound = true;
-            }
-            
+            if (line.Contains("<CALL:", StringComparison.InvariantCultureIgnoreCase)) logFound = true;
+
             if (!logFound) continue;
-            
+
             if (!line.Contains("<CALL:", StringComparison.InvariantCultureIgnoreCase)
                 || !line.Contains("<MODE:", StringComparison.InvariantCultureIgnoreCase)
                 || !line.Contains("<BAND:", StringComparison.InvariantCultureIgnoreCase)
                 || !line.Contains("<RST_", StringComparison.InvariantCultureIgnoreCase))
-                throw new Exception($"This is not a correct Wsjtx/jtdx log file! - line {lineNum}");
+                throw new ArgumentException($"This is not a correct Wsjtx/jtdx log file! - line {lineNum}");
             if (queue.Count == targetCount)
                 queue.Dequeue();
             queue.Enqueue(line.Trim());
