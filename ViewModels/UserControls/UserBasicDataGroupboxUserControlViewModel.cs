@@ -23,7 +23,7 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly CloudlogSettings _settings = ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
+    private readonly CloudlogSettings _settings;
 
     private readonly IWindowNotificationManagerService _windowNotificationManager;
 
@@ -32,12 +32,15 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
     public UserBasicDataGroupboxUserControlViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
+        _settings = new CloudlogSettings();
     }
 
     public UserBasicDataGroupboxUserControlViewModel(CommandLineOptions cmd,
-        IWindowNotificationManagerService windowNotificationManager)
+        IWindowNotificationManagerService windowNotificationManager,
+        IApplicationSettingsService applicationSettingsService)
     {
         _windowNotificationManager = windowNotificationManager;
+        _settings = applicationSettingsService.GetCurrentSettings().CloudlogSettings;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         if (!InitSkipped) Initialize();
     }
@@ -66,12 +69,10 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
                 .Subscribe(x =>
                 {
                     ClassLogger.Debug("Setting changed; updating cloudlog info");
-                    // _ = _refreshUserBasicData();
                     Observable.Return(Unit.Default) // 触发信号
                         .Delay(TimeSpan.FromMilliseconds(500))
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
-                    // SendMsgToParentVm("");
                 })
                 .DisposeWith(disposables);
 

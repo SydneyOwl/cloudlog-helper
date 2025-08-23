@@ -1,5 +1,6 @@
 ﻿using System.Reactive;
 using CloudlogHelper.Models;
+using CloudlogHelper.Services.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -7,20 +8,21 @@ namespace CloudlogHelper.ViewModels;
 
 public class AskExitOrMinimizeWindowViewModel : ViewModelBase
 {
-    private readonly ApplicationSettings _settings;
-
-
     public AskExitOrMinimizeWindowViewModel()
     {
-        _settings = ApplicationSettings.GetDraftInstance();
+        
+    }
+    
+    public AskExitOrMinimizeWindowViewModel(IApplicationSettingsService ss)
+    {
+        var settings = ss.GetDraftSettings();
         ConfirmToTray = ReactiveCommand.Create(() =>
         {
             if (RememberChoice)
             {
-                _settings.ShutdownMode =
+                settings.ShutdownMode =
                     MinimizeToTray ? ProgramShutdownMode.ToTray : ProgramShutdownMode.Shutdown;
-                _settings.ApplySettings();
-                _settings.WriteCurrentSettingsToFile();
+                ss.ApplySettings();
             }
 
             return MinimizeToTray;

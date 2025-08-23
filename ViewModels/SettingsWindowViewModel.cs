@@ -41,11 +41,12 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly bool initSkipped;
 
     private readonly IRigctldService rigctldService;
+    private readonly IApplicationSettingsService settingsService;
 
     public SettingsWindowViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
-        DraftSettings = ApplicationSettings.GetDraftInstance();
+        DraftSettings = new ApplicationSettings();
         DiscardConf = ReactiveCommand.Create(() => { });
         SaveAndApplyConf = ReactiveCommand.Create(() => { });
         HamlibInitPassed = true;
@@ -53,11 +54,14 @@ public class SettingsWindowViewModel : ViewModelBase
     }
 
 
-    public SettingsWindowViewModel(CommandLineOptions cmd, IRigctldService rs)
+    public SettingsWindowViewModel(CommandLineOptions cmd,
+        IApplicationSettingsService ss,
+        IRigctldService rs)
     {
+        settingsService = ss;
         rigctldService = rs;
         initSkipped = cmd.AutoUdpLogUploadOnly;
-        DraftSettings = ApplicationSettings.GetDraftInstance();
+        DraftSettings = settingsService.GetDraftSettings();
 
         _source = new CancellationTokenSource();
         InitializeLogSystems();
@@ -313,31 +317,28 @@ public class SettingsWindowViewModel : ViewModelBase
         // resume settings
         if (Design.IsDesignMode) return;
         ClassLogger.Trace("Discarding confse");
-        DraftSettings.RestoreSettings();
+        settingsService.RestoreSettings();
         _source.Cancel();
         MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     private void _saveAndApplyConf()
     {
-        var cmp = ApplicationSettings.GetInstance().DeepClone();
-
-        DraftSettings.ApplySettings(LogSystems.ToList());
-        DraftSettings.WriteCurrentSettingsToFile();
+        settingsService.ApplySettings(LogSystems.ToList());
         _source.Cancel();
-        if (DraftSettings.IsCloudlogConfChanged(cmp))
+        if (settingsService.IsCloudlogConfChanged())
         {
             ClassLogger.Trace("Cloudlog settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
         }
 
-        if (DraftSettings.IsHamlibConfChanged(cmp))
+        if (settingsService.IsHamlibConfChanged())
         {
             ClassLogger.Trace("hamlib settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
         }
 
-        if (DraftSettings.IsUDPConfChanged(cmp))
+        if (settingsService.IsUDPConfChanged())
         {
             ClassLogger.Trace("udp settings changed");
             MessageBus.Current.SendMessage(new SettingsChanged

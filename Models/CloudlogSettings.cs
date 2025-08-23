@@ -79,16 +79,7 @@ public class CloudlogSettings : ReactiveValidationObject
         x => x.CloudlogStationInfo,
         (url, key, id) => !IsCloudlogHasErrors()
     );
-
-    public void ApplySettingsChange(CloudlogSettings settings)
-    {
-        CloudlogUrl = settings.CloudlogUrl;
-        CloudlogApiKey = settings.CloudlogApiKey;
-        CloudlogStationInfo = settings.CloudlogStationInfo;
-        AutoQSOUploadEnabled = settings.AutoQSOUploadEnabled;
-        AvailableCloudlogStationInfo.Clear();
-        AvailableCloudlogStationInfo.AddRange(settings.AvailableCloudlogStationInfo);
-    }
+    
 
     public bool IsCloudlogHasErrors(bool checkStationId = false)
     {
@@ -108,12 +99,6 @@ public class CloudlogSettings : ReactiveValidationObject
     private bool IsPropertyHasErrors(string propertyName)
     {
         return GetErrors(propertyName).Cast<string>().Any();
-    }
-
-    public CloudlogSettings GetReference()
-    {
-        return this;
-        // return JsonConvert.DeserializeObject<CloudlogSettings>(JsonConvert.SerializeObject(this))!;
     }
 
     protected bool Equals(CloudlogSettings other)

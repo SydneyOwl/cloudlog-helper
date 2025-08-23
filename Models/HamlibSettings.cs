@@ -76,34 +76,6 @@ public class HamlibSettings : ReactiveValidationObject
             !IsHamlibHasErrors()
     );
 
-    public bool RestartHamlibNeeded(HamlibSettings oldSettings)
-    {
-        if (SelectedRigInfo is null) return true;
-        return !SelectedRigInfo.Equals(oldSettings.SelectedRigInfo) || SelectedPort != oldSettings.SelectedPort ||
-               PollAllowed != oldSettings.PollAllowed ||
-               UseRigAdvanced != oldSettings.UseRigAdvanced || DisablePTT != oldSettings.DisablePTT ||
-               AllowExternalControl != oldSettings.AllowExternalControl ||
-               OverrideCommandlineArg != oldSettings.OverrideCommandlineArg ||
-               UseExternalRigctld != oldSettings.UseExternalRigctld ||
-               ExternalRigctldHostAddress != oldSettings.ExternalRigctldHostAddress;
-    }
-
-    public void ApplySettingsChange(HamlibSettings settings)
-    {
-        SelectedRigInfo = settings.SelectedRigInfo?.DeepClone();
-        SelectedPort = settings.SelectedPort;
-        PollInterval = settings.PollInterval;
-        PollAllowed = settings.PollAllowed;
-        ReportRFPower = settings.ReportRFPower;
-        ReportSplitInfo = settings.ReportSplitInfo;
-        UseRigAdvanced = settings.UseRigAdvanced;
-        DisablePTT = settings.DisablePTT;
-        AllowExternalControl = settings.AllowExternalControl;
-        OverrideCommandlineArg = settings.OverrideCommandlineArg;
-        UseExternalRigctld = settings.UseExternalRigctld;
-        ExternalRigctldHostAddress = settings.ExternalRigctldHostAddress;
-        SyncRigInfoAddress = settings.SyncRigInfoAddress;
-    }
 
     private bool IsPropertyHasErrors(string propertyName)
     {
@@ -125,11 +97,6 @@ public class HamlibSettings : ReactiveValidationObject
         return !IPAddrUtil.CheckAddress(ExternalRigctldHostAddress);
     }
 
-
-    public HamlibSettings GetReference()
-    {
-        return this;
-    }
 
     protected bool Equals(HamlibSettings other)
     {

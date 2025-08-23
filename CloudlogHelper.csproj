@@ -23,6 +23,7 @@
 
     <ItemGroup>
         <PackageReference Include="Antelcat.I18N.Avalonia" Version="1.1.2"/>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
         <PackageReference Include="Avalonia" Version="11.3.1"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.3.1"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1"/>

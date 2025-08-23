@@ -21,15 +21,20 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IWindowNotificationManagerService windowNotificationManager;
+    private readonly IWindowNotificationManagerService _windowNotificationManager;
+    private readonly IApplicationSettingsService _applicationSettingsService;
 
     private bool _isManualClosing;
 
     public MainWindow(MainWindowViewModel mainWindowViewModel,
         QsoSyncAssistantWindowViewModel qsoSyncAssistantWindowViewModel,
+        AskExitOrMinimizeWindowViewModel askExitOrMinimizeWindowViewModel,
+        IApplicationSettingsService ss,
         IWindowNotificationManagerService wm)
     {
-        windowNotificationManager = wm;
+        _windowNotificationManager = wm;
+        
+        _applicationSettingsService = ss;
         DataContext = mainWindowViewModel;
         InitializeComponent();
         this.WhenActivated(disposables =>
@@ -44,7 +49,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                         // ask users to minimize or close
                         if (_isManualClosing) return;
                         args.EventArgs.Cancel = true;
-                        var mode = ApplicationSettings.GetInstance().ShutdownMode;
+                        var mode = _applicationSettingsService.GetCurrentSettings().ShutdownMode;
                         if (mode != ProgramShutdownMode.NotSpecified)
                         {
                             if (mode == ProgramShutdownMode.ToTray)
@@ -58,7 +63,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                         }
 
                         var dialog = new AskExitOrMinimizeWindow
-                            { DataContext = new AskExitOrMinimizeWindowViewModel() };
+                            { DataContext = askExitOrMinimizeWindowViewModel };
                         if (await dialog.ShowDialog<bool>(this))
                         {
                             Hide();
@@ -76,13 +81,13 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 .DisposeWith(disposables);
 
             // Start qso assistant, if required.
-            if (ApplicationSettings.GetInstance().QsoSyncAssistantSettings.ExecuteOnStart)
+            if (_applicationSettingsService.GetCurrentSettings().QsoSyncAssistantSettings.ExecuteOnStart)
             {
                 qsoSyncAssistantWindowViewModel.EnableExecuteOnStart();
 
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
-                    .Do(_ => windowNotificationManager.SendInfoNotificationSync(
+                    .Do(_ => _windowNotificationManager.SendInfoNotificationSync(
                         TranslationHelper.GetString(LangKeys.qsosyncing)))
                     .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
                     .DisposeWith(disposables);

@@ -35,6 +35,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     private bool _executeOnStart;
 
     private CancellationTokenSource _source = new();
+    
+    private readonly IApplicationSettingsService settingsService;
 
     public QsoSyncAssistantWindowViewModel()
     {
@@ -44,10 +46,14 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     }
 
     public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
-        IWindowNotificationManagerService winNotification)
+        IWindowNotificationManagerService winNotification,
+        IApplicationSettingsService ss)
     {
         _dbService = dbService;
         _windowNotificationManager = winNotification;
+        settingsService = ss;
+        Settings = settingsService.GetDraftSettings();
+        
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
         StartSyncCommand =
@@ -78,7 +84,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> SaveConf { get; }
 
-    public ApplicationSettings Settings { get; set; } = ApplicationSettings.GetDraftInstance();
+    public ApplicationSettings Settings { get; set; }
 
 
     public Interaction<Unit, IStorageFile[]> ShowFileSelectWindow { get; } = new();
@@ -100,8 +106,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private void _saveAndApplyConf()
     {
-        Settings.ApplySettings();
-        Settings.WriteCurrentSettingsToFile();
+        settingsService.ApplySettings();
     }
 
     private async Task AddLogPath()

@@ -44,24 +44,7 @@ public class UDPServerSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public bool ForwardMessage { get; set; }
     [Reactive] [JsonProperty] public string ForwardAddress { get; set; }
-
-
-    public void ApplySettingsChange(UDPServerSettings settings)
-    {
-        EnableUDPServer = settings.EnableUDPServer;
-        EnableConnectionFromOutside = settings.EnableConnectionFromOutside;
-        UDPPort = settings.UDPPort;
-        RetryCount = settings.RetryCount;
-        ForwardMessage = settings.ForwardMessage;
-        ForwardAddress = settings.ForwardAddress;
-    }
-
-    public bool RestartUDPNeeded(UDPServerSettings oldSettings)
-    {
-        return EnableUDPServer != oldSettings.EnableUDPServer || EnableConnectionFromOutside !=
-                                                              oldSettings.EnableConnectionFromOutside
-                                                              || UDPPort != oldSettings.UDPPort;
-    }
+    
 
     private bool IsPropertyHasErrors(string propertyName)
     {
@@ -73,11 +56,6 @@ public class UDPServerSettings : ReactiveValidationObject
         return IsPropertyHasErrors(nameof(UDPPort)) || IsPropertyHasErrors(nameof(RetryCount));
     }
 
-    public UDPServerSettings GetReference()
-    {
-        return this;
-        // return JsonConvert.DeserializeObject<UDPServerSettings>(JsonConvert.SerializeObject(this))!;
-    }
 
     protected bool Equals(UDPServerSettings other)
     {

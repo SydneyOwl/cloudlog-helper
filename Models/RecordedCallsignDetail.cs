@@ -204,11 +204,11 @@ public class RecordedCallsignDetail : ReactiveObject
     /// <param name="cdb"></param>
     /// <param name="qlo"></param>
     /// <returns></returns>
-    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo)
+    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo, SupportedLanguage lan)
     {
         return new RecordedCallsignDetail
         {
-            LocalizedCountryName = ApplicationSettings.GetInstance().LanguageType == SupportedLanguage.SimplifiedChinese
+            LocalizedCountryName = lan == SupportedLanguage.SimplifiedChinese
                 ? cdb.CountryNameCn
                 : cdb.CountryNameEn,
             CqZone = cdb.CqZone,

@@ -21,8 +21,9 @@ public class StatusLightUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private static IRigctldService _rigctldService;
-    private static IUdpServerService _udpServerService;
+    private IRigctldService _rigctldService;
+    private IUdpServerService _udpServerService;
+    private IApplicationSettingsService _applicationSettingsService;
 
     private bool _isRigctldUsingExternal;
 
@@ -33,8 +34,10 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     public StatusLightUserControlViewModel(IRigctldService rSer,
         IUdpServerService uSer,
+        IApplicationSettingsService ss,
         CommandLineOptions cmd)
     {
+        _applicationSettingsService = ss;
         _udpServerService = uSer;
         _rigctldService = rSer;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
@@ -77,7 +80,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     private void _updateRigctldListeningAddress()
     {
-        var settings = ApplicationSettings.GetInstance().HamlibSettings;
+        var settings = _applicationSettingsService.GetCurrentSettings().HamlibSettings;
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
 
@@ -141,7 +144,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     private void _updateUdpServerListeningAddress()
     {
-        var settings = ApplicationSettings.GetInstance().UDPSettings;
+        var settings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
         var port = settings.UDPPort;
         if (string.IsNullOrEmpty(port))
         {

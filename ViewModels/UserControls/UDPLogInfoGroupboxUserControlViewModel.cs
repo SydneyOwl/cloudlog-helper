@@ -47,11 +47,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
 
     private readonly IDatabaseService _databaseService;
 
-    /// <summary>
-    ///     Settings for cloudlog.
-    /// </summary>
-    private readonly CloudlogSettings _extraCloudlogSettings =
-        ApplicationSettings.GetInstance().CloudlogSettings.GetReference();
 
     /// <summary>
     ///     UDP Timeout watchdog.
@@ -62,21 +57,27 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     ///     check if this queue is empty. Reupload qso function is disabled if queue is not empty.
     /// </summary>
     private readonly BehaviorSubject<bool> _isUploadQueueEmpty;
-
+    
+    /// <summary>
+    ///     Settings for cloudlog.
+    /// </summary>
+    private readonly CloudlogSettings _extraCloudlogSettings;
+    
     /// <summary>
     ///     Settings for log services.
     /// </summary>
-    private readonly List<ThirdPartyLogService> _logServices =
-        ApplicationSettings.GetInstance().LogServices;
-
-    private readonly IMessageBoxManagerService _messageBoxManagerService;
-
+    private readonly List<ThirdPartyLogService> _logServices;
+    
     /// <summary>
     ///     Settings for UDPServer.
     /// </summary>
-    private readonly UDPServerSettings _settings = ApplicationSettings.GetInstance().UDPSettings.GetReference();
+    private readonly UDPServerSettings _udpSettings;
+
+    private readonly IMessageBoxManagerService _messageBoxManagerService;
 
     private readonly IUdpServerService _udpServerService;
+    
+    private readonly IApplicationSettingsService _applicationSettingsService;
 
     /// <summary>
     ///     To be uploaded QSOs queue.
@@ -92,11 +93,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     ///     Total decoded number.
     /// </summary>
     private uint _allDecodedCount;
-
-    /// <summary>
-    ///     Old Settings for UDPServer to check if a restart is needed.
-    /// </summary>
-    private UDPServerSettings _oldSettings = ApplicationSettings.GetInstance().UDPSettings.DeepClone();
 
     /// <summary>
     ///     The number of Qso made.
@@ -119,15 +115,23 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
         IWindowNotificationManagerService windowNotificationManager,
         IMessageBoxManagerService messageBoxManagerService,
-        IUdpServerService udpServerService)
+        IUdpServerService udpServerService,
+        IApplicationSettingsService ss)
     {
+        _applicationSettingsService = ss;
+        
+        _logServices = ss.GetCurrentSettings().LogServices;
+        _extraCloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
+        _udpSettings = ss.GetCurrentSettings().UDPSettings;
+        
         _udpServerService = udpServerService;
         _databaseService = dbService;
         _messageBoxManagerService = messageBoxManagerService;
         _windowNotificationManager = windowNotificationManager;
+        
         _isUploadQueueEmpty = new BehaviorSubject<bool>(_uploadQueue.IsEmpty);
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
-        WaitFirstConn = _settings.EnableUDPServer;
+        WaitFirstConn = _udpSettings.EnableUDPServer;
 
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
         ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO, _isUploadQueueEmpty.AsObservable());
@@ -153,7 +157,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ =>
                 {
-                    if (!_settings.EnableUDPServer || WaitFirstConn) return;
+                    if (!_udpSettings.EnableUDPServer || WaitFirstConn) return;
                     TimeoutStatus = true;
                 })
                 .DisposeWith(disposables);
@@ -224,10 +228,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     if (x.Part == ChangedPart.UDPServer)
                     {
                         ClassLogger.Debug("Setting changed; updating udp");
-                        WaitFirstConn = _settings.EnableUDPServer;
-                        if (_settings.RestartUDPNeeded(_oldSettings)) TryStartUdpService().DisposeWith(disposables);
-
-                        _oldSettings = _settings.DeepClone();
+                        WaitFirstConn = _udpSettings.EnableUDPServer;
+                        if (ss.RestartUDPNeeded()) TryStartUdpService().DisposeWith(disposables);
                     }
                 })
                 .DisposeWith(disposables);
@@ -280,7 +282,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
 
     private IDisposable TryStartUdpService()
     {
-        if (!_settings.EnableUDPServer)
+        if (!_udpSettings.EnableUDPServer)
         {
             _ = _udpServerService.TerminateUDPServerAsync();
             return Disposable.Empty;
@@ -294,7 +296,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     {
         ClassLogger.Debug("trying to start UDP...");
         // create a default handler here
-        if (_settings.IsUDPConfigHasErrors())
+        if (_udpSettings.IsUDPConfigHasErrors())
         {
             _ = _udpServerService.TerminateUDPServerAsync();
             WaitFirstConn = false;
@@ -302,8 +304,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         }
 
         _ = _udpServerService.RestartUDPServerAsync(
-            _settings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
-            int.Parse(_settings.UDPPort),
+            _udpSettings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
+            int.Parse(_udpSettings.UDPPort),
             _wsjtxMsgHandler,
             _wsjtxMsgForwarder,
             _wsjtxMsgLogger
@@ -422,7 +424,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                 }
 
                 // do possible retry...
-                if (!int.TryParse(_settings.RetryCount, out var retTime)) retTime = 1;
+                if (!int.TryParse(_udpSettings.RetryCount, out var retTime)) retTime = 1;
                 for (var i = 0; i < retTime; i++)
                 {
                     rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
@@ -506,9 +508,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     {
         try
         {
-            if (_settings.ForwardMessage)
+            if (_udpSettings.ForwardMessage)
                 // ClassLogger.Trace(message.DeserializeWsjtxMessage().MessageType);
-                await _udpServerService.ForwardMessageAsync(message, IPEndPoint.Parse(_settings.ForwardAddress));
+                await _udpServerService.ForwardMessageAsync(message, IPEndPoint.Parse(_udpSettings.ForwardAddress));
         }
         catch (Exception e)
         {
@@ -529,7 +531,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     // process message
                     var msg = (QsoLogged)message;
                     var cty = await _databaseService.GetCallsignDetailAsync(msg.DXCall);
-                    var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg);
+                    var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg, _applicationSettingsService.GetCurrentSettings().LanguageType);
                     rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
                     // log it into that
                     _allQsos.Add(rcd);

@@ -1,4 +1,5 @@
-﻿using CloudlogHelper.Services.Interfaces;
+﻿using CloudlogHelper.Models;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
         // Register all view models as singletons
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<SettingsWindowViewModel>();
+        services.AddTransient<AskExitOrMinimizeWindowViewModel>();
         services.AddSingleton<QsoSyncAssistantWindowViewModel>();
         services.AddTransient<AskExitOrMinimizeWindowViewModel>();
         services.AddSingleton<AboutWindowViewModel>();
@@ -31,6 +33,13 @@ public static class ServiceCollectionExtensions
 
     public static void AddExtra(this IServiceCollection services)
     {
+        services.AddAutoMapper(cfg =>
+        {
+            cfg.CreateMap<HamlibSettings, HamlibSettings>();
+            cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
+            cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
+            cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
+        });
         // Register all view models as singletons
         services.AddSingleton<MainWindow>();
     }

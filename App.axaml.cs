@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -64,24 +65,6 @@ public class App : Application
         if (_cmdOptions.Verbose) DefaultConfigs.MaxRigctldErrorCount = 100;
         var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
-
-        // now search for all assemblies marked as "log service"
-        var lType = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
-            .ToList();
-
-        if (lType.GroupBy(n => n).Any(c => c.Count() > 1))
-            throw new InvalidOperationException("Dupe log service found. This is not allowed!");
-
-        // create those types and assign back to settings...
-        var logServices = lType.Select(x =>
-        {
-            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x))
-                throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
-            return (ThirdPartyLogService)Activator.CreateInstance(x)!;
-        });
-
-        _initializeSettings(logServices, _cmdOptions.ReinitSettings);
     }
 
     public override void Initialize()
@@ -104,8 +87,32 @@ public class App : Application
             new WindowNotificationManagerService(desktop));
         collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
             new MessageBoxManagerService(desktop));
+        
+        // now search for all assemblies marked as "log service"
+        var lType = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
+            .ToList();
 
+        if (lType.GroupBy(n => n).Any(c => c.Count() > 1))
+            throw new InvalidOperationException("Dupe log service found. This is not allowed!");
+
+        // create those types and assign back to settings...
+        var logServices = lType.Select(x =>
+        {
+            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x))
+                throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
+            return (ThirdPartyLogService)Activator.CreateInstance(x)!;
+        });
+        collection.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
+            ApplicationSettingsService.GenerateApplicationSettingsService(
+                logServices.ToArray(), _cmdOptions.ReinitSettings, pr.GetRequiredService<IMapper>()
+                ));
+        
         _servProvider = collection.BuildServiceProvider();
+        
+        var applicationSettingsService = _servProvider.GetRequiredService<IApplicationSettingsService>();
+        I18NExtension.Culture = TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().LanguageType);
+
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
         _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
@@ -211,23 +218,7 @@ public class App : Application
         _mutex?.ReleaseMutex();
         _trayIcon?.Dispose();
     }
-
-
-    private static void _initializeSettings(IEnumerable<ThirdPartyLogService> logServices, bool reinit = false)
-    {
-        ApplicationSettings.ReadSettingsFromFile(logServices.ToArray(), reinit);
-        var settings = ApplicationSettings.GetInstance();
-        var draftSettings = ApplicationSettings.GetDraftInstance();
-
-        // init culture
-        if (settings.LanguageType == SupportedLanguage.NotSpecified)
-        {
-            settings.LanguageType = TranslationHelper.DetectDefaultLanguage();
-            draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
-        }
-
-        I18NExtension.Culture = TranslationHelper.GetCultureInfo(settings.LanguageType);
-    }
+    
 
     private static void _initializeLogger(LogLevel logLevel, bool writeToFile = false)
     {
