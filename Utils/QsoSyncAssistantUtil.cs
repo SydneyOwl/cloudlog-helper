@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
 using Flurl;
 using Flurl.Http;

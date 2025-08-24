@@ -1,4 +1,5 @@
 ﻿using System;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 
 namespace CloudlogHelper.LogService.Attributes;

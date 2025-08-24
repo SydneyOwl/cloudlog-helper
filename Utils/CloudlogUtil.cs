@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using Flurl;
@@ -12,12 +13,7 @@ using NLog;
 
 namespace CloudlogHelper.Utils;
 
-public enum ServerInstanceType
-{
-    Cloudlog,
-    Wavelog,
-    Unknown
-}
+
 
 public class CloudlogUtil
 {

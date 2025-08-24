@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
+using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;

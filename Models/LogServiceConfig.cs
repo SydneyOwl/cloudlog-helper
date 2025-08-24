@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CloudlogHelper.Enums;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -26,10 +27,4 @@ public class LogSystemField : ReactiveObject
     public bool IsRequired { get; set; }
 
     [Reactive] public string? Value { get; set; }
-}
-
-public enum FieldType
-{
-    Text,
-    Password
 }

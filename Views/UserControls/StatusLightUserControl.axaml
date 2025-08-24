@@ -9,8 +9,8 @@
              x:DataType="userControls:StatusLightUserControlViewModel">
 
     <UserControl.Resources>
-        <converters:BoolToColorConverter x:Key="BoolToColor" />
-        <converters:BoolToShadowConverter x:Key="BoolToShadow" />
+        <converters:StatusToColorConverter x:Key="StatusToColor" />
+        <converters:StatusToShadowConverter x:Key="StatusToShadow" />
     </UserControl.Resources>
     
     <UserControl.Styles>
@@ -69,8 +69,8 @@
             <StackPanel Background="Transparent" Cursor="Hand" ToolTip.Tip="Start/Stop"
                         Orientation="Horizontal" Spacing="10" >
                 <Border Width="22" Height="22" CornerRadius="11"
-                        Background="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
-                        BoxShadow="{Binding IsUdpServerRunning, Converter={StaticResource BoolToShadow}}"
+                        Background="{Binding UdpServerRunningStatus, Converter={StaticResource StatusToColor}}"
+                        BoxShadow="{Binding UdpServerRunningStatus, Converter={StaticResource StatusToShadow}}"
                         VerticalAlignment="Center">
                     <Border.Styles>
                         <Style Selector="Border">
@@ -115,8 +115,8 @@
                         Orientation="Horizontal" Spacing="10">
                 
                 <Border Width="22" Height="22" CornerRadius="11"
-                        Background="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                        BoxShadow="{Binding IsRigctldRunning, Converter={StaticResource BoolToShadow}}"
+                        Background="{Binding RigctldRunningStatus, Converter={StaticResource StatusToColor}}"
+                        BoxShadow="{Binding RigctldRunningStatus, Converter={StaticResource StatusToShadow}}"
                         VerticalAlignment="Center">
                     <Border.Styles>
                         <Style Selector="Border">

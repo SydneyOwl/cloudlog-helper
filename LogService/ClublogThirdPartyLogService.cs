@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;

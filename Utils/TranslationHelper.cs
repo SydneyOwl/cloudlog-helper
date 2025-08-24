@@ -2,16 +2,10 @@
 using System.Globalization;
 using System.Threading;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using CloudlogHelper.Enums;
 using NLog;
 
 namespace CloudlogHelper.Utils;
-
-public enum SupportedLanguage
-{
-    NotSpecified = -1,
-    English = 0,
-    SimplifiedChinese = 1
-}
 
 /// <summary>
 ///     Provides helper methods for translation and language support.

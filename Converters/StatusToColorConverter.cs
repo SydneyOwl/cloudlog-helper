@@ -2,18 +2,21 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CloudlogHelper.Enums;
 
 namespace CloudlogHelper.Converters;
 
-public class BoolToShadowConverter : IValueConverter
+public class StatusToColorConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is null) return BoxShadows.Parse("0 0 20 0 Red");
-        return value?.ToString() switch
+        if (value is null) return Brushes.Red;
+        return value switch
         {
-            "True" => BoxShadows.Parse("0 0 40 0 LawnGreen"),
-            _ => BoxShadows.Parse("0 0 40 0 Red")
+            StatusLightEnum.Running => Brushes.LawnGreen,
+            StatusLightEnum.Stopped =>Brushes.Red,
+            StatusLightEnum.Loading => Brushes.Yellow,
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };
     }
 

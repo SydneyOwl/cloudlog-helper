@@ -1,4 +1,5 @@
 ﻿using System.Reactive;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
 using ReactiveUI;

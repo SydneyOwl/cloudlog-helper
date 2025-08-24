@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 
 namespace CloudlogHelper.Converters;

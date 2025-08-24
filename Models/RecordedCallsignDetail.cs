@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using ADIFLib;
 using CloudlogHelper.Database;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using ReactiveUI;
@@ -10,16 +11,6 @@ using ReactiveUI.Fody.Helpers;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
 namespace CloudlogHelper.Models;
-
-public enum UploadStatus
-{
-    Uploading,
-    Retrying,
-    Pending,
-    Success,
-    Fail,
-    Ignored // Auto upload qso is not enabled 
-}
 
 public class RecordedCallsignDetail : ReactiveObject
 {

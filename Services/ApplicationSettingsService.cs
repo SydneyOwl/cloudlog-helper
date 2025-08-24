@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;

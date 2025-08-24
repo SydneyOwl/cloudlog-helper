@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
@@ -14,23 +15,7 @@ using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Models;
 
-public enum ProgramShutdownMode
-{
-    /// <summary>
-    ///     Shutdown mode is not specified. This means user didn't click "remember choice".
-    /// </summary>
-    NotSpecified,
 
-    /// <summary>
-    ///     Minimize to tray.
-    /// </summary>
-    ToTray,
-
-    /// <summary>
-    ///     Close the application.
-    /// </summary>
-    Shutdown
-}
 
 /// <summary>
 ///     Application-wide settings

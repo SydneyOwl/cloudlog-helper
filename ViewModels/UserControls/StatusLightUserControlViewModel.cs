@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using Avalonia.Controls;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -59,6 +60,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 _applingSettings = true;
                 try
                 {
+                    UdpServerRunningStatus = StatusLightEnum.Loading;
                     var udpSettingsEnableUdpServer =
                         _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer;
                     _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer =
@@ -76,6 +78,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 _applingSettings = true;
                 try
                 {
+                    RigctldRunningStatus = StatusLightEnum.Loading;
                     var poll =
                         _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed;
                     _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed =
@@ -100,8 +103,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     [Reactive] public string CurrentRigctldAddress { get; set; } = "(?)";
     [Reactive] public string CurrentUDPServerAddress { get; set; } = "(?)";
-    [Reactive] public bool IsRigctldRunning { get; set; }
-    [Reactive] public bool IsUdpServerRunning { get; set; }
+    [Reactive] public StatusLightEnum RigctldRunningStatus { get; set; } = StatusLightEnum.Loading;
+    [Reactive] public StatusLightEnum UdpServerRunningStatus { get; set; } = StatusLightEnum.Loading;
     [Reactive] public bool InitSkipped { get; set; }
     
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
@@ -126,8 +129,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
             Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)).Subscribe(_ =>
             {
-                IsUdpServerRunning = _udpServerService.IsUdpServerRunning();
-                IsRigctldRunning = _rigctldService.IsRigctldClientRunning() || _isRigctldUsingExternal;
+                UdpServerRunningStatus = _udpServerService.IsUdpServerRunning() ? StatusLightEnum.Running : StatusLightEnum.Stopped;
+                RigctldRunningStatus = (_rigctldService.IsRigctldClientRunning() || _isRigctldUsingExternal) ? StatusLightEnum.Running : StatusLightEnum.Stopped;
             }).DisposeWith(disposables);
         });
 
