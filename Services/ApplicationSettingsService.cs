@@ -6,6 +6,7 @@ using System.Reflection;
 using AutoMapper;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.LogService;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
@@ -14,6 +15,7 @@ using Force.DeepCloner;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NLog;
+using ReactiveUI;
 
 namespace CloudlogHelper.Services;
 
@@ -192,17 +194,33 @@ public class ApplicationSettingsService: IApplicationSettingsService
         _writeCurrentSettingsToFile(_draftSettings!);
         _mapper.Map(_draftSettings, _currentSettings);
         _applyLogServiceChanges(rawConfigs);
-        // _draftSettings.DeepCloneTo(_currentSettings);
-        // _currentInstance!.CloudlogSettings.ApplySettingsChange(CloudlogSettings);
-        // _currentInstance!.HamlibSettings.ApplySettingsChange(HamlibSettings);
-        // _currentInstance!.UDPSettings.ApplySettingsChange(UDPSettings);
-        // _settingsInstance = _currentInstance;
+        
+        if (IsCloudlogConfChanged())
+        {
+            ClassLogger.Trace("Cloudlog settings changed");
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
+        }
+
+        if (IsHamlibConfChanged())
+        {
+            ClassLogger.Trace("hamlib settings changed");
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
+        }
+
+        if (IsUDPConfChanged())
+        {
+            ClassLogger.Trace("udp settings changed");
+            MessageBus.Current.SendMessage(new SettingsChanged
+                { Part = ChangedPart.UDPServer });
+        }
+
+        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     public void RestoreSettings()
     {
-        // _currentSettings.DeepCloneTo(_draftSettings);
         _draftSettings = _currentSettings!.DeepClone();
+        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
         // CloudlogSettings.ApplySettingsChange(_currentInstance!.CloudlogSettings);
         // HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
         // UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
@@ -24,24 +25,77 @@ public class StatusLightUserControlViewModel : ViewModelBase
     private IRigctldService _rigctldService;
     private IUdpServerService _udpServerService;
     private IApplicationSettingsService _applicationSettingsService;
+    private IWindowNotificationManagerService _windowNotificationManagerService;
 
     private bool _isRigctldUsingExternal;
+
+    private bool _applingSettings;
 
     public StatusLightUserControlViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
+        StartStopUdpCommand = ReactiveCommand.Create(() => { });
+        StartStopRigctldCommand = ReactiveCommand.Create(() => { });
     }
 
     public StatusLightUserControlViewModel(IRigctldService rSer,
         IUdpServerService uSer,
         IApplicationSettingsService ss,
+        IWindowNotificationManagerService nw,
         CommandLineOptions cmd)
     {
         _applicationSettingsService = ss;
         _udpServerService = uSer;
         _rigctldService = rSer;
+        _windowNotificationManagerService = nw;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
-        if (!InitSkipped) Initialize();
+        if (!InitSkipped)
+        {
+            Initialize();
+            
+            StartStopUdpCommand = ReactiveCommand.Create(() =>
+            {
+                if (_applingSettings)return;
+                _applingSettings = true;
+                try
+                {
+                    var udpSettingsEnableUdpServer =
+                        _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer;
+                    _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer =
+                        !udpSettingsEnableUdpServer;
+                    _applicationSettingsService.ApplySettings();
+                }
+                finally
+                {
+                    _applingSettings = false;
+                }
+            });
+            StartStopRigctldCommand = ReactiveCommand.Create(() =>
+            {
+                if (_applingSettings)return;
+                _applingSettings = true;
+                try
+                {
+                    var poll =
+                        _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed;
+                    _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed =
+                        !poll;
+                    _applicationSettingsService.ApplySettings();
+                }
+                finally
+                {
+                    _applingSettings = false;
+                }
+            });
+
+            StartStopUdpCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
+            StartStopRigctldCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
+        }
+        else
+        {
+            StartStopUdpCommand = ReactiveCommand.Create(() => { });
+            StartStopRigctldCommand = ReactiveCommand.Create(() => { });
+        }
     }
 
     [Reactive] public string CurrentRigctldAddress { get; set; } = "(?)";
@@ -49,6 +103,9 @@ public class StatusLightUserControlViewModel : ViewModelBase
     [Reactive] public bool IsRigctldRunning { get; set; }
     [Reactive] public bool IsUdpServerRunning { get; set; }
     [Reactive] public bool InitSkipped { get; set; }
+    
+    [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
+    [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigctldCommand { get; set; }
 
     private void Initialize()
     {
@@ -138,26 +195,35 @@ public class StatusLightUserControlViewModel : ViewModelBase
         catch (Exception a)
         {
             ClassLogger.Error(a);
+            // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
             CurrentRigctldAddress = "(?)";
         }
     }
 
     private void _updateUdpServerListeningAddress()
     {
-        var settings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
-        var port = settings.UDPPort;
-        if (string.IsNullOrEmpty(port))
+        try
         {
-            CurrentUDPServerAddress = "(?)";
-            return;
-        }
+            var settings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
+            var port = settings.UDPPort;
+            if (string.IsNullOrEmpty(port))
+            {
+                CurrentUDPServerAddress = "(?)";
+                return;
+            }
 
-        if (settings.EnableConnectionFromOutside)
+            if (settings.EnableConnectionFromOutside)
+            {
+                CurrentUDPServerAddress = $"(0.0.0.0:{port})";
+                return;
+            }
+
+            CurrentUDPServerAddress = $"(127.0.0.1:{port})";
+        }
+        catch (Exception a)
         {
-            CurrentUDPServerAddress = $"(0.0.0.0:{port})";
-            return;
+            ClassLogger.Error(a);
+            // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
         }
-
-        CurrentUDPServerAddress = $"(127.0.0.1:{port})";
     }
 }

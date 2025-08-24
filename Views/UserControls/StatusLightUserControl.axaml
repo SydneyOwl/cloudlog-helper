@@ -44,6 +44,12 @@
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
                     Classes="StatusContainer">
             
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="PointerPressed">
+                    <InvokeCommandAction Command="{Binding StartStopUdpCommand}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            
             <StackPanel.Styles>
                 <Style Selector="StackPanel.StatusContainer">
                     <Setter Property="Opacity" Value="0.8" />
@@ -84,6 +90,12 @@
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
                     Classes="StatusContainer">
             
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="PointerPressed">
+                    <InvokeCommandAction Command="{Binding StartStopRigctldCommand}" />
+                </EventTriggerBehavior>
+                
+            </Interaction.Behaviors>
             <StackPanel.Styles>
                 <Style Selector="StackPanel.StatusContainer">
                     <Setter Property="Opacity" Value="0.8" />

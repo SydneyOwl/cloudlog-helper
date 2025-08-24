@@ -51,6 +51,8 @@
         <PackageReference Include="System.Management" Version="8.0.0"/>
         <PackageReference Include="WsjtxUtilsPatch.WsjtxMessages" Version="1.0.3"/>
         <PackageReference Include="WsjtxUtilsPatch.WsjtxUdpServer" Version="1.0.3"/>
+        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.1" />
+        <PackageReference Include="Xaml.Behaviors.Interactivity" Version="11.3.1" />
     </ItemGroup>
 
     <ItemGroup>

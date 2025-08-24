@@ -316,36 +316,14 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         // resume settings
         if (Design.IsDesignMode) return;
-        ClassLogger.Trace("Discarding confse");
         settingsService.RestoreSettings();
         _source.Cancel();
-        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     private void _saveAndApplyConf()
     {
         settingsService.ApplySettings(LogSystems.ToList());
         _source.Cancel();
-        if (settingsService.IsCloudlogConfChanged())
-        {
-            ClassLogger.Trace("Cloudlog settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
-        }
-
-        if (settingsService.IsHamlibConfChanged())
-        {
-            ClassLogger.Trace("hamlib settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
-        }
-
-        if (settingsService.IsUDPConfChanged())
-        {
-            ClassLogger.Trace("udp settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged
-                { Part = ChangedPart.UDPServer });
-        }
-
-        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     #region CloudlogAPI
