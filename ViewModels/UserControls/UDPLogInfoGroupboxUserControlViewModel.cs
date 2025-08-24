@@ -116,7 +116,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
 
         var testQso = new RecordedCallsignDetail
         {
-            LocalizedCountryName = "Japan",
+            LocalizedCountryName = "日本",
             CqZone = 25,
             ItuZone = 45,
             Continent = "AS",
@@ -149,7 +149,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
             ExchangeSent = "599",
             ExchangeReceived = "599",
 
-            ClientId = "WSJT-X",
+            ClientId = "WSJT-X 50MHZ",
             UploadStatus = UploadStatus.Success,
             Checked = true,
             ForcedUpload = false,

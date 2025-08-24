@@ -11,32 +11,71 @@
     <Design.DataContext>
         <userControls:UserBasicDataGroupboxUserControlViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Horizontal" Margin="10">
-        <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}">
-            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                  ShowGridLines="False" Margin="5"
-                  VerticalAlignment="Center" HorizontalAlignment="Left">
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.op}}" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Margin="50,0,0,5" Text="{Binding OP}" />
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.grid}}" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Margin="50,0,0,15" Text="{Binding GridSquare}" />
+    <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}" Margin="16"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+        <Border CornerRadius="12" 
+                Padding="16" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+                HorizontalAlignment="Stretch">
+            
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*"
+                  VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                
+                <!-- op -->
+                <TextBlock Grid.Row="0" Grid.Column="0" 
+                           Text="{I18N {x:Static resources:LangKeys.op}}"
+                           FontSize="15"
+                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Border Grid.Row="0" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
+                        HorizontalAlignment="Stretch">
+                    <TextBlock Text="{Binding OP}" FontSize="15" FontWeight="SemiBold"
+                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                </Border>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.dayqsos}}" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Margin="50,0,0,5" Text="{Binding QsToday}" />
+                <!-- grid -->
+                <TextBlock Grid.Row="1" Grid.Column="0" 
+                           Text="{I18N {x:Static resources:LangKeys.grid}}"
+                           FontSize="15" 
+                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Border Grid.Row="1" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
+                        HorizontalAlignment="Stretch">
+                    <TextBlock Text="{Binding GridSquare}" FontSize="15" FontWeight="SemiBold"
+                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                </Border>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.monthqsos}}" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Margin="50,0,0,5" Text="{Binding QsMonth}" />
+                <!-- today -->
+                <TextBlock Grid.Row="2" Grid.Column="0" 
+                           Text="{I18N {x:Static resources:LangKeys.dayqsos}}"
+                           FontSize="15" 
+                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Border Grid.Row="2" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
+                        HorizontalAlignment="Stretch">
+                    <TextBlock Text="{Binding QsToday}" FontSize="15" FontWeight="SemiBold"
+                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                </Border>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.yearqsos}}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Margin="50,0,0,15" Text="{Binding QsYear}" />
+                <!-- month -->
+                <TextBlock Grid.Row="3" Grid.Column="0" 
+                           Text="{I18N {x:Static resources:LangKeys.monthqsos}}"
+                           FontSize="15" 
+                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Border Grid.Row="3" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
+                        HorizontalAlignment="Stretch">
+                    <TextBlock Text="{Binding QsMonth}" FontSize="15" FontWeight="SemiBold"
+                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                </Border>
 
-                <!-- <TextBlock Grid.Row="5" Grid.Column="0" Text="QSOs/min"/> -->
-                <!-- <TextBlock Grid.Row="5" Grid.Column="1" Margin="10,0,0,5" Text="{Binding QsAvgMin}"/> -->
-                <!--      -->
-                <!-- <TextBlock Grid.Row="6" Grid.Column="0" Text="QSOs/h"/> -->
-                <!-- <TextBlock Grid.Row="6" Grid.Column="1" Margin="10,0,0,5" Text="{Binding QsAvgHour}"/> -->
+                <!-- Year QSO -->
+                <TextBlock Grid.Row="4" Grid.Column="0" 
+                           Text="{I18N {x:Static resources:LangKeys.yearqsos}}"
+                           FontSize="15" 
+                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Border Grid.Row="4" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
+                        HorizontalAlignment="Stretch">
+                    <TextBlock Text="{Binding QsYear}" FontSize="15" FontWeight="SemiBold"
+                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                </Border>
             </Grid>
-        </HeaderedContentControl>
-    </StackPanel>
+        </Border>
+    </HeaderedContentControl>
 </UserControl>

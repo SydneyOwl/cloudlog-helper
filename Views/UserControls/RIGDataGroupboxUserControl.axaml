@@ -25,7 +25,7 @@
         <converters:NullableStringToVisibilityConverter x:Key="StringToVisibility" />
     </UserControl.Resources>
 
-    <StackPanel Orientation="Horizontal" Margin="10">
+    <StackPanel Orientation="Horizontal" Margin="10" >
         <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.rigdata}}">
             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                   ShowGridLines="False" Margin="5"
@@ -35,18 +35,23 @@
                         Padding="20,10,20,10">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
-                            <TextBlock FontSize="10" Text="SPLIT-Rx"
-                                       FontWeight="Bold" Padding="2" Background="DarkOrange"
-                                       IsVisible="{Binding IsSplit}"
-                                       HorizontalAlignment="Left" />
-                            <TextBlock FontSize="10" Text="{Binding CurrentRxFrequencyInMeters}"
-                                       IsVisible="{Binding CurrentRxFrequencyInMeters, Converter={StaticResource StringToVisibility}}"
-                                       FontWeight="Bold" Padding="2" Background="LightBlue"
-                                       HorizontalAlignment="Left" />
-                            <TextBlock FontSize="10" Text="{Binding CurrentRxMode}" FontWeight="Bold" Padding="2"
-                                       Background="Tan"
-                                       IsVisible="{Binding CurrentRxMode, Converter={StaticResource StringToVisibility}}"
-                                       HorizontalAlignment="Left" />
+                            <Border CornerRadius="4" Background="#FF8C00" Padding="6,3"
+                                    IsVisible="{Binding IsSplit}">
+                                <TextBlock Text="SPLIT-Rx" FontSize="11" FontWeight="Bold" 
+                                           Foreground="White"/>
+                            </Border>
+                            
+                            <Border CornerRadius="4" Background="#4FC3F7" Padding="6,3"
+                                    IsVisible="{Binding CurrentRxFrequencyInMeters, Converter={StaticResource StringToVisibility}}">
+                                <TextBlock Text="{Binding CurrentRxFrequencyInMeters}" 
+                                           FontSize="11" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                            
+                            <Border CornerRadius="4" Background="#D7CCC8" Padding="6,3"
+                                    IsVisible="{Binding CurrentRxMode, Converter={StaticResource StringToVisibility}}">
+                                <TextBlock Text="{Binding CurrentRxMode}" 
+                                           FontSize="11" FontWeight="Bold" Foreground="#37474F"/>
+                            </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontSize="30"
@@ -67,17 +72,22 @@
                         IsVisible="{Binding IsSplit}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
-                            <TextBlock FontSize="10" Text="SPLIT-Tx"
-                                       FontWeight="Bold" Padding="2" Background="DarkOrange"
-                                       HorizontalAlignment="Left" />
-                            <TextBlock FontSize="10" Text="{Binding CurrentTxFrequencyInMeters}"
-                                       IsVisible="{Binding CurrentTxFrequencyInMeters, Converter={StaticResource StringToVisibility}}"
-                                       FontWeight="Bold" Padding="2" Background="LightBlue"
-                                       HorizontalAlignment="Left" />
-                            <TextBlock FontSize="10" Text="{Binding CurrentTxMode}" FontWeight="Bold" Padding="2"
-                                       Background="Tan"
-                                       IsVisible="{Binding CurrentTxMode, Converter={StaticResource StringToVisibility}}"
-                                       HorizontalAlignment="Left" />
+                            <Border CornerRadius="4" Background="#FF8C00" Padding="6,3">
+                                <TextBlock Text="SPLIT-Tx" FontSize="11" FontWeight="Bold" 
+                                           Foreground="White"/>
+                            </Border>
+                            
+                            <Border CornerRadius="4" Background="#4FC3F7" Padding="6,3"
+                                    IsVisible="{Binding CurrentTxFrequencyInMeters, Converter={StaticResource StringToVisibility}}">
+                                <TextBlock Text="{Binding CurrentTxFrequencyInMeters}" 
+                                           FontSize="11" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                            
+                            <Border CornerRadius="4" Background="#D7CCC8" Padding="6,3"
+                                    IsVisible="{Binding CurrentTxMode, Converter={StaticResource StringToVisibility}}">
+                                <TextBlock Text="{Binding CurrentTxMode}" 
+                                           FontSize="11" FontWeight="Bold" Foreground="#37474F"/>
+                            </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontSize="30"

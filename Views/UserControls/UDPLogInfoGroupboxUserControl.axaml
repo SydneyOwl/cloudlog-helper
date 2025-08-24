@@ -22,7 +22,7 @@
         <HeaderedContentControl Header="UDP Logs">
             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,*,Auto"
                   ShowGridLines="False" Margin="5"
-                  VerticalAlignment="Center" HorizontalAlignment="Left">
+                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.totaldivqso}}" />
                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0,0,15" Text="{Binding QsosCountData}" />
 
@@ -42,18 +42,21 @@
                 </StackPanel>
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                    <ListBox Grid.Row="0" Grid.Column="0" Height="280" Name="QsoBox" AutoScrollToSelectedItem="True"
+                    <ListBox Grid.Row="0" Grid.Column="0" AutoScrollToSelectedItem="True" x:Name="QsoBox"
+                             MinHeight="300"
                              ItemsSource="{Binding FilteredQsos}"
+                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListBox.Styles>
                             <Style Selector="ListBoxItem">
                                 <Setter Property="Padding" Value="6" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" /> 
                             </Style>
                         </ListBox.Styles>
                         
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Background="Transparent"  Cursor="Hand">
+                                <DockPanel LastChildFill="True" Cursor="Hand">
                                     
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
@@ -63,34 +66,69 @@
                                         </EventTriggerBehavior>
                                     </Interaction.Behaviors>
                                     
-                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
-                                        <CheckBox IsChecked="{Binding Checked}" Grid.Column="0" />
-                                        <StackPanel Grid.Column="1">
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Center">
+                                        <CheckBox IsChecked="{Binding Checked}" Grid.Column="0" VerticalAlignment="Top" />
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Top">
                                             <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17"
                                                        MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0" />
-                                            <TextBlock Text="{Binding LocalizedCountryName}" FontSize="10"
-                                                       FontWeight="Bold" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding LocalizedCountryName}" FontSize="12"
+                                                       FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" />
                                         </StackPanel>
-                                        <StackPanel Grid.Column="2" Margin="0,0,20,0">
-                                            <StackPanel Orientation="Horizontal" Width="50">
-                                                <TextBlock Text="Tx:" Margin="0,0,10,0" />
-                                                <TextBlock Text="{Binding ReportSent}" Margin="0,0,20,0" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Width="50">
-                                                <TextBlock Text="Rx:" Margin="0,0,10,0" />
-                                                <TextBlock Text="{Binding ReportReceived}" Margin="0,0,20,0" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="3" HorizontalAlignment="Right">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding TXFrequencyInMeters}" Padding="2" FontSize="10"
-                                                           FontWeight="Bold" VerticalAlignment="Center"
-                                                           Background="CornflowerBlue" Margin="0,0,5,0" />
-                                                <TextBlock Text="{Binding Mode}" FontSize="10" FontWeight="Bold"
-                                                           Padding="2" VerticalAlignment="Center" Background="Goldenrod"
-                                                           Margin="0,0,5,0" />
-                                                <TextBlock Text="{Binding ClientId}" FontSize="10" FontWeight="Bold"
-                                                           Padding="2" VerticalAlignment="Center" Background="LightGreen" />
+                                        <Grid Grid.Column="2" 
+                                              Margin="0,0,24,0"
+                                              ColumnDefinitions="Auto,Auto"
+                                              RowDefinitions="Auto,Auto"
+                                              VerticalAlignment="Top">
+                                            <TextBlock Text="Tx:" 
+                                                       Grid.Column="0" Grid.Row="0"
+                                                       Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                                                       FontSize="13"
+                                                       Margin="0,0,4,2" />
+                                            <TextBlock Text="{Binding ReportSent}" 
+                                                       Grid.Column="1" Grid.Row="0"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"
+                                                       Margin="0,0,16,2" />
+                        
+                                            <TextBlock Text="Rx:" 
+                                                       Grid.Column="0" Grid.Row="1"
+                                                       Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                                                       FontSize="13"
+                                                       Margin="0,2,4,0" />
+                                            <TextBlock Text="{Binding ReportReceived}" 
+                                                       Grid.Column="1" Grid.Row="1"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"
+                                                       Margin="0,2,16,0" />
+                                        </Grid>
+                                        <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                                        Spacing="4">
+                                                
+                                                <Border Background="#3A86C9" CornerRadius="4"
+                                                        Padding="6 3">
+                                                    <TextBlock Text="{Binding TXFrequencyInMeters}" FontSize="10"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="White" />
+                                                </Border>
+                                                
+                                                <Border Background="#E9B949" CornerRadius="4"
+                                                        Padding="6 3">
+                                                    <TextBlock Text="{Binding Mode}" 
+                                                               FontSize="10"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="White" />
+                                                </Border>
+                                                
+                                                <Border Background="#4CAF50" CornerRadius="4"
+                                                        Padding="6 3">
+                                                    <TextBlock Text="{Binding ClientId}" 
+                                                               FontSize="10"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="White" />
+                                                </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock
@@ -116,20 +154,20 @@
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
-                                </StackPanel>
+                                </DockPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 147, 0, 0.7)" IsVisible="{Binding TxStatus}">
-                        <TextBlock Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        <TextBlock Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"
                                    Foreground="Azure" Text="{Binding MsgSending}" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 69, 0, 0.8)"
                                 IsVisible="{Binding TimeoutStatus}">
-                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
                                    Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />
                     </StackPanel>
 

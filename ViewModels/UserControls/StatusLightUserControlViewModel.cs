@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
@@ -54,7 +55,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
         {
             Initialize();
             
-            StartStopUdpCommand = ReactiveCommand.Create(() =>
+            StartStopUdpCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (_applingSettings)return;
                 _applingSettings = true;
@@ -66,13 +67,14 @@ public class StatusLightUserControlViewModel : ViewModelBase
                     _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer =
                         !udpSettingsEnableUdpServer;
                     _applicationSettingsService.ApplySettings();
+                    await Task.Delay(500);
                 }
                 finally
                 {
                     _applingSettings = false;
                 }
             });
-            StartStopRigctldCommand = ReactiveCommand.Create(() =>
+            StartStopRigctldCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (_applingSettings)return;
                 _applingSettings = true;
@@ -84,6 +86,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                     _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed =
                         !poll;
                     _applicationSettingsService.ApplySettings();
+                    await Task.Delay(1500);
                 }
                 finally
                 {
@@ -129,6 +132,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
             Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)).Subscribe(_ =>
             {
+                if(_applingSettings)return;
+                
                 UdpServerRunningStatus = _udpServerService.IsUdpServerRunning() ? StatusLightEnum.Running : StatusLightEnum.Stopped;
                 RigctldRunningStatus = (_rigctldService.IsRigctldClientRunning() || _isRigctldUsingExternal) ? StatusLightEnum.Running : StatusLightEnum.Stopped;
             }).DisposeWith(disposables);

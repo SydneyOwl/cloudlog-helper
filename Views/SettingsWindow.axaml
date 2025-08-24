@@ -114,7 +114,7 @@
                     <StackPanel Spacing="12">
                         <TextBlock Text="Cloudlog" Classes="section-title" />
 
-                        <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto" ShowGridLines="False"
+                        <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto,Auto" ShowGridLines="False"
                               RowSpacing="10">
                             <!-- URL -->
                             <TextBlock Text="Cloudlog URL" Classes="setting-label" Grid.Row="0" Grid.Column="0" />
@@ -158,6 +158,10 @@
                                 <userControls1:TipIconUserControl
                                     TooltipText="{I18N {x:Static resources:LangKeys.cloudlogstationid}}" />
                             </StackPanel>
+                            
+                            <CheckBox Grid.Row="3" Grid.Column="0"
+                                      Content="{I18N {x:Static resources:LangKeys.autoqsoupload}}"
+                                      IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}"/>
                         </Grid>
 
                         <userControls1:FixedInfoPanelUserControl Margin="0 12 0 0"

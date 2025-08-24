@@ -12,6 +12,7 @@
         Icon="avares://CloudlogHelper/Assets/icon.png"
         Title="CloudlogHelper"
         Topmost="{Binding IsTopmost}"
+        CanResize="False"
         x:DataType="viewModels:MainWindowViewModel">
 
     <Design.DataContext>
