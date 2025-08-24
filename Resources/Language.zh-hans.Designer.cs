@@ -888,6 +888,35 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to • 呼号: {0}
+        ///• 国家: {1} (CQ区: {2}, ITU区: {3})
+        ///• 大洲: {4}
+        ///• 位置: 纬度 {5}°, 经度 {6}° (GMT{7})
+        ///• DXCC: {8}
+        ///• 网格: {9}
+        ///• 频率: {10} ({11})
+        ///• 模式: {12} (父模式: {13})
+        ///• 时间: {14} 至 {15}
+        ///• 信号报告: 发送 &apos;{16}&apos; / 接收 &apos;{17}&apos;
+        ///• 功率: {18}
+        ///• 操作员: {19}
+        ///• 本机呼号: {20}
+        ///• 本机网格: {21}
+        ///• 交换信息: 发送 &apos;{22}&apos; / 接收 &apos;{23}&apos;
+        ///• 传播模式: {24}
+        ///• 姓名: {25}
+        ///• 备注: {26}
+        ///• 客户端: {27}
+        ///• 上传状态: {28}
+        ///• 失败原因: {29}.
+        /// </summary>
+        public static string qsotemplate {
+            get {
+                return ResourceManager.GetString("qsotemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QSO自动上传功能未启用。.
         /// </summary>
         public static string qsouploaddisabled {

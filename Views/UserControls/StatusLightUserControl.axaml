@@ -94,8 +94,8 @@
                 <EventTriggerBehavior EventName="PointerPressed">
                     <InvokeCommandAction Command="{Binding StartStopRigctldCommand}" />
                 </EventTriggerBehavior>
-                
             </Interaction.Behaviors>
+            
             <StackPanel.Styles>
                 <Style Selector="StackPanel.StatusContainer">
                     <Setter Property="Opacity" Value="0.8" />

@@ -888,6 +888,35 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to • Call Sign: {0}
+        ///• Country: {1} (CQ Zone: {2}, ITU Zone: {3})
+        ///• Continent: {4}
+        ///• Location: Lat {5}°, Lon {6}° (GMT{7})
+        ///• DXCC: {8}
+        ///• Grid: {9}
+        ///• Frequency: {10} ({11})
+        ///• Mode: {12} (Parent: {13})
+        ///• Time: {14} to {15}
+        ///• Report: Sent &apos;{16}&apos; / Received &apos;{17}&apos;
+        ///• Power: {18}
+        ///• Operator: {19}
+        ///• My Call: {20}
+        ///• My Grid: {21}
+        ///• Exchange: Sent &apos;{22}&apos; / Received &apos;{23}&apos;
+        ///• Propagation: {24}
+        ///• Name: {25}
+        ///• Comments: {26}
+        ///• Client: {27}
+        ///• Upload Status: {28}
+        ///• Fail Reason: {29}.
+        /// </summary>
+        public static string qsotemplate {
+            get {
+                return ResourceManager.GetString("qsotemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QSO auto upload is disabled..
         /// </summary>
         public static string qsouploaddisabled {

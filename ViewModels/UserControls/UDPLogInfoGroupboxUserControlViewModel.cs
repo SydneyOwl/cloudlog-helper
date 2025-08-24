@@ -87,6 +87,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private readonly IWindowNotificationManagerService _windowNotificationManager;
 
     private readonly ReactiveCommand<Unit, Unit> RestartUdpCommand;
+    
     private readonly ReactiveCommand<Unit, Unit> UploadLogFromQueueCommand;
 
     /// <summary>
@@ -103,6 +104,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         SelectAllCommand = ReactiveCommand.Create(() => { });
+        ShowQSODetailCommand = ReactiveCommand.Create<RecordedCallsignDetail, Unit>(_  => Unit.Default);
         ReuploadSelectedCommand = ReactiveCommand.Create(() => { });
         ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
@@ -110,6 +112,50 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         RestartUdpCommand = ReactiveCommand.Create(() => { });
         UploadLogFromQueueCommand = ReactiveCommand.Create(() => { });
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
+
+        var testQso = new RecordedCallsignDetail
+        {
+            LocalizedCountryName = "Japan",
+            CqZone = 25,
+            ItuZone = 45,
+            Continent = "AS",
+            Latitude = 35.6895f,
+            Longitude = 139.6917f,
+            GmtOffset = 9.0f,
+            Dxcc = "JA",
+            
+            DateTimeOff = DateTime.Now,
+            DateTimeOn = DateTime.Now.AddMinutes(-5),
+            
+            DXCall = "JA1ABC",
+            DXGrid = "PM95",
+            MyCall = "BA1ABC",
+            MyGrid = "OM89",
+
+            TXFrequencyInHz = 14074000,
+            TXFrequencyInMeters = "20m",
+            Mode = "FT8",
+            ParentMode = "DIGITAL",
+
+            ReportSent = "-07",
+            ReportReceived = "+01",
+
+            TXPower = "100W",
+            Comments = "Nice contact with JA station",
+            Name = "Taro",
+            OperatorCall = "BH1ABC",
+
+            ExchangeSent = "599",
+            ExchangeReceived = "599",
+
+            ClientId = "WSJT-X",
+            UploadStatus = UploadStatus.Success,
+            Checked = true,
+            ForcedUpload = false,
+            FailReason = null
+        };
+
+        FilteredQsos.Add(testQso);
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
@@ -133,10 +179,18 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _udpSettings.EnableUDPServer;
 
+        
+        ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
+        {
+            await _messageBoxManagerService.DoShowMessageboxAsync(
+                new List<ButtonDefinition>() { new ButtonDefinition { Name = "OK" } },
+                Icon.Info, "Detail", callDet.FormatToReadableContent());
+            return Unit.Default;
+        });
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
         ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO, _isUploadQueueEmpty.AsObservable());
-        ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);
-        IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);
+        ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);//
+        IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);//
         DeleteSelectedCommand = ReactiveCommand.Create(() =>
         {
             _allQsos.Edit(innerList =>
@@ -146,8 +200,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                         innerList.RemoveAt(i);
             });
         });
-        RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);
-        UploadLogFromQueueCommand = ReactiveCommand.CreateFromTask(_uploadQSOFromQueue);
+        RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);//
+        UploadLogFromQueueCommand = ReactiveCommand.CreateFromTask(_uploadQSOFromQueue);//
 
         this.WhenActivated(disposables =>
         {
@@ -203,6 +257,18 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                         }
                     });
                 }).DisposeWith(disposables);
+            
+            ShowQSODetailCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                .DisposeWith(disposables);
+            
+            SelectAllCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                .DisposeWith(disposables);
+            
+            ReuploadSelectedCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                .DisposeWith(disposables);
 
             RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
@@ -263,6 +329,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
     public ReactiveCommand<Unit, Unit> IgnoreSelectedPermanentlyCommand { get; set; }
+    public ReactiveCommand<RecordedCallsignDetail, Unit> ShowQSODetailCommand { get; set; }
 
 
     public Interaction<Unit, IStorageFile?> ShowFilePickerDialog { get; }

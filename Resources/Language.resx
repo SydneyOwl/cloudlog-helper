@@ -510,4 +510,27 @@
     <data name="failuploadriginfoto" xml:space="preserve">
         <value>Failed to upload rig info to {addr}. See logs for more!</value>
     </data>
+    <data name="qsotemplate" xml:space="preserve">
+        <value>• Call Sign: {0}
+• Country: {1} (CQ Zone: {2}, ITU Zone: {3})
+• Continent: {4}
+• Location: Lat {5}°, Lon {6}° (GMT{7})
+• DXCC: {8}
+• Grid: {9}
+• Frequency: {10} ({11})
+• Mode: {12} (Parent: {13})
+• Time: {14} to {15}
+• Report: Sent '{16}' / Received '{17}'
+• Power: {18}
+• Operator: {19}
+• My Call: {20}
+• My Grid: {21}
+• Exchange: Sent '{22}' / Received '{23}'
+• Propagation: {24}
+• Name: {25}
+• Comments: {26}
+• Client: {27}
+• Upload Status: {28}
+• Fail Reason: {29}</value>
+    </data>
 </root>
