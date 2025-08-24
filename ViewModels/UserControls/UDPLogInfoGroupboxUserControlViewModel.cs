@@ -385,7 +385,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
         {
             adif.AppendLine(recordedCallsignDetail.GenerateAdif());
-            adif.AppendLine();
         }
 
         // ask user to save 
@@ -469,6 +468,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                                 }
                                 catch (Exception ex)
                                 {
+                                    rcd.UploadedServices[serName] = false;
                                     ClassLogger.Error(ex, $"Qso for {serName} uploaded failed.");
                                     failOutput.AppendLine(serName + ex.Message);
                                 }

@@ -190,8 +190,8 @@ public class ApplicationSettingsService: IApplicationSettingsService
         _oldSettings = _currentSettings.DeepClone();
         // apply changes for log services here
         _writeCurrentSettingsToFile(_draftSettings!);
-        _applyLogServiceChanges(rawConfigs);
         _mapper.Map(_draftSettings, _currentSettings);
+        _applyLogServiceChanges(rawConfigs);
         // _draftSettings.DeepCloneTo(_currentSettings);
         // _currentInstance!.CloudlogSettings.ApplySettingsChange(CloudlogSettings);
         // _currentInstance!.HamlibSettings.ApplySettingsChange(HamlibSettings);

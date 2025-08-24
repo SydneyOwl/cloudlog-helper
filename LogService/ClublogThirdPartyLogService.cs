@@ -44,7 +44,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
         var code = result.StatusCode;
         if (code == 200) return;
         throw new Exception(string.IsNullOrWhiteSpace(responseText)
-            ? $"Failed to test connection. Resp code: {code}"
+            ? $"Failed to test connection. Resp code: {code}. Check ur login info!"
             : responseText);
     }
 

@@ -10,35 +10,113 @@
 
     <UserControl.Resources>
         <converters:BoolToColorConverter x:Key="BoolToColor" />
+        <converters:BoolToShadowConverter x:Key="BoolToShadow" />
     </UserControl.Resources>
+    
+    <UserControl.Styles>
+        <Style Selector="StackPanel.StatusContainer">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Spacing" Value="15" />
+        </Style>
+        
+        <Style Selector="TextBlock.StatusLabel">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+        
+        <Style Selector="TextBlock.AddressText">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </UserControl.Styles>
 
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
-                HorizontalAlignment="Right" Spacing="30"
-                IsVisible="{Binding !InitSkipped}">
+                HorizontalAlignment="Right" Spacing="20"
+                IsVisible="{Binding !InitSkipped}"
+                Margin="10">
 
-        <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
-            <!-- udp -->
-            <Ellipse Width="20" Height="20"
-                     Fill="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
-                     VerticalAlignment="Center"
-                     Stroke="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
-                     StrokeThickness="2" />
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock FontWeight="Bold" Text="UDP Server" />
-                <TextBlock FontWeight="DemiBold" Text="{Binding CurrentUDPServerAddress}" />
+        <!-- UDP Server Status -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
+                    Classes="StatusContainer">
+            
+            <StackPanel.Styles>
+                <Style Selector="StackPanel.StatusContainer">
+                    <Setter Property="Opacity" Value="0.8" />
+                </Style>
+                <Style Selector="StackPanel.StatusContainer:pointerover">
+                    <Setter Property="Opacity" Value="1" />
+                    <Setter Property="ZIndex" Value="100" />
+                </Style>
+            </StackPanel.Styles>
+    
+            <StackPanel.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
+                </Transitions>
+            </StackPanel.Transitions>
+            
+            <StackPanel Background="Transparent" Cursor="Hand" ToolTip.Tip="Start/Stop"
+                        Orientation="Horizontal" Spacing="10" >
+                <Border Width="22" Height="22" CornerRadius="11"
+                        Background="{Binding IsUdpServerRunning, Converter={StaticResource BoolToColor}}"
+                        BoxShadow="{Binding IsUdpServerRunning, Converter={StaticResource BoolToShadow}}"
+                        VerticalAlignment="Center">
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Setter Property="Opacity" Value="0.8" />
+                        </Style>
+                    </Border.Styles>
+                </Border>
+                
+                <StackPanel Orientation="Vertical" Spacing="2">
+                    <TextBlock Text="UDP SERVER" Classes="StatusLabel"/>
+                    <TextBlock Text="{Binding CurrentUDPServerAddress}" Classes="AddressText"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
-
-        <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Spacing="10">
-            <!-- rigctld -->
-            <Ellipse Width="20" Height="20"
-                     Fill="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                     VerticalAlignment="Center"
-                     Stroke="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
-                     StrokeThickness="2" />
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock FontWeight="Bold" Text="Rigctld" />
-                <TextBlock FontWeight="DemiBold" Text="{Binding CurrentRigctldAddress}" />
+        
+        <!-- Rigctld Status -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
+                    Classes="StatusContainer">
+            
+            <StackPanel.Styles>
+                <Style Selector="StackPanel.StatusContainer">
+                    <Setter Property="Opacity" Value="0.8" />
+                </Style>
+                <Style Selector="StackPanel.StatusContainer:pointerover">
+                    <Setter Property="Opacity" Value="1" />
+                    <Setter Property="ZIndex" Value="100" />
+                </Style>
+            </StackPanel.Styles>
+    
+            <StackPanel.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
+                </Transitions>
+            </StackPanel.Transitions>
+            <StackPanel Background="Transparent" Cursor="Hand" ToolTip.Tip="Start/Stop"
+                        Orientation="Horizontal" Spacing="10">
+                
+                <Border Width="22" Height="22" CornerRadius="11"
+                        Background="{Binding IsRigctldRunning, Converter={StaticResource BoolToColor}}"
+                        BoxShadow="{Binding IsRigctldRunning, Converter={StaticResource BoolToShadow}}"
+                        VerticalAlignment="Center">
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Setter Property="Opacity" Value="0.8" />
+                        </Style>
+                    </Border.Styles>
+                </Border>
+                
+                <StackPanel Orientation="Vertical" Spacing="2">
+                    <TextBlock Text="RIGCTLD" Classes="StatusLabel"/>
+                    <TextBlock Text="{Binding CurrentRigctldAddress}" Classes="AddressText"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </StackPanel>
