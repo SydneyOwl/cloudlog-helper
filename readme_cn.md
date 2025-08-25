@@ -16,7 +16,7 @@
 
 如果您的电脑性能捉襟见肘，或单纯需要一个自动化QSO/电台信息上传工具，不妨来试试`Cloudlog Helper`！
 
-  <img src="./md_assets/img.png" alt="img.png"  width="60%" />
+  <img src="./md_assets/img_cn.jpg" alt="img.png"  width="60%" />
 </div>
 
 ## 💻 支持的平台
