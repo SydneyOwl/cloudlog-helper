@@ -47,6 +47,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
 
     private readonly IDatabaseService _databaseService;
+    private readonly IClipboardService _clipboardService;
 
 
     /// <summary>
@@ -134,8 +135,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
             MyGrid = "OM89",
 
             TXFrequencyInHz = 14074000,
-            TXFrequencyInMeters = "20m",
-            Mode = "FT8",
+            TXFrequencyInMeters = "10m",
+            Mode = "FT4",
             ParentMode = "DIGITAL",
 
             ReportSent = "-07",
@@ -163,9 +164,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         IWindowNotificationManagerService windowNotificationManager,
         IMessageBoxManagerService messageBoxManagerService,
         IUdpServerService udpServerService,
+        IClipboardService clipboardService,
         IApplicationSettingsService ss)
     {
         _applicationSettingsService = ss;
+        _clipboardService = clipboardService;
         
         _logServices = ss.GetCurrentSettings().LogServices;
         _extraCloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
@@ -183,9 +186,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {
-            await _messageBoxManagerService.DoShowMessageboxAsync(
-                new List<ButtonDefinition>() { new ButtonDefinition { Name = "OK" } },
-                Icon.Info, "Detail", callDet.FormatToReadableContent());
+            var content = callDet.FormatToReadableContent();
+            var msgResult = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(
+                new List<ButtonDefinition>() { new (){ Name = "OK" }, new (){Name = "Copy info"} },
+                Icon.Info, "Detail", content);
+            if (msgResult == "Copy info")
+            {
+                // copy to clipboard
+                await _clipboardService.SetTextAsync(content);
+            }
             return Unit.Default;
         });
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
@@ -408,7 +417,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         var candidate = _allQsos.Items.Where(x => x.Checked).ToList();
         if (!candidate.Any())
         {
-            await _messageBoxManagerService.DoShowMessageboxAsync(new List<ButtonDefinition>
+            await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(new List<ButtonDefinition>
             {
                 new()
                 {
@@ -419,7 +428,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
             return;
         }
 
-        var result = await _messageBoxManagerService.DoShowMessageboxAsync(new List<ButtonDefinition>
+        var result = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(new List<ButtonDefinition>
         {
             new()
             {

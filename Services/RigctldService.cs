@@ -70,7 +70,7 @@ public class RigctldService : IRigctldService, IDisposable
     /// <summary>
     ///     Simple scheduler for rigctld requests.
     /// </summary>
-    private RigctldScheduler _scheduler;
+    private RigctldScheduler? _scheduler;
 
     /// <summary>
     ///     Keep-alive tcp client for rigctld communications.
@@ -675,10 +675,10 @@ public class RigctldService : IRigctldService, IDisposable
         {
             TerminateBackgroundProcess();
             TerminateOnetimeProcess();
-            _scheduler.Dispose();
-            BackgroundProcessSemaphore.Dispose();
-            OnetimeSemaphore.Dispose();
-            SchedulerSemaphore.Dispose();
+            _scheduler?.Dispose();
+            BackgroundProcessSemaphore?.Dispose();
+            OnetimeSemaphore?.Dispose();
+            SchedulerSemaphore?.Dispose();
             _tcpClient?.Dispose();
         }
 

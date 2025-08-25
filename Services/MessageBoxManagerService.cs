@@ -28,27 +28,16 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
         // TODO release managed resources here
     }
 
-    public async Task<string> DoShowMessageboxAsync(List<ButtonDefinition> buttons, Icon iconType,
-        string title, string message)
+    public async Task<string> DoShowCustomMessageboxDialogAsync(MessageBoxCustomParams cParams, Window? toplevel = null)
     {
         var result = string.Empty;
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             try
             {
-                if (desktop.MainWindow is null) return;
+                if (desktop.MainWindow is null && toplevel is null) return;
                 result = await MessageBoxManager.GetMessageBoxCustom(
-                    new MessageBoxCustomParams
-                    {
-                        ButtonDefinitions = buttons,
-                        ContentTitle = title,
-                        ContentMessage = message,
-                        Icon = iconType,
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                        CanResize = false,
-                        SizeToContent = SizeToContent.WidthAndHeight,
-                        ShowInCenter = true
-                    }).ShowWindowDialogAsync(desktop.MainWindow);
+                   cParams).ShowWindowDialogAsync(toplevel??desktop.MainWindow);
             }
             catch (Exception ex)
             {
@@ -56,5 +45,48 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
             }
         });
         return result;
+    }
+    
+    public async Task<string> DoShowCustomMessageboxDialogAsync(List<ButtonDefinition> buttons, Icon iconType,
+        string title, string message, Window? toplevel = null)
+    {
+        return await DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
+        {
+            ButtonDefinitions = buttons,
+            ContentTitle = title,
+            ContentMessage = message,
+            Icon = iconType,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            ShowInCenter = true
+        }, toplevel);
+    }
+
+    public async Task<ButtonResult> DoShowStandardMessageboxDialogAsync(Icon iconType, ButtonEnum bType, string title, string message, Window? toplevel = null)
+    {
+        var result = ButtonResult.Abort;
+        await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            try
+            {
+                if (desktop.MainWindow is null && toplevel is null) return;
+                result = await MessageBoxManager.GetMessageBoxStandard(title,
+                    message, bType,
+                    iconType).ShowWindowDialogAsync(toplevel??desktop.MainWindow!);
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Warn(ex, "Error showing message box.");
+            }
+        });
+        return result;
+    }
+    
+    public async Task<ButtonResult> DoShowStandardMessageboxAsync(Icon iconType, ButtonEnum bType, string title, string message)
+    {
+        return await MessageBoxManager.GetMessageBoxStandard(title,
+            message, bType,
+            iconType).ShowWindowAsync();
     }
 }

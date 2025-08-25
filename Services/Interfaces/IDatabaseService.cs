@@ -12,5 +12,4 @@ public interface IDatabaseService
     Task<CountryDatabase> GetCallsignDetailAsync(string callsign);
     Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso);
     Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso);
-    Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso);
 }

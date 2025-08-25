@@ -533,4 +533,22 @@
 • Upload Status: {28}
 • Fail Reason: {29}</value>
     </data>
+    <data name="doubletap2seemore" xml:space="preserve">
+        <value>Double tap QSO to see more</value>
+    </data>
+    <data name="accept" xml:space="preserve">
+        <value>Accept</value>
+    </data>
+    <data name="deny" xml:space="preserve">
+        <value>Decline</value>
+    </data>
+    <data name="disclaimer" xml:space="preserve">
+        <value>Welcome to Cloudlog Helper v{1}!
+
+This software is open-sourced under The Unlicense and provided "as is", for technical exchange and learning purposes only. Users must assume all risks associated with its use.
+
+The developers assume no responsibility for any data loss, device damage, or other losses that may result from the use of this software.
+
+By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudlog-helper).</value>
+    </data>
 </root>

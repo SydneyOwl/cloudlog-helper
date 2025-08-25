@@ -96,6 +96,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         _rigctldService = rs;
         _windowNotificationManager = ws;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
+        RefreshRigInfoCommand = ReactiveCommand.Create(() => { });
         if (!InitSkipped) Initialize();
     }
 
@@ -111,15 +112,38 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
     [Reactive] public string? CurrentTxFrequency { get; set; } = "-------";
     [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
     [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Whether rig refresh button is cooling down or not.
+    /// </summary>
+    [Reactive] public bool IsCoolingDown { get; set; }
 
     [Reactive] public bool IsSplit { get; set; }
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    
+    public ReactiveCommand<Unit, Unit> RefreshRigInfoCommand { get; set; }
 
     private void Initialize()
     {
         // check if conf is available, then start rigctld
-        _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
+        _pollCommand = ReactiveCommand.CreateFromTask(() => _refreshRigInfo());
+        RefreshRigInfoCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            try
+            {
+                IsCoolingDown = true;
+                // reset pool counter
+                _disposeAllTimers();
+                await _refreshRigInfo(true);
+                _createNewTimer();
+                await Task.Delay(3000);
+            }
+            finally
+            {
+                IsCoolingDown = false;
+            }
+        }, this.WhenAnyValue(x => x.IsCoolingDown, isCoolingDown => !isCoolingDown));
         this.WhenActivated(disposables =>
         {
             _syncRigInfoAddr.AddRange(_hamlibSettings.SyncRigInfoAddress.Split(";"));
@@ -171,6 +195,9 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                 })
                 .DisposeWith(disposables);
 
+            RefreshRigInfoCommand.ThrownExceptions.Subscribe(err =>
+                _windowNotificationManager.SendErrorNotificationSync(err.Message));
+
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
                     try
@@ -183,7 +210,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                             _resetStatus();
                             _disposeAllTimers();
                             // popup!
-                            var choice = await _messageBoxManagerService.DoShowMessageboxAsync(
+                            var choice = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(
                                 new List<ButtonDefinition>
                                 {
                                     new() { Name = "Retry", IsDefault = true },
@@ -285,17 +312,17 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         ClassLogger.Error(exceptionMsg);
     }
 
-    private async Task _refreshRigInfo()
+    private async Task _refreshRigInfo(bool force = false)
     {
         ClassLogger.Trace("Refreshing hamlib data....");
 
-        if (_rigConnFailedTimes < 0)
+        if (_rigConnFailedTimes < 0 && !force)
         {
             ClassLogger.Trace("Waiting for user choice. ignored poll sir.");
             return;
         }
 
-        if (!_hamlibSettings.PollAllowed)
+        if (!_hamlibSettings.PollAllowed && !force)
         {
             _rigConnFailedTimes = 0;
             ClassLogger.Trace("Poll disabled. ignore....");

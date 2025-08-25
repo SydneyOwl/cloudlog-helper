@@ -28,6 +28,9 @@ using CloudlogHelper.ViewModels;
 using CloudlogHelper.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Mono.Unix;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -87,6 +90,8 @@ public class App : Application
             new WindowNotificationManagerService(desktop));
         collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
             new MessageBoxManagerService(desktop));
+        collection.AddSingleton<IClipboardService, ClipboardService>(_ =>
+            new ClipboardService(desktop));
         
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
@@ -118,9 +123,45 @@ public class App : Application
         _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
     }
 
-    private Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
+    private async Task PostExec(IClassicDesktopStyleApplicationLifetime desktop, Window splashLevel)
     {
         if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
+        var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
+        if (dbSer.IsUpgradeNeeded())
+        {
+            splashLevel.Topmost = false;
+            var msgBox = _servProvider.GetRequiredService<IMessageBoxManagerService>();
+            var accept = TranslationHelper.GetString(LangKeys.accept);
+            var deny = TranslationHelper.GetString(LangKeys.deny);
+            if (await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
+                    {
+                        ButtonDefinitions = new[] 
+                        {
+                            new ButtonDefinition 
+                            { 
+                                Name = accept,
+                            },
+                            new ButtonDefinition 
+                            { 
+                                Name = deny
+                            }
+                        },
+                        ContentTitle = "User Agreement",
+                        ContentMessage = TranslationHelper.GetString(LangKeys.disclaimer).Replace("{1}", VersionInfo.Version),
+                        Icon = Icon.Info,
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                        Width = 500,
+                        Height = 350,
+                        SizeToContent = SizeToContent.Manual,
+                        CanResize = false
+                    },
+                    splashLevel) != accept)
+            {
+                Environment.Exit(0);
+                return;
+            }
+        }
+        
         var mainWindow = _servProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
         mainWindow.Focus();
@@ -167,8 +208,6 @@ public class App : Application
             // this may fail on Windows 7
             ClassLogger.Warn(ex);
         }
-
-        return Task.CompletedTask;
     }
 
     private Task PreExec(IClassicDesktopStyleApplicationLifetime desktop)
@@ -195,7 +234,7 @@ public class App : Application
             else
                 desktop.MainWindow = new SplashWindow(() => PreExec(desktop),
                     () => Workload(desktop),
-                    () => PostExec(desktop));
+                    (win) => PostExec(desktop, win));
         }
 
         base.OnFrameworkInitializationCompleted();

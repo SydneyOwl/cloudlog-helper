@@ -90,9 +90,10 @@
                                 <TextBlock Grid.Column="1"
                                            Text="{Binding Converter={StaticResource EllipsisConverter}}"
                                            VerticalAlignment="Center" Margin="5,0,0,0" />
-                                <!-- IDE thinks RemoveLogPathCommand does not exist but this does work -->
+                                <!-- This binding is a bit weird however it does works... -->
                                 <Button Grid.Column="0" Content="-" FontWeight="Bold"
-                                        Command="{Binding $parent[ListBox].DataContext.RemoveLogPathCommand}"
+                                        Command="{Binding ((viewModels:QsoSyncAssistantWindowViewModel)DataContext).RemoveLogPathCommand,
+                                        RelativeSource={RelativeSource AncestorType=ListBox}}"
                                         CommandParameter="{Binding}"
                                         Width="25" Margin="5,0,0,0" />
                             </Grid>

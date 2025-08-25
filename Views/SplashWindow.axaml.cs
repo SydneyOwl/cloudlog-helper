@@ -15,7 +15,7 @@ namespace CloudlogHelper.Views;
 
 public partial class SplashWindow : Window
 {
-    private readonly Func<Task?> _postExec;
+    private readonly Func<Window, Task?> _postExec;
     private readonly Func<Task?> _preCheck;
     private readonly Func<Task?> _workload;
 
@@ -27,7 +27,7 @@ public partial class SplashWindow : Window
         InitializeComponent();
     }
 
-    public SplashWindow(Func<Task?> preCheck, Func<Task?> workload, Func<Task?> postExec)
+    public SplashWindow(Func<Task?> preCheck, Func<Task?> workload, Func<Window, Task?> postExec)
     {
         InitializeComponent();
         _preCheck = preCheck;
@@ -62,7 +62,7 @@ public partial class SplashWindow : Window
             {
                 statusText.Text = "Loading Window...";
                 statusTextDetailed.Text = "Executing post-exec...";
-                await _postExec?.Invoke()!;
+                await _postExec?.Invoke(this)!;
                 Close();
             });
         }

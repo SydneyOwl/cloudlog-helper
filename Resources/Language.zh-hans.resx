@@ -533,4 +533,24 @@
 • 上传状态: {28}
 • 失败原因: {29}</value>
     </data>
+    <data name="doubletap2seemore" xml:space="preserve">
+        <value>双击查看更多</value>
+    </data>
+    <data name="accept" xml:space="preserve">
+        <value>接受</value>
+    </data>
+    <data name="deny" xml:space="preserve">
+        <value>拒绝</value>
+    </data>
+    <data name="disclaimer" xml:space="preserve">
+        <value>欢迎使用Cloudlog Helper v{1}!
+
+在您开始使用前，请先阅读并同意下方的【免责声明与用户协议】
+
+【免责声明与用户协议】
+本软件采用The Unlicense协议开源，按“原样”提供，仅供技术交流与学习之用。使用者需自行承担所有风险。
+开发者对因使用本软件而产生的任何数据丢失、设备损坏或其他损失概不负责。
+继续使用即表示您已阅读并同意上述条款及项目主页上的完整免责声明 (https://github.com/sydneyowl/cloudlog-helper)。
+</value>
+    </data>
 </root>

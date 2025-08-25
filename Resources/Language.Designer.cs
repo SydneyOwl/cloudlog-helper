@@ -69,6 +69,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accept.
+        /// </summary>
+        public static string accept {
+            get {
+                return ResourceManager.GetString("accept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced.
         /// </summary>
         public static string advancedsettings {
@@ -330,6 +339,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decline.
+        /// </summary>
+        public static string deny {
+            get {
+                return ResourceManager.GetString("deny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device Port.
         /// </summary>
         public static string deviceport {
@@ -362,6 +380,30 @@ namespace CloudlogHelper.Resources {
         public static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Cloudlog Helper v{1}!
+        ///
+        ///This software is open-sourced under The Unlicense and provided &quot;as is&quot;, for technical exchange and learning purposes only. Users must assume all risks associated with its use.
+        ///
+        ///The developers assume no responsibility for any data loss, device damage, or other losses that may result from the use of this software.
+        ///
+        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string disclaimer {
+            get {
+                return ResourceManager.GetString("disclaimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Double tap QSO to see more.
+        /// </summary>
+        public static string doubletap2seemore {
+            get {
+                return ResourceManager.GetString("doubletap2seemore", resourceCulture);
             }
         }
         

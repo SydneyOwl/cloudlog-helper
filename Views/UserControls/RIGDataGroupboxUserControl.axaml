@@ -5,6 +5,7 @@
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
+             xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.UserControls.RIGDataGroupboxUserControl"
              x:DataType="userControls:RIGDataGroupboxUserControlViewModel">
@@ -23,14 +24,31 @@
     <UserControl.Resources>
         <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
         <converters:NullableStringToVisibilityConverter x:Key="StringToVisibility" />
+        <converters:StringToColorConverter x:Key="StringToColor" />
     </UserControl.Resources>
 
     <StackPanel Orientation="Horizontal" Margin="10" >
         <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.rigdata}}">
-            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                  ShowGridLines="False" Margin="5"
+            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                  ShowGridLines="False" Margin="5" RowSpacing="5"
                   VerticalAlignment="Center" HorizontalAlignment="Left">
-                <Border Classes="FreqBlock" Grid.Row="0" Grid.Column="0"
+                <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"
+                        Command="{Binding RefreshRigInfoCommand}"
+                        CornerRadius="4" Width="32" Height="32">
+                    <StackPanel>
+                        <Image Source="avares://CloudlogHelper/Assets/Settings/Refresh.png" Width="16"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Height="16" IsVisible="{Binding !IsCoolingDown}"/>
+                        <avaloniaProgressRing:ProgressRing Width="20" Height="20"
+                                                           IsActive="{Binding IsCoolingDown}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" Foreground="Green"
+                                                           Margin="0,0,0,0" />
+                    </StackPanel>
+                </Button>
+                
+                <Border Classes="FreqBlock" Grid.Row="1" Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Padding="20,10,20,10">
                     <StackPanel>
@@ -41,16 +59,18 @@
                                            Foreground="White"/>
                             </Border>
                             
-                            <Border CornerRadius="4" Background="#4FC3F7" Padding="6,3"
+                            <Border CornerRadius="4" Background="{Binding CurrentRxFrequencyInMeters, 
+                            Converter={StaticResource StringToColor}}" Padding="6,3"
                                     IsVisible="{Binding CurrentRxFrequencyInMeters, Converter={StaticResource StringToVisibility}}">
                                 <TextBlock Text="{Binding CurrentRxFrequencyInMeters}" 
                                            FontSize="11" FontWeight="Bold" Foreground="White"/>
                             </Border>
                             
-                            <Border CornerRadius="4" Background="#D7CCC8" Padding="6,3"
+                            <Border CornerRadius="4" Background="{Binding CurrentRxMode, 
+                            Converter={StaticResource StringToColor}}" Padding="6,3"
                                     IsVisible="{Binding CurrentRxMode, Converter={StaticResource StringToVisibility}}">
                                 <TextBlock Text="{Binding CurrentRxMode}" 
-                                           FontSize="11" FontWeight="Bold" Foreground="#37474F"/>
+                                           FontSize="11" FontWeight="Bold" Foreground="White"/>
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -64,7 +84,7 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
-                <Border Grid.Row="1" Grid.Column="0"
+                <Border Grid.Row="2" Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Classes="FreqBlock"
                         Margin="0,20,0,10"
@@ -77,16 +97,18 @@
                                            Foreground="White"/>
                             </Border>
                             
-                            <Border CornerRadius="4" Background="#4FC3F7" Padding="6,3"
+                            <Border CornerRadius="4" Background="{Binding CurrentTxFrequencyInMeters, 
+                            Converter={StaticResource StringToColor}}" Padding="6,3"
                                     IsVisible="{Binding CurrentTxFrequencyInMeters, Converter={StaticResource StringToVisibility}}">
                                 <TextBlock Text="{Binding CurrentTxFrequencyInMeters}" 
                                            FontSize="11" FontWeight="Bold" Foreground="White"/>
                             </Border>
                             
-                            <Border CornerRadius="4" Background="#D7CCC8" Padding="6,3"
+                            <Border CornerRadius="4" Background="{Binding CurrentTxMode,
+                            Converter={StaticResource StringToColor}}" Padding="6,3"
                                     IsVisible="{Binding CurrentTxMode, Converter={StaticResource StringToVisibility}}">
                                 <TextBlock Text="{Binding CurrentTxMode}" 
-                                           FontSize="11" FontWeight="Bold" Foreground="#37474F"/>
+                                           FontSize="11" FontWeight="Bold" Foreground="White"/>
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -101,13 +123,13 @@
                     </StackPanel>
                 </Border>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,5"
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5"
                            Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" />
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,0,0,5"
+                <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5"
                            Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" />
             </Grid>
         </HeaderedContentControl>
     </StackPanel>

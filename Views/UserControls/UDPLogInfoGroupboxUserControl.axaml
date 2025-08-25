@@ -17,6 +17,7 @@
         <converters:UploadStatusToTranslatedStringConverter x:Key="StringToTranslatedString" />
         <converters:UploadStatusToVisibilityConverter x:Key="StatusToVisibility" />
         <converters:FailReasonToTooltipConverter x:Key="FailReasonToTooltip" />
+        <converters:StringToColorConverter x:Key="StringToColor" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="10">
         <HeaderedContentControl Header="UDP Logs">
@@ -43,7 +44,7 @@
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
                     <ListBox Grid.Row="0" Grid.Column="0" AutoScrollToSelectedItem="True" x:Name="QsoBox"
-                             MinHeight="300"
+                             Height="300"
                              ItemsSource="{Binding FilteredQsos}"
                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -56,13 +57,17 @@
                         
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel LastChildFill="True" Cursor="Hand">
-                                    
+                                <DockPanel LastChildFill="True"
+                                           ToolTip.Tip="{I18N {x:Static resources:LangKeys.doubletap2seemore}}"
+                                           Cursor="Hand"
+                                           Background="Transparent">
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
-                                            <!-- IDE thinks ShowQSODetailCommand does not exist but this does work -->
-                                            <InvokeCommandAction Command="{Binding $parent[ListBox].DataContext.ShowQSODetailCommand}"
-                                                                 CommandParameter="{Binding}"/>
+                                            <!-- This binding is a bit weird however it does works... -->
+                                            <InvokeCommandAction
+                                                Command="{Binding ((userControls:UDPLogInfoGroupboxUserControlViewModel)DataContext).ShowQSODetailCommand,
+                                                RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                CommandParameter="{Binding}"/>
                                         </EventTriggerBehavior>
                                     </Interaction.Behaviors>
                                     
@@ -106,15 +111,16 @@
                                         <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                                                         Spacing="4">
-                                                
-                                                <Border Background="#3A86C9" CornerRadius="4"
+                                                <Border Background="{Binding TXFrequencyInMeters, 
+                                                Converter={StaticResource StringToColor}}" CornerRadius="4"
                                                         Padding="6 3">
                                                     <TextBlock Text="{Binding TXFrequencyInMeters}" FontSize="10"
                                                                FontWeight="SemiBold"
                                                                Foreground="White" />
                                                 </Border>
                                                 
-                                                <Border Background="#E9B949" CornerRadius="4"
+                                                <Border Background="{Binding Mode, 
+                                                Converter={StaticResource StringToColor}}" CornerRadius="4"
                                                         Padding="6 3">
                                                     <TextBlock Text="{Binding Mode}" 
                                                                FontSize="10"
@@ -125,6 +131,9 @@
                                                 <Border Background="#4CAF50" CornerRadius="4"
                                                         Padding="6 3">
                                                     <TextBlock Text="{Binding ClientId}" 
+                                                               MaxWidth="40"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               ToolTip.Tip="{Binding ClientId}"
                                                                FontSize="10"
                                                                FontWeight="SemiBold"
                                                                Foreground="White" />

@@ -92,12 +92,6 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                         TranslationHelper.GetString(LangKeys.qsosyncing)))
                     .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
                     .DisposeWith(disposables);
-                // var qsoWindow = new QsoSyncAssistantWindow { DataContext = qsoSyncAssistantWindowViewModel };
-                // windowManager.Track(qsoWindow);
-                // qsoWindow.ShowInTaskbar = false; 
-                // qsoWindow.WindowState = WindowState.Normal;
-                // qsoWindow.Show(this);
-                // qsoWindow.Hide();
             }
         });
     }

@@ -69,6 +69,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 接受.
+        /// </summary>
+        public static string accept {
+            get {
+                return ResourceManager.GetString("accept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 高级设置.
         /// </summary>
         public static string advancedsettings {
@@ -330,6 +339,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 拒绝.
+        /// </summary>
+        public static string deny {
+            get {
+                return ResourceManager.GetString("deny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 设备端口.
         /// </summary>
         public static string deviceport {
@@ -362,6 +380,32 @@ namespace CloudlogHelper.Resources {
         public static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 欢迎使用Cloudlog Helper v{1}!
+        ///
+        ///在您开始使用前，请先阅读并同意下方的【免责声明与用户协议】
+        ///
+        ///【免责声明与用户协议】
+        ///本软件采用The Unlicense协议开源，按“原样”提供，仅供技术交流与学习之用。使用者需自行承担所有风险。
+        ///开发者对因使用本软件而产生的任何数据丢失、设备损坏或其他损失概不负责。
+        ///继续使用即表示您已阅读并同意上述条款及项目主页上的完整免责声明 (https://github.com/sydneyowl/cloudlog-helper)。
+        ///.
+        /// </summary>
+        public static string disclaimer {
+            get {
+                return ResourceManager.GetString("disclaimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 双击查看更多.
+        /// </summary>
+        public static string doubletap2seemore {
+            get {
+                return ResourceManager.GetString("doubletap2seemore", resourceCulture);
             }
         }
         
