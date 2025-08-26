@@ -16,6 +16,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
@@ -76,7 +77,7 @@ public class App : Application
         Name = "CloudlogHelper";
     }
 
-    private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop)
+    private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop, Window splashLevel)
     {
         _preInit();
         var collection = new ServiceCollection();
@@ -120,34 +121,31 @@ public class App : Application
 
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
-        _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
-    }
-
-    private async Task PostExec(IClassicDesktopStyleApplicationLifetime desktop, Window splashLevel)
-    {
-        if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
-        var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         if (dbSer.IsUpgradeNeeded())
         {
-            splashLevel.Topmost = false;
             var msgBox = _servProvider.GetRequiredService<IMessageBoxManagerService>();
-            var accept = TranslationHelper.GetString(LangKeys.accept);
-            var deny = TranslationHelper.GetString(LangKeys.deny);
-            if (await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
+            var res = false;
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                splashLevel.Topmost = false;
+                var accept = TranslationHelper.GetString(LangKeys.accept);
+                var deny = TranslationHelper.GetString(LangKeys.deny);
+                res = await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
                     {
-                        ButtonDefinitions = new[] 
+                        ButtonDefinitions = new[]
                         {
-                            new ButtonDefinition 
-                            { 
+                            new ButtonDefinition
+                            {
                                 Name = accept,
                             },
-                            new ButtonDefinition 
-                            { 
+                            new ButtonDefinition
+                            {
                                 Name = deny
                             }
                         },
                         ContentTitle = "User Agreement",
-                        ContentMessage = TranslationHelper.GetString(LangKeys.disclaimer).Replace("{1}", VersionInfo.Version),
+                        ContentMessage = TranslationHelper.GetString(LangKeys.disclaimer)
+                            .Replace("{1}", VersionInfo.Version),
                         Icon = Icon.Info,
                         WindowStartupLocation = WindowStartupLocation.CenterScreen,
                         Width = 500,
@@ -155,12 +153,23 @@ public class App : Application
                         SizeToContent = SizeToContent.Manual,
                         CanResize = false
                     },
-                    splashLevel) != accept)
+                    splashLevel) != accept;
+            });
+            if (res)
             {
+                ClassLogger.Info("User refused disclaimer. Abort.");
                 Environment.Exit(0);
                 return;
             }
+            ClassLogger.Info("User accepted disclaimer.");
+            await dbSer.UpgradeDatabaseAsync();
         }
+        _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
+    }
+
+    private async Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
         
         var mainWindow = _servProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
@@ -233,8 +242,8 @@ public class App : Application
                     { ViewModel = new ErrorReportWindowViewModel() };
             else
                 desktop.MainWindow = new SplashWindow(() => PreExec(desktop),
-                    () => Workload(desktop),
-                    (win) => PostExec(desktop, win));
+                    (win) => Workload(desktop, win),
+                    () => PostExec(desktop));
         }
 
         base.OnFrameworkInitializationCompleted();

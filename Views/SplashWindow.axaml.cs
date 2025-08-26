@@ -15,9 +15,9 @@ namespace CloudlogHelper.Views;
 
 public partial class SplashWindow : Window
 {
-    private readonly Func<Window, Task?> _postExec;
+    private readonly Func< Task?> _postExec;
     private readonly Func<Task?> _preCheck;
-    private readonly Func<Task?> _workload;
+    private readonly Func<Window,Task?> _workload;
 
     private int _ctrlPressCount;
 
@@ -27,7 +27,7 @@ public partial class SplashWindow : Window
         InitializeComponent();
     }
 
-    public SplashWindow(Func<Task?> preCheck, Func<Task?> workload, Func<Window, Task?> postExec)
+    public SplashWindow(Func<Task?> preCheck, Func<Window, Task?> workload, Func<Task?> postExec)
     {
         InitializeComponent();
         _preCheck = preCheck;
@@ -52,19 +52,13 @@ public partial class SplashWindow : Window
 
             statusText.Text = "Initialization in progress...";
             statusTextDetailed.Text = "Database / Log services initialization";
-            var workloadTask = Task.Run(async () => { await _workload?.Invoke()!; });
-            await workloadTask.ConfigureAwait(false);
+            var workloadTask = Task.Run(async () => { await _workload?.Invoke(this)!; });
+            await workloadTask.ConfigureAwait(true);
              
             // wait for user to press ctrl...
             await Task.Delay(600);
-
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                statusText.Text = "Loading Window...";
-                statusTextDetailed.Text = "Executing post-exec...";
-                await _postExec?.Invoke(this)!;
-                Close();
-            });
+            await _postExec?.Invoke()!;
+            Close();
         }
         catch (DuplicateProcessException e)
         {

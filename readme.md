@@ -11,18 +11,31 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=for-the-badge)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
 
-
-
 [**🌍阅读中文版本**](./readme_cn.md)
 
-
-
-A lightweight, cross-platform helper application for `Cloudlog`/`Wavelog`. It automatically uploads current radio information and real-time QSO data, supports most mainstream radios, and works seamlessly with software like `JTDX`/`WSJT-X`!
+A lightweight, cross-platform helper application for `Cloudlog`/`Wavelog`. 
+Automatically uploads current radio information and real-time QSO data to your server or other log services.
+Supports most mainstream radios, and works seamlessly with software like `JTDX`/`WSJT-X`!
 
 If your computer is resource-constrained, or you simply need a tool for automating QSO/radio information uploads, give `Cloudlog Helper` a try!
 
   <img src="./md_assets/img.png" alt="img.png" width="60%" />
 </div>
+
+## ✨ Features
+
++ 📨 **Real-time QSO Uploading**: Listens for decoded spots from WSJT-X / JTDX and automatically upload completed QSOs to your logbook.
+
++ 🌐 **Multi-Service Support**: Seamlessly supports uploading to multiple logging services simultaneously, including Cloudlog/Wavelog, Clublog, eQSL, and HamCQ.
+
++ 🤖 **Automatic Radio Data Reporting**: Keeps your Cloudlog/Wavelog server updated with your radio's current frequency, mode, and status in real-time, eliminating manual data entry.
+
++ 🔄 **QSO Sync Tool**: Compares your local log files with your cloud logbook to find and upload any missing QSOs, ensuring nothing is missed.
+
++ 🖥️ **Cross-Platform & Lightweight**: Runs smoothly on Windows and Linux as a single executable file - no installation needed and no burden on your system.
+
++ 🔧 **Extensible & Customizable**: Easily add support for new log services or push your radio data to custom APIs for your own projects.
+
 
 ## 💻 Supported Platforms
 
@@ -63,7 +76,7 @@ If your computer is resource-constrained, or you simply need a tool for automati
 
 ### 📌 HamCQ Configuration
 
-[HamCQ](https://forum.hamcq.cn) is an amateur radio enthusiast community in China. This software integrates with HamCQ's log upload feature. After passing the community's license verification and obtaining an API key, simply enter it in the corresponding input field in the software.
+[HamCQ](https://forum.hamcq.cn) is an amateur radio enthusiast community. This software integrates with HamCQ's log upload feature. After passing the community's license verification and obtaining an API key, simply enter it in the corresponding input field in the software.
 
 ![img.png](./md_assets/image-20250602140113552.png)
 
@@ -116,7 +129,7 @@ When JTDX is running, it holds exclusive control over the radio, preventing this
 > [!IMPORTANT]
 >
 > Do not set the polling intervals for JTDX and this software too short. Excessive data requests may cause the radio to respond slowly or error out. A recommended value is to set the time interval in JTDX's Settings -> Radio to 8s, and this software's polling interval to 15s.
-> **Please note that the intervals should not be integer multiples of each other.**
+> **Please note that the intervals should not be integer multiples of each other.** This helps to prevent both programs from polling the radio simultaneously, which could overload it.
 
 Here are the specific steps (using Windows 7 as an example):
 
@@ -197,7 +210,7 @@ This tool can automatically download uploaded QSOs from your Cloudlog server, co
 
 | Keys              | Description                                                                           |
 | ----------------- | ------------------------------------------------------------------------------------- |
-| Ctrl (Triple Press) | Press Ctrl three times quickly before the splash screen disappears to delete all settings and reinitialize the application. |
+| ⚠️ Ctrl (Triple Press) | ⚠️ Press Ctrl three times quickly before the splash screen disappears to delete all settings and reinitialize the application. |
 
 ## 🛠️ Compilation
 
@@ -277,7 +290,7 @@ The program automatically discovers classes marked with `LogServiceAttribute`, a
 Besides reporting to Cloudlog, you can also push real-time radio data (frequency, mode, etc.) to your own server or API, enabling further development.
 The data format is as follows (JSON):
 
-```json
+```json5
 {
   "key": null,         // Reserved field, please ignore
   "radio": "G90",      // Radio name
@@ -289,7 +302,7 @@ The data format is as follows (JSON):
 }
 ```
 
-Upon receiving the data, your server should respond with the string "OK"; otherwise, the software will consider the data push failed and notify the user.
+**Upon receiving the data, your server should respond with the string "OK"; otherwise, the software will consider the data push failed and notify the user.**
 
 You can find examples in the `Demo` folder.
 
@@ -302,6 +315,10 @@ The system was running `Rustdesk` + `JTDX` + `Cloudlog helper` + `NetTime v3.14`
 CPU and memory usage after 1 hour of operation are shown below. The CPU spikes correspond to decoding operations after a receive period.
 
 <img src="./md_assets/img_branchmark.png" width="30%" />
+
+## ❓ Known Issues
+
++ Double-clicking on QSO to view details does not work on Windows 7 and Linux.
 
 ## 🙏 Acknowledgments
 

@@ -7,7 +7,10 @@ namespace CloudlogHelper.Services.Interfaces;
 public interface IWindowManagerService
 {
     void Track(Window window);
-    bool TryGetWindow(Type wType, out Window? targetWindow);
 
-    Task CreateOrShowWindowByVm(Type wType);
+    Task<T?> CreateAndShowWindowByVm<T>(Type wType, Window? toplevel = null);
+    
+    Task CreateAndShowWindowByVm(Type wType, Window? toplevel = null);
+
+    public T GetViewModelInstance<T>();
 }

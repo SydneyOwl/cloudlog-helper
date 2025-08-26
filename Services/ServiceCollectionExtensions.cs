@@ -22,8 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<SettingsWindowViewModel>();
         services.AddTransient<AskExitOrMinimizeWindowViewModel>();
-        services.AddSingleton<QsoSyncAssistantWindowViewModel>();
-        services.AddTransient<AskExitOrMinimizeWindowViewModel>();
+        services.AddTransient<QsoSyncAssistantWindowViewModel>();
         services.AddSingleton<AboutWindowViewModel>();
         services.AddSingleton<UDPLogInfoGroupboxUserControlViewModel>();
         services.AddSingleton<RIGDataGroupboxUserControlViewModel>();
@@ -38,6 +37,7 @@ public static class ServiceCollectionExtensions
             cfg.CreateMap<HamlibSettings, HamlibSettings>();
             cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
+            cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
             cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
         });
         // Register all view models as singletons

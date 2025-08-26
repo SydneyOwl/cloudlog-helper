@@ -228,7 +228,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                                     _createNewTimer().DisposeWith(disposables);
                                     break;
                                 case "Open Settings":
-                                    await _windowManagerService.CreateOrShowWindowByVm(typeof(SettingsWindowViewModel));
+                                    await _windowManagerService.CreateAndShowWindowByVm(typeof(SettingsWindowViewModel));
                                     break;
                                 case "Cancel":
                                     break;

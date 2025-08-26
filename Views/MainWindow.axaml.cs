@@ -28,9 +28,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     private bool _isManualClosing;
 
     public MainWindow(MainWindowViewModel mainWindowViewModel,
-        QsoSyncAssistantWindowViewModel qsoSyncAssistantWindowViewModel,
-        AskExitOrMinimizeWindowViewModel askExitOrMinimizeWindowViewModel,
         IApplicationSettingsService ss,
+        IWindowManagerService windowManagerService,
         IWindowNotificationManagerService wm)
     {
         _windowNotificationManager = wm;
@@ -62,10 +61,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                             args.EventArgs.Cancel = false;
                             return;
                         }
-
-                        var dialog = new AskExitOrMinimizeWindow
-                            { DataContext = askExitOrMinimizeWindowViewModel };
-                        if (await dialog.ShowDialog<bool>(this))
+                        
+                        if (await windowManagerService.CreateAndShowWindowByVm<bool>(typeof(AskExitOrMinimizeWindowViewModel)))
                         {
                             Hide();
                             return;
@@ -84,8 +81,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             // Start qso assistant, if required.
             if (_applicationSettingsService.GetCurrentSettings().QsoSyncAssistantSettings.ExecuteOnStart)
             {
+                var qsoSyncAssistantWindowViewModel = windowManagerService.GetViewModelInstance<QsoSyncAssistantWindowViewModel>();
                 qsoSyncAssistantWindowViewModel.EnableExecuteOnStart();
-
+                windowManagerService.Track(new QsoSyncAssistantWindow{DataContext = qsoSyncAssistantWindowViewModel});
+                
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
                     .Do(_ => _windowNotificationManager.SendInfoNotificationSync(

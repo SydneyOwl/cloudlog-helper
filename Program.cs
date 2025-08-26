@@ -38,7 +38,10 @@ internal sealed class Program
             File.WriteAllText(tmp,
                 $@"Environment: {RuntimeInformation.RuntimeIdentifier}, {RuntimeInformation.OSDescription}
 Type：{ex.Message}
-Stack：{ex.StackTrace}");
+Stack：{ex.StackTrace}
+
+Inner Expection(if any): {ex.InnerException?.Message}
+Inner Exception Stack(if any): {ex.InnerException?.StackTrace}");
             ApplicationStartUpUtil.RestartApplicationWithArgs($"--crash-report {tmp}");
         }
         finally

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,19 +68,22 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
         AddLogPathCommand = ReactiveCommand.CreateFromTask(AddLogPath);
         Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
-
-        // this.WhenActivated(disposable =>
-        // {
-        //     if (_executeOnStart)
-        //     {
-        //         Observable
-        //             .Timer(TimeSpan.FromMilliseconds(2000))
-        //             .Select(_ => Unit.Default)
-        //             .Do(_ => _windowNotificationManager.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.qsosyncing)))
-        //             .InvokeCommand(this, x => x.StartSyncCommand)
-        //             .DisposeWith(disposable);
-        //     }
-        // });
+        
+        this.WhenActivated(disposable =>
+        {
+            Disposable.Create(async void () => 
+            {
+                try
+                {
+                    await StopSyncCommand.Execute();
+                    await SaveConf.Execute();
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex);
+                }
+            }).DisposeWith(disposable);
+        });
     }
 
     public ReactiveCommand<Unit, Unit> SaveConf { get; }
@@ -168,7 +172,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         try
         {
             var stationCallsign = Settings.CloudlogSettings.CloudlogStationInfo?.StationCallsign;
-            SyncStarted = true;
+            await Dispatcher.UIThread.InvokeAsync(()=>
+                SyncStarted = true);
             _logProgress("Starting login and downloading qsos from cloudlog/wavelog...", 10);
             var cookies = await QsoSyncAssistantUtil.LoginAndGetCookies(Settings.CloudlogSettings.CloudlogUrl,
                 Settings.QsoSyncAssistantSettings.CloudlogUserName!,
@@ -293,7 +298,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         finally
         {
             _executeOnStart = false;
-            SyncStarted = false;
+            await Dispatcher.UIThread.InvokeAsync(()=>
+                SyncStarted = false);
         }
     }
 }

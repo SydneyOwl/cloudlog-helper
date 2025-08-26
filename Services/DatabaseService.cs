@@ -40,6 +40,8 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// </summary>
     private bool _inited;
 
+    private Version _appVersion;
+    private Version _dbVersion;
 
     /// <summary>
     ///     Indicates if current version is lower than target version.
@@ -76,7 +78,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         await _conn.CreateTableAsync<ApplicationVersionDatabase>();
         var dbVer = await _conn.Table<ApplicationVersionDatabase>().FirstOrDefaultAsync() ??
                     ApplicationVersionDatabase.NewDefaultAppVersion();
-        var dbVersion = new Version(dbVer.CurrentVersion!);
+        _dbVersion = new Version(dbVer.CurrentVersion!);
 
         // NEVER USE `Assembly.GetEntryAssembly()?.GetName().Version`: SEEMS LIKE IT'LL CHANGE AFTER AVALONIA FULLY INITIALIZED!
         var appVer = VersionInfo.Version;
@@ -88,55 +90,60 @@ public class DatabaseService : IDatabaseService, IDisposable
             appVer = appVer.Split("-").FirstOrDefault();
         }
 
-        var appVersion = new Version("0.0.0");
+        _appVersion = new Version("0.0.0");
         if (!forceInitDatabase)
             try
             {
-                appVersion = new Version(appVer);
+                _appVersion = new Version(appVer);
             }
             catch (Exception e)
             {
                 ClassLogger.Error(e, "failed to parse version - ignored.");
             }
 
-        ClassLogger.Trace($"DBVer:{dbVersion}");
-        ClassLogger.Trace($"appVersion:{appVersion}");
+        ClassLogger.Trace($"DBVer:{_dbVersion}");
+        ClassLogger.Trace($"appVersion:{_appVersion}");
 
-        if (appVersion > dbVersion || forceInitDatabase || !formalRelease)
+        if (_appVersion > _dbVersion || forceInitDatabase || !formalRelease)
         {
             _upgradeNeeded = true;
-            ClassLogger.Trace($"upgrading {dbVersion} => {appVersion}");
-            await InitCountryDicAsync();
-            await _conn.RunInTransactionAsync(db =>
-            {
-                ClassLogger.Trace($"Running transaction: {dbVersion} => {appVersion}");
-                // just truncate here
-                // country id is (maybe) not fixed here; so we just truncate it. won't take much time!
-                db.DropTable<CallsignDatabase>();
-                db.DropTable<CountryDatabase>();
-                db.DropTable<AdifModesDatabase>();
-
-                db.CreateTable<CallsignDatabase>();
-                db.CreateTable<CountryDatabase>();
-                db.CreateTable<AdifModesDatabase>();
-                db.CreateTable<IgnoredQsoDatabase>();
-
-                InitPrefixAndCountryData(db);
-                InitAdifModesDatabase(db);
-                db.InsertOrReplace(
-                    ApplicationVersionDatabase.NewAppVersionWithVersionNumber(appVersion.ToString()));
-                ClassLogger.Trace($"Tansaction done: {dbVersion} => {appVersion}");
-            });
+            ClassLogger.Info("Upgrade needed.");
         }
         else
         {
             ClassLogger.Info(
-                $"Current app version is same of less then db version: {dbVersion} => {appVersion}. Creating/Migrating skipped");
+                $"Current app version is same of less then db version: {_dbVersion} => {_appVersion}. Creating/Migrating skipped");
         }
 
         ClassLogger.Info("Creating/Migrating done.");
         await _conn.EnableWriteAheadLoggingAsync();
         _inited = true;
+    }
+
+    public async Task UpgradeDatabaseAsync()
+    {
+        ClassLogger.Trace($"upgrading {_dbVersion} => {_appVersion}");
+        await InitCountryDicAsync();
+        await _conn!.RunInTransactionAsync(db =>
+        {
+            ClassLogger.Trace($"Running transaction: {_dbVersion} => {_appVersion}");
+            // just truncate here
+            // country id is (maybe) not fixed here; so we just truncate it. won't take much time!
+            db.DropTable<CallsignDatabase>();
+            db.DropTable<CountryDatabase>();
+            db.DropTable<AdifModesDatabase>();
+
+            db.CreateTable<CallsignDatabase>();
+            db.CreateTable<CountryDatabase>();
+            db.CreateTable<AdifModesDatabase>();
+            db.CreateTable<IgnoredQsoDatabase>();
+
+            InitPrefixAndCountryData(db);
+            InitAdifModesDatabase(db);
+            db.InsertOrReplace(
+                ApplicationVersionDatabase.NewAppVersionWithVersionNumber(_appVersion.ToString()));
+            ClassLogger.Trace($"Tansaction done: {_dbVersion} => {_appVersion}");
+        });
     }
 
     /// <summary>

@@ -314,6 +314,10 @@ CloudlogHelper 使用基于属性的系统来定义日志服务，使开发者�
 
 <img src="./md_assets/img_branchmark.png" width="30%" />
 
+## ❓ 已知问题
+
++ 在Win7和Linux上双击QSO查看详情功能失效。
+
 ## 🙏 致谢
 
 + [Hamlib](https://github.com/Hamlib/Hamlib): 业余无线电设备控制库（支持电台、旋转器、调谐器及功放）

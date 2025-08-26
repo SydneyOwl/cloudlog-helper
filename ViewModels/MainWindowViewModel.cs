@@ -69,7 +69,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            await windowManager.CreateOrShowWindowByVm(vm);
+            await windowManager.CreateAndShowWindowByVm(vm);
         }
         catch (Exception ex)
         {

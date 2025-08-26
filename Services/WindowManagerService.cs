@@ -14,14 +14,14 @@ public class WindowManagerService : IWindowManagerService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private readonly List<WeakReference<Window>> _windows = new();
-    private readonly IClassicDesktopStyleApplicationLifetime desktop;
-    private readonly IServiceProvider provider;
+    private readonly IClassicDesktopStyleApplicationLifetime _desktop;
+    private readonly IServiceProvider _provider;
 
     public WindowManagerService(IServiceProvider prov,
         IClassicDesktopStyleApplicationLifetime desk)
     {
-        provider = prov;
-        desktop = desk;
+        _provider = prov;
+        _desktop = desk;
     }
 
     public void Dispose()
@@ -48,7 +48,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         }
     }
 
-    public bool TryGetWindow(Type wType, out Window? targetWindow)
+    private bool TryGetWindow(Type wType, out Window? targetWindow)
     {
         AutoRemove();
         foreach (var weakRef in _windows)
@@ -62,40 +62,48 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         return false;
     }
 
-    public Task CreateOrShowWindowByVm(Type vmType)
+    public async Task<T?> CreateAndShowWindowByVm<T>(Type vmType, Window? toplevel = null)
     {
-        var finalName = vmType!.FullName!.Split(".").Last();
+        var finalName = vmType.FullName!.Split(".").Last();
         var pFinalName = finalName.Replace("ViewModel", "");
 
-        var viewPath = vmType!.FullName!.Replace(finalName, "")
+        var viewPath = vmType.FullName!.Replace(finalName, "")
             .Replace("ViewModel", "View", StringComparison.Ordinal);
         viewPath += pFinalName;
 
-
         var winType = Type.GetType(viewPath);
-
-        if (winType == null) throw new Exception($"Windows not found for {viewPath}");
+        if (winType == null) 
+            throw new Exception($"Window not found for {viewPath}");
 
         if (TryGetWindow(winType, out var target))
         {
             target!.Show();
             target.Activate();
-            return Task.CompletedTask;
+            return default;
         }
 
-        //
-        var topLevel = desktop.MainWindow;
-        if (topLevel is Window window)
+        var tl = toplevel ?? _desktop.MainWindow;
+        if (tl is Window parentWindow)
         {
-            var wd = (Window)Activator.CreateInstance(winType)!;
-            // find service...
-            wd.DataContext = provider.GetRequiredService(vmType);
-            // wd.DataContext = provider.GetRequiredService
-            Track(wd);
-            return wd.ShowDialog(window);
+            var newWindow = (Window)Activator.CreateInstance(winType)!;
+            newWindow.DataContext = _provider.GetRequiredService(vmType);
+            Track(newWindow);
+            
+            var result = await newWindow.ShowDialog<T>(parentWindow);
+            return result;
         }
 
-        return Task.CompletedTask;
+        return default;
+    }
+
+    public async Task CreateAndShowWindowByVm(Type vmType, Window? toplevel = null)
+    {
+        await CreateAndShowWindowByVm<object>(vmType, toplevel);
+    }
+
+    public T GetViewModelInstance<T>()
+    {
+        return _provider.GetRequiredService<T>();
     }
 
     private void AutoRemove()

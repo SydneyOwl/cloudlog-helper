@@ -16,34 +16,11 @@ namespace CloudlogHelper.Views;
 
 public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantWindowViewModel>
 {
-    private bool _closeRequestedBefore;
-
     public QsoSyncAssistantWindow()
     {
         InitializeComponent();
         this.WhenActivated(disposables =>
         {
-            Observable.FromEventPattern<EventHandler<WindowClosingEventArgs>, WindowClosingEventArgs>(
-                    h => Closing += h,
-                    h => Closing -= h)
-                .Subscribe(async void (args) =>
-                {
-                    try
-                    {
-                        if (_closeRequestedBefore) return;
-                        _closeRequestedBefore = true;
-                        args.EventArgs.Cancel = true;
-                        await ViewModel!.SaveConf.Execute();
-                        await ViewModel!.StopSyncCommand.Execute();
-                        Close();
-                    }
-                    catch (Exception e)
-                    {
-                        // ignored.
-                    }
-                })
-                .DisposeWith(disposables);
-
             Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                     h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged += h,
                     h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged -= h)
