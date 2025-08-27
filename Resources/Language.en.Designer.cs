@@ -759,6 +759,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Must have -vvvvv in command-line args!.
+        /// </summary>
+        public static string mustverbose {
+            get {
+                return ResourceManager.GetString("mustverbose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Next Upload Time.
         /// </summary>
         public static string nextuploadtime {

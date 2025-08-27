@@ -13,6 +13,13 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
 {
     public QsoSyncAssistantSettings()
     {
+        
+    }
+
+    public void ApplyValidationRules()
+    {
+        this.ClearValidationRules();
+        
         this.ValidationRule(x => x.CloudlogUserName,
             SettingsValidation.CheckStringNotNull,
             TranslationHelper.GetString(LangKeys.notnull)

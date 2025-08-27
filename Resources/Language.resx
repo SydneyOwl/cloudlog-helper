@@ -551,4 +551,7 @@ The developers assume no responsibility for any data loss, device damage, or oth
 
 By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudlog-helper).</value>
     </data>
+    <data name="mustverbose" xml:space="preserve">
+        <value>Must have -vvvvv in command-line args!</value>
+    </data>
 </root>

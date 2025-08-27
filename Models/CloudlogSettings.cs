@@ -20,6 +20,12 @@ public class CloudlogSettings : ReactiveValidationObject
 {
     public CloudlogSettings()
     {
+        
+    }
+
+    public void ApplyValidationRules()
+    {
+        this.ClearValidationRules();
         var cloudlogRulesUrl =
             this.WhenAnyValue(
                 x => x.CloudlogUrl,

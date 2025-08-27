@@ -50,6 +50,8 @@ public class App : Application
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
+    
+    private DateTime _lastClickTime = DateTime.MinValue;
 
     public App(CommandLineOptions? options)
     {
@@ -210,6 +212,17 @@ public class App : Application
                     nmiExit,
                     nmiOpen
                 }
+            };
+            _trayIcon.Clicked += (sender, args) =>
+            {
+                var currentTime = DateTime.Now;
+                var elapsed = currentTime - _lastClickTime;
+                
+                if (elapsed.TotalMilliseconds < 500)
+                {
+                    mainWindow.Show();
+                }
+                _lastClickTime = currentTime;
             };
         }
         catch (Exception ex)

@@ -17,6 +17,12 @@ public class HamlibSettings : ReactiveValidationObject
 {
     public HamlibSettings()
     {
+        
+    }
+
+    public void ApplyValidationRules()
+    {
+        this.ClearValidationRules();
         this.ValidationRule(x => x.SelectedRigInfo,
             st => st?.Id is not null,
             TranslationHelper.GetString(LangKeys.notnull)

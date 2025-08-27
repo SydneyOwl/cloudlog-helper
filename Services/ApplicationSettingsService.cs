@@ -235,6 +235,10 @@ public class ApplicationSettingsService: IApplicationSettingsService
 
     public ApplicationSettings GetDraftSettings()
     {
+        _draftSettings!.CloudlogSettings.ApplyValidationRules();
+        _draftSettings!.HamlibSettings.ApplyValidationRules();
+        _draftSettings!.UDPSettings.ApplyValidationRules();
+        _draftSettings!.QsoSyncAssistantSettings.ApplyValidationRules();
         return _draftSettings!;
     }
 

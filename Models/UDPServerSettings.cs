@@ -16,6 +16,12 @@ public class UDPServerSettings : ReactiveValidationObject
 {
     public UDPServerSettings()
     {
+        
+    }
+
+    public void ApplyValidationRules()
+    {
+        this.ClearValidationRules();
         this.ValidationRule(
             x => x.UDPPort,
             st =>

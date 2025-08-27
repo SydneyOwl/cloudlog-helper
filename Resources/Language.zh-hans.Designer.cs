@@ -761,6 +761,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 命令行参数必须添加-vvvvv！.
+        /// </summary>
+        public static string mustverbose {
+            get {
+                return ResourceManager.GetString("mustverbose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 下次上报时间.
         /// </summary>
         public static string nextuploadtime {

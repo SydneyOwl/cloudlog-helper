@@ -553,4 +553,7 @@
 继续使用即表示您已阅读并同意上述条款及项目主页上的完整免责声明 (https://github.com/sydneyowl/cloudlog-helper)。
 </value>
     </data>
+    <data name="mustverbose" xml:space="preserve">
+        <value>命令行参数必须添加-vvvvv！</value>
+    </data>
 </root>

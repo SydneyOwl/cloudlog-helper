@@ -254,6 +254,7 @@ public class SettingsWindowViewModel : ViewModelBase
         if (DraftSettings.HamlibSettings.UseRigAdvanced &&
             !string.IsNullOrEmpty(DraftSettings.HamlibSettings.OverrideCommandlineArg))
         {
+            // match port
             var matchPort = Regex.Match(DraftSettings.HamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
             if (matchPort.Success)
             {
@@ -263,6 +264,12 @@ public class SettingsWindowViewModel : ViewModelBase
             else
             {
                 throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
+            }
+            
+            // require verbose
+            if (!DraftSettings.HamlibSettings.OverrideCommandlineArg.Contains("-vvvvv"))
+            {
+                throw new Exception(TranslationHelper.GetString(LangKeys.mustverbose));
             }
         }
 
