@@ -212,7 +212,7 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 首先，克隆本仓库：
 
 ```shell
-git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
+git clone --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 ```
 
 ### 🔨 编译Hamlib
@@ -222,6 +222,9 @@ git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 事实上我们只需要`rigctld`，它是`Hamlib`工具集中的一个无线电控制守护进程，允许通过TCP长连接远程控制无线电设备:
 
 ```shell
+# Clone hamlib
+git clone --depth=1 https://github.com/hamlib/hamlib.git
+
 # 依赖安装
 sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev autoconf automake libtool
 

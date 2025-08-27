@@ -219,7 +219,7 @@ Please ensure your build environment has `.NET 6.0` (or higher) and `gcc` instal
 First, clone this repository:
 
 ```shell
-git clone --recursive --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
+git clone --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 ```
 
 ### 🔨 Compiling Hamlib
@@ -229,6 +229,9 @@ You can skip this step entirely if you do not need to read and upload radio info
 We essentially only need `rigctld`, a radio control daemon from the `Hamlib` toolkit that allows remote control of radio devices via TCP:
 
 ```shell
+# Clone hamlib
+git clone --depth=1 https://github.com/hamlib/hamlib.git
+
 # Install dependencies
 sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev autoconf automake libtool
 
