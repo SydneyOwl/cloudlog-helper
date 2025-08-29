@@ -136,7 +136,9 @@ public class DatabaseService : IDatabaseService, IDisposable
             db.CreateTable<CallsignDatabase>();
             db.CreateTable<CountryDatabase>();
             db.CreateTable<AdifModesDatabase>();
+            
             db.CreateTable<IgnoredQsoDatabase>();
+            db.CreateTable<CollectedGridDatabase>();
 
             InitPrefixAndCountryData(db);
             InitAdifModesDatabase(db);
@@ -258,6 +260,35 @@ public class DatabaseService : IDatabaseService, IDisposable
             return null;
         }
     }
+
+    public async Task AddOrUpdateCallsignGrid(CollectedGridDatabase callGrid)
+    {
+        try
+        {
+            await _conn!.InsertOrReplaceAsync(callGrid);
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e);
+        }
+    }
+
+    public async Task<string?> GetGridByCallsign(string callsign)
+    {
+        try
+        {
+            var res = await _conn!.Table<CollectedGridDatabase>()
+                .Where(x => x.Callsign == callsign)
+                .FirstOrDefaultAsync();
+            return res?.GridSquare;
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e, "Failed to find grid.");
+            return null;
+        }
+    }
+
 
     public void Dispose()
     {

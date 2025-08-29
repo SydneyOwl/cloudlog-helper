@@ -1,7 +1,7 @@
 .vscode
 .idea
-**/bin/
-**/obj/
+bin/
+obj/
 *.user
 **/*.exe
 **/*.dll

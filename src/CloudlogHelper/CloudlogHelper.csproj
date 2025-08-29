@@ -17,7 +17,6 @@
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
-        <AvaloniaResource Include="md_assets\logo.png"/>
         <AvaloniaResource Remove="Hamlib\**"/>
     </ItemGroup>
 

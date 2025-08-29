@@ -1,7 +1,7 @@
 ﻿<div align="center">
 <img src="./md_assets/logo.png" alt="cloudlog_helper_logo" width="25%" />
 
-# Cloudlog Helper
+# Cloudlog Helper [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SydneyOwl/cloudlog-helper)
 
 ![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=for-the-badge)
 ![avalonia](https://img.shields.io/badge/AvaloniaUI-11.2.6-0d6efd?style=for-the-badge)
@@ -20,6 +20,7 @@ Supports most mainstream radios, and works seamlessly with software like `JTDX`/
 If your computer is resource-constrained, or you simply need a tool for automating QSO/radio information uploads, give `Cloudlog Helper` a try!
 
   <img src="./md_assets/img.png" alt="img.png" width="60%" />
+
 </div>
 
 ## ✨ Features

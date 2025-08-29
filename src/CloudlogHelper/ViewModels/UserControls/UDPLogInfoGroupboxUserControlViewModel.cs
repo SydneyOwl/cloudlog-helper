@@ -616,6 +616,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     break;
                 case MessageType.Decode:
                     _allDecodedCount += 1;
+                    var decMsg = (Decode)message;
+                    var call = WsjtxMessageUtil.ExtractDeFromMessage(decMsg.Message);
+                    var grid = WsjtxMessageUtil.ExtractGridFromMessage(decMsg.Message);
+                    if (call is null || grid is null)break;
+                    ClassLogger.Debug($"Logged: {call} => {grid}");
+                    _ = _databaseService.AddOrUpdateCallsignGrid(new CollectedGridDatabase
+                    {
+                        Callsign = call,
+                        GridSquare = grid
+                    });
                     break;
                 case MessageType.Status:
                     var stat = (Status)message;

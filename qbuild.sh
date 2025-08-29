@@ -7,6 +7,8 @@ buildTime=$(date +"%Y-%m-%d %H:%M:%S")
 
 echo "building ${tagName} ${commitHash} ${buildTime}"
 
+cd src/CloudlogHelper
+
 sed -i.bak \
 -e "s/@INTERNAL_COMMIT@/$commitHash/g" \
 -e "s/@INTERNAL_TIME@/$buildTime/g" \

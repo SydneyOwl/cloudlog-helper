@@ -33,11 +33,11 @@ jobs:
           }else{
             $tagName = $tagName -replace '^[vV]', ''
           }
-          ./ci-build.ps1 -tagName "$tagName"
+          ./build.ps1 -tagName "$tagName"
 
       - name: Release it
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            bin/*.zip
+            src/CloudlogHelper/bin/*.zip

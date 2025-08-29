@@ -10,8 +10,11 @@ $buildTime = Get-Date -Format "yyyyMMdd HHmmss"
 
 Write-Host "building $tagName $commitHash $buildTime"
 
+Set-Location src\CloudlogHelper
 $versionInfoPath = "Resources/VersionInfo.cs"
+$versionInfoPathBak = "Resources/VersionInfo.bak"
 $content = Get-Content $versionInfoPath -Raw
+Copy-Item $versionInfoPath $versionInfoPathBak
 
 $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
                     -replace '@INTERNAL_TIME@', $buildTime `
@@ -89,5 +92,8 @@ function Build-And-Package
 Build-And-Package -runtime "win-x64" -archName "windows-x64"
 Build-And-Package -runtime "win-x86" -archName "windows-x86"
 Build-And-Package -runtime "linux-x64" -archName "linux-x64" -exeName "CloudlogHelper"
+
+Remove-Item $versionInfoPath
+Move-Item $versionInfoPathBak $versionInfoPath
 
 Write-Host "-------------------------->  Build completed successfully!"
