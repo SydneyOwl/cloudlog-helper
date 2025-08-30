@@ -47,7 +47,7 @@ public class CountryDatabase
     /// </summary>
     [PrimaryKey]
     [Column("id")]
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     /// <summary>
     ///     Country name in english.

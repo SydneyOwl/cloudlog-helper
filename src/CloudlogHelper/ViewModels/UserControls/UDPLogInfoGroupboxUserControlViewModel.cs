@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -47,6 +48,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
 
     private readonly IDatabaseService _databaseService;
+    
     private readonly IClipboardService _clipboardService;
 
 
@@ -91,6 +93,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private readonly ReactiveCommand<Unit, Unit> RestartUdpCommand;
     
     private readonly ReactiveCommand<Unit, Unit> UploadLogFromQueueCommand;
+
+    private ConcurrentQueue<CollectedGridDatabase> _collectedGrid = new();
 
     /// <summary>
     ///     Total decoded number.
@@ -215,6 +219,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
 
         this.WhenActivated(disposables =>
         {
+            Observable.Interval(TimeSpan.FromSeconds(DefaultConfigs.DefaultGridCallsignWritebackInterval))
+                .ObserveOn(RxApp.TaskpoolScheduler)
+                .Subscribe(_ =>
+                {
+                    var collectedGridDatabases = _collectedGrid.ToList();
+                    _collectedGrid.Clear();
+                    _databaseService.BatchAddOrUpdateCallsignGrid(collectedGridDatabases);
+                    ClassLogger.Info($"Added {collectedGridDatabases.Count} grids.");
+                });
+            
             // Our client watchdog
             _heartbeatSubject
                 .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UDPClientExpiryInSeconds))
@@ -620,8 +634,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     var call = WsjtxMessageUtil.ExtractDeFromMessage(decMsg.Message);
                     var grid = WsjtxMessageUtil.ExtractGridFromMessage(decMsg.Message);
                     if (call is null || grid is null)break;
-                    ClassLogger.Debug($"Logged: {call} => {grid}");
-                    _ = _databaseService.AddOrUpdateCallsignGrid(new CollectedGridDatabase
+                    _collectedGrid.Enqueue(new CollectedGridDatabase()
                     {
                         Callsign = call,
                         GridSquare = grid

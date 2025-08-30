@@ -11,7 +11,7 @@ public class CallsignDatabase
     [PrimaryKey]
     [AutoIncrement]
     [Column("id")]
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     /// <summary>
     ///     Id of the item.

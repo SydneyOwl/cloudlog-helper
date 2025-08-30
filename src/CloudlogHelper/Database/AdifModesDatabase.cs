@@ -10,7 +10,7 @@ public class AdifModesDatabase
     /// </summary>
     [PrimaryKey]
     [Column("id")]
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     [Column("mode")] public string? Mode { get; set; }
 

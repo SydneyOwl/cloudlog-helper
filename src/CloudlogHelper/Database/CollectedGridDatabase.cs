@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using System;
+using SQLite;
 
 namespace CloudlogHelper.Database;
 
@@ -6,14 +7,12 @@ namespace CloudlogHelper.Database;
 public class CollectedGridDatabase
 {
     [PrimaryKey]
-    [AutoIncrement]
-    [Column("id")]
-    public int Id { get; set; }
-
     [Column("callsign")]
-    [Unique]
     public string? Callsign { get; set; }
     
     [Column("grid_square")]
     public string? GridSquare { get; set; }
+    
+    [Column("updated_at")]
+    public DateTime? UpdatedAt { get; set; }
 }

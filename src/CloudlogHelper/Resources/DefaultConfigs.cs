@@ -250,6 +250,8 @@ public class DefaultConfigs
     public static readonly int UDPClientExpiryInSeconds = 60;
 
     public static readonly int UDPServerDefaultPort = 2237;
+    
+    public static readonly int DefaultGridCallsignWritebackInterval = 18;
 
     /// <summary>
     ///     Default Hamlib files for windows

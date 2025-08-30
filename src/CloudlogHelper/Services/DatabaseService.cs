@@ -194,7 +194,11 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         try
         {
-            if (!await IsQsoIgnored(ignoredQso)) await _conn!.InsertAsync(ignoredQso);
+            if (!await IsQsoIgnored(ignoredQso))
+            {
+                ignoredQso.UpdatedAt = DateTime.Now;
+                await _conn!.InsertAsync(ignoredQso);
+            }
         }
         catch (Exception e)
         {
@@ -261,11 +265,28 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
-    public async Task AddOrUpdateCallsignGrid(CollectedGridDatabase callGrid)
+    public async Task BatchAddOrUpdateCallsignGrid(List<CollectedGridDatabase> collectedGrid)
     {
         try
         {
-            await _conn!.InsertOrReplaceAsync(callGrid);
+            if (collectedGrid?.Count == 0)return;
+            var now = DateTime.Now;
+            var parameters = collectedGrid.SelectMany(item => new object[]
+            {
+                item.Callsign!,
+                item.GridSquare!,
+                now
+            }).ToArray();
+
+            var valuePlaceholders = string.Join(", ", Enumerable.Range(0, collectedGrid.Count).Select(_ => "(?, ?, ?)"));
+            
+            await _conn!.ExecuteAsync(
+                $@"INSERT INTO collected_grid (callsign, grid_square, updated_at)
+                VALUES {valuePlaceholders}
+                ON CONFLICT(callsign) DO UPDATE SET
+                    grid_square = excluded.grid_square,
+                    updated_at = excluded.updated_at",
+                parameters);
         }
         catch (Exception e)
         {

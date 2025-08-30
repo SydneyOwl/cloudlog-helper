@@ -10,7 +10,7 @@ public class IgnoredQsoDatabase
     [PrimaryKey]
     [AutoIncrement]
     [Column("id")]
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     [Column("de")] public string? De { get; set; }
 
@@ -29,6 +29,8 @@ public class IgnoredQsoDatabase
     [Column("rst_recv")] public string? RstRecv { get; set; }
 
     [Column("qso_start_time")] public DateTime? QsoStartTime { get; set; }
+    
+    [Column("updated_at")] public DateTime? UpdatedAt { get; set; }
 
     public static IgnoredQsoDatabase Parse(RecordedCallsignDetail detail)
     {
