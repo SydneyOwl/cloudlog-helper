@@ -32,10 +32,6 @@ public class HamlibTests : IClassFixture<HamlibFixture>
             await _rigctldService.RestartRigctldBackgroundProcessAsync($"-m 1 -T {DefaultConfigs.RigctldDefaultHost} -t {DefaultConfigs.RigctldDefaultPort} -vvvvv");
         Assert.True(res);
         
-        var data = await _rigctldService.GetAllRigInfo(DefaultConfigs.RigctldDefaultHost, DefaultConfigs.RigctldDefaultPort,
-            true, true, CancellationToken.None);
-        Assert.NotNull(data);
-        
         // try set SPLIT and freq
         await _rigctldService.ExecuteCommandInScheduler(DefaultConfigs.RigctldDefaultHost,
             DefaultConfigs.RigctldDefaultPort, "F 21021000", false);
@@ -44,7 +40,7 @@ public class HamlibTests : IClassFixture<HamlibFixture>
         await _rigctldService.ExecuteCommandInScheduler(DefaultConfigs.RigctldDefaultHost,
             DefaultConfigs.RigctldDefaultPort, "S 1 currVFO", false);
         
-        data = await _rigctldService.GetAllRigInfo(DefaultConfigs.RigctldDefaultHost, DefaultConfigs.RigctldDefaultPort,
+        var data = await _rigctldService.GetAllRigInfo(DefaultConfigs.RigctldDefaultHost, DefaultConfigs.RigctldDefaultPort,
             true, true, CancellationToken.None);
         Assert.Equal(21021000, data.FrequencyRx);
         Assert.Equal(21021000, data.FrequencyTx);

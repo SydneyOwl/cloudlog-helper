@@ -31,4 +31,17 @@ public class AdifUtil
         adif.Append("<eor>");
         return adif.ToString();
     }
+    
+    private static string EscapeAdif(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        return input
+            .Replace("&", "&amp;")
+            .Replace("<", "&lt;")
+            .Replace(">", "&gt;")
+            .Replace("'", "&apos;")
+            .Replace("\"", "&quot;");
+    }
 }

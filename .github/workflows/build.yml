@@ -23,9 +23,14 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
+      
+      - name: Execute test
+        shell: pwsh
+        run: dotnet test
 
       - name: Build application
         shell: pwsh
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           $tagName = "${{ github.ref_name }}"
           if ([string]::IsNullOrEmpty($tagName)) {
