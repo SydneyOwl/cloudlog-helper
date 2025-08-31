@@ -219,7 +219,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
 
         this.WhenActivated(disposables =>
         {
-            Observable.Interval(TimeSpan.FromSeconds(DefaultConfigs.DefaultGridCallsignWritebackInterval))
+            Observable.Interval(TimeSpan.FromSeconds(DefaultConfigs.DefaultBatchProcessGridMessageInterval))
                 .ObserveOn(RxApp.TaskpoolScheduler)
                 .Subscribe(_ =>
                 {
@@ -638,6 +638,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     {
                         Callsign = call,
                         GridSquare = grid
+                    });
+                    
+                    MessageBus.Current.SendMessage(new MsgDecoded
+                    {
+                        DecodedData = decMsg
                     });
                     break;
                 case MessageType.Status:

@@ -198,6 +198,14 @@ public class RecordedCallsignDetail : ReactiveObject
     /// <returns></returns>
     public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo, SupportedLanguage lan)
     {
+        var latLonByDxGrid = MaidenheadGridUtil.GridToLatLng(qlo.DXGrid);
+        var lat = cdb.Latitude;
+        var lon = cdb.Longitude;
+        if (latLonByDxGrid is not null)
+        {
+            lat = (float)latLonByDxGrid.Latitude;
+            lon = (float)latLonByDxGrid.Longitude;
+        }
         return new RecordedCallsignDetail
         {
             LocalizedCountryName = lan == SupportedLanguage.SimplifiedChinese
@@ -206,8 +214,8 @@ public class RecordedCallsignDetail : ReactiveObject
             CqZone = cdb.CqZone,
             ItuZone = cdb.ItuZone,
             Continent = cdb.Continent,
-            Latitude = cdb.Latitude,
-            Longitude = cdb.Longitude,
+            Latitude = lat,
+            Longitude = lon,
             GmtOffset = cdb.GmtOffset,
             Dxcc = cdb.Dxcc,
             DateTimeOff = qlo.DateTimeOff,
