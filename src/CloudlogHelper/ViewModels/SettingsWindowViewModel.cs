@@ -21,12 +21,13 @@ using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
+using DesktopNotifications;
 using DynamicData;
 using Flurl.Http;
-using Force.DeepCloner;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Notification = DesktopNotifications.Notification;
 
 namespace CloudlogHelper.ViewModels;
 
@@ -39,10 +40,11 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private readonly CancellationTokenSource _source;
 
-    private readonly bool initSkipped;
+    private readonly bool _initSkipped;
 
-    private readonly IRigctldService rigctldService;
-    private readonly IApplicationSettingsService settingsService;
+    private readonly IRigctldService _rigctldService;
+    private readonly IApplicationSettingsService _settingsService;
+    private readonly INotificationManager _desktopNotificationManager;
 
     public SettingsWindowViewModel()
     {
@@ -57,12 +59,14 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public SettingsWindowViewModel(CommandLineOptions cmd,
         IApplicationSettingsService ss,
-        IRigctldService rs)
+        IRigctldService rs,
+        INotificationManager nm)
     {
-        settingsService = ss;
-        rigctldService = rs;
-        initSkipped = cmd.AutoUdpLogUploadOnly;
-        DraftSettings = settingsService.GetDraftSettings();
+        _settingsService = ss;
+        _rigctldService = rs;
+        _desktopNotificationManager = nm;
+        _initSkipped = cmd.AutoUdpLogUploadOnly;
+        DraftSettings = _settingsService.GetDraftSettings();
 
         _source = new CancellationTokenSource();
         InitializeLogSystems();
@@ -159,8 +163,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _initializeHamlibAsync()
     {
-        if (initSkipped) return;
-        var (result, output) = await rigctldService.StartOnetimeRigctldAsync("--version");
+        if (_initSkipped) return;
+        var (result, output) = await _rigctldService.StartOnetimeRigctldAsync("--version");
         // init hamlib
         if (result)
         {
@@ -172,10 +176,10 @@ public class SettingsWindowViewModel : ViewModelBase
             return;
         }
 
-        var (listResult, opt) = await rigctldService.StartOnetimeRigctldAsync("--list");
+        var (listResult, opt) = await _rigctldService.StartOnetimeRigctldAsync("--list");
         if (listResult)
         {
-            SupportedModels = rigctldService.ParseAllModelsFromRawOutput(opt)
+            SupportedModels = _rigctldService.ParseAllModelsFromRawOutput(opt)
                 .OrderBy(x => x.Model)
                 .ToList();
 
@@ -195,6 +199,12 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         try
         {
+            await _desktopNotificationManager.ShowNotification(new Notification
+            {
+                Title = "Oh sir",
+                Body = "this does works..."
+            }, DateTimeOffset.Now.AddSeconds(DefaultConfigs.DefaultNotificationTimeout));
+            
             CloudlogInfoPanelUserControl.InfoMessage = string.Empty;
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
@@ -281,13 +291,13 @@ public class SettingsWindowViewModel : ViewModelBase
         var (ip, port) = _getRigctldIpAndPort();
         if (DraftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
         {
-            var defaultArgs = rigctldService.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
+            var defaultArgs = _rigctldService.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
                 DraftSettings.HamlibSettings.SelectedPort);
 
             if (DraftSettings.HamlibSettings.UseRigAdvanced)
             {
                 if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.OverrideCommandlineArg))
-                    defaultArgs = rigctldService.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
+                    defaultArgs = _rigctldService.GenerateRigctldCmdArgs(DraftSettings.HamlibSettings.SelectedRigInfo.Id,
                         DraftSettings.HamlibSettings.SelectedPort,
                         DraftSettings.HamlibSettings.DisablePTT,
                         DraftSettings.HamlibSettings.AllowExternalControl);
@@ -296,15 +306,15 @@ public class SettingsWindowViewModel : ViewModelBase
             }
 
             var (res, des) =
-                await rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs);
+                await _rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs);
             if (!res) throw new Exception(des);
         }
         else
         {
-            rigctldService.TerminateBackgroundProcess();
+            _rigctldService.TerminateBackgroundProcess();
         }
 
-        _ = await rigctldService.GetAllRigInfo(ip, port, DraftSettings.HamlibSettings.ReportRFPower,
+        _ = await _rigctldService.GetAllRigInfo(ip, port, DraftSettings.HamlibSettings.ReportRFPower,
             DraftSettings.HamlibSettings.ReportSplitInfo, _source.Token);
     }
 
@@ -324,13 +334,13 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         // resume settings
         if (Design.IsDesignMode) return;
-        settingsService.RestoreSettings();
+        _settingsService.RestoreSettings();
         _source.Cancel();
     }
 
     private void _saveAndApplyConf()
     {
-        settingsService.ApplySettings(LogSystems.ToList());
+        _settingsService.ApplySettings(LogSystems.ToList());
         _source.Cancel();
     }
 

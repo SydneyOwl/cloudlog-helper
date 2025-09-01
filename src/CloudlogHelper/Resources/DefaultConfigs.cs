@@ -252,6 +252,7 @@ public class DefaultConfigs
     public static readonly int UDPServerDefaultPort = 2237;
     
     public static readonly int DefaultBatchProcessGridMessageInterval = 18;
+    public static readonly int DefaultNotificationTimeout = 5;
 
     /// <summary>
     ///     Default Hamlib files for windows

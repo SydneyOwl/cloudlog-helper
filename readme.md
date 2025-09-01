@@ -258,8 +258,9 @@ Execute the following commands:
 ```shell
 cd cloudlog-helper
 dotnet restore -r linux-x64
-dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true \
---self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true
+dotnet publish -c Release -r linux-x64 -f net6.0 -p:PublishSingleFile=true \
+--self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true \
+-p:UseAppHost=true
 ```
 
 After compilation, you can find the compiled software in `bin/Release/net6.0/linux-x64/publish/`.

@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <TargetFrameworks>net6.0-windows10.0.17763.0;net6.0</TargetFrameworks>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-
         <PackageIcon>Assets\icon.png</PackageIcon>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <MacOSAppIcon>Assets/icon.icns</MacOSAppIcon>
@@ -36,6 +33,7 @@
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
         <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.10"/>
         <PackageReference Include="DeepCloner" Version="0.10.4"/>
+        <PackageReference Include="DesktopNotifications.Avalonia" Version="1.3.1" />
         <PackageReference Include="Flurl.Http" Version="4.0.2"/>
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1"/>
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
@@ -105,10 +103,6 @@
         <AdditionalFiles Include="Views\UserControls\TipIconUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\UDPLogInfoGroupboxUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="tmp\"/>
     </ItemGroup>
 
 </Project>

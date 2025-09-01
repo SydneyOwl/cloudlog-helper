@@ -22,7 +22,7 @@ $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
 
 Set-Content $versionInfoPath -Value $content -NoNewline
 
-Remove-Item -Path "bin\Release\net6.0\win-x64\publish" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "bin\Release\*" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "bin\*.zip" -Force -ErrorAction SilentlyContinue
 
 mkdir tmp -Force
@@ -62,20 +62,22 @@ function Build-And-Package
     param(
         [string]$runtime,
         [string]$archName,
+        [string]$frameworkName,
         [string]$exeName = "CloudlogHelper.exe"
     )
 
     Write-Host "Building for $runtime ($archName)..."
 
-    dotnet restore -r $runtime
     dotnet publish -c Release -r $runtime `
+        -f $frameworkName `
         -p:PublishSingleFile=true `
         --self-contained true `
         -p:PublishReadyToRun=true `
         -p:PublishTrimmed=true `
-        -p:IncludeNativeLibrariesForSelfExtract=true
+        -p:IncludeNativeLibrariesForSelfExtract=true `
+        -p:UseAppHost=true
 
-    $publishPath = "bin/Release/net6.0/$runtime/publish/$exeName"
+    $publishPath = "bin/Release/$frameworkName/$runtime/publish/$exeName"
     $zipName = if ($tagName)
     {
         "bin/CloudlogHelper-v$tagName-$archName.zip"
@@ -89,9 +91,9 @@ function Build-And-Package
     Write-Host "Created: $zipName"
 }
 
-Build-And-Package -runtime "win-x64" -archName "windows-x64"
-Build-And-Package -runtime "win-x86" -archName "windows-x86"
-Build-And-Package -runtime "linux-x64" -archName "linux-x64" -exeName "CloudlogHelper"
+Build-And-Package -runtime "win-x64" -archName "windows-x64" -frameworkName "net6.0-windows10.0.17763.0"
+Build-And-Package -runtime "win-x86" -archName "windows-x86" -frameworkName "net6.0-windows10.0.17763.0"
+Build-And-Package -runtime "linux-x64" -archName "linux-x64" -exeName "CloudlogHelper" -frameworkName "net6.0"
 
 Remove-Item $versionInfoPath
 Move-Item $versionInfoPathBak $versionInfoPath

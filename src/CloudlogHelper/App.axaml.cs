@@ -83,9 +83,9 @@ public class App : Application
     {
         _preInit();
         var collection = new ServiceCollection();
-        collection.AddCommonServices();
-        collection.AddViewModels();
-        collection.AddExtra();
+        await collection.AddCommonServicesAsync();
+        await collection.AddViewModelsAsync();
+        await collection.AddExtraAsync();
         collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
         collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
             new WindowManagerService(prov, desktop));
