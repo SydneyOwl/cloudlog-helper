@@ -31,7 +31,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private readonly IDatabaseService _dbService;
 
-    private readonly IWindowNotificationManagerService _windowNotificationManager;
+    private readonly IInAppNotificationService _inAppNotification;
 
     private bool _executeOnStart;
 
@@ -47,11 +47,11 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     }
 
     public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
-        IWindowNotificationManagerService winNotification,
+        IInAppNotificationService winNotification,
         IApplicationSettingsService ss)
     {
         _dbService = dbService;
-        _windowNotificationManager = winNotification;
+        _inAppNotification = winNotification;
         settingsService = ss;
         Settings = settingsService.GetDraftSettings();
         
@@ -284,7 +284,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                 throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
             _logProgress(TranslationHelper.GetString(LangKeys.qsosyncsucc), 100);
             if (_executeOnStart)
-                await _windowNotificationManager.SendSuccessNotificationAsync(
+                await _inAppNotification.SendSuccessNotificationAsync(
                     $"{TranslationHelper.GetString(LangKeys.qsosyncsucc)}");
         }
         catch (Exception ex)
@@ -292,7 +292,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
             _logProgress($"Failed to sync QSOs: {ex.Message}", 100);
             ClassLogger.Error(ex);
             if (_executeOnStart)
-                await _windowNotificationManager.SendErrorNotificationAsync(
+                await _inAppNotification.SendErrorNotificationAsync(
                     $"{TranslationHelper.GetString(LangKeys.failedsyncqso)}{ex.Message}");
         }
         finally

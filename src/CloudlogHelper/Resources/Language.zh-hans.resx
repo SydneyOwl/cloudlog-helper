@@ -421,10 +421,10 @@
         <value>自动上传QSO到</value>
     </data>
     <data name="forwardmsg" xml:space="preserve">
-        <value>转发UDP数据包到</value>
+        <value>转发原始数据包到</value>
     </data>
     <data name="forwardto" xml:space="preserve">
-        <value>转发地址</value>
+        <value>转发原始数据包到</value>
     </data>
     <data name="advancedsettings" xml:space="preserve">
         <value>高级设置</value>
@@ -555,5 +555,38 @@
     </data>
     <data name="mustverbose" xml:space="preserve">
         <value>命令行参数必须添加-vvvvv！</value>
+    </data>
+    <data name="pushnotificationon" xml:space="preserve">
+        <value>出现下列情况时推送系统通知：</value>
+    </data>
+    <data name="qsofinished" xml:space="preserve">
+        <value>QSO完成时</value>
+    </data>
+    <data name="qsouploaded" xml:space="preserve">
+        <value>QSO上传完成时</value>
+    </data>
+    <data name="autopollstatus" xml:space="preserve">
+        <value>自动更新台站信息</value>
+    </data>
+    <data name="madeaqso" xml:space="preserve">
+        <value>✅ 完成了一个QSO！</value>
+    </data>
+    <data name="uploadedaqso" xml:space="preserve">
+        <value>🚀 QSO上传成功！</value>
+    </data>
+    <data name="qsoconcisetemplate" xml:space="preserve">
+        <value>• 呼号: {0}
+• 国家: {1} ({8})
+• 网格: {9}
+• 频率: {10} ({11})
+• 模式: {12} (父模式: {13})
+• 时间: {14} 至 {15}
+• 信号报告: 发送 '{16}' / 接收 '{17}'</value>
+    </data>
+    <data name="uploadfailedaqso" xml:space="preserve">
+        <value>☹️ QSO 上传失败！</value>
+    </data>
+    <data name="transparency" xml:space="preserve">
+        <value>透明度</value>
     </data>
 </root>

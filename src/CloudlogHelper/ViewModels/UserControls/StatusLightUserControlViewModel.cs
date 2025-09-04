@@ -27,7 +27,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
     private IRigctldService _rigctldService;
     private IUdpServerService _udpServerService;
     private IApplicationSettingsService _applicationSettingsService;
-    private IWindowNotificationManagerService _windowNotificationManagerService;
+    private IInAppNotificationService _inAppNotificationService;
 
     private bool _isRigctldUsingExternal;
 
@@ -43,13 +43,13 @@ public class StatusLightUserControlViewModel : ViewModelBase
     public StatusLightUserControlViewModel(IRigctldService rSer,
         IUdpServerService uSer,
         IApplicationSettingsService ss,
-        IWindowNotificationManagerService nw,
+        IInAppNotificationService nw,
         CommandLineOptions cmd)
     {
         _applicationSettingsService = ss;
         _udpServerService = uSer;
         _rigctldService = rSer;
-        _windowNotificationManagerService = nw;
+        _inAppNotificationService = nw;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         if (!InitSkipped)
         {

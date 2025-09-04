@@ -49,7 +49,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     private readonly List<string> _syncRigInfoAddr = new();
 
-    private readonly IWindowNotificationManagerService _windowNotificationManager;
+    private readonly IInAppNotificationService _inAppNotification;
 
     private readonly IRigctldService _rigctldService;
     private readonly IWindowManagerService _windowManagerService;
@@ -83,7 +83,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
 
     public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd,
         IRigctldService rs,
-        IWindowNotificationManagerService ws,
+        IInAppNotificationService ws,
         IWindowManagerService wm,
         IMessageBoxManagerService mm,
         IApplicationSettingsService ss)
@@ -94,7 +94,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         _applicationSettingsService = ss;
         _windowManagerService = wm;
         _rigctldService = rs;
-        _windowNotificationManager = ws;
+        _inAppNotification = ws;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         RefreshRigInfoCommand = ReactiveCommand.Create(() => { });
         if (!InitSkipped) Initialize();
@@ -196,7 +196,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
                 .DisposeWith(disposables);
 
             RefreshRigInfoCommand.ThrownExceptions.Subscribe(err =>
-                _windowNotificationManager.SendErrorNotificationSync(err.Message));
+                _inAppNotification.SendErrorNotificationSync(err.Message));
 
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
@@ -308,7 +308,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
         CurrentRxMode = string.Empty;
-        await _windowNotificationManager.SendErrorNotificationAsync(exceptionMsg);
+        await _inAppNotification.SendErrorNotificationAsync(exceptionMsg);
         ClassLogger.Error(exceptionMsg);
     }
 
@@ -374,7 +374,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
             {
                 UploadStatus = TranslationHelper.GetString(LangKeys.failed);
                 ClassLogger.Warn(ex, "Failed to upload rig info");
-                await _windowNotificationManager.SendWarningNotificationAsync(ex.Message);
+                await _inAppNotification.SendWarningNotificationAsync(ex.Message);
             }
         }
         else
@@ -394,7 +394,7 @@ public class RIGDataGroupboxUserControlViewModel : ViewModelBase
             catch (Exception ex)
             {
                 ClassLogger.Error(ex, "Failed to upload rig info");
-                await _windowNotificationManager.SendErrorNotificationAsync(TranslationHelper
+                await _inAppNotification.SendErrorNotificationAsync(TranslationHelper
                     .GetString(LangKeys.failuploadriginfoto).Replace("{addr}", se));
             }
     }

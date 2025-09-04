@@ -350,14 +350,16 @@ public class RecordedCallsignDetail : ReactiveObject
     {
         return UploadStatus is UploadStatus.Ignored or UploadStatus.Fail or UploadStatus.Pending;
     }
-
+    
     /// <summary>
     /// Format to a more readable content
     /// </summary>
     /// <returns></returns>
-    public string FormatToReadableContent()
+    public string FormatToReadableContent(bool concise = false)
     {
-        var template = TranslationHelper.GetString(LangKeys.qsotemplate);
+        var template = TranslationHelper.GetString(concise
+            ? LangKeys.qsoconcisetemplate
+            : LangKeys.qsotemplate);
     
         return string.Format(template,
             // 0-3: 基本呼号和国家信息

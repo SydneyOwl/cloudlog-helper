@@ -22,6 +22,7 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using DesktopNotifications;
 using DynamicData;
 using DynamicData.Binding;
 using Force.DeepCloner;
@@ -32,6 +33,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+using Notification = DesktopNotifications.Notification;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
@@ -42,59 +44,41 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    /// <summary>
-    ///     All qsologged message received.
-    /// </summary>
-    private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
-
     private readonly IDatabaseService _databaseService;
     
     private readonly IClipboardService _clipboardService;
+    
+    private readonly INotificationManager _nativeNativeNotificationManager;
+
+    private readonly IInAppNotificationService _inAppNotification; 
+    
+    private readonly IMessageBoxManagerService _messageBoxManagerService;
+
+    private readonly IUdpServerService _udpServerService;
+    
+    private readonly IApplicationSettingsService _applicationSettingsService;
+    
+    private readonly IQSOUploadService _qsoUploadService;
 
 
     /// <summary>
     ///     UDP Timeout watchdog.
     /// </summary>
     private readonly Subject<Unit> _heartbeatSubject = new();
-
-    /// <summary>
-    ///     check if this queue is empty. Reupload qso function is disabled if queue is not empty.
-    /// </summary>
-    private readonly BehaviorSubject<bool> _isUploadQueueEmpty;
-    
-    /// <summary>
-    ///     Settings for cloudlog.
-    /// </summary>
-    private readonly CloudlogSettings _extraCloudlogSettings;
-    
-    /// <summary>
-    ///     Settings for log services.
-    /// </summary>
-    private readonly List<ThirdPartyLogService> _logServices;
     
     /// <summary>
     ///     Settings for UDPServer.
     /// </summary>
     private readonly UDPServerSettings _udpSettings;
-
-    private readonly IMessageBoxManagerService _messageBoxManagerService;
-
-    private readonly IUdpServerService _udpServerService;
     
-    private readonly IApplicationSettingsService _applicationSettingsService;
-
     /// <summary>
-    ///     To be uploaded QSOs queue.
+    ///     All qsologged message received.
     /// </summary>
-    private readonly ConcurrentQueue<RecordedCallsignDetail> _uploadQueue = new();
+    private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
 
-    private readonly IWindowNotificationManagerService _windowNotificationManager;
-
-    private readonly ReactiveCommand<Unit, Unit> RestartUdpCommand;
+    private readonly ConcurrentQueue<CollectedGridDatabase> _collectedGrid = new();
     
-    private readonly ReactiveCommand<Unit, Unit> UploadLogFromQueueCommand;
-
-    private ConcurrentQueue<CollectedGridDatabase> _collectedGrid = new();
+    private readonly ReactiveCommand<Unit, Unit> _restartUdpCommand;
 
     /// <summary>
     ///     Total decoded number.
@@ -115,8 +99,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
-        RestartUdpCommand = ReactiveCommand.Create(() => { });
-        UploadLogFromQueueCommand = ReactiveCommand.Create(() => { });
+        _restartUdpCommand = ReactiveCommand.Create(() => { });
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
 
         var testQso = new RecordedCallsignDetail
@@ -165,25 +148,26 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
-        IWindowNotificationManagerService windowNotificationManager,
+        IInAppNotificationService inAppNotification,
         IMessageBoxManagerService messageBoxManagerService,
         IUdpServerService udpServerService,
         IClipboardService clipboardService,
-        IApplicationSettingsService ss)
+        IApplicationSettingsService ss,
+        IQSOUploadService qu,
+        INotificationManager nativeNotificationManager)
     {
         _applicationSettingsService = ss;
         _clipboardService = clipboardService;
-        
-        _logServices = ss.GetCurrentSettings().LogServices;
-        _extraCloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
+        _nativeNativeNotificationManager = nativeNotificationManager;
+
+        _qsoUploadService = qu;
         _udpSettings = ss.GetCurrentSettings().UDPSettings;
         
         _udpServerService = udpServerService;
         _databaseService = dbService;
         _messageBoxManagerService = messageBoxManagerService;
-        _windowNotificationManager = windowNotificationManager;
+        _inAppNotification = inAppNotification;
         
-        _isUploadQueueEmpty = new BehaviorSubject<bool>(_uploadQueue.IsEmpty);
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _udpSettings.EnableUDPServer;
 
@@ -202,7 +186,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
             return Unit.Default;
         });
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
-        ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO, _isUploadQueueEmpty.AsObservable());
+        ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO);
         ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);//
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);//
         DeleteSelectedCommand = ReactiveCommand.Create(() =>
@@ -214,8 +198,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                         innerList.RemoveAt(i);
             });
         });
-        RestartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);//
-        UploadLogFromQueueCommand = ReactiveCommand.CreateFromTask(_uploadQSOFromQueue);//
+        _restartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);//
 
         this.WhenActivated(disposables =>
         {
@@ -283,31 +266,27 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                 }).DisposeWith(disposables);
             
             ShowQSODetailCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
             
             SelectAllCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
             
             ReuploadSelectedCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
-            RestartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+            _restartUdpCommand.ThrownExceptions.Subscribe(async void (err) =>
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             IgnoreSelectedPermanentlyCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
-                .DisposeWith(disposables);
-
-            UploadLogFromQueueCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             ExportSelectedToAdiCommand.ThrownExceptions.Subscribe(async void (err) =>
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message))
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
 
             // refresh cloudlog infos immediately if settings changed.
@@ -330,16 +309,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     foreach (var rcd in x.QsoData)
                     {
                         _allQsos.Add(rcd);
-                        _checkAndEnqueueQSO(rcd);
+                        _qsoUploadService.EnqueueQSOForUpload(rcd);
                     }
                 })
                 .DisposeWith(disposables);
 
 
             TryStartUdpService().DisposeWith(disposables);
-
-            // start uploading service
-            Observable.Return(Unit.Default).InvokeCommand(UploadLogFromQueueCommand).DisposeWith(disposables);
         });
     }
 
@@ -362,8 +338,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     [Reactive] public bool WaitFirstConn { get; set; }
     [Reactive] public bool TxStatus { get; set; }
     [Reactive] public string MsgSending { get; set; }
-
-
+    
     [Reactive] public string? QsAvgMin { get; set; } = "0Qsos/min";
     [Reactive] public string QsosCountData { get; set; } = "0/0"; // total/qsos
 
@@ -380,7 +355,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         }
 
         return Observable.Return(Unit.Default)
-            .InvokeCommand(RestartUdpCommand);
+            .InvokeCommand(_restartUdpCommand);
     }
 
     private async Task _restartUdp()
@@ -402,27 +377,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
             _wsjtxMsgLogger
         );
     }
-
-    private void _checkAndEnqueueQSO(RecordedCallsignDetail rcd)
-    {
-        if (rcd.IsUploadable())
-        {
-            if (_uploadQueue.Contains(rcd)) return;
-            rcd.UploadStatus = UploadStatus.Pending;
-            _uploadQueue.Enqueue(rcd);
-            ClassLogger.Trace($"Enqueued QSO: {rcd}");
-            return;
-        }
-
-        ClassLogger.Trace($"ignoring enqueue QSO: {rcd}");
-    }
-
+    
     private async Task _uploadCheckedQSO()
     {
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
         {
             recordedCallsignDetail.ForcedUpload = true;
-            _checkAndEnqueueQSO(recordedCallsignDetail);
+            _qsoUploadService.EnqueueQSOForUpload(recordedCallsignDetail);
         }
     }
 
@@ -488,113 +449,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         st.Close();
     }
 
-
-    /// <summary>
-    ///     Upload QSOs from queue.
-    /// </summary>
-    /// ///     todo: LANGKEYS
-    private async Task _uploadQSOFromQueue()
-    {
-        while (true)
-            try
-            {
-                _isUploadQueueEmpty.OnNext(_uploadQueue.IsEmpty);
-                if (!_uploadQueue.TryDequeue(out var rcd)) continue;
-                var adif = rcd.RawData?.ToString() ?? rcd.GenerateAdif();
-                if (string.IsNullOrEmpty(adif)) continue;
-                ClassLogger.Trace($"Try Logging: {adif}");
-                if (!_logServices.Any(x => x.AutoQSOUploadEnabled)
-                    && !_extraCloudlogSettings.AutoQSOUploadEnabled
-                    && !rcd.ForcedUpload)
-                {
-                    rcd.UploadStatus = UploadStatus.Ignored;
-                    rcd.FailReason = TranslationHelper.GetString(LangKeys.qsouploaddisabled);
-                    ClassLogger.Debug($"Auto upload not enabled. ignored: {adif}.");
-                    continue;
-                }
-
-                // do possible retry...
-                if (!int.TryParse(_udpSettings.RetryCount, out var retTime)) retTime = 1;
-                for (var i = 0; i < retTime; i++)
-                {
-                    rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
-                    rcd.FailReason = null;
-                    var failOutput = new StringBuilder();
-
-                    try
-                    {
-                        if (!_extraCloudlogSettings.AutoQSOUploadEnabled)
-                            rcd.UploadedServices["CloudlogService"] = true;
-                        if (!rcd.UploadedServices.GetValueOrDefault("CloudlogService", false))
-                        {
-                            var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
-                                _extraCloudlogSettings.CloudlogUrl,
-                                _extraCloudlogSettings.CloudlogApiKey,
-                                _extraCloudlogSettings.CloudlogStationInfo?.StationId!,
-                                adif,
-                                CancellationToken.None);
-                            if (cloudlogResult.Status != "created")
-                            {
-                                ClassLogger.Debug("A qso for cloudlog failed to upload.");
-                                rcd.UploadedServices["CloudlogService"] = false;
-                                failOutput.AppendLine("Cloudlog: " + cloudlogResult.Reason.Trim());
-                            }
-                            else
-                            {
-                                ClassLogger.Debug("Qso for cloudlog uploaded successfully.");
-                                rcd.UploadedServices["CloudlogService"] = true;
-                            }
-                        }
-
-                        foreach (var thirdPartyLogService in _logServices)
-                        {
-                            var serName = thirdPartyLogService.GetType().Name;
-                            if (!thirdPartyLogService.AutoQSOUploadEnabled) rcd.UploadedServices[serName] = true;
-                            if (!rcd.UploadedServices.GetValueOrDefault(serName, false))
-                                try
-                                {
-                                    await thirdPartyLogService.UploadQSOAsync(adif, CancellationToken.None);
-                                    rcd.UploadedServices[serName] = true;
-                                    ClassLogger.Info($"Qso for {serName} uploaded successfully.");
-                                }
-                                catch (Exception ex)
-                                {
-                                    rcd.UploadedServices[serName] = false;
-                                    ClassLogger.Error(ex, $"Qso for {serName} uploaded failed.");
-                                    failOutput.AppendLine(serName + ex.Message);
-                                }
-                        }
-
-                        if (rcd.UploadedServices.Values.All(x => x))
-                        {
-                            rcd.UploadStatus = UploadStatus.Success;
-                            rcd.FailReason = string.Empty;
-                            break;
-                        }
-
-                        rcd.UploadStatus = UploadStatus.Fail;
-                        rcd.FailReason = failOutput.ToString();
-
-                        await Task.Delay(1000);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Debug(ex, "Qso uploaded failed.");
-                        rcd.UploadStatus = UploadStatus.Fail;
-                        rcd.FailReason = ex.Message;
-                    }
-                }
-            }
-            catch (Exception st)
-            {
-                ClassLogger.Error(st, "Error occurred while uploading qso data. This is ignored.");
-            }
-            finally
-            {
-                await Task.Delay(500);
-            }
-    }
-
     private async void _wsjtxMsgForwarder(Memory<byte> message)
     {
         try
@@ -619,14 +473,26 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
                     // No need to add semaphore; It is not async.
                     _allDecodedCount += 1;
                     _qsosCount += 1;
+                    
                     // process message
                     var msg = (QsoLogged)message;
                     var cty = await _databaseService.GetCallsignDetailAsync(msg.DXCall);
                     var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg, _applicationSettingsService.GetCurrentSettings().LanguageType);
                     rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
+                    
                     // log it into that
                     _allQsos.Add(rcd);
-                    _checkAndEnqueueQSO(rcd);
+                    _qsoUploadService.EnqueueQSOForUpload(rcd);
+                    
+                    // notify users
+                    if (_udpSettings.PushNotificationOnQSOMade)
+                    {
+                        _ = _nativeNativeNotificationManager.ShowNotification(new Notification
+                        {
+                            Title = TranslationHelper.GetString(LangKeys.madeaqso),
+                            Body = rcd.FormatToReadableContent(true)
+                        });
+                    }
                     break;
                 case MessageType.Decode:
                     _allDecodedCount += 1;
@@ -668,6 +534,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     private void _wsjtxMsgLogger(LogLevel level, string message)
     {
         if (level < LogLevel.Error) return;
-        _windowNotificationManager.SendWarningNotificationSync(message);
+        _inAppNotification.SendWarningNotificationSync(message);
     }
 }

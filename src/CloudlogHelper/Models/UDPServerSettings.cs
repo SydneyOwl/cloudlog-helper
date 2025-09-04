@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
@@ -51,6 +53,20 @@ public class UDPServerSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public bool ForwardMessage { get; set; }
     [Reactive] [JsonProperty] public string ForwardAddress { get; set; }
     
+    // === Notification groupbox
+
+    /// <summary>
+    /// Push notification when a qso is uploaded, either successfully or unsuccessfully.
+    /// </summary>
+    [Reactive]
+    [JsonProperty]
+    public bool PushNotificationOnQSOUploaded { get; set; } = true;
+    
+    /// <summary>
+    /// Push notification when a qso is made. This is read directly from wsjtx message.
+    /// </summary>
+    [Reactive] [JsonProperty] public bool PushNotificationOnQSOMade { get; set; }
+    
 
     private bool IsPropertyHasErrors(string propertyName)
     {
@@ -65,10 +81,7 @@ public class UDPServerSettings : ReactiveValidationObject
 
     protected bool Equals(UDPServerSettings other)
     {
-        return EnableUDPServer == other.EnableUDPServer &&
-               EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort
-               && RetryCount == other.RetryCount &&
-               ForwardMessage == other.ForwardMessage && ForwardAddress == other.ForwardAddress;
+        return EnableUDPServer == other.EnableUDPServer && EnableConnectionFromOutside == other.EnableConnectionFromOutside && UDPPort == other.UDPPort && RetryCount == other.RetryCount && ForwardMessage == other.ForwardMessage && ForwardAddress == other.ForwardAddress && PushNotificationOnQSOUploaded == other.PushNotificationOnQSOUploaded && PushNotificationOnQSOMade == other.PushNotificationOnQSOMade;
     }
 
     public override bool Equals(object? obj)
@@ -81,13 +94,6 @@ public class UDPServerSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        var hashCode = new HashCode();
-        hashCode.Add(EnableUDPServer);
-        hashCode.Add(EnableConnectionFromOutside);
-        hashCode.Add(UDPPort);
-        hashCode.Add(RetryCount);
-        hashCode.Add(ForwardMessage);
-        hashCode.Add(ForwardAddress);
-        return hashCode.ToHashCode();
+        return HashCode.Combine(EnableUDPServer, EnableConnectionFromOutside, UDPPort, RetryCount, ForwardMessage, ForwardAddress, PushNotificationOnQSOUploaded, PushNotificationOnQSOMade);
     }
 }

@@ -22,7 +22,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IWindowNotificationManagerService _windowNotificationManager;
+    private readonly IInAppNotificationService _inAppNotification;
     private readonly IApplicationSettingsService _applicationSettingsService;
 
     private bool _isManualClosing;
@@ -30,9 +30,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     public MainWindow(MainWindowViewModel mainWindowViewModel,
         IApplicationSettingsService ss,
         IWindowManagerService windowManagerService,
-        IWindowNotificationManagerService wm)
+        IInAppNotificationService wm)
     {
-        _windowNotificationManager = wm;
+        _inAppNotification = wm;
         
         _applicationSettingsService = ss;
         DataContext = mainWindowViewModel;
@@ -87,7 +87,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
-                    .Do(_ => _windowNotificationManager.SendInfoNotificationSync(
+                    .Do(_ => _inAppNotification.SendInfoNotificationSync(
                         TranslationHelper.GetString(LangKeys.qsosyncing)))
                     .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
                     .DisposeWith(disposables);

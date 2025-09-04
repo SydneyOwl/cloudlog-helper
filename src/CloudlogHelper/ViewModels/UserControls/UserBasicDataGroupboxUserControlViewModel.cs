@@ -26,7 +26,7 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
 
     private readonly CloudlogSettings _settings;
 
-    private readonly IWindowNotificationManagerService _windowNotificationManager;
+    private readonly IInAppNotificationService _inAppNotification;
 
     private ReactiveCommand<Unit, Unit> _pollCommand;
 
@@ -37,10 +37,10 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
     }
 
     public UserBasicDataGroupboxUserControlViewModel(CommandLineOptions cmd,
-        IWindowNotificationManagerService windowNotificationManager,
+        IInAppNotificationService inAppNotification,
         IApplicationSettingsService applicationSettingsService)
     {
-        _windowNotificationManager = windowNotificationManager;
+        _inAppNotification = inAppNotification;
         _settings = applicationSettingsService.GetCurrentSettings().CloudlogSettings;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         if (!InitSkipped) Initialize();
@@ -79,12 +79,8 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
 
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
-                    OP = TranslationHelper.GetString(LangKeys.unknown);
-                    GridSquare = TranslationHelper.GetString(LangKeys.unknown);
-                    QsToday = TranslationHelper.GetString(LangKeys.unknown);
-                    QsMonth = TranslationHelper.GetString(LangKeys.unknown);
-                    QsYear = TranslationHelper.GetString(LangKeys.unknown);
-                    await _windowNotificationManager.SendErrorNotificationAsync(err.Message);
+                    _setStatusToUnknown();
+                    await _inAppNotification.SendErrorNotificationAsync(err.Message);
                     // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
                 .DisposeWith(disposables);
@@ -101,6 +97,11 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
     private async Task _refreshUserBasicData()
     {
         // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
+        if (!_settings.AutoPollStationStatus)
+        {
+            _setStatusToUnknown();
+            return;
+        };
         ClassLogger.Debug("Refreshing userbasic data....");
         if (_settings.IsCloudlogHasErrors(true))
             throw new Exception(TranslationHelper.GetString(LangKeys.confcloudlogfirst));
@@ -124,5 +125,14 @@ public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
         QsToday = statistic.Value.Today;
         QsMonth = statistic.Value.MonthQsos;
         QsYear = statistic.Value.YearQsos;
+    }
+
+    private void _setStatusToUnknown()
+    {
+        OP = TranslationHelper.GetString(LangKeys.unknown);
+        GridSquare = TranslationHelper.GetString(LangKeys.unknown);
+        QsToday = TranslationHelper.GetString(LangKeys.unknown);
+        QsMonth = TranslationHelper.GetString(LangKeys.unknown);
+        QsYear = TranslationHelper.GetString(LangKeys.unknown);
     }
 }

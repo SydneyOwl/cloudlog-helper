@@ -12,12 +12,12 @@ using NLog;
 
 namespace CloudlogHelper.Services;
 
-public class WindowNotificationManagerService : IWindowNotificationManagerService, IDisposable
+public class InAppNotificationService : IInAppNotificationService, IDisposable
 {
     private readonly Logger _classLoggger = LogManager.GetCurrentClassLogger();
     private WindowNotificationManager? _manager;
 
-    public WindowNotificationManagerService(IClassicDesktopStyleApplicationLifetime topLevel)
+    public InAppNotificationService(IClassicDesktopStyleApplicationLifetime topLevel)
     {
         Dispatcher.UIThread.InvokeAsync(async () =>
         {
@@ -33,7 +33,7 @@ public class WindowNotificationManagerService : IWindowNotificationManagerServic
         });
     }
 
-    public WindowNotificationManagerService(Window topLevel)
+    public InAppNotificationService(Window topLevel)
     {
         _manager = new WindowNotificationManager(topLevel);
     }

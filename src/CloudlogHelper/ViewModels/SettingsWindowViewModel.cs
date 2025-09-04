@@ -37,14 +37,11 @@ public class SettingsWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-
     private readonly CancellationTokenSource _source;
-
     private readonly bool _initSkipped;
-
     private readonly IRigctldService _rigctldService;
     private readonly IApplicationSettingsService _settingsService;
-    private readonly INotificationManager _desktopNotificationManager;
+    private readonly INotificationManager _nativeNotificationManager;
 
     public SettingsWindowViewModel()
     {
@@ -64,7 +61,7 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         _settingsService = ss;
         _rigctldService = rs;
-        _desktopNotificationManager = nm;
+        _nativeNotificationManager = nm;
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         DraftSettings = _settingsService.GetDraftSettings();
 
@@ -94,9 +91,9 @@ public class SettingsWindowViewModel : ViewModelBase
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })
                 .DisposeWith(disposables);
-            hamlibCmd.ThrownExceptions.Subscribe(err => NotificationManager?.SendErrorNotificationSync(err.Message))
+            hamlibCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            cloudCmd.ThrownExceptions.Subscribe(err => NotificationManager?.SendErrorNotificationSync(err.Message))
+            cloudCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
@@ -124,7 +121,7 @@ public class SettingsWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
 
-    public IWindowNotificationManagerService NotificationManager { get; set; }
+    public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
 
     private void InitializeLogSystems()
@@ -172,7 +169,7 @@ public class SettingsWindowViewModel : ViewModelBase
         }
         else
         {
-            NotificationManager?.SendErrorNotificationSync(output);
+            Notification?.SendErrorNotificationSync(output);
             return;
         }
 
@@ -191,7 +188,7 @@ public class SettingsWindowViewModel : ViewModelBase
         }
         else
         {
-            NotificationManager?.SendErrorNotificationSync(opt);
+            Notification?.SendErrorNotificationSync(opt);
         }
     }
 
@@ -199,12 +196,6 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         try
         {
-            await _desktopNotificationManager.ShowNotification(new Notification
-            {
-                Title = "Oh sir",
-                Body = "this does works..."
-            }, DateTimeOffset.Now.AddSeconds(DefaultConfigs.DefaultNotificationTimeout));
-            
             CloudlogInfoPanelUserControl.InfoMessage = string.Empty;
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);

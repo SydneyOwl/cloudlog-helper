@@ -251,7 +251,6 @@ make install-strip DESTDIR=""
 
 ```shell
 cd cloudlog-helper
-dotnet restore -r linux-x64
 dotnet publish -c Release -r linux-x64 -f net6.0 -p:PublishSingleFile=true \
 --self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true \
 -p:UseAppHost=true

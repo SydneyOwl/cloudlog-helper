@@ -44,7 +44,6 @@
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
                     <ListBox Grid.Row="0" Grid.Column="0" AutoScrollToSelectedItem="True" x:Name="QsoBox"
-                             Height="300"
                              ItemsSource="{Binding FilteredQsos}"
                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              ScrollViewer.VerticalScrollBarVisibility="Auto">

@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDatabaseService, DatabaseService>();
         services.AddSingleton<IRigctldService, RigctldService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
+        services.AddSingleton<IQSOUploadService, QSOUploadService>();
         return Task.CompletedTask;
     }
 
@@ -42,8 +43,9 @@ public static class ServiceCollectionExtensions
     {
         try
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.OSVersion.Version >= new Version(10, 0))
             {
+                // only enabled on win10 or later
                 var context = WindowsApplicationContext.FromCurrentProcess();
                 var windowsNotificationManager = new WindowsNotificationManager(context);
                 await windowsNotificationManager.Initialize();

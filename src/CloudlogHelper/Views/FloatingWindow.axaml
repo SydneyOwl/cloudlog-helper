@@ -1,0 +1,45 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        x:DataType="viewModels:FloatingWIndowViewModel"
+        x:Class="CloudlogHelper.Views.FloatingWindow"
+        Title="FloatingWindow"
+        WindowStartupLocation="Manual"
+        SizeToContent="Width"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        Background="Transparent"
+        Opacity="0.7"
+        Topmost="True">
+    
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="{I18N {x:Static resources:LangKeys.transparency}}">
+                <MenuItem Header="10%" Click="TransparencyMenuItem_Click"/>
+                <MenuItem Header="30%" Click="TransparencyMenuItem_Click"/>
+                <MenuItem Header="50%" Click="TransparencyMenuItem_Click"/>
+                <MenuItem Header="70%" Click="TransparencyMenuItem_Click"/>
+                <MenuItem Header="90%" Click="TransparencyMenuItem_Click"/>
+                <MenuItem Header="100%" Click="TransparencyMenuItem_Click"/>
+            </MenuItem>
+        </ContextMenu>
+    </Window.ContextMenu>
+    
+    <Border CornerRadius="10" Background="#40000000" Margin="10">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <ContentControl x:Name="FloatingContent" Grid.Row="1" />
+
+            <Border Height="10" Background="Transparent"
+                    PointerPressed="BottomBorder_PointerPressed"
+                    PointerMoved="BottomBorder_PointerMoved"
+                    PointerReleased="BottomBorder_PointerReleased"
+                    Cursor="SizeNorthSouth"
+                    Grid.Row="2" />
+        </Grid>
+    </Border>
+</Window>

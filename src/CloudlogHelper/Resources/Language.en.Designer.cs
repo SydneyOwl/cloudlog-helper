@@ -105,6 +105,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Auto refresh station info.
+        /// </summary>
+        public static string autopollstatus {
+            get {
+                return ResourceManager.GetString("autopollstatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto upload qso.
         /// </summary>
         public static string autoqsoupload {
@@ -579,7 +588,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Forward message.
+        ///   Looks up a localized string similar to Forward raw UDP Packet to.
         /// </summary>
         public static string forwardmsg {
             get {
@@ -588,7 +597,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Forward address.
+        ///   Looks up a localized string similar to Forward raw UDP Packet to.
         /// </summary>
         public static string forwardto {
             get {
@@ -750,6 +759,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ✅ A QSO Was made!.
+        /// </summary>
+        public static string madeaqso {
+            get {
+                return ResourceManager.GetString("madeaqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QSOs this month.
         /// </summary>
         public static string monthqsos {
@@ -894,11 +912,44 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send notifications after:.
+        /// </summary>
+        public static string pushnotificationon {
+            get {
+                return ResourceManager.GetString("pushnotificationon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QSO Assistant.
         /// </summary>
         public static string qsoassistant {
             get {
                 return ResourceManager.GetString("qsoassistant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to • Call Sign: {0}
+        ///• Country: {1} ({8})
+        ///• Grid: {9}
+        ///• Frequency: {10} ({11})
+        ///• Mode: {12} (Parent: {13})
+        ///• Time: {14} to {15}
+        ///• Report: Sent &apos;{16}&apos; / Received &apos;{17}&apos;.
+        /// </summary>
+        public static string qsoconcisetemplate {
+            get {
+                return ResourceManager.GetString("qsoconcisetemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A QSO is made.
+        /// </summary>
+        public static string qsofinished {
+            get {
+                return ResourceManager.GetString("qsofinished", resourceCulture);
             }
         }
         
@@ -973,6 +1024,15 @@ namespace CloudlogHelper.Resources {
         public static string qsouploaddisabled {
             get {
                 return ResourceManager.GetString("qsouploaddisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A QSO is uploaded.
+        /// </summary>
+        public static string qsouploaded {
+            get {
+                return ResourceManager.GetString("qsouploaded", resourceCulture);
             }
         }
         
@@ -1409,6 +1469,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transparency.
+        /// </summary>
+        public static string transparency {
+            get {
+                return ResourceManager.GetString("transparency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tx....
         /// </summary>
         public static string txing {
@@ -1504,6 +1573,24 @@ namespace CloudlogHelper.Resources {
         public static string upload2hamcq {
             get {
                 return ResourceManager.GetString("upload2hamcq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 🚀 QSO Logged!.
+        /// </summary>
+        public static string uploadedaqso {
+            get {
+                return ResourceManager.GetString("uploadedaqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ☹️ QSO upload failed!.
+        /// </summary>
+        public static string uploadfailedaqso {
+            get {
+                return ResourceManager.GetString("uploadfailedaqso", resourceCulture);
             }
         }
         

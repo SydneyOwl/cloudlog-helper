@@ -188,7 +188,7 @@ public class LogSystemCard : UserControl
 
                     var actualEx = ex is TargetInvocationException tie ? tie.InnerException ?? tie : ex;
                     ClassLogger.Error(ex, "failed to test connection");
-                    await ((SettingsWindowViewModel)DataContext!).NotificationManager.SendErrorNotificationAsync(
+                    await ((SettingsWindowViewModel)DataContext!).Notification.SendErrorNotificationAsync(
                         actualEx.Message);
                     throw;
                 }

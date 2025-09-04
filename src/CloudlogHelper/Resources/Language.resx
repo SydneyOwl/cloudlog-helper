@@ -421,10 +421,10 @@
         <value>Auto upload QSO to</value>
     </data>
     <data name="forwardmsg" xml:space="preserve">
-        <value>Forward message</value>
+        <value>Forward raw UDP Packet to</value>
     </data>
     <data name="forwardto" xml:space="preserve">
-        <value>Forward address</value>
+        <value>Forward raw UDP Packet to</value>
     </data>
     <data name="advancedsettings" xml:space="preserve">
         <value>Advanced</value>
@@ -553,5 +553,38 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     </data>
     <data name="mustverbose" xml:space="preserve">
         <value>Must have -vvvvv in command-line args!</value>
+    </data>
+    <data name="pushnotificationon" xml:space="preserve">
+        <value>Send notifications after:</value>
+    </data>
+    <data name="qsofinished" xml:space="preserve">
+        <value>A QSO is made</value>
+    </data>
+    <data name="qsouploaded" xml:space="preserve">
+        <value>A QSO is uploaded</value>
+    </data>
+    <data name="autopollstatus" xml:space="preserve">
+        <value>Auto refresh station info</value>
+    </data>
+    <data name="madeaqso" xml:space="preserve">
+        <value>✅ A QSO Was made!</value>
+    </data>
+    <data name="uploadedaqso" xml:space="preserve">
+        <value>🚀 QSO Logged!</value>
+    </data>
+    <data name="qsoconcisetemplate" xml:space="preserve">
+        <value>• Call Sign: {0}
+• Country: {1} ({8})
+• Grid: {9}
+• Frequency: {10} ({11})
+• Mode: {12} (Parent: {13})
+• Time: {14} to {15}
+• Report: Sent '{16}' / Received '{17}'</value>
+    </data>
+    <data name="uploadfailedaqso" xml:space="preserve">
+        <value>☹️ QSO upload failed!</value>
+    </data>
+    <data name="transparency" xml:space="preserve">
+        <value>Transparency</value>
     </data>
 </root>

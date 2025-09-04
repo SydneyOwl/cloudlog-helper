@@ -26,7 +26,9 @@ using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
+using CloudlogHelper.Views.UserControls;
 using Microsoft.Extensions.DependencyInjection;
 using Mono.Unix;
 using MsBox.Avalonia.Dto;
@@ -89,8 +91,8 @@ public class App : Application
         collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
         collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
             new WindowManagerService(prov, desktop));
-        collection.AddSingleton<IWindowNotificationManagerService, WindowNotificationManagerService>(_ =>
-            new WindowNotificationManagerService(desktop));
+        collection.AddSingleton<IInAppNotificationService, InAppNotificationService>(_ =>
+            new InAppNotificationService(desktop));
         collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
             new MessageBoxManagerService(desktop));
         collection.AddSingleton<IClipboardService, ClipboardService>(_ =>

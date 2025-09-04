@@ -74,6 +74,7 @@ public class CloudlogSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public StationInfo? CloudlogStationInfo { get; set; }
 
     [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; } = true;
+    [Reactive] [JsonProperty] public bool AutoPollStationStatus { get; set; } = true;
 
     [Reactive]
     [JsonProperty]
@@ -111,7 +112,7 @@ public class CloudlogSettings : ReactiveValidationObject
     {
         return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
                CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId &&
-               AutoQSOUploadEnabled == other.AutoQSOUploadEnabled;
+               AutoQSOUploadEnabled == other.AutoQSOUploadEnabled && AutoPollStationStatus == other.AutoPollStationStatus;
     }
 
     public override bool Equals(object? obj)
@@ -124,6 +125,6 @@ public class CloudlogSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled);
+        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled, AutoPollStationStatus);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CloudlogHelper.Services.Interfaces;
 
-public interface IWindowNotificationManagerService
+public interface IInAppNotificationService
 {
     Task SendInfoNotificationAsync(string message);
     Task SendSuccessNotificationAsync(string message);

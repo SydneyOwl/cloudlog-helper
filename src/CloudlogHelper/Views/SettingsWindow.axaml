@@ -159,9 +159,12 @@
                                     TooltipText="{I18N {x:Static resources:LangKeys.cloudlogstationid}}" />
                             </StackPanel>
                             
-                            <CheckBox Grid.Row="3" Grid.Column="0"
-                                      Content="{I18N {x:Static resources:LangKeys.autoqsoupload}}"
-                                      IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}"/>
+                            <StackPanel Orientation="Horizontal"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20">
+                                <CheckBox Content="{I18N {x:Static resources:LangKeys.autoqsoupload}}"
+                                          IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}"/>
+                                <CheckBox Content="{I18N {x:Static resources:LangKeys.autopollstatus}}"
+                                          IsChecked="{Binding DraftSettings.CloudlogSettings.AutoPollStationStatus}"/>
+                            </StackPanel>
                         </Grid>
 
                         <userControls1:FixedInfoPanelUserControl Margin="0 12 0 0"
@@ -287,7 +290,7 @@
                 <Border Classes="setting-card">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{I18N {x:Static resources:LangKeys.udpserver}}" Classes="section-title" />
-                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                             <!-- Enable UDP -->
                             <CheckBox Content="{I18N {x:Static resources:LangKeys.enableudpserver}}"
                                       Grid.Column="0" Grid.ColumnSpan="2"
@@ -311,16 +314,20 @@
                                      Text="{Binding DraftSettings.UDPSettings.RetryCount}" />
 
                             <!-- Forwarding -->
-                            <CheckBox Content="{I18N {x:Static resources:LangKeys.forwardmsg}}"
-                                      x:Name="forward" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                            <CheckBox Grid.Row="5" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.forwardmsg}}"
+                                      Margin="0,10,0,0" x:Name="forward"
                                       IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessage}" />
-
-                            <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1" Spacing="12"
-                                        Margin="24 0 0 0" IsEnabled="{Binding #forward.IsChecked}">
-                                <TextBlock Text="{I18N {x:Static resources:LangKeys.forwardto}}"
-                                           VerticalAlignment="Center" />
-                                <TextBox Classes="setting-control"
-                                         Text="{Binding DraftSettings.UDPSettings.ForwardAddress}" />
+                            <TextBox Grid.Row="5" Grid.Column="1"  Classes="setting-control" Margin="0,10,0,0" 
+                                                 Text="{Binding DraftSettings.UDPSettings.ForwardAddress}"
+                                                 IsEnabled="{Binding #forward.IsChecked}"/>
+                            
+                            <!-- Notifications -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                                <TextBlock Text="{I18N {x:Static resources:LangKeys.pushnotificationon}}" VerticalAlignment="Center"/>
+                                <CheckBox Margin="30,0,0,0" IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOMade}"
+                                          Content="{I18N {x:Static resources:LangKeys.qsofinished}}"/>
+                                <CheckBox Margin="30,0,0,0"  IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOUploaded}"
+                                          Content="{I18N {x:Static resources:LangKeys.qsouploaded}}"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

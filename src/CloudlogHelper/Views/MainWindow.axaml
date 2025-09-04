@@ -19,9 +19,6 @@
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
 
-    <Window.Resources>
-    </Window.Resources>
-
     <StackPanel>
         <!-- menu -->
         <StackPanel>

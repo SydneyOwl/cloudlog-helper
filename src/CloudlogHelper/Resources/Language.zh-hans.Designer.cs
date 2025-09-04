@@ -105,6 +105,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 自动更新台站信息.
+        /// </summary>
+        public static string autopollstatus {
+            get {
+                return ResourceManager.GetString("autopollstatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自动上传QSO.
         /// </summary>
         public static string autoqsoupload {
@@ -581,7 +590,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发UDP数据包到.
+        ///   Looks up a localized string similar to 转发原始数据包到.
         /// </summary>
         public static string forwardmsg {
             get {
@@ -590,7 +599,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发地址.
+        ///   Looks up a localized string similar to 转发原始数据包到.
         /// </summary>
         public static string forwardto {
             get {
@@ -752,6 +761,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ✅ 完成了一个QSO！.
+        /// </summary>
+        public static string madeaqso {
+            get {
+                return ResourceManager.GetString("madeaqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 本月QSO数.
         /// </summary>
         public static string monthqsos {
@@ -896,11 +914,44 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 出现下列情况时推送系统通知：.
+        /// </summary>
+        public static string pushnotificationon {
+            get {
+                return ResourceManager.GetString("pushnotificationon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QSO上传助手.
         /// </summary>
         public static string qsoassistant {
             get {
                 return ResourceManager.GetString("qsoassistant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to • 呼号: {0}
+        ///• 国家: {1} ({8})
+        ///• 网格: {9}
+        ///• 频率: {10} ({11})
+        ///• 模式: {12} (父模式: {13})
+        ///• 时间: {14} 至 {15}
+        ///• 信号报告: 发送 &apos;{16}&apos; / 接收 &apos;{17}&apos;.
+        /// </summary>
+        public static string qsoconcisetemplate {
+            get {
+                return ResourceManager.GetString("qsoconcisetemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to QSO完成时.
+        /// </summary>
+        public static string qsofinished {
+            get {
+                return ResourceManager.GetString("qsofinished", resourceCulture);
             }
         }
         
@@ -975,6 +1026,15 @@ namespace CloudlogHelper.Resources {
         public static string qsouploaddisabled {
             get {
                 return ResourceManager.GetString("qsouploaddisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to QSO上传完成时.
+        /// </summary>
+        public static string qsouploaded {
+            get {
+                return ResourceManager.GetString("qsouploaded", resourceCulture);
             }
         }
         
@@ -1411,6 +1471,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 透明度.
+        /// </summary>
+        public static string transparency {
+            get {
+                return ResourceManager.GetString("transparency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 发射中....
         /// </summary>
         public static string txing {
@@ -1506,6 +1575,24 @@ namespace CloudlogHelper.Resources {
         public static string upload2hamcq {
             get {
                 return ResourceManager.GetString("upload2hamcq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 🚀 QSO上传成功！.
+        /// </summary>
+        public static string uploadedaqso {
+            get {
+                return ResourceManager.GetString("uploadedaqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ☹️ QSO 上传失败！.
+        /// </summary>
+        public static string uploadfailedaqso {
+            get {
+                return ResourceManager.GetString("uploadfailedaqso", resourceCulture);
             }
         }
         
