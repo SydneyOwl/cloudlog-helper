@@ -3,15 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.UserControls.TipIconUserControl"
              x:DataType="userControls:TipIconUserControl">
-    <Image Margin="5,0,0,0"
-           Width="20"
-           Height="20"
-           Source="avares://CloudlogHelper/Assets/Settings/Help.png"
-           VerticalAlignment="Center"
-           Cursor="Hand">
+    <Button Width="20" Height="20" Background="Transparent">
         <ToolTip.Tip>
             <TextBlock Text="{Binding TooltipText}"
                        FontSize="14"
@@ -21,5 +17,11 @@
         <ToolTip.ShowDelay>
             10
         </ToolTip.ShowDelay>
-    </Image>
+        <avalonia:MaterialIcon Kind="HelpCircleOutline"
+                               Foreground="CornflowerBlue"
+                               Width="20"
+                               Height="20"
+                               VerticalAlignment="Center"
+                               Cursor="Hand" />
+    </Button>
 </UserControl>

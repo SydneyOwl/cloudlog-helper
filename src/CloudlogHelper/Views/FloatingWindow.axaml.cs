@@ -11,7 +11,7 @@ using CloudlogHelper.Views.UserControls;
 
 namespace CloudlogHelper.Views;
 
-public partial class FloatingWindow : ReactiveWindow<FloatingWIndowViewModel>
+public partial class FloatingWindow : ReactiveWindow<FloatingWindowViewModel>
 {
     private bool _isResizing = false;
     private Point _startPoint;
@@ -20,19 +20,14 @@ public partial class FloatingWindow : ReactiveWindow<FloatingWIndowViewModel>
     public FloatingWindow()
     {
         InitializeComponent();
-    }
-
-    public FloatingWindow(Control userControl)
-    {
-        // FloatingContent.Content = userControl;
-        InitializeComponent();
+        
         PointerPressed += (s, e) =>
         {
             if (_isResizing) return;
             BeginMoveDrag(e);
         };
-        FloatingContent.Content = userControl;
     }
+
 
     private void BottomBorder_PointerPressed(object sender, PointerPressedEventArgs e)
     {

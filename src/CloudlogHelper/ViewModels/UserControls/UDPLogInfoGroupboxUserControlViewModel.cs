@@ -37,7 +37,7 @@ using Notification = DesktopNotifications.Notification;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
+public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 {
     /// <summary>
     ///     Logger for the class.
@@ -90,7 +90,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
     /// </summary>
     private uint _qsosCount;
 
-    public UDPLogInfoGroupboxUserControlViewModel()
+    public UDPLogInfoGroupboxUserControlViewModel():base()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         SelectAllCommand = ReactiveCommand.Create(() => { });
@@ -154,7 +154,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         IClipboardService clipboardService,
         IApplicationSettingsService ss,
         IQSOUploadService qu,
-        INotificationManager nativeNotificationManager)
+        INotificationManager nativeNotificationManager):base()
     {
         _applicationSettingsService = ss;
         _clipboardService = clipboardService;
@@ -170,7 +170,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : ViewModelBase
         
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _udpSettings.EnableUDPServer;
-
         
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {

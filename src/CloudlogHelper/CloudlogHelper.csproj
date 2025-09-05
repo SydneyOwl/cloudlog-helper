@@ -36,6 +36,7 @@
         <PackageReference Include="DesktopNotifications.Avalonia" Version="1.3.1" />
         <PackageReference Include="Flurl.Http" Version="4.0.2"/>
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1"/>
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
         <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
@@ -73,6 +74,10 @@
         <None Remove="cloudlog-helper.zip"/>
     </ItemGroup>
 
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*"/>
+    </ItemGroup>
+
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
         <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*"/>
     </ItemGroup>
@@ -95,8 +100,6 @@
 
     <ItemGroup>
         <AdditionalFiles Remove="Hamlib\**"/>
-        <AdditionalFiles Include="Views\UserControls\ClosableErrorPanelUserControl.axaml"/>
-        <AdditionalFiles Include="Views\UserControls\ErrorPanelUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\FixedInfoPanelUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\RIGDataGroupboxUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\TestButtonUserControl.axaml"/>

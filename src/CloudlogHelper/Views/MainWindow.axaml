@@ -5,6 +5,7 @@
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
@@ -28,41 +29,35 @@
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}"
                                   Command="{Binding OpenSettingsWindow}">
                             <MenuItem.Icon>
-                                <Image Width="32" Height="32"
-                                       Source="avares://CloudlogHelper/Assets/MenuImgs/Settings.png" />
+                                <avalonia:MaterialIcon Kind="Settings" Width="32" Height="32"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.themecolor}}">
                             <MenuItem.Icon>
-                                <Image Width="32" Height="32"
-                                       Source="avares://CloudlogHelper/Assets/MenuImgs/Theme.png" />
+                                <avalonia:MaterialIcon Kind="ThemeLightDark" Width="32" Height="32"/>
                             </MenuItem.Icon>
                             <MenuItem Header="{I18N {x:Static resources:LangKeys.light}}"
                                       Command="{Binding SwitchLightTheme}">
                                 <MenuItem.Icon>
-                                    <Image Width="32" Height="32"
-                                           Source="avares://CloudlogHelper/Assets/MenuImgs/Light.png" />
+                                    <avalonia:MaterialIcon Kind="WbSunny" Width="32" Height="32"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="{I18N {x:Static resources:LangKeys.dark}}"
                                       Command="{Binding SwitchDarkTheme}">
                                 <MenuItem.Icon>
-                                    <Image Width="32" Height="32"
-                                           Source="avares://CloudlogHelper/Assets/MenuImgs/Dark.png" />
+                                    <avalonia:MaterialIcon Kind="MoonAndStars" Width="32" Height="32"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
 
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.tools}}">
                             <MenuItem.Icon>
-                                <Image Width="32" Height="32"
-                                       Source="avares://CloudlogHelper/Assets/MenuImgs/Tool.png" />
+                                <avalonia:MaterialIcon Kind="ToolboxOutline" Width="32" Height="32"/>
                             </MenuItem.Icon>
                             <MenuItem Header="{I18N {x:Static resources:LangKeys.qsoassistant}}"
                                       Command="{Binding OpenQSOAssistantWindow}">
                                 <MenuItem.Icon>
-                                    <Image Width="32" Height="32"
-                                           Source="avares://CloudlogHelper/Assets/MenuImgs/QsoAssistant.png" />
+                                    <avalonia:MaterialIcon Kind="FileUploadOutline" Width="32" Height="32"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
@@ -71,15 +66,14 @@
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.about}}"
                                   Command="{Binding OpenAboutWindow}">
                             <MenuItem.Icon>
-                                <Image Width="32" Height="32"
-                                       Source="avares://CloudlogHelper/Assets/MenuImgs/About.png" />
+                                <avalonia:MaterialIcon Kind="InfoCircleOutline" Width="32" Height="32"/>
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
                 </Menu>
                 <ToggleButton Grid.Column="2" Grid.Row="0" IsChecked="{Binding IsTopmost}"
                               Margin="2">
-                    <Image Source="avares://CloudlogHelper/Assets/MainPage/StayTopmost.png" Height="20" />
+                    <avalonia:MaterialIcon Kind="Pin" Width="20" Height="20"/>
                 </ToggleButton>
                 <userControls1:StatusLightUserControl Grid.Column="1" Grid.Row="0"
                                                       DataContext="{Binding StatusLightUserControlViewModel}"
@@ -90,14 +84,18 @@
 
         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
             <userControls1:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="0"
-                                                            IsVisible="{Binding !InitSkipped}"
+                                                            IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UserBasicBoxEnabled,
+                                                            RelativeSource={RelativeSource AncestorType=Grid}}"
                                                             ViewModel="{Binding}"
                                                             DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
             <userControls1:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="1"
-                                                      IsVisible="{Binding !InitSkipped}"
+                                                      IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).RigDataBoxEnabled,
+                                                        RelativeSource={RelativeSource AncestorType=Grid}}"
                                                       DataContext="{Binding RigDataGroupboxUserControlVm}"
                                                       ViewModel="{Binding }" />
-            <userControls1:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+            <userControls1:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" 
+                                                         IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UDPLogBoxEnabled,
+                                                        RelativeSource={RelativeSource AncestorType=Grid}}"
                                                          DataContext="{Binding UDPLogInfoGroupboxUserControlVm}"
                                                          ViewModel="{Binding }" />
         </Grid>

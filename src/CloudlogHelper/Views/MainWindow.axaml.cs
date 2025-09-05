@@ -27,6 +27,12 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private bool _isManualClosing;
 
+    public MainWindow()
+    {
+        DataContext = new MainWindowViewModel();
+        InitializeComponent();
+    }
+
     public MainWindow(MainWindowViewModel mainWindowViewModel,
         IApplicationSettingsService ss,
         IWindowManagerService windowManagerService,

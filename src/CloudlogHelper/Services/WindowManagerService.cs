@@ -10,10 +10,16 @@ using NLog;
 
 namespace CloudlogHelper.Services;
 
+internal struct WindowData
+{
+    public WeakReference<Window> Window { get; set; }
+    public string Seq { get; set; }
+}
+
 public class WindowManagerService : IWindowManagerService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    private readonly List<WeakReference<Window>> _windows = new();
+    private readonly List<WindowData> _windows = new();
     private readonly IClassicDesktopStyleApplicationLifetime _desktop;
     private readonly IServiceProvider _provider;
 
@@ -29,22 +35,32 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         // TODO release managed resources here
     }
 
-    public void Track(Window window)
+    /// <summary>
+    /// Track a window and return uuid related to this window.
+    /// </summary>
+    /// <param name="window"></param>
+    /// <returns></returns>
+    public string Track(Window window)
     {
         AutoRemove();
         ClassLogger.Trace($"Tracking window {window.DataContext?.GetType()}.");
         var reference = new WeakReference<Window>(window);
-        _windows.Add(reference);
+        var seq = Guid.NewGuid().ToString();
+        _windows.Add(new WindowData
+        {
+            Window = reference,
+            Seq = seq
+        });
 
         window.Closed += OnWindowClosed;
-        return;
+        return seq;
 
         void OnWindowClosed(object? sender, EventArgs e)
         {
             if (sender is not Window closedWindow) return;
             ClassLogger.Trace($"Window {window.DataContext?.GetType()} released.");
             closedWindow.Closed -= OnWindowClosed;
-            _windows.RemoveAll(wr => !wr.TryGetTarget(out var w) || w == closedWindow);
+            _windows.RemoveAll(wr => !wr.Window.TryGetTarget(out var w) || w == closedWindow);
         }
     }
 
@@ -52,7 +68,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     {
         AutoRemove();
         foreach (var weakRef in _windows)
-            if (weakRef.TryGetTarget(out var window) && window.GetType() == wType)
+            if (weakRef.Window.TryGetTarget(out var window) && window.GetType() == wType)
             {
                 targetWindow = window;
                 return true;
@@ -105,9 +121,40 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     {
         return _provider.GetRequiredService<T>();
     }
+    
+    private bool TryGetWindowByVm(Type vmType, out Window? targetWindow)
+    {
+        AutoRemove();
+        foreach (var weakRef in _windows)
+            if (weakRef.Window.TryGetTarget(out var window) && window.DataContext?.GetType() == vmType)
+            {
+                targetWindow = window;
+                return true;
+            }
+
+        targetWindow = null;
+        return false;
+    }
+
+    private Window? GetWindowBySeq(string seq)
+    {
+        AutoRemove();
+        foreach (var data in _windows)
+            if (data.Seq == seq && data.Window.TryGetTarget(out var res))
+            {
+                return res;
+            }
+
+        return null;
+    }
+
+    public void CloseWindowBySeq(string seq)
+    {
+        GetWindowBySeq(seq)?.Close();
+    }
 
     private void AutoRemove()
     {
-        _windows.RemoveAll(wr => !wr.TryGetTarget(out var res));
+        _windows.RemoveAll(wr => !wr.Window.TryGetTarget(out var res));
     }
 }

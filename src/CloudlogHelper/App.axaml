@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="CloudlogHelper.App"
              xmlns:local="using:CloudlogHelper"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -12,6 +13,7 @@
     <Application.Styles>
         <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
         <FluentTheme />
+        <avalonia:MaterialIconStyles />
 
         <!-- // https://github.com/AvaloniaUI/AvaloniaUI.QuickGuides/blob/main/GroupBox/Views/MainWindow.axaml -->
         <Style Selector="HeaderedContentControl">

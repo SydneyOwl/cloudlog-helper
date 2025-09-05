@@ -6,6 +6,7 @@
         x:Class="CloudlogHelper.Views.SettingsWindow"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d"
         d:DesignWidth="800" d:DesignHeight="700"
         x:DataType="viewModels:SettingsWindowViewModel"
@@ -213,10 +214,9 @@
                                 <ComboBox Classes="setting-control"
                                           SelectedItem="{Binding DraftSettings.HamlibSettings.SelectedPort}"
                                           ItemsSource="{Binding Ports}" />
-                                <Button Command="{Binding RefreshPort}" CornerRadius="4" Width="32" Height="32">
-                                    <Image Source="avares://CloudlogHelper/Assets/Settings/Refresh.png" Width="16"
-                                           Height="16" />
-                                </Button>
+                                <Button Command="{Binding RefreshPort}" CornerRadius="4"
+                                        Content="{avalonia:MaterialIconExt Kind=Refresh}"
+                                        Width="32" Height="32" />
                             </StackPanel>
 
                             <!-- Report Options -->

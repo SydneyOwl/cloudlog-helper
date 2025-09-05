@@ -17,7 +17,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
-public class UserBasicDataGroupboxUserControlViewModel : ViewModelBase
+public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
 {
     /// <summary>
     ///     Logger for the class.

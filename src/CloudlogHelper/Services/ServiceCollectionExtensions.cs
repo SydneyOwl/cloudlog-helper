@@ -10,11 +10,16 @@ using DesktopNotifications;
 using DesktopNotifications.FreeDesktop;
 using DesktopNotifications.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 
 namespace CloudlogHelper.Services;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    ///     Logger for the class.
+    /// </summary>
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     public static Task AddCommonServicesAsync(this IServiceCollection services)
     {
         services.AddSingleton<IDatabaseService, DatabaseService>();
@@ -46,6 +51,7 @@ public static class ServiceCollectionExtensions
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.OSVersion.Version >= new Version(10, 0))
             {
                 // only enabled on win10 or later
+                ClassLogger.Info("Using windows native notification.");
                 var context = WindowsApplicationContext.FromCurrentProcess();
                 var windowsNotificationManager = new WindowsNotificationManager(context);
                 await windowsNotificationManager.Initialize();
@@ -53,6 +59,7 @@ public static class ServiceCollectionExtensions
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
+                ClassLogger.Info("Using dbus native notification.");
                 var context = FreeDesktopApplicationContext.FromCurrentProcess();
                 var freeDesktopNotificationManager = new FreeDesktopNotificationManager(context);
                 await freeDesktopNotificationManager.Initialize();
@@ -60,11 +67,13 @@ public static class ServiceCollectionExtensions
             }
             else
             {
+                ClassLogger.Info("Using fallback notification.");
                 services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
             }
         }
         catch (Exception e)
         {
+            ClassLogger.Warn(e, "Failed to apply native notification - Using fallback options.");
             services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
         }
         

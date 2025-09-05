@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
-        x:DataType="viewModels:FloatingWIndowViewModel"
+        x:DataType="viewModels:FloatingWindowViewModel"
         x:Class="CloudlogHelper.Views.FloatingWindow"
         Title="FloatingWindow"
         WindowStartupLocation="Manual"
@@ -14,7 +14,7 @@
         ExtendClientAreaChromeHints="NoChrome"
         SystemDecorations="None"
         Background="Transparent"
-        Opacity="0.7"
+        TransparencyLevelHint="AcrylicBlur"
         Topmost="True">
     
     <Window.ContextMenu>
@@ -30,9 +30,19 @@
         </ContextMenu>
     </Window.ContextMenu>
     
-    <Border CornerRadius="10" Background="#40000000" Margin="10">
+    <Border CornerRadius="10" Margin="10">
         <Grid RowDefinitions="Auto,*,Auto">
-            <ContentControl x:Name="FloatingContent" Grid.Row="1" />
+            <ExperimentalAcrylicBorder IsHitTestVisible="False">
+                <ExperimentalAcrylicBorder.Material>
+                    <ExperimentalAcrylicMaterial
+                        BackgroundSource="Digger"
+                        TintColor="Black"
+                        TintOpacity="1"
+                        MaterialOpacity="0.65" />
+                </ExperimentalAcrylicBorder.Material>
+            </ExperimentalAcrylicBorder>
+            
+            <ContentControl Content="{Binding TargetControl}" Grid.Row="1" />
 
             <Border Height="10" Background="Transparent"
                     PointerPressed="BottomBorder_PointerPressed"

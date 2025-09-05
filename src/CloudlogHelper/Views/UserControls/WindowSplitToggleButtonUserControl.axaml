@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="50" d:DesignHeight="50"
+             x:Class="CloudlogHelper.Views.UserControls.WindowSplitToggleButtonUserControl"
+             x:DataType="userControls:WindowSplitToggleButtonUserControlViewModel">
+
+    <Design.DataContext>
+        <userControls:WindowSplitToggleButtonUserControlViewModel />
+    </Design.DataContext>
+    <ToggleButton IsChecked="{Binding IsSplit}"
+                  Content="{avalonia:MaterialIconExt Kind=DockWindow}"/>
+</UserControl>

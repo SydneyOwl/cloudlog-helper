@@ -6,7 +6,9 @@
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
              xmlns:userControls2="clr-namespace:CloudlogHelper.Views.UserControls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             MinHeight="400"
              x:Class="CloudlogHelper.Views.UserControls.UDPLogInfoGroupboxUserControl"
              x:DataType="userControls:UDPLogInfoGroupboxUserControlViewModel">
     <Design.DataContext>
@@ -40,6 +42,9 @@
                             Margin="5,0,5,10" />
                     <CheckBox Content="{I18N {x:Static resources:LangKeys.showfailonly}}"
                               IsChecked="{Binding ShowFailedOnly}" Margin="20,0,0,10" />
+                    <userControls2:WindowSplitToggleButtonUserControl
+                        DataContext="{Binding SplitUserControlViewModel}"
+                        Margin="20,0,0,10"  />
                 </StackPanel>
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
@@ -144,21 +149,10 @@
                                                     Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
                                                     VerticalAlignment="Center"
                                                     FontWeight="Bold" />
-                                                <Image Margin="5,0,0,0"
-                                                       Width="20"
-                                                       Height="20"
-                                                       Source="avares://CloudlogHelper/Assets/Settings/Help.png"
-                                                       IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
-                                                       VerticalAlignment="Center">
-                                                    <ToolTip.Tip>
-                                                        <TextBlock
-                                                            Text="{Binding FailReason, 
-                                                        Converter={StaticResource FailReasonToTooltip}}" />
-                                                    </ToolTip.Tip>
-                                                    <ToolTip.ShowDelay>
-                                                        10
-                                                    </ToolTip.ShowDelay>
-                                                </Image>
+                                                <userControls2:TipIconUserControl TooltipText="{Binding FailReason, 
+                                                        Converter={StaticResource FailReasonToTooltip}}"
+                                                        IsVisible="{Binding UploadStatus, 
+                                                        Converter={StaticResource StatusToVisibility}}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
@@ -193,9 +187,9 @@
                             Command="{Binding ReuploadSelectedCommand}" />
                     <Button Content="{I18N {x:Static resources:LangKeys.delsel}}"
                             Command="{Binding DeleteSelectedCommand}" />
-                    <Button Background="Orange" Command="{Binding IgnoreSelectedPermanentlyCommand}">
-                        <Image Source="avares://CloudlogHelper/Assets/MainPage/Ignore.png" Width="20" />
-                    </Button>
+                    <Button Content="{avalonia:MaterialIconExt Kind=PublishDisabled}"
+                        Background="Orange" 
+                        Command="{Binding IgnoreSelectedPermanentlyCommand}"/>
                 </StackPanel>
             </Grid>
         </HeaderedContentControl>

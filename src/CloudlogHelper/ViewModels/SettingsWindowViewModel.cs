@@ -236,7 +236,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 CloudlogInfoPanelUserControl.InfoMessage = TranslationHelper.GetString(LangKeys.instanceuncompitable)
                     .Replace("{replace01}", instType.ToString());
         }
-        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException)
+        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException && _source.IsCancellationRequested)
         {
             ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }
@@ -298,7 +298,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
             var (res, des) =
                 await _rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs);
-            if (!res) throw new Exception(des);
+            if (!res && !_source.IsCancellationRequested) throw new Exception(des);
         }
         else
         {

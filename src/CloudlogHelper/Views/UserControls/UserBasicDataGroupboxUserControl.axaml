@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="300"
              x:Class="CloudlogHelper.Views.UserControls.UserBasicDataGroupboxUserControl"
              x:DataType="userControls:UserBasicDataGroupboxUserControlViewModel">
@@ -20,7 +21,7 @@
                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
                 HorizontalAlignment="Stretch">
             
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*"
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="2*,*,*"
                   VerticalAlignment="Center" HorizontalAlignment="Stretch">
                 
                 <!-- op -->
@@ -77,6 +78,10 @@
                     <TextBlock Text="{Binding QsYear}" FontSize="15" FontWeight="SemiBold"
                                HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
                 </Border>
+                
+                <userControls1:WindowSplitToggleButtonUserControl Grid.RowSpan="5" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"
+                                                                  DataContext="{Binding SplitUserControlViewModel}"
+                                                                  Margin="20,0,0,10"  />
             </Grid>
         </Border>
     </HeaderedContentControl>
