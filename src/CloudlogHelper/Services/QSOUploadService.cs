@@ -156,7 +156,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                             {
                                 _ = _nativeNativeNotificationManager.ShowNotification(new Notification
                                 {
-                                    Title = TranslationHelper.GetString(LangKeys.uploadedaqso),
+                                    Title = TranslationHelper.GetString(LangKeys.uploadedaqso) + (rcd.DXCall),
                                     Body = rcd.FormatToReadableContent(true)
                                 });
                             }

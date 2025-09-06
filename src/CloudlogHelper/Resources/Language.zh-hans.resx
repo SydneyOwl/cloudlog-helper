@@ -575,13 +575,7 @@
         <value>🚀 QSO上传成功！</value>
     </data>
     <data name="qsoconcisetemplate" xml:space="preserve">
-        <value>• 呼号: {0}
-• 国家: {1} ({8})
-• 网格: {9}
-• 频率: {10} ({11})
-• 模式: {12} (父模式: {13})
-• 时间: {14} 至 {15}
-• 信号报告: 发送 '{16}' / 接收 '{17}'</value>
+        <value>呼号: {0}, 国家: {1} ({8}), 网格: {9},  频率: {10} ({11}),  模式: {12}, 时间: {14} 至 {15}, 信号报告: 发送 '{16}' / 接收 '{17}'</value>
     </data>
     <data name="uploadfailedaqso" xml:space="preserve">
         <value>☹️ QSO 上传失败！</value>

@@ -13,8 +13,9 @@
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         SystemDecorations="None"
-        Background="Transparent"
+        Background="rgba(0,0,0,0.4)"
         TransparencyLevelHint="AcrylicBlur"
+        RequestedThemeVariant="Dark"
         Topmost="True">
     
     <Window.ContextMenu>

@@ -932,13 +932,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to • 呼号: {0}
-        ///• 国家: {1} ({8})
-        ///• 网格: {9}
-        ///• 频率: {10} ({11})
-        ///• 模式: {12} (父模式: {13})
-        ///• 时间: {14} 至 {15}
-        ///• 信号报告: 发送 &apos;{16}&apos; / 接收 &apos;{17}&apos;.
+        ///   Looks up a localized string similar to 呼号: {0}, 国家: {1} ({8}), 网格: {9},  频率: {10} ({11}),  模式: {12}, 时间: {14} 至 {15}, 信号报告: 发送 &apos;{16}&apos; / 接收 &apos;{17}&apos;.
         /// </summary>
         public static string qsoconcisetemplate {
             get {

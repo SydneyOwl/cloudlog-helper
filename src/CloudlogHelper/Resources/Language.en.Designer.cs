@@ -930,13 +930,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to • Call Sign: {0}
-        ///• Country: {1} ({8})
-        ///• Grid: {9}
-        ///• Frequency: {10} ({11})
-        ///• Mode: {12} (Parent: {13})
-        ///• Time: {14} to {15}
-        ///• Report: Sent &apos;{16}&apos; / Received &apos;{17}&apos;.
+        ///   Looks up a localized string similar to Call Sign: {0}, Country: {1} ({8}) ,  Grid: {9},  Frequency: {10} ({11}), Mode: {12},  Time: {14} to {15},  Report: Sent &apos;{16}&apos; / Received &apos;{17}&apos;.
         /// </summary>
         public static string qsoconcisetemplate {
             get {

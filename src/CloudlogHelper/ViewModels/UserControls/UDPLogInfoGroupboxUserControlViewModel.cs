@@ -488,7 +488,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     {
                         _ = _nativeNativeNotificationManager.ShowNotification(new Notification
                         {
-                            Title = TranslationHelper.GetString(LangKeys.madeaqso),
+                            Title = TranslationHelper.GetString(LangKeys.madeaqso) + (rcd.DXCall),
                             Body = rcd.FormatToReadableContent(true)
                         });
                     }

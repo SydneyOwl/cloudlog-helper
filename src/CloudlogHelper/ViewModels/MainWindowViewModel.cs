@@ -81,11 +81,12 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     DataContext = res.Sender
                                 };
+                                k.Height = double.NaN;
                                 var floatWin = new FloatingWindow()
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
-                                floatWin.Height = 500;
+                                floatWin.Height = 600;
                                 floatWin.Show();
                                 var track = windowManager.Track(floatWin);
                                 ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
