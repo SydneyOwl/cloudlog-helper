@@ -88,15 +88,6 @@ public class App : Application
         await collection.AddCommonServicesAsync();
         await collection.AddViewModelsAsync();
         await collection.AddExtraAsync();
-        collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
-        collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
-            new WindowManagerService(prov, desktop));
-        collection.AddSingleton<IInAppNotificationService, InAppNotificationService>(_ =>
-            new InAppNotificationService(desktop));
-        collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
-            new MessageBoxManagerService(desktop));
-        collection.AddSingleton<IClipboardService, ClipboardService>(_ =>
-            new ClipboardService(desktop));
         
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
@@ -117,6 +108,16 @@ public class App : Application
             ApplicationSettingsService.GenerateApplicationSettingsService(
                 logServices.ToArray(), _cmdOptions.ReinitSettings, pr.GetRequiredService<IMapper>()
                 ));
+        
+        collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
+        collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
+            new WindowManagerService(prov, desktop));
+        collection.AddSingleton<IInAppNotificationService, InAppNotificationService>(_ =>
+            new InAppNotificationService(desktop));
+        collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
+            new MessageBoxManagerService(desktop));
+        collection.AddSingleton<IClipboardService, ClipboardService>(_ =>
+            new ClipboardService(desktop));
         
         _servProvider = collection.BuildServiceProvider();
         

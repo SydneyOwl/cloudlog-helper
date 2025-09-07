@@ -124,13 +124,13 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         }
     }
 
-    private void _logProgress(string info, float? progress = null)
+    private void _logProgress(string info, float? progress = null, Exception? ex = null)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
             if (progress is not null) CurrentProgress = progress.Value;
             if (!string.IsNullOrEmpty(info)) CurrentInfo += $"\n[{DateTime.Now}] {info}";
-            ClassLogger.Debug(info);
+            ClassLogger.Debug(ex, info);
         });
     }
 
@@ -264,9 +264,12 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                         continue;
                     }
 
-                    MessageBus.Current.SendMessage(new QsoUploadRequested
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x)).ToList()
+                        MessageBus.Current.SendMessage(new QsoUploadRequested
+                        {
+                            QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x)).ToList()
+                        });
                     });
 
                     _logProgress(
@@ -277,7 +280,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                 {
                     errorOccurred = true;
                     _logProgress($"Parsing qso data from {localLog} failed: {e.Message}. Skipping...",
-                        CurrentProgress + sEach);
+                        CurrentProgress + sEach, e);
                 }
 
             if (errorOccurred)
@@ -289,7 +292,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _logProgress($"Failed to sync QSOs: {ex.Message}", 100);
+            _logProgress($"Failed to sync QSOs: {ex.Message}", 100, ex);
             ClassLogger.Error(ex);
             if (_executeOnStart)
                 await _inAppNotification.SendErrorNotificationAsync(

@@ -147,16 +147,26 @@
                                                                Foreground="White" />
                                                 </Border>
                                             </StackPanel>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
                                                 <TextBlock
                                                     Foreground="{Binding UploadStatus, Converter={StaticResource StatusToColor}}"
                                                     Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
-                                                    VerticalAlignment="Center"
+                                                    VerticalAlignment="Bottom"
                                                     FontWeight="Bold" />
-                                                <userControls2:TipIconUserControl TooltipText="{Binding FailReason, 
-                                                        Converter={StaticResource FailReasonToTooltip}}"
-                                                        IsVisible="{Binding UploadStatus, 
-                                                        Converter={StaticResource StatusToVisibility}}"/>
+                                                <avalonia:MaterialIcon Kind="HelpCircleOutline"
+                                                                       Foreground="DeepSkyBlue"
+                                                                       Background="Transparent"
+                                                                       IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
+                                                                       VerticalAlignment="Center"
+                                                                       Width="20" Height="20" Margin="5,0,0,0">
+                                                    <ToolTip.Tip>
+                                                        <TextBlock Text="{Binding FailReason, 
+                                                        Converter={StaticResource FailReasonToTooltip}}" />
+                                                    </ToolTip.Tip>
+                                                    <ToolTip.ShowDelay>
+                                                        10
+                                                    </ToolTip.ShowDelay>
+                                                </avalonia:MaterialIcon>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
