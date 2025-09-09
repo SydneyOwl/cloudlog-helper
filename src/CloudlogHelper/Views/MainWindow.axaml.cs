@@ -2,7 +2,9 @@ using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
@@ -39,10 +41,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         IInAppNotificationService wm)
     {
         _inAppNotification = wm;
-        
         _applicationSettingsService = ss;
         DataContext = mainWindowViewModel;
         InitializeComponent();
+
         this.WhenActivated(disposables =>
         {
             Observable.FromEventPattern<EventHandler<WindowClosingEventArgs>, WindowClosingEventArgs>(

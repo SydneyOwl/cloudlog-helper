@@ -244,6 +244,8 @@ public class DefaultConfigs
     /// </summary>
     public static int MaxRigctldErrorCount = 3;
 
+    public static int ExportedPolarChartSize = 600;
+
     /// <summary>
     ///     Expiry time (in seconds) for UDP client connections.
     /// </summary>
@@ -253,6 +255,10 @@ public class DefaultConfigs
     
     public static readonly int DefaultBatchProcessGridMessageInterval = 18;
     public static readonly int DefaultNotificationTimeout = 5;
+    public static readonly int DefaulPolarKValue = 5;
+    public static readonly double DefaulPolarAngWeightValue = 0.5;
+    public static readonly double DefaulPolarDistWeightValue = 0.5;
+    public static readonly int DefaulPolarQSOSamples = 1000;
 
     /// <summary>
     ///     Default Hamlib files for windows

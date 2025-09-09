@@ -20,12 +20,10 @@
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
 
-    <StackPanel>
-        <!-- menu -->
-        <StackPanel>
-            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto" ShowGridLines="False">
-                <Menu Grid.Row="0" Grid.Column="0">
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.settings}}">
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ShowGridLines="False">
+            <Menu Grid.Column="0">
+                <MenuItem Header="{I18N {x:Static resources:LangKeys.settings}}">
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}"
                                   Command="{Binding OpenSettingsWindow}">
                             <MenuItem.Icon>
@@ -70,35 +68,43 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
-                </Menu>
-                <ToggleButton Grid.Column="2" Grid.Row="0" IsChecked="{Binding IsTopmost}"
-                              Margin="2">
-                    <avalonia:MaterialIcon Kind="Pin" Width="20" Height="20"/>
-                </ToggleButton>
-                <userControls1:StatusLightUserControl Grid.Column="1" Grid.Row="0"
-                                                      DataContext="{Binding StatusLightUserControlViewModel}"
-                                                      ViewModel="{Binding}"
-                                                      Margin="10,0,10,0" />
-            </Grid>
-        </StackPanel>
-
-        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-            <userControls1:UserBasicDataGroupboxUserControl Grid.Column="0" Grid.Row="0"
-                                                            IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UserBasicBoxEnabled,
-                                                            RelativeSource={RelativeSource AncestorType=Grid}}"
-                                                            ViewModel="{Binding}"
-                                                            DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
-            <userControls1:RIGDataGroupboxUserControl Grid.Column="0" Grid.Row="1"
-                                                      IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).RigDataBoxEnabled,
-                                                        RelativeSource={RelativeSource AncestorType=Grid}}"
-                                                      DataContext="{Binding RigDataGroupboxUserControlVm}"
-                                                      ViewModel="{Binding }" />
-            <userControls1:UDPLogInfoGroupboxUserControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" 
-                                                         IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UDPLogBoxEnabled,
-                                                        RelativeSource={RelativeSource AncestorType=Grid}}"
-                                                         DataContext="{Binding UDPLogInfoGroupboxUserControlVm}"
-                                                         ViewModel="{Binding }" />
+            </Menu>
+            <ToggleButton Grid.Column="2" IsChecked="{Binding IsTopmost}" Margin="2">
+                <avalonia:MaterialIcon Kind="Pin" Width="20" Height="20"/>
+            </ToggleButton>
+            <userControls1:StatusLightUserControl Grid.Column="1"
+                DataContext="{Binding StatusLightUserControlViewModel}"
+                ViewModel="{Binding}" Margin="10,0,10,0" />
         </Grid>
-    </StackPanel>
 
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto" VerticalAlignment="Top">
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="LeftPanel" VerticalAlignment="Top">
+                <!-- A: UserBasicData -->
+                <userControls1:UserBasicDataGroupboxUserControl 
+                    IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UserBasicBoxEnabled,
+                                                            RelativeSource={RelativeSource AncestorType=Grid}}"
+                    ViewModel="{Binding}"
+                    DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
+        
+                <!-- C: RIGData -->
+                <userControls1:RIGDataGroupboxUserControl 
+                    IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).RigDataBoxEnabled,
+                                                            RelativeSource={RelativeSource AncestorType=Grid}}"
+                    DataContext="{Binding RigDataGroupboxUserControlVm}"
+                    ViewModel="{Binding}" />
+            </StackPanel>
+    
+            <!-- B: UDP Log - 高度绑定到左侧容器 -->
+            <userControls1:UDPLogInfoGroupboxUserControl 
+                Grid.Row="0" Grid.Column="1"
+                Grid.RowSpan="2"
+                Height="{Binding #LeftPanel.Bounds.Height, Mode=OneWay}"
+                MaxHeight="{Binding #LeftPanel.Bounds.Height, Mode=OneWay}"
+                MinHeight="300"
+                IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UDPLogBoxEnabled,
+                                                            RelativeSource={RelativeSource AncestorType=Grid}}"
+                DataContext="{Binding UDPLogInfoGroupboxUserControlVm}"
+                ViewModel="{Binding}" />
+        </Grid>
+    </Grid>
 </Window>

@@ -8,7 +8,7 @@
              xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
              x:Class="CloudlogHelper.Views.UserControls.RIGDataGroupboxUserControl"
              x:DataType="userControls:RIGDataGroupboxUserControlViewModel">
     <Design.DataContext>

@@ -144,7 +144,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             FailReason = null
         };
 
-        FilteredQsos.Add(testQso);
+        for (int i = 0; i < 10; i++)
+        {
+            FilteredQsos.Add(testQso);
+        }
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
@@ -329,7 +332,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
     public ReactiveCommand<Unit, Unit> IgnoreSelectedPermanentlyCommand { get; set; }
     public ReactiveCommand<RecordedCallsignDetail, Unit> ShowQSODetailCommand { get; set; }
-
 
     public Interaction<Unit, IStorageFile?> ShowFilePickerDialog { get; }
 

@@ -86,6 +86,7 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
+                                floatWin.SizeToContent = SizeToContent.Width;
                                 floatWin.Height = 600;
                                 floatWin.Show();
                                 var track = windowManager.Track(floatWin);
@@ -103,7 +104,6 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
-                                floatWin.Height = 260;
                                 floatWin.Show();
                                 var track = windowManager.Track(floatWin);
                                 ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
@@ -120,7 +120,6 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
-                                floatWin.Height = 250;
                                 floatWin.Show();
                                 var track = windowManager.Track(floatWin);
                                 ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;

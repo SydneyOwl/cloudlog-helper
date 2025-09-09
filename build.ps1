@@ -37,19 +37,19 @@ Write-Host "Latest sydneyowl hamlib linux release version: $latestHamlibLinuxVer
 
 ##################################
 
-$downloadUrl = "https://github.com/Hamlib/Hamlib/releases/download/$latestHamlibVersion/hamlib-w32-$latestHamlibVersion.zip"
+$downloadUrl = "https://gh-proxy.com/github.com/Hamlib/Hamlib/releases/download/$latestHamlibVersion/hamlib-w32-$latestHamlibVersion.zip"
 Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/hamlib-w32-$latestHamlibVersion.zip"
 Expand-Archive -Path "./tmp/hamlib-w32-$latestHamlibVersion.zip" -DestinationPath "./tmp/"
 Copy-Item -Path "./tmp/hamlib-w32-$latestHamlibVersion/bin/*.dll" -Destination "./Resources/Dependencies/hamlib/win-x86"
 Copy-Item -Path "./tmp/hamlib-w32-$latestHamlibVersion/bin/rigctld.exe" -Destination "./Resources/Dependencies/hamlib/win-x86"
 
-$downloadUrl = "https://github.com/Hamlib/Hamlib/releases/download/$latestHamlibVersion/hamlib-w64-$latestHamlibVersion.zip"
+$downloadUrl = "https://gh-proxy.com/github.com/Hamlib/Hamlib/releases/download/$latestHamlibVersion/hamlib-w64-$latestHamlibVersion.zip"
 Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/hamlib-w64-$latestHamlibVersion.zip"
 Expand-Archive -Path "./tmp/hamlib-w64-$latestHamlibVersion.zip" -DestinationPath "./tmp/"
 Copy-Item -Path "./tmp/hamlib-w64-$latestHamlibVersion/bin/*.dll" -Destination "./Resources/Dependencies/hamlib/win-x64"
 Copy-Item -Path "./tmp/hamlib-w64-$latestHamlibVersion/bin/rigctld.exe" -Destination "./Resources/Dependencies/hamlib/win-x64"
 
-$downloadUrl = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip"
+$downloadUrl = "https://gh-proxy.com/github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip"
 Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/Hamlib-linux-x64-$latestHamlibLinuxVersion.zip"
 Expand-Archive -Path "./tmp/Hamlib-linux-x64-$latestHamlibLinuxVersion.zip" -DestinationPath "./tmp/hamlib-linux-x64"
 Copy-Item -Path "./tmp/hamlib-linux-x64/bin/rigctld" -Destination "./Resources/Dependencies/hamlib/linux-x64"
