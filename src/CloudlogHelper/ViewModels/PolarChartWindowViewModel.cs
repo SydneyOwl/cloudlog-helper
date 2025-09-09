@@ -145,6 +145,7 @@ public class PolarChartWindowViewModel : ViewModelBase
         {
             _isExecutingChartUpdate = false;
             PlotControl.Refresh();
+            PlotControl.Plot.Title("信号来源分布图");
         }
     }
 }

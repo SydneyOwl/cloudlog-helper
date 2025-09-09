@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRigctldService, RigctldService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
+        services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         return Task.CompletedTask;
     }
 

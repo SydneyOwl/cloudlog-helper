@@ -59,6 +59,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IApplicationSettingsService _applicationSettingsService;
     
     private readonly IQSOUploadService _qsoUploadService;
+    private readonly IDecodedDataProcessorService _decodedDataProcessorService;
 
 
     /// <summary>
@@ -75,8 +76,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     ///     All qsologged message received.
     /// </summary>
     private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
-
-    private readonly ConcurrentQueue<CollectedGridDatabase> _collectedGrid = new();
     
     private readonly ReactiveCommand<Unit, Unit> _restartUdpCommand;
 
@@ -157,10 +156,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IClipboardService clipboardService,
         IApplicationSettingsService ss,
         IQSOUploadService qu,
-        INotificationManager nativeNotificationManager):base()
+        INotificationManager nativeNotificationManager,
+        IDecodedDataProcessorService decodedDataProcessorService):base()
     {
         _applicationSettingsService = ss;
         _clipboardService = clipboardService;
+        _decodedDataProcessorService = decodedDataProcessorService;
         _nativeNativeNotificationManager = nativeNotificationManager;
 
         _qsoUploadService = qu;
@@ -204,16 +205,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         this.WhenActivated(disposables =>
         {
-            Observable.Interval(TimeSpan.FromSeconds(DefaultConfigs.DefaultBatchProcessGridMessageInterval))
-                .ObserveOn(RxApp.TaskpoolScheduler)
-                .Subscribe(_ =>
-                {
-                    var collectedGridDatabases = _collectedGrid.ToList();
-                    _collectedGrid.Clear();
-                    _databaseService.BatchAddOrUpdateCallsignGrid(collectedGridDatabases);
-                    ClassLogger.Info($"Added {collectedGridDatabases.Count} grids.");
-                });
-            
             // Our client watchdog
             _heartbeatSubject
                 .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UDPClientExpiryInSeconds))
@@ -498,19 +489,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 case MessageType.Decode:
                     _allDecodedCount += 1;
                     var decMsg = (Decode)message;
-                    var call = WsjtxMessageUtil.ExtractDeFromMessage(decMsg.Message);
-                    var grid = WsjtxMessageUtil.ExtractGridFromMessage(decMsg.Message);
-                    if (call is null || grid is null)break;
-                    _collectedGrid.Enqueue(new CollectedGridDatabase()
-                    {
-                        Callsign = call,
-                        GridSquare = grid
-                    });
-                    
-                    MessageBus.Current.SendMessage(new MsgDecoded
-                    {
-                        DecodedData = decMsg
-                    });
+                    _decodedDataProcessorService.ProcessDecoded(decMsg);
                     break;
                 case MessageType.Status:
                     var stat = (Status)message;
@@ -518,6 +497,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     MsgSending = string.IsNullOrEmpty(stat.TXMessage)
                         ? TranslationHelper.GetString(LangKeys.txing)
                         : stat.TXMessage;
+                    MessageBus.Current.SendMessage(new ClientStatusChanged()
+                    {
+                        CurrStatus = stat
+                    });
+                    ClassLogger.Trace($"Status changed: {stat.DialFrequencyInHz} {stat.ConfigurationName} {""} {stat.Mode}" );
                     break;
             }
 
