@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CommandLine;
 
@@ -36,7 +37,8 @@ internal sealed class Program
             if (!string.IsNullOrEmpty(options.CrashReportFile)) return;
             var tmp = Path.GetTempFileName();
             File.WriteAllText(tmp,
-                $@"Environment: {RuntimeInformation.RuntimeIdentifier}, {RuntimeInformation.OSDescription}
+                $@"App version: {VersionInfo.Version} @ {VersionInfo.Commit}
+Environment: {RuntimeInformation.RuntimeIdentifier}, {RuntimeInformation.OSDescription}
 Type：{ex.Message}
 Stack：{ex.StackTrace}
 

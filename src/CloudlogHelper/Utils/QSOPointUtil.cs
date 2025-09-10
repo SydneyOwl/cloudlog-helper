@@ -7,10 +7,10 @@ namespace CloudlogHelper.Utils;
 
 public class QSOPointUtil
 {
-    public static List<PolarQSOPoint> GenerateFakeFT8Data(int count)
+    public static List<ChartQSOPoint> GenerateFakeFT8Data(int count)
     {
         var random = new Random();
-        var data = new List<PolarQSOPoint>();
+        var data = new List<ChartQSOPoint>();
 
         var hotSpots = new[] { 45, 120, 300, 30, 200 };
 
@@ -39,17 +39,31 @@ public class QSOPointUtil
             else
                 distance = 10000 + random.NextDouble() * 5000;
 
-            data.Add(new PolarQSOPoint
+            data.Add(new ChartQSOPoint
             {
+                DxCallsign = null,
                 Azimuth = azimuth,
-                Distance = distance
+                Distance = distance,
+                Mode = new[]{"FT8","FT4"}[new Random().Next(0,2)],
+                Snr = 0,
+                Band = new[]{"40m","20m","10m"}[new Random().Next(0,3)],
+                Client = new[]{"WSJT-X","JTDX","PPSK"}[new Random().Next(0,3)],
             });
         }
 
         return data;
     }
 
-    public static double[] CalculateDensitiesKNN(PolarQSOPoint[] points,
+    /// <summary>
+    /// 用KNN算法评估信号点之间的接近程度。支持使用距离或角度评估。
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="maxDistance"></param>
+    /// <param name="k"></param>
+    /// <param name="distanceWeight"></param>
+    /// <param name="angleWeight"></param>
+    /// <returns></returns>
+    public static double[] CalculateDensitiesKNN(ChartQSOPoint[] points,
         double maxDistance,
         int k = 5,
         double distanceWeight = 1.0,
@@ -95,7 +109,13 @@ public class QSOPointUtil
         return densities;
     }
 
-    public static double CalculateRobustMaxDistance(PolarQSOPoint[] points, double percentile = 0.95)
+    /// <summary>
+    /// 保守地计算数据集中前n%的平均值作为最大值
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="percentile"></param>
+    /// <returns></returns>
+    public static double CalculateRobustMaxDistance(ChartQSOPoint[] points, double percentile = 0.95)
     {
         if (points.Length == 0)
             return 3000.0;
@@ -114,6 +134,6 @@ public class QSOPointUtil
 
         var robustMax = sortedDistances.Skip(startIndex).Take(count).Average();
 
-        return Math.Max(robustMax, 500.0); // 至少500km
+        return Math.Max(robustMax, 500.0);
     }
 }

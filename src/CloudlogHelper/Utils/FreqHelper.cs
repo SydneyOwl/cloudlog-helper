@@ -57,6 +57,34 @@ public static class FreqHelper
                || freq is >= 432301600 and <= 432301800 //70cm
                || freq is >= 1296501400 and <= 1296501600; //23cm
     }
+    
+    public static ulong GetRandomFreqFromMeter(string meterBand)
+    {
+        var random = new Random();
+    
+        return meterBand.ToLower() switch
+        {
+            "2200m" => (ulong)random.Next(135700, 137800 + 1),
+            "630m" => (ulong)random.Next(472000, 479000 + 1),
+            "160m" => (ulong)random.Next(1800000, 2000000 + 1),
+            "80m" => (ulong)random.Next(3500000, 4000000 + 1),
+            "60m" => (ulong)random.Next(5351500, 5366500 + 1),
+            "40m" => (ulong)random.Next(7000000, 7300000 + 1),
+            "30m" => (ulong)random.Next(10100000, 10150000 + 1),
+            "20m" => (ulong)random.Next(14000000, 14350000 + 1),
+            "17m" => (ulong)random.Next(18068000, 18168000 + 1),
+            "15m" => (ulong)random.Next(21000000, 21450000 + 1),
+            "12m" => (ulong)random.Next(24890000, 24990000 + 1),
+            "10m" => (ulong)random.Next(28000000, 29700000 + 1),
+            "6m" => (ulong)random.Next(50000000, 54000000 + 1),
+            "2m" => (ulong)random.Next(144000000, 148000000 + 1),
+            "1.25m" => (ulong)random.Next(220000000, 225000000 + 1),
+            "70cm" => (ulong)random.Next(420000000, 450000000 + 1),
+            "33cm" => (ulong)random.Next(902000000, 928000000 + 1),
+            "23cm" => (ulong)random.Next(1240000000, 1300000000 + 1),
+            _ => throw new ArgumentException($"Unknown band: {meterBand}")
+        };
+    }
 
     /// <summary>
     ///     Convert frequency to corresponding wavelength.
@@ -88,6 +116,8 @@ public static class FreqHelper
             _ => CalculationMeterFromFreq(freq)
         };
     }
+    
+    
 
     /// <summary>
     ///     Convert frequency to corresponding wavelength.

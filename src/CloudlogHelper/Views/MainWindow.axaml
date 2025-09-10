@@ -47,27 +47,34 @@
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
-
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.tools}}">
-                            <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="ToolboxOutline" Width="32" Height="32"/>
-                            </MenuItem.Icon>
-                            <MenuItem Header="{I18N {x:Static resources:LangKeys.qsoassistant}}"
-                                      Command="{Binding OpenQSOAssistantWindow}">
-                                <MenuItem.Icon>
-                                    <avalonia:MaterialIcon Kind="FileUploadOutline" Width="32" Height="32"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                        </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.help}}">
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.about}}"
-                                  Command="{Binding OpenAboutWindow}">
+                <MenuItem Header="{I18N {x:Static resources:LangKeys.tools}}">
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.qsoassistant}}"
+                              Command="{Binding OpenQSOAssistantWindow}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="FileUploadOutline" Width="32" Height="32"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.charts}}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="ChartBar" Width="32" Height="32"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.signalpolarchart}}"
+                                  Command="{Binding OpenSignalPolarChatWindow}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="InfoCircleOutline" Width="32" Height="32"/>
+                                <avalonia:MaterialIcon Kind="Radar" Width="32" Height="32"/>
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
+                </MenuItem>
+                <MenuItem Header="{I18N {x:Static resources:LangKeys.help}}">
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.about}}"
+                              Command="{Binding OpenAboutWindow}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="InfoCircleOutline" Width="32" Height="32"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
             </Menu>
             <ToggleButton Grid.Column="2" IsChecked="{Binding IsTopmost}" Margin="2">
                 <avalonia:MaterialIcon Kind="Pin" Width="20" Height="20"/>

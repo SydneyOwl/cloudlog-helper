@@ -583,4 +583,13 @@
     <data name="transparency" xml:space="preserve">
         <value>透明度</value>
     </data>
+    <data name="charts" xml:space="preserve">
+        <value>图表</value>
+    </data>
+    <data name="signalpolarchart" xml:space="preserve">
+        <value>信号分布极坐标图</value>
+    </data>
+    <data name="mygrid" xml:space="preserve">
+        <value>我的网格坐标</value>
+    </data>
 </root>

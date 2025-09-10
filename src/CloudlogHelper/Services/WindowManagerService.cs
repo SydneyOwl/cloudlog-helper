@@ -78,7 +78,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         return false;
     }
 
-    public async Task<T?> CreateAndShowWindowByVm<T>(Type vmType, Window? toplevel = null)
+    public async Task<T?> CreateAndShowWindowByVm<T>(Type vmType, Window? toplevel = null, bool dialog = true)
     {
         var finalName = vmType.FullName!.Split(".").Last();
         var pFinalName = finalName.Replace("ViewModel", "");
@@ -104,17 +104,20 @@ public class WindowManagerService : IWindowManagerService, IDisposable
             var newWindow = (Window)Activator.CreateInstance(winType)!;
             newWindow.DataContext = _provider.GetRequiredService(vmType);
             Track(newWindow);
-            
-            var result = await newWindow.ShowDialog<T>(parentWindow);
-            return result;
+
+            if (dialog)
+            {
+                return await newWindow.ShowDialog<T>(parentWindow);
+            }
+            newWindow.Show();
         }
 
         return default;
     }
 
-    public async Task CreateAndShowWindowByVm(Type vmType, Window? toplevel = null)
+    public async Task CreateAndShowWindowByVm(Type vmType, Window? toplevel = null, bool dialog = true)
     {
-        await CreateAndShowWindowByVm<object>(vmType, toplevel);
+        await CreateAndShowWindowByVm<object>(vmType, toplevel, dialog);
     }
 
     public T GetViewModelInstance<T>()

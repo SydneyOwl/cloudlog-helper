@@ -109,6 +109,17 @@
                         </Grid>
                     </StackPanel>
                 </Border>
+                
+                <!-- Grid Settings -->
+                <Border Classes="setting-card">
+                    <StackPanel>
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.basicsettings}}" Classes="section-title" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{I18N {x:Static resources:LangKeys.mygrid}}" Classes="setting-label" />
+                            <TextBox HorizontalAlignment="Left" Text="{Binding DraftSettings.BasicSettings.MyMaidenheadGrid}" Classes="setting-control" Grid.Column="1" Watermark="e.g. OM89"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
 
                 <!-- Cloudlog Settings -->
                 <Border Classes="setting-card">

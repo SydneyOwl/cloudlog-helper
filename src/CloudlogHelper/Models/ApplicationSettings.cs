@@ -40,6 +40,13 @@ public class ApplicationSettings : ReactiveValidationObject
     [Reactive]
     [JsonProperty]
     public SupportedLanguage LanguageType { get; set; } = SupportedLanguage.NotSpecified;
+    
+    /// <summary>
+    ///     Some basic settings.
+    /// </summary>
+    [Reactive]
+    [JsonProperty]
+    public BasicSettings BasicSettings { get; set; } = new();
 
     /// <summary>
     ///     Cloudlog settings.

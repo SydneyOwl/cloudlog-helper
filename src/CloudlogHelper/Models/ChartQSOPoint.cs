@@ -1,6 +1,6 @@
 ﻿namespace CloudlogHelper.Models;
 
-public struct PolarQSOPoint
+public struct ChartQSOPoint
 {
     /// <summary>
     /// Callsign of DX
@@ -20,4 +20,11 @@ public struct PolarQSOPoint
     /// Current band
     /// </summary>
     public string Band { get; set; }
+    public string Client { get; set; }
+
+    public override string ToString()
+    {
+        return
+            $"{nameof(DxCallsign)}: {DxCallsign}, {nameof(Azimuth)}: {Azimuth}, {nameof(Distance)}: {Distance}, {nameof(Mode)}: {Mode}, {nameof(Snr)}: {Snr}, {nameof(Band)}: {Band}, {nameof(Client)}: {Client}";
+    }
 }

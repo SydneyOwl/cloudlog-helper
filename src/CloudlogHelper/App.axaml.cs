@@ -176,7 +176,7 @@ public class App : Application
     {
         if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
         
-        var mainWindow = new PolarChartWindow(){DataContext = new PolarChartWindowViewModel()};
+        var mainWindow = _servProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
         mainWindow.Focus();
         desktop.MainWindow = mainWindow;
@@ -184,7 +184,7 @@ public class App : Application
 
         _exitCommand = ReactiveCommand.Create(() =>
         {
-            // mainWindow.CloseDirectly();
+            mainWindow.CloseDirectly();
             desktop.Shutdown();
         });
         _openCommand = ReactiveCommand.Create(() => mainWindow.Show());

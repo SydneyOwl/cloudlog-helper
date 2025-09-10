@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -53,12 +54,14 @@ public class MainWindowViewModel : ViewModelBase
         }
         
         windowManager = wm;
-        OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel)));
-        OpenAboutWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(AboutWindowViewModel)));
+        OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel), true));
+        OpenAboutWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(AboutWindowViewModel), true));
         OpenQSOAssistantWindow =
-            ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(QsoSyncAssistantWindowViewModel)));
-        SwitchLightTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Light; });
-        SwitchDarkTheme = ReactiveCommand.Create(() => { App.Current.RequestedThemeVariant = ThemeVariant.Dark; });
+            ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(QsoSyncAssistantWindowViewModel), true));
+        OpenSignalPolarChatWindow =
+            ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(PolarChartWindowViewModel), false));
+        SwitchLightTheme = ReactiveCommand.Create(() => { Application.Current!.RequestedThemeVariant = ThemeVariant.Light; });
+        SwitchDarkTheme = ReactiveCommand.Create(() => { Application.Current!.RequestedThemeVariant = ThemeVariant.Dark; });
 
         UserBasicDataGroupboxUserControlVm = userBasicDataGroupboxUserControlViewModel;
         RigDataGroupboxUserControlVm = rigdataGroupboxUserControlViewModel;
@@ -157,6 +160,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> OpenAboutWindow { get; }
     public ReactiveCommand<Unit, Unit> OpenQSOAssistantWindow { get; }
+    public ReactiveCommand<Unit, Unit> OpenSignalPolarChatWindow { get; }
     public ReactiveCommand<Unit, Unit> SwitchLightTheme { get; }
     public ReactiveCommand<Unit, Unit> SwitchDarkTheme { get; }
 
@@ -165,11 +169,11 @@ public class MainWindowViewModel : ViewModelBase
     public UDPLogInfoGroupboxUserControlViewModel UDPLogInfoGroupboxUserControlVm { get; set; }
     public StatusLightUserControlViewModel StatusLightUserControlViewModel { get; set; }
 
-    private async Task OpenWindow(Type vm)
+    private async Task OpenWindow(Type vm, bool dialog)
     {
         try
         {
-            await windowManager.CreateAndShowWindowByVm(vm);
+            await windowManager.CreateAndShowWindowByVm(vm, null, dialog);
         }
         catch (Exception ex)
         {

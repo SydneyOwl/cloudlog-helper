@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using CloudlogHelper.Database;
+using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
@@ -48,6 +49,24 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
     public void ProcessDecoded(Decode decode)
     {
         _decodedCache.Add(decode);
+    }
+
+    private void _cacheChartData(Decode[] decode)
+    {
+        foreach (var tmp in decode)
+        {
+            var chartQsoPoint = new ChartQSOPoint();
+            var callsign = WsjtxMessageUtil.ExtractDeFromMessage(tmp.Message);
+            var grid = WsjtxMessageUtil.ExtractGridFromMessage(tmp.Message);
+          
+            if (callsign is null) continue;
+            chartQsoPoint.DxCallsign = callsign;
+            if (grid is not null)
+            {
+                // todo
+                // MaidenheadGridUtil.CalculateBearing()
+            }
+        }
     }
 
     private void _saveCallsignGridInfo(Decode[] decodes)

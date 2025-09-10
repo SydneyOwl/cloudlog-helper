@@ -195,6 +195,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Charts.
+        /// </summary>
+        public static string charts {
+            get {
+                return ResourceManager.GetString("charts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please check RIG connection!.
         /// </summary>
         public static string checkrigconn {
@@ -786,6 +795,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to My Grid.
+        /// </summary>
+        public static string mygrid {
+            get {
+                return ResourceManager.GetString("mygrid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Next Upload Time.
         /// </summary>
         public static string nextuploadtime {
@@ -1225,6 +1243,15 @@ namespace CloudlogHelper.Resources {
         public static string shutdown {
             get {
                 return ResourceManager.GetString("shutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signal distribution.
+        /// </summary>
+        public static string signalpolarchart {
+            get {
+                return ResourceManager.GetString("signalpolarchart", resourceCulture);
             }
         }
         

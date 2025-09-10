@@ -1,22 +1,25 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Avalonia;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using DynamicData;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.PlotStyles;
 using ScottPlot.Plottables;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
 namespace CloudlogHelper.ViewModels;
 
@@ -27,73 +30,166 @@ public class PolarChartWindowViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private ConcurrentFixedSizeQueue<PolarQSOPoint> _qsoPoints = new(DefaultConfigs.DefaulPolarQSOSamples);
+    [Reactive] public string LastDataUpdatedAt{ get; set; } = "No data yet";
 
 
-    [Reactive] private bool _isExecutingChartUpdate { get; set; }
+    private bool _isExecutingChartUpdate;
+
+    [Reactive] public ObservableCollection<string> Bands { get; set; } = new();
+    [Reactive] public ObservableCollection<string> Clients { get; set; } = new();
+    [Reactive] public ObservableCollection<string> Modes { get; set; } = new();
+
+    [Reactive] public string SelectedBand { get; set; } = string.Empty;
+    [Reactive] public string SelectedClient { get; set; } = string.Empty;
+    [Reactive] public string SelectedMode { get; set; } = string.Empty;
+
+    [Reactive] public bool AutoSwitchEnabled { get; set; } = true;
 
     [Reactive] public int KValue { get; set; } = DefaultConfigs.DefaulPolarKValue;
-    [Reactive] public double AngWeightValue { get; set; } =DefaultConfigs.DefaulPolarAngWeightValue;
+    [Reactive] public double AngWeightValue { get; set; } = DefaultConfigs.DefaulPolarAngWeightValue;
     [Reactive] public double DistWeightValue { get; set; } = DefaultConfigs.DefaulPolarDistWeightValue;
-    [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaulPolarQSOSamples;
+    [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
     [Reactive] public bool ShowDestColor { get; set; } = true;
-    
-    public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; }  = new();
+    [Reactive] public bool UpdatePaused { get; set; }
+
+    public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
-    public ReactiveCommand<Unit, Unit> ClearData { get; }
+    public ReactiveCommand<Unit, Unit> Test { get; }
     public AvaPlot PlotControl { get; private set; }
 
     private PolarAxis _polarAxis;
 
+    private IChartDataCacheService<ChartQSOPoint> _chartDataCacheService;
+
     public PolarChartWindowViewModel()
     {
+    }
+
+    public PolarChartWindowViewModel(IChartDataCacheService<ChartQSOPoint> chartDataCacheService)
+    {
+        _chartDataCacheService = chartDataCacheService;
+
+        Application.Current!.ActualThemeVariantChanged += (sender, args) => { UpdatePolar(); };
+
         PlotControl = new AvaPlot();
-        
         SaveChart = ReactiveCommand.CreateFromTask(async () =>
         {
             var a = await OpenSaveFilePickerInteraction?.Handle(Unit.Default)!;
-            if (a is null)return;
+            if (a is null) return;
             PlotControl.Plot.GetImage(DefaultConfigs.ExportedPolarChartSize,
                 DefaultConfigs.ExportedPolarChartSize).SavePng(a.Path.AbsolutePath);
         });
-        
-        ClearData = ReactiveCommand.Create(() =>
+
+        Test = ReactiveCommand.Create(() =>
         {
-            _qsoPoints.Clear();
-            UpdatePolar();
-        }, this.WhenAnyValue(x => x._isExecutingChartUpdate).Select(executing => !executing));
-        
+            var aa = QSOPointUtil.GenerateFakeFT8Data(1).First();
+            _chartDataCacheService.Add(aa);
+            ClassLogger.Debug($"Produce {aa}");
+            MessageBus.Current.SendMessage(new ClientStatusChanged
+            {
+                CurrStatus = new Status
+                {
+                    MagicNumber = 0,
+                    SchemaVersion = (SchemaVersion)0,
+                    Id = aa.Client,
+                    DialFrequencyInHz = FreqHelper.GetRandomFreqFromMeter(aa.Band),
+                    Mode = aa.Mode,
+                    DXCall = null,
+                    Report = null,
+                    TXMode = null,
+                    TXEnabled = false,
+                    Transmitting = false,
+                    Decoding = false,
+                    RXOffsetFrequencyHz = 0,
+                    TXOffsetFrequencyHz = 0,
+                    DECall = null,
+                    DEGrid = null,
+                    DXGrid = null,
+                    TXWatchdog = false,
+                    SubMode = null,
+                    FastMode = false,
+                    SpecialOperationMode = SpecialOperationMode.NONE,
+                    FrequencyTolerance = 0,
+                    TRPeriod = 0,
+                    ConfigurationName = null,
+                    TXMessage = null
+                }
+            });
+        });
+
         this.WhenActivated(disposable =>
         {
+            MessageBus.Current.Listen<ClientStatusChanged>().Subscribe(x =>
+            {
+                var currStatusMode = x.CurrStatus.Mode;
+                var currStatusDialFrequencyInHz = x.CurrStatus.DialFrequencyInHz;
+                var currStatusId = x.CurrStatus.Id;
+                var currBand = FreqHelper.GetMeterFromFreq(currStatusDialFrequencyInHz);
+                
+                if (!Bands.Contains(currBand)) Bands.Add(currBand);
+                if (!Clients.Contains(currStatusId))Clients.Add(currStatusId);
+                if (!Modes.Contains(currStatusMode))Modes.Add(currStatusMode);
+
+                if (AutoSwitchEnabled)
+                {
+                    SelectedBand = currBand;
+                    SelectedClient = currStatusId;
+                    SelectedMode = currStatusMode;
+                }
+            }, exception => ClassLogger.Error(exception))
+            .DisposeWith(disposable);
+            
             SaveChart.ThrownExceptions.Subscribe().DisposeWith(disposable);
-            ClearData.ThrownExceptions.Subscribe().DisposeWith(disposable);
+
+            _chartDataCacheService.GetItemAddedObservable()
+                .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleTime))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe((_) =>
+                {
+                    LastDataUpdatedAt = "Last data recv at:" + DateTime.Now.ToLongTimeString();
+                    UpdatePolar();
+                })
+                .DisposeWith(disposable);
+
             this.WhenAnyValue(x => x.KValue,
-                    x=>x.AngWeightValue,
-                    x=>x.DistWeightValue,
+                    x => x.AngWeightValue,
+                    x => x.DistWeightValue,
                     x => x.ShowDestColor,
-                    x => x.QSOSamples) 
+                    x => x.QSOSamples,
+                    x => x.UpdatePaused)
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe((_)=>UpdatePolar())
+                .Subscribe((_) => UpdatePolar())
+                .DisposeWith(disposable);
+            
+            this.WhenAnyValue(x => x.SelectedBand,
+                    x => x.SelectedClient,
+                    x=>x.SelectedMode)
+                .Throttle(TimeSpan.FromMilliseconds(352))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe((_) => UpdatePolar())
                 .DisposeWith(disposable);
         });
-        foreach (var polarQSOPoint in QSOPointUtil.GenerateFakeFT8Data(1000))
-        {
-            _qsoPoints.Enqueue(polarQSOPoint);
-        }
+
         UpdatePolar();
     }
 
     private void UpdatePolar()
     {
-        if (_isExecutingChartUpdate)return;
+        if (_isExecutingChartUpdate || UpdatePaused) return;
         try
         {
+            ClassLogger.Trace("Updating polar.");
             _isExecutingChartUpdate = true;
-            _qsoPoints.Resize(QSOSamples);
             PlotControl.Plot.Clear();
-            var cacheData = _qsoPoints.ToArray();
-            var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData);
+
+            var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples)
+                                                .Where(x => x.Band == SelectedBand
+                                                            && x.Mode == SelectedMode
+                                                            && x.Client == SelectedClient)
+                                                .ToArray();
+            var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData) + 500;
+            ClassLogger.Trace($"Use maxDistance:{maxDistance}");
             var densities = new double[1];
             if (ShowDestColor)
             {
@@ -101,18 +197,26 @@ public class PolarChartWindowViewModel : ViewModelBase
                     distanceWeight: DistWeightValue, angleWeight: AngWeightValue);
             }
 
-            _polarAxis = PlotControl.Plot.Add.PolarAxis(radius: maxDistance);
+            _polarAxis = PlotControl.Plot.Add.PolarAxis(radius: maxDistance <= 1000 ? 1000 : maxDistance);
             _polarAxis.Rotation = Angle.FromDegrees(-90);
             _polarAxis.Clockwise = true;
 
             if (cacheData.Length == 0) return;
             var distLina = (double)((int)((maxDistance / 5) / 100) * 100);
+            if (maxDistance <= 1000)
+            {
+                distLina = 200;
+            }
             var circleDistance = new[] { distLina, distLina * 2, distLina * 3, distLina * 4, distLina * 5 };
+            
             var labels = circleDistance.Select(x => x + "km").ToArray();
             // polarAxis.SetCircles(distLina,5);
             _polarAxis.SetCircles(circleDistance, labels);
 
-            IColormap colormap = new ScottPlot.Colormaps.Turbo();
+            IColormap colormap = Application.Current!.ActualThemeVariant == ThemeVariant.Dark
+                ? new ScottPlot.Colormaps.MellowRainbow()
+                : new ScottPlot.Colormaps.Turbo();
+
             if (densities.Length == 0) return;
 
             var maxDensity = densities.Max();
@@ -143,9 +247,66 @@ public class PolarChartWindowViewModel : ViewModelBase
         }
         finally
         {
-            _isExecutingChartUpdate = false;
+            _refreshTheme();
+            PlotControl.Plot.Axes.AutoScale();
             PlotControl.Refresh();
-            PlotControl.Plot.Title("信号来源分布图");
+            _isExecutingChartUpdate = false;
+        }
+    }
+
+    private void _refreshTheme()
+    {
+        if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
+        {
+            _setDarkTheme();
+        }
+        else
+        {
+            _setLightTheme();
+        }
+    }
+
+    private void _setDarkTheme()
+    {
+        if (PlotControl?.Plot == null) return;
+
+        PlotControl.Plot.SetStyle(new Dark());
+
+        foreach (var polarAxisCircle in _polarAxis.Circles)
+        {
+            polarAxisCircle.LineStyle.Color = Colors.White;
+            polarAxisCircle.LabelStyle.ForeColor = Colors.White;
+        }
+
+        foreach (var spoke in _polarAxis.Spokes)
+        {
+            spoke.LineStyle.Color = Colors.White;
+            spoke.LabelStyle.ForeColor = Colors.White;
+        }
+    }
+
+    private void _setLightTheme()
+    {
+        if (PlotControl?.Plot == null) return;
+        PlotControl.Plot.SetStyle(new Light());
+        foreach (var polarAxisCircle in _polarAxis.Circles)
+        {
+            polarAxisCircle.LineStyle = new LineStyle()
+            {
+                Width = 1f,
+                Color = Colors.Black.WithAlpha(0.5)
+            };
+            polarAxisCircle.LabelStyle.ForeColor = Colors.Black;
+        }
+
+        foreach (var spoke in _polarAxis.Spokes)
+        {
+            spoke.LineStyle = new LineStyle()
+            {
+                Width = 1f,
+                Color = Colors.Black.WithAlpha(0.5)
+            };
+            spoke.LabelStyle.ForeColor = Colors.Black;
         }
     }
 }

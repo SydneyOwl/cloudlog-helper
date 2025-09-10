@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRigctldService, RigctldService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
+        services.AddSingleton<IChartDataCacheService<ChartQSOPoint>, ChartDataCacheService<ChartQSOPoint>>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         return Task.CompletedTask;
     }
@@ -42,6 +43,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<RIGDataGroupboxUserControlViewModel>();
         services.AddSingleton<UserBasicDataGroupboxUserControlViewModel>();
         services.AddSingleton<StatusLightUserControlViewModel>();
+        services.AddTransient<PolarChartWindowViewModel>();
         return Task.CompletedTask;
     }
 
@@ -84,6 +86,7 @@ public static class ServiceCollectionExtensions
             cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
+            cfg.CreateMap<BasicSettings, BasicSettings>();
             cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
         });
         // Register all view models as singletons

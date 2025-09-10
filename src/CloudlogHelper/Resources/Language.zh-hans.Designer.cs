@@ -195,6 +195,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 图表.
+        /// </summary>
+        public static string charts {
+            get {
+                return ResourceManager.GetString("charts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请检查电台连接！.
         /// </summary>
         public static string checkrigconn {
@@ -788,6 +797,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 我的网格坐标.
+        /// </summary>
+        public static string mygrid {
+            get {
+                return ResourceManager.GetString("mygrid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 下次上报时间.
         /// </summary>
         public static string nextuploadtime {
@@ -1227,6 +1245,15 @@ namespace CloudlogHelper.Resources {
         public static string shutdown {
             get {
                 return ResourceManager.GetString("shutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 信号分布极坐标图.
+        /// </summary>
+        public static string signalpolarchart {
+            get {
+                return ResourceManager.GetString("signalpolarchart", resourceCulture);
             }
         }
         

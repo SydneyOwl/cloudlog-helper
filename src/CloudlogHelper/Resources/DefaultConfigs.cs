@@ -258,7 +258,15 @@ public class DefaultConfigs
     public static readonly int DefaulPolarKValue = 5;
     public static readonly double DefaulPolarAngWeightValue = 0.5;
     public static readonly double DefaulPolarDistWeightValue = 0.5;
-    public static readonly int DefaulPolarQSOSamples = 1000;
+    public static readonly int DefaultPolarQSOSamples = 1000;
+    
+    /// <summary>
+    /// Default cache size for qso points.
+    /// </summary>
+    public static readonly int DefaultChartDataCacheNumber = 15000;
+    
+    public static readonly int UpdateChartsThrottleTime = 3;
+    
 
     /// <summary>
     ///     Default Hamlib files for windows
