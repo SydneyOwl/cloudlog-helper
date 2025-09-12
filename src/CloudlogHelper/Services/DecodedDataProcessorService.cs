@@ -49,6 +49,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 try
                 {
                     var decodes = _decodedCache.ToArray();
+                    if (decodes.Length == 0)return;
                     _decodedCache.Clear();
                     // refresh all data if my grid changed
                     if (_myGrid != basicSettings.MyMaidenheadGrid)

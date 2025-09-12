@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<RIGDataGroupboxUserControlViewModel>();
         services.AddSingleton<UserBasicDataGroupboxUserControlViewModel>();
         services.AddSingleton<StatusLightUserControlViewModel>();
-        services.AddTransient<PolarChartWindowViewModel>();
+        services.AddSingleton<PolarChartWindowViewModel>();
         return Task.CompletedTask;
     }
 

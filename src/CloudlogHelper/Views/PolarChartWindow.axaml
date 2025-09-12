@@ -80,7 +80,8 @@
                            FontWeight="Medium" FontSize="15"
                            IsVisible="{Binding ShowErrorMsg}"
                            Margin="5"/>
-                <ContentControl Content="{Binding PlotControl, Mode=OneTime}" IsVisible="{Binding !ShowErrorMsg}"/>
+                <ContentControl x:Name="plotControl" Content="{Binding PlotControl, Mode=OneTime}"
+                                IsVisible="{Binding !ShowErrorMsg}"/>
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal"
                             Margin="5" Spacing="10">
                     <CheckBox Content="自动选择" IsChecked="{Binding AutoSwitchEnabled}"/>
