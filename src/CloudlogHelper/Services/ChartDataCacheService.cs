@@ -16,7 +16,7 @@ namespace CloudlogHelper.Services;
 /// <typeparam name="T"></typeparam>
 public class ChartDataCacheService<T> : IChartDataCacheService<T>, IDisposable
 { 
-    private readonly T[] _buffer = new T[DefaultConfigs.DefaultChartDataCacheNumber];
+    private T[] _buffer = new T[DefaultConfigs.DefaultChartDataCacheNumber];
     private int _nextIndex = 0;
     private int _count = 0;
     private readonly object _lock = new();
@@ -40,19 +40,37 @@ public class ChartDataCacheService<T> : IChartDataCacheService<T>, IDisposable
         }
     }
 
-    public IEnumerable<T> TakeLatestN(int count)
+    public void Clear()
+    {
+        lock (_lock)
+        {
+            _buffer = new T[DefaultConfigs.DefaultChartDataCacheNumber];
+            _nextIndex = 0;
+            _count = 0;
+        }
+    }
+
+    public IEnumerable<T> TakeLatestN(int count, bool filterDupe = false, IEqualityComparer<T>? comparer = null)
     {
         lock (_lock)
         {
             count = Math.Min(count, _count);
-            var result = new T[count];
+            var result = new List<T>(count);
+            var seen = new HashSet<T>(comparer);
             
             var startIndex = (_nextIndex - count + _buffer.Length) % _buffer.Length;
             
             for (var i = 0; i < count; i++)
             {
                 var index = (startIndex + i) % _buffer.Length;
-                result[i] = _buffer[index];
+                var cur = _buffer[index];
+
+                if (filterDupe)
+                {
+                    if (seen.Add(cur)) result.Add(cur);
+                    continue;
+                }
+                result.Add(cur);
             }
             
             return result;

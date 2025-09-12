@@ -59,6 +59,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IApplicationSettingsService _applicationSettingsService;
     
     private readonly IQSOUploadService _qsoUploadService;
+    
     private readonly IDecodedDataProcessorService _decodedDataProcessorService;
 
 
@@ -497,6 +498,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     MsgSending = string.IsNullOrEmpty(stat.TXMessage)
                         ? TranslationHelper.GetString(LangKeys.txing)
                         : stat.TXMessage;
+                    _decodedDataProcessorService.UpdateClientBand(stat.Id,FreqHelper.GetMeterFromFreq(stat.DialFrequencyInHz));
                     MessageBus.Current.SendMessage(new ClientStatusChanged()
                     {
                         CurrStatus = stat

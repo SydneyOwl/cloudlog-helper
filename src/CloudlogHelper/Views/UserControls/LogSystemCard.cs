@@ -117,6 +117,16 @@ public class LogSystemCard : UserControl
                             UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
                         }
                     },
+                    FieldType.FilePicker => new FilePickerTextboxUserControl()
+                    {
+                        Classes = { "setting-control" },
+                        DataContext = config.Fields[i],
+                        [!FilePickerTextboxUserControl.SelectedFilePathProperty] = new Binding("Value")
+                        {
+                            Mode = BindingMode.TwoWay,
+                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                        }
+                    },
                     _ => new TextBox()
                 };
 

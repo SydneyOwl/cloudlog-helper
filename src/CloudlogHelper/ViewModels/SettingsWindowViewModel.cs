@@ -63,8 +63,11 @@ public class SettingsWindowViewModel : ViewModelBase
         _rigctldService = rs;
         _nativeNotificationManager = nm;
         _initSkipped = cmd.AutoUdpLogUploadOnly;
-        DraftSettings = _settingsService.GetDraftSettings();
-
+        if (!_settingsService.TryGetDraftSettings(this, out var settings))
+        {
+            throw new Exception("Draft setting instance is held by another viewmodel!");
+        }
+        DraftSettings = settings!;
         _source = new CancellationTokenSource();
         InitializeLogSystems();
         // throw new Exception();
@@ -325,13 +328,13 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         // resume settings
         if (Design.IsDesignMode) return;
-        _settingsService.RestoreSettings();
+        _settingsService.RestoreSettings(this);
         _source.Cancel();
     }
 
     private void _saveAndApplyConf()
     {
-        _settingsService.ApplySettings(LogSystems.ToList());
+        _settingsService.ApplySettings(this, LogSystems.ToList());
         _source.Cancel();
     }
 

@@ -5,4 +5,5 @@ namespace CloudlogHelper.Services.Interfaces;
 public interface IDecodedDataProcessorService
 {
     void ProcessDecoded(Decode decode);
+    void UpdateClientBand(string clientId, string band);
 }

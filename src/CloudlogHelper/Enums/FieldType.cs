@@ -4,5 +4,6 @@
 public enum FieldType
 {
     Text,
-    Password
+    Password,
+    FilePicker
 }

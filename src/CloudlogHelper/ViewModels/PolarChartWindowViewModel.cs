@@ -50,23 +50,31 @@ public class PolarChartWindowViewModel : ViewModelBase
     [Reactive] public double DistWeightValue { get; set; } = DefaultConfigs.DefaulPolarDistWeightValue;
     [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
     [Reactive] public bool ShowDestColor { get; set; } = true;
+    [Reactive] public bool FilterDupeCallsign { get; set; } = true;
     [Reactive] public bool UpdatePaused { get; set; }
+    
+    [Reactive] public bool ShowErrorMsg { get; set; }
 
     public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
     public ReactiveCommand<Unit, Unit> Test { get; }
+    public ReactiveCommand<Unit, Unit> RefreshChart { get; }
     public AvaPlot PlotControl { get; private set; }
 
     private PolarAxis _polarAxis;
 
     private IChartDataCacheService<ChartQSOPoint> _chartDataCacheService;
+    
+    private BasicSettings _basicSettings;
 
     public PolarChartWindowViewModel()
     {
     }
 
-    public PolarChartWindowViewModel(IChartDataCacheService<ChartQSOPoint> chartDataCacheService)
+    public PolarChartWindowViewModel(IChartDataCacheService<ChartQSOPoint> chartDataCacheService,
+        IApplicationSettingsService applicationSettingsService)
     {
+        _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;
 
         Application.Current!.ActualThemeVariantChanged += (sender, args) => { UpdatePolar(); };
@@ -80,43 +88,8 @@ public class PolarChartWindowViewModel : ViewModelBase
                 DefaultConfigs.ExportedPolarChartSize).SavePng(a.Path.AbsolutePath);
         });
 
-        Test = ReactiveCommand.Create(() =>
-        {
-            var aa = QSOPointUtil.GenerateFakeFT8Data(1).First();
-            _chartDataCacheService.Add(aa);
-            ClassLogger.Debug($"Produce {aa}");
-            MessageBus.Current.SendMessage(new ClientStatusChanged
-            {
-                CurrStatus = new Status
-                {
-                    MagicNumber = 0,
-                    SchemaVersion = (SchemaVersion)0,
-                    Id = aa.Client,
-                    DialFrequencyInHz = FreqHelper.GetRandomFreqFromMeter(aa.Band),
-                    Mode = aa.Mode,
-                    DXCall = null,
-                    Report = null,
-                    TXMode = null,
-                    TXEnabled = false,
-                    Transmitting = false,
-                    Decoding = false,
-                    RXOffsetFrequencyHz = 0,
-                    TXOffsetFrequencyHz = 0,
-                    DECall = null,
-                    DEGrid = null,
-                    DXGrid = null,
-                    TXWatchdog = false,
-                    SubMode = null,
-                    FastMode = false,
-                    SpecialOperationMode = SpecialOperationMode.NONE,
-                    FrequencyTolerance = 0,
-                    TRPeriod = 0,
-                    ConfigurationName = null,
-                    TXMessage = null
-                }
-            });
-        });
-
+        RefreshChart = ReactiveCommand.Create(UpdatePolar);
+        
         this.WhenActivated(disposable =>
         {
             MessageBus.Current.Listen<ClientStatusChanged>().Subscribe(x =>
@@ -177,13 +150,19 @@ public class PolarChartWindowViewModel : ViewModelBase
     private void UpdatePolar()
     {
         if (_isExecutingChartUpdate || UpdatePaused) return;
+        if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
+        {
+            ShowErrorMsg = true;
+            return;
+        }
         try
         {
+            ShowErrorMsg = false;
             ClassLogger.Trace("Updating polar.");
             _isExecutingChartUpdate = true;
             PlotControl.Plot.Clear();
 
-            var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples)
+            var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples, FilterDupeCallsign, ChartQSOPoint.ChartQsoPointComparer)
                                                 .Where(x => x.Band == SelectedBand
                                                             && x.Mode == SelectedMode
                                                             && x.Client == SelectedClient)
@@ -243,6 +222,7 @@ public class PolarChartWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
+            ClassLogger.Error(e);
             PlotControl.Plot.Clear();
         }
         finally

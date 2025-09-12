@@ -1,4 +1,7 @@
-﻿namespace CloudlogHelper.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace CloudlogHelper.Models;
 
 public struct ChartQSOPoint
 {
@@ -27,4 +30,19 @@ public struct ChartQSOPoint
         return
             $"{nameof(DxCallsign)}: {DxCallsign}, {nameof(Azimuth)}: {Azimuth}, {nameof(Distance)}: {Distance}, {nameof(Mode)}: {Mode}, {nameof(Snr)}: {Snr}, {nameof(Band)}: {Band}, {nameof(Client)}: {Client}";
     }
+
+    private sealed class ChartQsoPointEqualityComparer : IEqualityComparer<ChartQSOPoint>
+    {
+        public bool Equals(ChartQSOPoint x, ChartQSOPoint y)
+        {
+            return x.DxCallsign == y.DxCallsign && x.Mode == y.Mode && x.Band == y.Band && x.Client == y.Client;
+        }
+
+        public int GetHashCode(ChartQSOPoint obj)
+        {
+            return HashCode.Combine(obj.DxCallsign, obj.Mode, obj.Band, obj.Client);
+        }
+    }
+
+    public static IEqualityComparer<ChartQSOPoint> ChartQsoPointComparer { get; } = new ChartQsoPointEqualityComparer();
 }

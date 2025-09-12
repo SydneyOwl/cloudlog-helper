@@ -26,7 +26,8 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IWindowManagerService windowManager;
+    private readonly IWindowManagerService _windowManager;
+    private readonly IInAppNotificationService _inAppNotificationService;
     private bool _isRigctldUsingExternal;
 
     public MainWindowViewModel()
@@ -44,7 +45,8 @@ public class MainWindowViewModel : ViewModelBase
         UserBasicDataGroupboxUserControlViewModel userBasicDataGroupboxUserControlViewModel,
         StatusLightUserControlViewModel statusLightUserControlViewModel,
         CommandLineOptions cmd,
-        IWindowManagerService wm
+        IWindowManagerService wm,
+        IInAppNotificationService inAppNotificationService
     )
     {
         if (cmd.AutoUdpLogUploadOnly)
@@ -52,8 +54,9 @@ public class MainWindowViewModel : ViewModelBase
             UserBasicBoxEnabled = false;
             RigDataBoxEnabled = false;
         }
-        
-        windowManager = wm;
+
+        _inAppNotificationService = inAppNotificationService;
+        _windowManager = wm;
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel), true));
         OpenAboutWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(AboutWindowViewModel), true));
         OpenQSOAssistantWindow =
@@ -92,7 +95,7 @@ public class MainWindowViewModel : ViewModelBase
                                 floatWin.SizeToContent = SizeToContent.Width;
                                 floatWin.Height = 600;
                                 floatWin.Show();
-                                var track = windowManager.Track(floatWin);
+                                var track = _windowManager.Track(floatWin);
                                 ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
                                 UDPLogBoxEnabled = false;
                                 break;
@@ -108,7 +111,7 @@ public class MainWindowViewModel : ViewModelBase
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
                                 floatWin.Show();
-                                var track = windowManager.Track(floatWin);
+                                var track = _windowManager.Track(floatWin);
                                 ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
                                 UserBasicBoxEnabled = false;
                                 break;
@@ -124,7 +127,7 @@ public class MainWindowViewModel : ViewModelBase
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
                                 floatWin.Show();
-                                var track = windowManager.Track(floatWin);
+                                var track = _windowManager.Track(floatWin);
                                 ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
                                 RigDataBoxEnabled = false;
                                 break;
@@ -133,7 +136,7 @@ public class MainWindowViewModel : ViewModelBase
                     }
                     else
                     {
-                        windowManager.CloseWindowBySeq(res.SenderSeq!);
+                        _windowManager.CloseWindowBySeq(res.SenderSeq!);
                         switch (res.Sender)
                         {
                             case UDPLogInfoGroupboxUserControlViewModel:
@@ -173,11 +176,12 @@ public class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            await windowManager.CreateAndShowWindowByVm(vm, null, dialog);
+            await _windowManager.CreateAndShowWindowByVm(vm, null, dialog);
         }
         catch (Exception ex)
         {
-            ClassLogger.Error($"open failed:{vm.Name}, {ex.Message}");
+            await _inAppNotificationService.SendErrorNotificationAsync($"Unable to open window: {ex.Message}");
+            ClassLogger.Error(ex, $"open failed:{vm.Name}");
             throw;
         }
     }

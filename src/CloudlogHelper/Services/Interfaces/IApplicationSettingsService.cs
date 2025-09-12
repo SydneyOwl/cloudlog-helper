@@ -16,10 +16,10 @@ public interface IApplicationSettingsService
 
     public bool RestartUDPNeeded();
 
-    public void ApplySettings(List<LogSystemConfig>? rawConfigs = null);
+    public void ApplySettings(object owner, List<LogSystemConfig>? rawConfigs = null);
 
-    public void RestoreSettings();
+    public void RestoreSettings(object owner);
     
     public ApplicationSettings GetCurrentSettings();
-    public ApplicationSettings GetDraftSettings();
+    public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings);
 }

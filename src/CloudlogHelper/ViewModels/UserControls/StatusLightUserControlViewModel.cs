@@ -62,11 +62,11 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 try
                 {
                     UdpServerRunningStatus = StatusLightEnum.Loading;
-                    var udpSettingsEnableUdpServer =
-                        _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer;
-                    _applicationSettingsService.GetDraftSettings().UDPSettings.EnableUDPServer =
-                        !udpSettingsEnableUdpServer;
-                    _applicationSettingsService.ApplySettings();
+                    if (_applicationSettingsService.TryGetDraftSettings(this, out var draft))
+                    {
+                        draft!.UDPSettings.EnableUDPServer = !draft!.UDPSettings.EnableUDPServer;
+                        _applicationSettingsService.ApplySettings(this);
+                    }
                     await Task.Delay(500);
                 }
                 finally
@@ -81,11 +81,12 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 try
                 {
                     RigctldRunningStatus = StatusLightEnum.Loading;
-                    var poll =
-                        _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed;
-                    _applicationSettingsService.GetDraftSettings().HamlibSettings.PollAllowed =
-                        !poll;
-                    _applicationSettingsService.ApplySettings();
+                    if (_applicationSettingsService.TryGetDraftSettings(this, out var draft))
+                    {
+                        draft!.HamlibSettings.PollAllowed = !draft!.HamlibSettings.PollAllowed;
+                        _applicationSettingsService.ApplySettings(this);
+                    }
+                    
                     await Task.Delay(1500);
                 }
                 finally

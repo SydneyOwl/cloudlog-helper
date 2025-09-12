@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ADIFLib;
+using AutoMapper;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -16,6 +17,7 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Force.DeepCloner;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -36,6 +38,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     private bool _executeOnStart;
 
     private CancellationTokenSource _source = new();
+
+    private IMapper _mapper;
     
     private readonly IApplicationSettingsService settingsService;
 
@@ -48,12 +52,14 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
         IInAppNotificationService winNotification,
-        IApplicationSettingsService ss)
+        IApplicationSettingsService ss,
+        IMapper mapper)
     {
+        _mapper = mapper;
         _dbService = dbService;
         _inAppNotification = winNotification;
         settingsService = ss;
-        Settings = settingsService.GetDraftSettings();
+        Settings = settingsService.GetCurrentSettings().DeepClone();
         
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
@@ -110,7 +116,11 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private void _saveAndApplyConf()
     {
-        settingsService.ApplySettings();
+        if (settingsService.TryGetDraftSettings(this, out var draft))
+        {
+            _mapper.Map(Settings, draft);
+            settingsService.ApplySettings(this);
+        }
     }
 
     private async Task AddLogPath()

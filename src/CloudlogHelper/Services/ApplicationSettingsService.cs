@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using AutoMapper;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Enums;
@@ -44,6 +45,12 @@ public class ApplicationSettingsService: IApplicationSettingsService
     private ApplicationSettings? _oldSettings;
 
     private IMapper _mapper;
+    
+    
+    private readonly object _draftLock = new object();
+    private bool _isDraftLocked = false;
+    private object? _currentLockThreadOwner;
+
     
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
@@ -167,7 +174,6 @@ public class ApplicationSettingsService: IApplicationSettingsService
                                                               b.EnableConnectionFromOutside
                                                               || a.UDPPort != b.UDPPort;
     }
-    
 
     /// <summary>
     ///     write settings to default position.
@@ -187,45 +193,59 @@ public class ApplicationSettingsService: IApplicationSettingsService
         }
     }
 
-
-    public void ApplySettings(List<LogSystemConfig>? rawConfigs = null)
+    public void ApplySettings(object owner, List<LogSystemConfig>? rawConfigs = null)
     {
-        _oldSettings = _currentSettings.DeepClone();
-        // apply changes for log services here
-        _writeCurrentSettingsToFile(_draftSettings!);
-        _mapper.Map(_draftSettings, _currentSettings);
-        _applyLogServiceChanges(rawConfigs);
+        lock (_draftLock)
+        {
+            if (!_isDraftLocked) throw new SynchronizationLockException("Draft setting is not locked!");
+            
+            if (!ReferenceEquals(_currentLockThreadOwner, owner)) throw new SynchronizationLockException("Draft setting is locked by another instance!");
+            
+            ClassLogger.Debug($"Settings applied by {owner.GetType().FullName}");
+            
+            _isDraftLocked = false;
+            _oldSettings = _currentSettings.DeepClone();
+            _mapper.Map(_draftSettings, _currentSettings);
+            _applyLogServiceChanges(rawConfigs);
         
-        if (IsCloudlogConfChanged())
-        {
-            ClassLogger.Trace("Cloudlog settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
-        }
+            // apply changes for log services here
+            _writeCurrentSettingsToFile(_draftSettings!);
+            
+            if (IsCloudlogConfChanged())
+            {
+                ClassLogger.Trace("Cloudlog settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
+            }
 
-        if (IsHamlibConfChanged())
-        {
-            ClassLogger.Trace("hamlib settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
-        }
+            if (IsHamlibConfChanged())
+            {
+                ClassLogger.Trace("hamlib settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
+            }
 
-        if (IsUDPConfChanged())
-        {
-            ClassLogger.Trace("udp settings changed");
-            MessageBus.Current.SendMessage(new SettingsChanged
-                { Part = ChangedPart.UDPServer });
-        }
+            if (IsUDPConfChanged())
+            {
+                ClassLogger.Trace("udp settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.UDPServer });
+            }
 
-        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
+        }
     }
 
-    public void RestoreSettings()
+    public void RestoreSettings(object owner)
     {
-        _draftSettings = _currentSettings!.DeepClone();
-        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
-        // CloudlogSettings.ApplySettingsChange(_currentInstance!.CloudlogSettings);
-        // HamlibSettings.ApplySettingsChange(_currentInstance!.HamlibSettings);
-        // UDPSettings.ApplySettingsChange(_currentInstance!.UDPSettings);
-        // _settingsInstance = _currentInstance;
+        lock (_draftLock)
+        {
+            if (!_isDraftLocked) throw new SynchronizationLockException("Draft setting is not locked!");
+            
+            if (!ReferenceEquals(_currentLockThreadOwner, owner)) throw new SynchronizationLockException("Draft setting is locked by another instance!");
+            
+            _isDraftLocked = false;
+            _draftSettings = _currentSettings!.DeepClone();
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
+        }
     }
 
     public ApplicationSettings GetCurrentSettings()
@@ -233,13 +253,21 @@ public class ApplicationSettingsService: IApplicationSettingsService
         return _currentSettings!;
     }
 
-    public ApplicationSettings GetDraftSettings()
+    public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings)
     {
+        draftSettings = null;
+        lock (_draftLock)
+        {
+            if (_isDraftLocked) return false;
+            _isDraftLocked = true;
+            _currentLockThreadOwner = owner;
+        }
         _draftSettings!.CloudlogSettings.ApplyValidationRules();
         _draftSettings!.HamlibSettings.ApplyValidationRules();
         _draftSettings!.UDPSettings.ApplyValidationRules();
         _draftSettings!.QsoSyncAssistantSettings.ApplyValidationRules();
-        return _draftSettings!;
+        draftSettings = _draftSettings;
+        return true;
     }
 
     private void _applyLogServiceChanges(List<LogSystemConfig>? rawConfigs = null)

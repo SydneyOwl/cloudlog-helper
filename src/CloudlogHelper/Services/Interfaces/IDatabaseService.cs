@@ -13,6 +13,6 @@ public interface IDatabaseService
     Task<CountryDatabase> GetCallsignDetailAsync(string callsign);
     Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso);
     Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso);
-    Task BatchAddOrUpdateCallsignGrid(List<CollectedGridDatabase> collectedGrid);
+    Task BatchAddOrUpdateCallsignGridAsync(List<CollectedGridDatabase> collectedGrid);
     Task<string?> GetGridByCallsign(string callsign);
 }

@@ -390,8 +390,9 @@ namespace CloudlogHelper.Utils
         /// </summary>
         /// <param name="s">梅登海德网格</param>
         /// <returns>是否是梅登海德网格。</returns>
-        public static bool CheckMaidenhead(string s)
+        public static bool CheckMaidenhead(string? s)
         {
+            if (s is null) return false;
             if (s.Length != 4 && s.Length != 6)
             {
                 return false;

@@ -16,14 +16,16 @@ public class AskExitOrMinimizeWindowViewModel : ViewModelBase
     
     public AskExitOrMinimizeWindowViewModel(IApplicationSettingsService ss)
     {
-        var settings = ss.GetDraftSettings();
         ConfirmToTray = ReactiveCommand.Create(() =>
         {
             if (RememberChoice)
             {
-                settings.ShutdownMode =
-                    MinimizeToTray ? ProgramShutdownMode.ToTray : ProgramShutdownMode.Shutdown;
-                ss.ApplySettings();
+                if (ss.TryGetDraftSettings(this, out var draft))
+                {
+                    draft!.ShutdownMode =
+                        MinimizeToTray ? ProgramShutdownMode.ToTray : ProgramShutdownMode.Shutdown;
+                    ss.ApplySettings(this);
+                }
             }
 
             return MinimizeToTray;

@@ -265,7 +265,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
-    public async Task BatchAddOrUpdateCallsignGrid(List<CollectedGridDatabase> collectedGrid)
+    public async Task BatchAddOrUpdateCallsignGridAsync(List<CollectedGridDatabase> collectedGrid)
     {
         try
         {

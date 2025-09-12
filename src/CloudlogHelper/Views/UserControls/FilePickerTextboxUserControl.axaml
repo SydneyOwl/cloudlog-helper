@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="60"
+             x:Class="CloudlogHelper.Views.UserControls.FilePickerTextboxUserControl"
+             x:DataType="userControls:FilePickerTextboxUserControl">
+    <Grid ColumnDefinitions="*,Auto">
+        <TextBox Grid.Column="0" Name="FilePathTextBox" Height="30" MaxWidth="200"
+                 Watermark="Select a file..." Text="{Binding SelectedFilePath}"/>
+        <Button Grid.Column="1" 
+                Click="FilePickerButton_OnClick"
+                Margin="10,0,0,0" Content="{avalonia:MaterialIconExt Kind=FolderOpen}" />
+    </Grid>
+</UserControl>
