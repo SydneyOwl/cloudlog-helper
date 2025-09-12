@@ -590,4 +590,15 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="mygrid" xml:space="preserve">
         <value>My Grid</value>
     </data>
+    <data name="disablecharts" xml:space="preserve">
+        <value>Disable chart feature (low-performance devices only)
+
+</value>
+    </data>
+    <data name="griderror" xml:space="preserve">
+        <value>Grid coordinates are empty or invalid, please check settings!</value>
+    </data>
+    <data name="chartsdisabled" xml:space="preserve">
+        <value>Chart feature is disabled, please enable it in settings!</value>
+    </data>
 </root>

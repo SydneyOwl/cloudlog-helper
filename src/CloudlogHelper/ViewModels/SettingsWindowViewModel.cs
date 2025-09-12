@@ -89,7 +89,7 @@ public class SettingsWindowViewModel : ViewModelBase
         this.WhenActivated(disposables =>
         {
             // Subscribe language change
-            this.WhenAnyValue(x => x.DraftSettings.LanguageType).Subscribe(language =>
+            this.WhenAnyValue(x => x.DraftSettings.BasicSettings.LanguageType).Subscribe(language =>
                 {
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })

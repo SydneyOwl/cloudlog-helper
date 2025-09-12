@@ -95,28 +95,25 @@
         <!-- Main Content (Scrollable) -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="8">
-                <!-- Language Settings -->
+                <!-- Basic Settings -->
                 <Border Classes="setting-card">
-                    <StackPanel>
-                        <TextBlock Text="Language/语言" Classes="section-title" />
-                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.basicsettings}}" Classes="section-title" />
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Language/语言" Classes="setting-label" />
-                            <ComboBox Classes="setting-control" Grid.Column="1"
-                                      SelectedIndex="{Binding DraftSettings.LanguageType}">
+                            <ComboBox Classes="setting-control"
+                                      SelectedIndex="{Binding DraftSettings.BasicSettings.LanguageType}">
                                 <ComboBoxItem>English</ComboBoxItem>
                                 <ComboBoxItem>简体中文</ComboBoxItem>
                             </ComboBox>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-                
-                <!-- Grid Settings -->
-                <Border Classes="setting-card">
-                    <StackPanel>
-                        <TextBlock Text="{I18N {x:Static resources:LangKeys.basicsettings}}" Classes="section-title" />
+                        </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{I18N {x:Static resources:LangKeys.mygrid}}" Classes="setting-label" />
                             <TextBox HorizontalAlignment="Left" Text="{Binding DraftSettings.BasicSettings.MyMaidenheadGrid}" Classes="setting-control" Grid.Column="1" Watermark="e.g. OM89"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <CheckBox HorizontalAlignment="Left" Content="{I18N {x:Static resources:LangKeys.disablecharts}}"
+                                      IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>

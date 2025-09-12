@@ -470,7 +470,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     // process message
                     var msg = (QsoLogged)message;
                     var cty = await _databaseService.GetCallsignDetailAsync(msg.DXCall);
-                    var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg, _applicationSettingsService.GetCurrentSettings().LanguageType);
+                    var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg, _applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
                     rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
                     
                     // log it into that

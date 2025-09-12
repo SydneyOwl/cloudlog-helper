@@ -122,7 +122,7 @@ public class App : Application
         _servProvider = collection.BuildServiceProvider();
         
         var applicationSettingsService = _servProvider.GetRequiredService<IApplicationSettingsService>();
-        I18NExtension.Culture = TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().LanguageType);
+        I18NExtension.Culture = TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
 
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);

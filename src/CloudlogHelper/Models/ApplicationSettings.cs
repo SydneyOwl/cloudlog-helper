@@ -33,13 +33,6 @@ public class ApplicationSettings : ReactiveValidationObject
     [Reactive]
     [JsonProperty]
     public ProgramShutdownMode ShutdownMode { get; set; } = ProgramShutdownMode.NotSpecified;
-
-    /// <summary>
-    ///     Default language of this application.
-    /// </summary>
-    [Reactive]
-    [JsonProperty]
-    public SupportedLanguage LanguageType { get; set; } = SupportedLanguage.NotSpecified;
     
     /// <summary>
     ///     Some basic settings.

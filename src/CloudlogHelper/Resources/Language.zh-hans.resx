@@ -592,4 +592,14 @@
     <data name="mygrid" xml:space="preserve">
         <value>我的网格坐标</value>
     </data>
+    <data name="disablecharts" xml:space="preserve">
+        <value>禁用图表功能（仅低性能设备）</value>
+    </data>
+    <data name="griderror" xml:space="preserve">
+        <value>网格坐标为空或有误，请检查设置！
+</value>
+    </data>
+    <data name="chartsdisabled" xml:space="preserve">
+        <value>图表功能被禁用，请在设置中启用！</value>
+    </data>
 </root>

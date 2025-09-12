@@ -204,6 +204,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Chart feature is disabled, please enable it in settings!.
+        /// </summary>
+        public static string chartsdisabled {
+            get {
+                return ResourceManager.GetString("chartsdisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please check RIG connection!.
         /// </summary>
         public static string checkrigconn {
@@ -371,6 +380,17 @@ namespace CloudlogHelper.Resources {
         public static string deviceport {
             get {
                 return ResourceManager.GetString("deviceport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable chart feature (low-performance devices only)
+        ///
+        ///.
+        /// </summary>
+        public static string disablecharts {
+            get {
+                return ResourceManager.GetString("disablecharts", resourceCulture);
             }
         }
         
@@ -629,6 +649,15 @@ namespace CloudlogHelper.Resources {
         public static string grid {
             get {
                 return ResourceManager.GetString("grid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid coordinates are empty or invalid, please check settings!.
+        /// </summary>
+        public static string griderror {
+            get {
+                return ResourceManager.GetString("griderror", resourceCulture);
             }
         }
         

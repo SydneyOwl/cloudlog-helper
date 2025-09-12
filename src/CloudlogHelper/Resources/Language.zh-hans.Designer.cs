@@ -204,6 +204,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 图表功能被禁用，请在设置中启用！.
+        /// </summary>
+        public static string chartsdisabled {
+            get {
+                return ResourceManager.GetString("chartsdisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 请检查电台连接！.
         /// </summary>
         public static string checkrigconn {
@@ -371,6 +380,15 @@ namespace CloudlogHelper.Resources {
         public static string deviceport {
             get {
                 return ResourceManager.GetString("deviceport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 禁用图表功能（仅低性能设备）.
+        /// </summary>
+        public static string disablecharts {
+            get {
+                return ResourceManager.GetString("disablecharts", resourceCulture);
             }
         }
         
@@ -631,6 +649,16 @@ namespace CloudlogHelper.Resources {
         public static string grid {
             get {
                 return ResourceManager.GetString("grid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 网格坐标为空或有误，请检查设置！
+        ///.
+        /// </summary>
+        public static string griderror {
+            get {
+                return ResourceManager.GetString("griderror", resourceCulture);
             }
         }
         

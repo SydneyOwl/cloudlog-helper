@@ -55,7 +55,7 @@ public class ApplicationSettingsService: IApplicationSettingsService
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
         _draftSettings = new ApplicationSettings();
-        _draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
+        _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
         _currentSettings = _draftSettings.DeepClone();
         _oldSettings = _draftSettings.DeepClone();
@@ -86,9 +86,9 @@ public class ApplicationSettingsService: IApplicationSettingsService
             }
 
             // init culture
-            if (applicationSettingsService._draftSettings.LanguageType == SupportedLanguage.NotSpecified)
+            if (applicationSettingsService._draftSettings.BasicSettings.LanguageType == SupportedLanguage.NotSpecified)
             {
-                applicationSettingsService._draftSettings.LanguageType = TranslationHelper.DetectDefaultLanguage(); 
+                applicationSettingsService._draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage(); 
             }
             
             var tps =  applicationSettingsService._draftSettings

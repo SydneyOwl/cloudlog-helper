@@ -54,6 +54,7 @@ public class PolarChartWindowViewModel : ViewModelBase
     [Reactive] public bool UpdatePaused { get; set; }
     
     [Reactive] public bool ShowErrorMsg { get; set; }
+    [Reactive] public string ErrorMessage { get; set; }
 
     public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
@@ -152,6 +153,14 @@ public class PolarChartWindowViewModel : ViewModelBase
         if (_isExecutingChartUpdate || UpdatePaused) return;
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
+            ErrorMessage = TranslationHelper.GetString(LangKeys.griderror);
+            ShowErrorMsg = true;
+            return;
+        }
+
+        if (_basicSettings.DisableAllCharts)
+        {
+            ErrorMessage = TranslationHelper.GetString(LangKeys.chartsdisabled);
             ShowErrorMsg = true;
             return;
         }

@@ -30,15 +30,18 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
     private ObservableCollection<Decode> _decodedCache = new();
     
     private IDatabaseService  _databaseService;
+    
     private IChartDataCacheService<ChartQSOPoint> _dataCacheService;
 
     private string _myGrid;
+    
+    private BasicSettings _basicSettings;
 
     public DecodedDataProcessorService(IDatabaseService databaseService,
         IApplicationSettingsService applicationSettingsService,
         IChartDataCacheService<ChartQSOPoint> chartDataCacheService)
     {
-        var basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
+        _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _databaseService = databaseService;
         _dataCacheService = chartDataCacheService;
        _decodedCache.ObserveCollectionChanges()
@@ -52,15 +55,15 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                     if (decodes.Length == 0)return;
                     _decodedCache.Clear();
                     // refresh all data if my grid changed
-                    if (_myGrid != basicSettings.MyMaidenheadGrid)
+                    if (_myGrid != _basicSettings.MyMaidenheadGrid)
                     {
                         ClassLogger.Debug("Callsign differs. Cleaning all data..");
                         _callsignDistanceAndBearing.Clear();
                         _dataCacheService.Clear();
                         _myGrid = string.Empty;
-                        if (MaidenheadGridUtil.CheckMaidenhead(basicSettings.MyMaidenheadGrid))
+                        if (MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
                         {
-                            _myGrid = basicSettings.MyMaidenheadGrid!;
+                            _myGrid = _basicSettings.MyMaidenheadGrid!;
                         }
                     }
                     await _saveCallsignGridInfo(decodes);
@@ -75,6 +78,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
 
     public void ProcessDecoded(Decode decode)
     {
+        if (_basicSettings.DisableAllCharts)return;
         _decodedCache.Add(decode);
     }
     
@@ -112,7 +116,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                     continue;
                 }
                 
-                ClassLogger.Debug($"Cache hits but we could get a more accurate result by recalc grid...");
+                ClassLogger.Debug($"{callsign} Cache hits but we could get a more accurate result by recalc grid...");
             }
 
             string iGrid;

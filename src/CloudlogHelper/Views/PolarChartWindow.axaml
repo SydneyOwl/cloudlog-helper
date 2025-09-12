@@ -73,7 +73,7 @@
         
         <Border Grid.Row="1" Grid.Column="1" Margin="10" BorderBrush="Gray" BorderThickness="1">
             <Grid x:Name="ChartContainerGrid">
-                <TextBlock Text="网格坐标为空或有误，请检查设置！"
+                <TextBlock Text="{Binding ErrorMessage}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Foreground="Red"
