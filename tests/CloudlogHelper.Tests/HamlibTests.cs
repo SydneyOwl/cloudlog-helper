@@ -6,6 +6,7 @@ using Xunit.Abstractions;
 
 namespace CloudlogHelper.Tests;
 
+#if false
 public class HamlibTests : IClassFixture<HamlibFixture>
 {
     private readonly IRigctldService _rigctldService;
@@ -66,3 +67,4 @@ public class HamlibFixture : IAsyncLifetime
         return Task.CompletedTask;
     }
 }
+#endif

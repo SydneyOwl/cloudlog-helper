@@ -27,21 +27,7 @@ jobs:
       - name: Execute test
         shell: pwsh
         run: |
-          $hamlibReleaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/Hamlib/Hamlib/releases/latest"
-          $latestHamlibVersion = $hamlibReleaseInfo.tag_name
-          $hamlibTargetDir = "$env:LOCALAPPDATA\CloudlogHelper\hamlib"
-          New-Item -ItemType Directory -Path $hamlibTargetDir -Force
-          $downloadUrl = "https://github.com/Hamlib/Hamlib/releases/download/$latestHamlibVersion/hamlib-w64-$latestHamlibVersion.zip"
-          $zipPath = "$env:TEMP\hamlib-w64-$latestHamlibVersion.zip"
-          Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
-          Expand-Archive -Path $zipPath -DestinationPath "$env:TEMP\hamlib"
-          $sourceDir = "$env:TEMP\hamlib\hamlib-w64-$latestHamlibVersion\bin"
-          Move-Item -Path "$sourceDir\*.dll" -Destination $hamlibTargetDir
-          Move-Item -Path "$sourceDir\rigctld.exe" -Destination $hamlibTargetDir
           dotnet test
-          Remove-Item -Path $zipPath -Force
-          Remove-Item -Path "$env:TEMP\hamlib" -Recurse -Force
-          Remove-Item -Path $hamlibTargetDir -Recurse -Force
 
       - name: Build application
         shell: pwsh

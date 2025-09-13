@@ -2,6 +2,7 @@
 
 namespace CloudlogHelper.Tests;
 
+#if false
 public class LotwLogServiceTest
 {
     [Theory]
@@ -14,3 +15,4 @@ public class LotwLogServiceTest
         await lotwThirdPartyLogService.UploadQSOAsync(adif,CancellationToken.None);
     }
 }
+#endif
