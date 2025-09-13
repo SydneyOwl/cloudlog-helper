@@ -20,4 +20,14 @@ public abstract class ThirdPartyLogService
     /// </summary>
     /// <param name="adif"></param>
     public abstract Task UploadQSOAsync(string? adif, CancellationToken token);
+
+    /// <summary>
+    /// Preinit works. This will be called each time setting window opened!
+    /// DON'T DO TIME COSTING WORKS HERE!
+    /// </summary>
+    /// <returns></returns>
+    public virtual Task PreInitAsync()
+    {
+        return Task.CompletedTask;
+    }
 }

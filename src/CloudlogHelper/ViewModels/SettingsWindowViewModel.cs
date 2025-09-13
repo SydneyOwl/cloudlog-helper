@@ -70,7 +70,7 @@ public class SettingsWindowViewModel : ViewModelBase
         DraftSettings = settings!;
         _source = new CancellationTokenSource();
         InitializeLogSystems();
-        // throw new Exception();
+        
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
@@ -129,6 +129,10 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private void InitializeLogSystems()
     {
+        foreach (var draftSettingsLogService in DraftSettings.LogServices)
+        {
+            draftSettingsLogService.PreInitAsync().GetAwaiter().GetResult();
+        }
         foreach (var draftSettingsLogService in DraftSettings.LogServices)
         {
             var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();

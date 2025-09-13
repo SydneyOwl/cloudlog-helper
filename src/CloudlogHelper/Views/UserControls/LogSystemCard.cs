@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,42 +94,54 @@ public class LogSystemCard : UserControl
                 Grid.SetColumn(label, 0);
                 grid.Children.Add(label);
 
-                Control inputControl = config.Fields[i].Type switch
+                Control inputControl;
+                switch (config.Fields[i].Type)
                 {
-                    FieldType.Text => new TextBox
-                    {
-                        Classes = { "setting-control" },
-                        DataContext = config.Fields[i],
-                        Watermark = config.Fields[i].Watermark ?? string.Empty,
-                        [!TextBox.TextProperty] = new Binding("Value")
+                    case FieldType.Text:
+                        inputControl = new TextBox
                         {
-                            Mode = BindingMode.TwoWay,
-                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                        }
-                    },
-                    FieldType.Password => new TextBox
-                    {
-                        Classes = { "setting-control" },
-                        PasswordChar = '•',
-                        DataContext = config.Fields[i],
-                        [!TextBox.TextProperty] = new Binding("Value")
+                            Classes = { "setting-control" },
+                            DataContext = config.Fields[i],
+                            Watermark = config.Fields[i].Watermark ?? string.Empty,
+                            [!TextBox.TextProperty] = new Binding("Value")
+                            {
+                                Mode = BindingMode.TwoWay,
+                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                            }
+                        };
+                        break;
+                    case FieldType.Password:
+                        inputControl = new TextBox
                         {
-                            Mode = BindingMode.TwoWay,
-                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                        }
-                    },
-                    FieldType.FilePicker => new FilePickerTextboxUserControl()
-                    {
-                        Classes = { "setting-control" },
-                        DataContext = config.Fields[i],
-                        [!FilePickerTextboxUserControl.SelectedFilePathProperty] = new Binding("Value")
+                            Classes = { "setting-control" },
+                            PasswordChar = '•',
+                            DataContext = config.Fields[i],
+                            [!TextBox.TextProperty] = new Binding("Value")
+                            {
+                                Mode = BindingMode.TwoWay,
+                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                            }
+                        };
+                        break;
+                    case FieldType.FilePicker:
+                        var filePickerTextboxUserControlViewModel = new FilePickerTextboxUserControlViewModel
+                            {
+                                SelectedFilePath = config.Fields[i].Value!
+                            };
+
+                        filePickerTextboxUserControlViewModel.WhenAnyValue(vm => vm.SelectedFilePath)
+                            .BindTo(config.Fields[i], f => f.Value);
+                        
+                        inputControl = new FilePickerTextboxUserControl()
                         {
-                            Mode = BindingMode.TwoWay,
-                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                        }
-                    },
-                    _ => new TextBox()
-                };
+                            Classes = { "setting-control" },
+                            DataContext = filePickerTextboxUserControlViewModel
+                        };
+                        break;
+                    default:
+                        inputControl = new TextBox();
+                        break;
+                }
 
                 Grid.SetColumn(inputControl, 1);
                 Grid.SetRow(inputControl, i);
