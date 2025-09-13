@@ -31,7 +31,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
     [UserInput("Station Name", InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
     public string? StationName { get; set; }
     
-    [UserInput("TQSL Password", InputType = FieldType.Password)]
+    [UserInput("TQSL Password", InputType = FieldType.Password, IsRequired = false)]
     public string? TqslPassword { get; set; }
 
     public string?[]? Stations = Array.Empty<string>();
