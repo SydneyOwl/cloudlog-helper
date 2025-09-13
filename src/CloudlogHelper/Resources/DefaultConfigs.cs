@@ -309,4 +309,6 @@ public class DefaultConfigs
     public static string ExecutableRigctldPath => Path.Join(
         HamlibFilePath,
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "rigctld.exe" : "rigctld");
+
+    public static string DefaultTempFilePath = Path.Join(Path.GetTempPath(), "CloudlogHelperTmpFiles");
 }

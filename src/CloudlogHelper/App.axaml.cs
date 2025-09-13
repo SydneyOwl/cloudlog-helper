@@ -84,6 +84,9 @@ public class App : Application
     private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop, Window splashLevel)
     {
         _preInit();
+        _safeExecute(()=> Directory.Delete(DefaultConfigs.DefaultTempFilePath, true));
+        _safeExecute(()=> Directory.CreateDirectory(DefaultConfigs.DefaultTempFilePath));
+        
         var collection = new ServiceCollection();
         await collection.AddCommonServicesAsync();
         await collection.AddViewModelsAsync();
@@ -278,9 +281,29 @@ public class App : Application
 
     public static void CleanUp()
     {
-        _servProvider?.Dispose();
-        _mutex?.ReleaseMutex();
-        _trayIcon?.Dispose();
+        try
+        {
+            _safeExecute(() => _servProvider?.Dispose());
+            _safeExecute(() => _mutex?.ReleaseMutex());
+            _safeExecute(() => _trayIcon?.Dispose());
+            _safeExecute(() => Directory.Delete(DefaultConfigs.DefaultTempFilePath, true));
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Error(e);
+        }
+    }
+
+    private static void _safeExecute(Action action)
+    {
+        try
+        {
+            action?.Invoke();
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Error(e);
+        }
     }
     
 

@@ -11,6 +11,7 @@ using Avalonia.Controls.Shapes;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using NLog;
 using Path = System.IO.Path;
@@ -50,7 +51,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
 
         var generateHeader = new StringBuilder(AdifUtil.GenerateHeader());
         generateHeader.AppendLine(adif);
-        var tempFileName = Path.GetTempFileName();
+        var tempFileName = Path.Join(DefaultConfigs.DefaultTempFilePath, Guid.NewGuid().ToString().Replace("-", ""));
         await File.WriteAllTextAsync(tempFileName, generateHeader.ToString(), token);
 
         var args = new List<string>();
