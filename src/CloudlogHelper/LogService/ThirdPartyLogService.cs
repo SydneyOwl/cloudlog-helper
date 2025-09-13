@@ -26,8 +26,8 @@ public abstract class ThirdPartyLogService
     /// DON'T DO TIME COSTING WORKS HERE!
     /// </summary>
     /// <returns></returns>
-    public virtual Task PreInitAsync()
+    public virtual void PreInitSync()
     {
-        return Task.CompletedTask;
+        return;
     }
 }

@@ -123,6 +123,19 @@ public class LogSystemCard : UserControl
                             }
                         };
                         break;
+                    case FieldType.ComboBox:
+                        inputControl = new ComboBox()
+                        {
+                            Classes = { "setting-control" },
+                            DataContext = config.Fields[i],
+                            ItemsSource = config.Fields[i].Selections,
+                            [!SelectingItemsControl.SelectedValueProperty] = new Binding("Value")
+                            {
+                                Mode = BindingMode.TwoWay,
+                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                            }
+                        };
+                        break;
                     case FieldType.FilePicker:
                         var filePickerTextboxUserControlViewModel = new FilePickerTextboxUserControlViewModel
                             {

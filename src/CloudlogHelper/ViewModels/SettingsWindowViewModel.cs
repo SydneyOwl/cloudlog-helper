@@ -129,10 +129,18 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private void InitializeLogSystems()
     {
-        foreach (var draftSettingsLogService in DraftSettings.LogServices)
+        try
         {
-            draftSettingsLogService.PreInitAsync().GetAwaiter().GetResult();
+            foreach (var draftSettingsLogService in DraftSettings.LogServices)
+            {
+                draftSettingsLogService.PreInitSync();
+            }
         }
+        catch (Exception e)
+        {
+            ClassLogger.Error(e, "Exception occurred while initializing log systems.");
+        }
+
         foreach (var draftSettingsLogService in DraftSettings.LogServices)
         {
             var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();
@@ -142,18 +150,39 @@ public class SettingsWindowViewModel : ViewModelBase
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.IsDefined(typeof(UserInputAttribute), false));
 
-            var fields = (from prop in properties
-                let attr = prop.GetCustomAttribute<UserInputAttribute>()!
-                select new LogSystemField
+            var fields = (properties.Select(prop => 
+                    new { prop, attr = prop.GetCustomAttribute<UserInputAttribute>()! })
+                .Select(t =>
                 {
-                    DisplayName = attr.DisplayName,
-                    PropertyName = prop.Name,
-                    Type = attr.InputType,
-                    Watermark = attr.WaterMark,
-                    Description = attr.Description,
-                    IsRequired = attr.IsRequired,
-                    Value = prop.GetValue(draftSettingsLogService)?.ToString()
-                }).ToList();
+                    var selections = Array.Empty<string>();
+                    
+                    if (!string.IsNullOrWhiteSpace(t.attr.SelectionsArrayName))
+                    {
+                        var draftType = draftSettingsLogService.GetType();
+                        var value = draftType
+                            .GetField(t.attr.SelectionsArrayName)?
+                            .GetValue(draftSettingsLogService);
+
+                        if (value is null)
+                            draftType
+                                .GetProperty(t.attr.SelectionsArrayName)?
+                                .GetValue(draftSettingsLogService);
+
+                        if (value is string[] ss) selections = ss;
+                    }
+                    
+                    return new LogSystemField
+                    {
+                        DisplayName = t.attr.DisplayName,
+                        PropertyName = t.prop.Name,
+                        Type = t.attr.InputType,
+                        Watermark = t.attr.WaterMark,
+                        Description = t.attr.Description,
+                        IsRequired = t.attr.IsRequired,
+                        Selections = selections,
+                        Value = t.prop.GetValue(draftSettingsLogService)?.ToString()
+                    };
+                })).ToList();
 
             LogSystems.Add(new LogSystemConfig
             {

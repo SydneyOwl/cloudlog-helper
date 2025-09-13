@@ -37,4 +37,9 @@ public class UserInputAttribute : Attribute
     ///     Should we use password mask?
     /// </summary>
     public string WaterMark { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     (Combobox only) Should we choose something here?
+    /// </summary>
+    public string SelectionsArrayName { get; set; }
 }

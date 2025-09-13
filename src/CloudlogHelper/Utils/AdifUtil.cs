@@ -1,10 +1,24 @@
 using System.Text;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
 
 namespace CloudlogHelper.Utils;
 
 public class AdifUtil
 {
+    public static string GenerateHeader()
+    {
+        var currentVersion = VersionInfo.Version;
+        var adif = new StringBuilder();
+        adif.AppendLine("Cloudlog Helper ADIF Export");
+        adif.AppendLine("<ADIF_VER:5>3.1.4");
+        adif.AppendLine("<PROGRAMID:14>CloudlogHelper");
+        adif.AppendLine($"<PROGRAMVERSION:{currentVersion.Length}>{currentVersion}");
+        adif.AppendLine("<EOH>");
+        adif.AppendLine();
+        return adif.ToString();
+    }
+    
     /// <summary>
     ///     Generate adif format log
     /// </summary>

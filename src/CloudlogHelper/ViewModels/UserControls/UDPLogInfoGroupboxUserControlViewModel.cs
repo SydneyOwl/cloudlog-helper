@@ -420,13 +420,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private async Task _createAdifFromCheckedQSO()
     {
         var currentVersion = VersionInfo.Version;
-        var adif = new StringBuilder();
-        adif.AppendLine("Cloudlog Helper ADIF Export");
-        adif.AppendLine("<ADIF_VER:5>3.1.4");
-        adif.AppendLine("<PROGRAMID:14>CloudlogHelper");
-        adif.AppendLine($"<PROGRAMVERSION:{currentVersion.Length}>{currentVersion}");
-        adif.AppendLine("<EOH>");
-        adif.AppendLine();
+        var adif = new StringBuilder(AdifUtil.GenerateHeader());
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
         {
             adif.AppendLine(recordedCallsignDetail.GenerateAdif());

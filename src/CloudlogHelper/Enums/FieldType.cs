@@ -5,5 +5,6 @@ public enum FieldType
 {
     Text,
     Password,
-    FilePicker
+    FilePicker,
+    ComboBox
 }
