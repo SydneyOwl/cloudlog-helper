@@ -274,6 +274,7 @@ public class DefaultConfigs
     public static List<string> DefaultWindowsHamlibFiles = new()
     {
         "libgcc_s_dw2-1.dll",
+        "libgcc_s_seh-1.dll",
         "libhamlib-4.dll",
         "libusb-1.0.dll",
         "libwinpthread-1.dll",

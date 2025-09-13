@@ -328,18 +328,27 @@ public class App : Application
             }
 
             ClassLogger.Debug($"releasing {tPath} ..");
-            var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
-            if (resourceFileStream is null)
+
+            try
             {
-                ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
+                var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
+                if (resourceFileStream is null)
+                {
+                    ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
+                    continue;
+                }
+                
+                using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
+                resourceFileStream.Seek(0, SeekOrigin.Begin);
+                resourceFileStream.CopyTo(fileStream);
+                fileStream.Flush();
+                fileStream.Close();
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Warn(ex,$"Failed to extract {defaultHamlibFile}, Skipping...");
                 continue;
             }
-
-            using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
-            resourceFileStream.Seek(0, SeekOrigin.Begin);
-            resourceFileStream.CopyTo(fileStream);
-            fileStream.Flush();
-            fileStream.Close();
 
             // make it executable on linux
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
