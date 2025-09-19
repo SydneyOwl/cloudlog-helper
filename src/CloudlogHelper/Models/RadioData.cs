@@ -2,6 +2,7 @@
 
 public struct RadioData
 {
+    public string? RigName { get; set; }
     /// <summary>
     ///     Is rig in split mode?
     /// </summary>
@@ -30,5 +31,5 @@ public struct RadioData
     /// <summary>
     ///     Optional transmit power in Watts.
     /// </summary>
-    public float Power { get; set; }
+    public float? Power { get; set; }
 }

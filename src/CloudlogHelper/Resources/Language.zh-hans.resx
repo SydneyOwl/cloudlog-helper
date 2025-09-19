@@ -602,4 +602,10 @@
     <data name="chartsdisabled" xml:space="preserve">
         <value>图表功能被禁用，请在设置中启用！</value>
     </data>
+    <data name="testandapply" xml:space="preserve">
+        <value>* 每次修改配置后，您必须点击“测试”来测试并应用本次更改。</value>
+    </data>
+    <data name="duperigservdetected" xml:space="preserve">
+        <value>不允许同时启用两个电台后端控制服务！</value>
+    </data>
 </root>

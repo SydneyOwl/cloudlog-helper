@@ -19,8 +19,6 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private IInAppNotificationService _notification;
-
     private bool _triggerByClickingButton;
 
     public SettingsWindow()
@@ -29,7 +27,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
 
         this.WhenActivated(disposables =>
         {
-            _notification = new InAppNotificationService(this);
+            var notification = new InAppNotificationService(this);
             // seems like linux does not support dpi reading...
             if (false)
                 if (!Design.IsDesignMode)
@@ -58,7 +56,7 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
                 else
                     Height = 800;
 
-            ViewModel!.Notification = _notification;
+            ViewModel!.Notification = notification;
 
             ViewModel!.DiscardConf
                 .Subscribe(_ =>

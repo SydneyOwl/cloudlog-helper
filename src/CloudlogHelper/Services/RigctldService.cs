@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -16,7 +17,7 @@ using NLog;
 
 namespace CloudlogHelper.Services;
 
-public class RigctldService : IRigctldService, IDisposable
+public class RigctldService : IRigService, IDisposable
 {
     /// <summary>
     ///     Logger for the class.
@@ -24,53 +25,44 @@ public class RigctldService : IRigctldService, IDisposable
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
+    ///     Semaphore for controlling access to the one-time process.
+    /// </summary>
+    private readonly SemaphoreSlim _onetimeSemaphore = new(1, 1);
+
+    /// <summary>
     ///     Semaphore for controlling access to the background process.
     /// </summary>
-    private readonly SemaphoreSlim BackgroundProcessSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _backgroundProcessSemaphore = new(1, 1);
+    
+    /// <summary>
+    ///     Semaphore for controlling access to ExecuteCommand.
+    /// </summary>
+    private readonly SemaphoreSlim _execCommandSemaphore = new(1, 1);
 
     /// <summary>
     ///     AppendRigctldLog lock.
     /// </summary>
-    private readonly object Lock = new();
-
-    /// <summary>
-    ///     Semaphore for controlling access to the one-time process.
-    /// </summary>
-    private readonly SemaphoreSlim OnetimeSemaphore = new(1, 1);
+    private readonly object _lock = new();
 
     /// <summary>
     ///     Log buffer of rigctld.
     /// </summary>
-    private readonly Queue<string> RigctldLogBuffer = new();
-
+    private readonly Queue<string> _rigctldLogBuffer = new();
+    
     /// <summary>
-    ///     Semaphore for controlling access to ExecuteCommand.
+    ///     One-time rigctld client process.
     /// </summary>
-    private readonly SemaphoreSlim SchedulerSemaphore = new(1, 1);
-
+    private Process? _onetimeRigctldClient;
+    
     /// <summary>
     ///     Rigctld processes residing in the background.
     /// </summary>
     private Process? _backgroundProcess;
 
-    private string? _currentRigctldIp;
-
-    private int? _currentRigctldPort;
-
     /// <summary>
     ///     Whether this is disposed or not.
     /// </summary>
     private bool _disposed;
-
-    /// <summary>
-    ///     One-time rigctld client process.
-    /// </summary>
-    private Process? _onetimeRigctldClient;
-
-    /// <summary>
-    ///     Simple scheduler for rigctld requests.
-    /// </summary>
-    private RigctldScheduler? _scheduler;
 
     /// <summary>
     ///     Keep-alive tcp client for rigctld communications.
@@ -83,16 +75,11 @@ public class RigctldService : IRigctldService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void InitScheduler()
-    {
-        _scheduler = new RigctldScheduler();
-    }
-
     /// <summary>
     ///     Checks if any rigctld client is currently running, including _onetimeRigctldClient and _backgroundProcess.
     /// </summary>
     /// <returns>True if either background or one-time process is running, false otherwise.</returns>
-    public bool IsRigctldClientRunning()
+    public bool IsServiceRunning()
     {
         try
         {
@@ -115,11 +102,11 @@ public class RigctldService : IRigctldService, IDisposable
     /// <param name="args">Command line arguments for rigctld.</param>
     /// <param name="timeoutMilliseconds">Timeout in milliseconds for process execution.</param>
     /// <returns>Tuple containing success status and output/error message.</returns>
-    public async Task<(bool, string)> StartOnetimeRigctldAsync(string args,
+    private async Task<string> StartOnetimeRigctldAsync(string args,
         int timeoutMilliseconds = 5000)
     {
         var outputBuilder = new StringBuilder();
-        await OnetimeSemaphore.WaitAsync();
+        await _onetimeSemaphore.WaitAsync();
         try
         {
             TerminateOnetimeProcess();
@@ -150,7 +137,7 @@ public class RigctldService : IRigctldService, IDisposable
 
 
             if (!_onetimeRigctldClient.Start())
-                return (false, TranslationHelper.GetString(LangKeys.inithamlibfailed));
+                throw new Exception(TranslationHelper.GetString(LangKeys.inithamlibfailed));
 
             _onetimeRigctldClient.BeginOutputReadLine();
             _onetimeRigctldClient.BeginErrorReadLine();
@@ -162,27 +149,20 @@ public class RigctldService : IRigctldService, IDisposable
             {
                 outputBuilder.Clear();
                 outputBuilder.Append("Rigctld Error: ");
-                outputBuilder.Append(GetDescriptionFromReturnCode(exitCode.ToString()));
+                outputBuilder.Append(RigUtils.GetDescriptionFromReturnCode(exitCode.ToString()));
 
                 ClassLogger.Warn(
                     $"Failed to start onetime rigctld:\n============================={ReadAndClearRigctldLog()}\n==============================\n");
             }
 
-            var status = exitCode == 0;
-            return (status, outputBuilder.ToString());
-        }
-        catch (Exception ex)
-        {
-            ClassLogger.Error(ex, "Failed in starting OnetimeRigctl.");
-            return (false, ex.Message);
+            return outputBuilder.ToString();
         }
         finally
         {
             TerminateOnetimeProcess();
-            OnetimeSemaphore.Release();
+            _onetimeSemaphore.Release();
         }
     }
-
 
     /// <summary>
     ///     Restarts the background rigctld process with specified arguments.
@@ -191,22 +171,19 @@ public class RigctldService : IRigctldService, IDisposable
     /// <param name="ignoreIfRunning">If true, won't restart if process is already running.</param>
     /// <param name="timeoutMilliseconds">Timeout in milliseconds for process execution.</param>
     /// <returns>Tuple containing success status and output/error message.</returns>
-    public async Task<(bool, string)> RestartRigctldBackgroundProcessAsync(string args,
-        bool ignoreIfRunning = false,
-        int timeoutMilliseconds = 5000)
+    public async Task StartService(CancellationToken token, params object[] args)
     {
-        if (_backgroundProcess is not null && !_backgroundProcess.HasExited && ignoreIfRunning)
+        if (_backgroundProcess is not null && !_backgroundProcess.HasExited)
         {
             ClassLogger.Trace("Rigctld service is already running. Ignored.");
-            return (true, "");
+            return;
         }
 
         TerminateBackgroundProcess();
         ClassLogger.Debug("tRigctld offline....Trying to restart Rigctld background process...");
         var readyTcs = new TaskCompletionSource<(bool, string)>();
-        var timeoutCts = new CancellationTokenSource(timeoutMilliseconds);
 
-        await BackgroundProcessSemaphore.WaitAsync();
+        await _backgroundProcessSemaphore.WaitAsync(token);
 
         // find a available port for rigctld
         _backgroundProcess = new Process
@@ -214,7 +191,7 @@ public class RigctldService : IRigctldService, IDisposable
             StartInfo = new ProcessStartInfo
             {
                 FileName = DefaultConfigs.ExecutableRigctldPath,
-                Arguments = args,
+                Arguments = args[0].ToString(),
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 StandardOutputEncoding = Encoding.UTF8,
@@ -232,7 +209,7 @@ public class RigctldService : IRigctldService, IDisposable
             if (_backgroundProcess.ExitCode != 0)
                 ClassLogger.Warn(
                     $"Rigctld exited abnormally. Here's the stacktrace:\n============================={ReadAndClearRigctldLog()}\n==============================\n");
-            var failReason = GetDescriptionFromReturnCode(_backgroundProcess.ExitCode.ToString());
+            var failReason = RigUtils.GetDescriptionFromReturnCode(_backgroundProcess.ExitCode.ToString());
             readyTcs.TrySetResult((false, failReason));
         };
 
@@ -257,63 +234,50 @@ public class RigctldService : IRigctldService, IDisposable
 
         try
         {
-            if (!_backgroundProcess.Start()) return (false, "Failed to start Rigctld process");
+            if (!_backgroundProcess.Start()) throw new Exception("Failed to start Rigctld process");
             ClassLogger.Debug($"Starting Rigctld process with arg {args}");
 
             _backgroundProcess.BeginErrorReadLine();
             _backgroundProcess.BeginOutputReadLine();
 
-            timeoutCts.Token.Register(() =>
+            token.Register(() =>
             {
                 if (readyTcs.Task.IsCompleted) return;
                 readyTcs.TrySetResult((false, "Execution Timeout"));
             });
 
-            return await readyTcs.Task;
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Error(e, "Failed to start Rigctld process");
-            return (false, $"Error in RestartRigctldBackgroundProcess: {e.Message}");
+             var (item1, item2) = await readyTcs.Task;
+             if (item1)return;
+             throw new Exception(item2);
         }
         finally
         {
-            timeoutCts.Dispose();
-            // TerminateBackgroundProcess();
-            BackgroundProcessSemaphore.Release();
+            _backgroundProcessSemaphore.Release();
         }
     }
 
-
-    /// <summary>
-    /// </summary>
-    /// <param name="host"></param>
-    /// <param name="port"></param>
-    /// <param name="cmd"></param>
-    /// <param name="highPriority"></param>
-    /// <returns></returns>
-    public async Task<string> ExecuteCommandInScheduler(string host, int port, string cmd, bool highPriority)
+    public RigBackendServiceEnum GetServiceType()
     {
-        if (highPriority)
-            return await _scheduler?.EnqueueHighPriorityRequest(() => ExecuteCommand(host, port, cmd, false))!;
-
-        return await _scheduler?.EnqueueLowPriorityRequest(() => ExecuteCommand(host, port, cmd + "\n"))!;
+        return RigBackendServiceEnum.Hamlib;
     }
 
-    public async Task<RadioData> GetAllRigInfo(string ip, int port, bool reportRfPower, bool reportSplitInfo,
-        CancellationToken token)
+    public async Task<RadioData> GetAllRigInfo(bool reportRfPower, bool reportSplitInfo,
+        CancellationToken token, params object[] args)
     {
         try
         {
+            var ip = args[0].ToString()!;
+            var port = int.Parse(args[1].ToString()!);
             var testbk = new RadioData();
-            var raw = await ExecuteCommandInScheduler(ip, port, "f", false);
+            var raw = await ExecuteCommand(ip, port, "f");
+            ClassLogger.Trace($"we got: {raw}");
             var freqStr = raw.Split("\n")[0];
             if (!long.TryParse(freqStr, out var freq))
                 throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
             testbk.FrequencyRx = freq;
             testbk.FrequencyTx = freq;
 
-            raw = await ExecuteCommandInScheduler(ip, port, "m", false);
+            raw = await ExecuteCommand(ip, port, "m");
             var mode = raw.Split("\n")[0];
             if (!DefaultConfigs.AvailableRigModes.Contains(mode))
                 throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
@@ -328,7 +292,7 @@ public class RigctldService : IRigctldService, IDisposable
 
                 if (reportSplitInfo)
                 {
-                    raw = await ExecuteCommandInScheduler(ip, port, "s", false);
+                    raw = await ExecuteCommand(ip, port, "s");
                     var splitStatus = raw.Split("\n")[0];
                     if (splitStatus is "0" or "1")
                     {
@@ -342,7 +306,7 @@ public class RigctldService : IRigctldService, IDisposable
                             ClassLogger.Trace("Spilt mode on.");
                             testbk.IsSplit = true;
                             // fetch spilt tx freq
-                            raw = await ExecuteCommandInScheduler(ip, port, "i", false);
+                            raw = await ExecuteCommand(ip, port, "i");
                             var txfreqStr = raw.Split("\n")[0];
                             if (!long.TryParse(txfreqStr, out var freqtx))
                                 throw new RigCommException(
@@ -350,7 +314,7 @@ public class RigctldService : IRigctldService, IDisposable
                             testbk.FrequencyTx = freqtx;
 
                             // fetch spilt tx mode 
-                            raw = await ExecuteCommandInScheduler(ip, port, "x", false);
+                            raw = await ExecuteCommand(ip, port, "x");
                             var modetx = raw.Split("\n")[0];
                             if (!DefaultConfigs.AvailableRigModes.Contains(modetx))
                                 throw new RigCommException(
@@ -371,7 +335,7 @@ public class RigctldService : IRigctldService, IDisposable
                 // add a "m" to make sure stream ends successfully.
                 if (reportRfPower)
                 {
-                    raw = await ExecuteCommandInScheduler(ip, port, "l RFPOWER", false);
+                    raw = await ExecuteCommand(ip, port, "l RFPOWER");
                     var pwrStr = raw.Split("\n")[0];
                     if (!float.TryParse(pwrStr, out var pwr))
                     {
@@ -386,8 +350,8 @@ public class RigctldService : IRigctldService, IDisposable
                         return testbk;
                     }
 
-                    raw = await ExecuteCommandInScheduler(ip, port,
-                        $"\\power2mW {pwr} {testbk.FrequencyTx} {testbk.ModeTx}", false);
+                    raw = await ExecuteCommand(ip, port,
+                        $"\\power2mW {pwr} {testbk.FrequencyTx} {testbk.ModeTx}");
                     var pwrmWStr = raw.Split("\n")[0];
                     if (!float.TryParse(pwrmWStr, out var pwrmw))
                     {
@@ -424,7 +388,7 @@ public class RigctldService : IRigctldService, IDisposable
     /// </summary>
     /// <param name="rawOutput">The raw output string from hamlib.</param>
     /// <returns>Dictionary mapping model names to their IDs.</returns>
-    public List<RigInfo> ParseAllModelsFromRawOutput(string rawOutput)
+    private List<RigInfo> _parseAllModelsFromRawOutput(string rawOutput)
     {
         var result = new List<RigInfo>();
         // Dynamically calculate extraction length based on the header row
@@ -433,11 +397,11 @@ public class RigctldService : IRigctldService, IDisposable
             if (tmp.Current.Contains("Rig #"))
                 break;
 
-        var columnBounds = RigListParser.GetColumnBounds(tmp.Current);
+        var columnBounds = RigUtils.GetColumnBounds(tmp.Current);
         while (tmp.MoveNext())
             try
             {
-                result.Add(RigListParser.ParseRigLine(tmp.Current, columnBounds));
+                result.Add(RigUtils.ParseRigLine(tmp.Current, columnBounds));
             }
             catch (Exception e)
             {
@@ -447,23 +411,17 @@ public class RigctldService : IRigctldService, IDisposable
         return result;
     }
 
-    public string GenerateRigctldCmdArgs(string radioId, string port, bool disablePtt = false,
-        bool allowExternal = false)
+    public async Task<string> GetServiceVersion(params object[] args)
     {
-        var args = new StringBuilder();
-        args.Append($"-m {radioId} ");
-        args.Append($"-r {port} ");
-
-        var defaultHost = IPAddress.Loopback.ToString();
-        if (allowExternal) defaultHost = IPAddress.Any.ToString();
-        args.Append($"-T {defaultHost} -t {DefaultConfigs.RigctldDefaultPort} ");
-
-        if (disablePtt) args.Append(@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" ");
-
-        args.Append("-vvvvv");
-        return args.ToString();
+        return await StartOnetimeRigctldAsync("--version");
     }
-
+    
+    public async Task<List<RigInfo>> GetSupportedRigModels()
+    {
+        var rigListText = await StartOnetimeRigctldAsync("--list");
+        return _parseAllModelsFromRawOutput(rigListText);
+    }
+    
     /// <summary>
     ///     Terminates the background rigctld process if running.
     /// </summary>
@@ -473,14 +431,12 @@ public class RigctldService : IRigctldService, IDisposable
         try
         {
             ClassLogger.Debug("Terminating BackgroundProcess...");
-            _scheduler?.Stop();
-            InitScheduler();
-            _tcpClient?.Close();
-            _tcpClient?.Dispose();
-            _tcpClient = null;
             _backgroundProcess?.Kill();
             _backgroundProcess?.Dispose();
             _backgroundProcess = null;
+            _tcpClient?.Close();
+            _tcpClient?.Dispose();
+            _tcpClient = null;
         }
         catch (Exception ex)
         {
@@ -522,11 +478,11 @@ public class RigctldService : IRigctldService, IDisposable
 
         if (DefaultConfigs.MaxRigctldOutputLineCount == 0) return;
 
-        lock (Lock)
+        lock (_lock)
         {
-            RigctldLogBuffer.Enqueue(log);
-            while (RigctldLogBuffer.Count > DefaultConfigs.MaxRigctldOutputLineCount)
-                RigctldLogBuffer.TryDequeue(out _);
+            _rigctldLogBuffer.Enqueue(log);
+            while (_rigctldLogBuffer.Count > DefaultConfigs.MaxRigctldOutputLineCount)
+                _rigctldLogBuffer.TryDequeue(out _);
         }
     }
 
@@ -534,10 +490,10 @@ public class RigctldService : IRigctldService, IDisposable
     {
         if (DefaultConfigs.MaxRigctldOutputLineCount <= 0)
             return "Seems like rigctld logging is disabled in default config.\n";
-        lock (Lock)
+        lock (_lock)
         {
-            var snapShot = RigctldLogBuffer.ToArray();
-            RigctldLogBuffer.Clear();
+            var snapShot = _rigctldLogBuffer.ToArray();
+            _rigctldLogBuffer.Clear();
             return string.Join(string.Empty, snapShot);
         }
     }
@@ -555,7 +511,7 @@ public class RigctldService : IRigctldService, IDisposable
         bool throwExceptionIfRprtError = true)
     {
         using var cts = new CancellationTokenSource(DefaultConfigs.RigctldSocketTimeout);
-        await SchedulerSemaphore.WaitAsync(cts.Token);
+        await _execCommandSemaphore.WaitAsync(cts.Token);
         try
         {
             if (_tcpClient is null || !_tcpClient.Connected)
@@ -589,6 +545,7 @@ public class RigctldService : IRigctldService, IDisposable
 
             var sp = strData.ToString();
             var results = sp.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+            if (results.Length == 0)throw new RigCommException("Invalid data format - maybe there's a dupe process?");
             // for commands that may return a code
             var rprtCode = results.Last();
             if (rprtCode.Contains("RPRT") && throwExceptionIfRprtError)
@@ -596,7 +553,7 @@ public class RigctldService : IRigctldService, IDisposable
                 if (rprtCode == "RPRT 0") return sp;
 
                 var code = rprtCode.Split(" ").Last();
-                var des = GetDescriptionFromReturnCode(code.Replace("-", ""));
+                var des = RigUtils.GetDescriptionFromReturnCode(code.Replace("-", ""));
                 throw new RigCommException(des);
             }
 
@@ -608,64 +565,8 @@ public class RigctldService : IRigctldService, IDisposable
         }
         finally
         {
-            SchedulerSemaphore.Release();
+            _execCommandSemaphore.Release();
         }
-    }
-
-
-    /// <summary>
-    ///     Gets the description for a hamlib return code.
-    /// </summary>
-    /// <param name="code">The error code as string.</param>
-    /// <returns>Description of the error code.</returns>
-    private static string GetDescriptionFromReturnCode(string code)
-    {
-        var codeDesMap = new Dictionary<string, string>
-        {
-            { "0", "Command completed successfully" },
-            { "1", "Invalid parameter" },
-            { "2", "Invalid configuration" },
-            { "3", "Memory shortage" },
-            { "4", "Feature not implemented" },
-            { "5", "Communication timed out" },
-            { "6", "IO error" },
-            { "7", "Internal Hamlib error" },
-            { "8", "Protocol error" },
-            { "9", "Command rejected by the rig" },
-            { "10", "Command performed, but arg truncated, result not guaranteed" },
-            { "11", "Feature not available" },
-            { "12", "Target VFO unaccessible" },
-            { "13", "Communication bus error" },
-            { "14", "Communication bus collision" },
-            { "15", "NULL RIG handle or invalid pointer parameter" },
-            { "16", "Invalid VFO" },
-            { "17", "Argument out of domain of func" },
-            { "18", "Function deprecated" },
-            { "19", "Security error password not provided or crypto failure" },
-            { "20", "Rig is not powered on" },
-            { "21", "Limit exceeded" },
-            { "22", "Access denied" }
-        };
-        if (codeDesMap.TryGetValue(code, out var result)) return "Hamlib error:" + result;
-        return "Failed to init hamlib!";
-    }
-
-    /// <summary>
-    ///     Checks for processes that might conflict with rigctld.
-    /// </summary>
-    /// <returns>Name of the first conflicting process found, or empty string if none.</returns>
-    public string GetPossibleConflictProcess()
-    {
-        // check if jtdx/wsjtx/Rigctld running in background
-        var localAllProcesses = Process.GetProcesses().Select(x => x.ProcessName).ToList();
-        var hasConflict = localAllProcesses.Where(processName =>
-            DefaultConfigs.PossibleRigctldConfilcts.Any(conflict =>
-                processName.Contains(conflict, StringComparison.OrdinalIgnoreCase)
-            )
-        ).ToList();
-        if (hasConflict.Any() && !IsRigctldClientRunning()) return hasConflict[0];
-
-        return string.Empty;
     }
 
     protected virtual void Dispose(bool disposing)
@@ -675,13 +576,19 @@ public class RigctldService : IRigctldService, IDisposable
         {
             TerminateBackgroundProcess();
             TerminateOnetimeProcess();
-            _scheduler?.Dispose();
-            BackgroundProcessSemaphore?.Dispose();
-            OnetimeSemaphore?.Dispose();
-            SchedulerSemaphore?.Dispose();
+            _backgroundProcessSemaphore?.Dispose();
+            _onetimeSemaphore?.Dispose();
+            _execCommandSemaphore?.Dispose();
             _tcpClient?.Dispose();
         }
 
         _disposed = true;
+    }
+
+    public Task StopService(CancellationToken token)
+    {
+        TerminateBackgroundProcess();
+        TerminateOnetimeProcess();
+        return Task.CompletedTask;
     }
 }

@@ -455,6 +455,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 不允许同时启用两个电台后端控制服务！.
+        /// </summary>
+        public static string duperigservdetected {
+            get {
+                return ResourceManager.GetString("duperigservdetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 高级设置.
         /// </summary>
         public static string enableadvanced {
@@ -1417,6 +1426,15 @@ namespace CloudlogHelper.Resources {
         public static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * 每次修改配置后，您必须点击“测试”来测试并应用本次更改。.
+        /// </summary>
+        public static string testandapply {
+            get {
+                return ResourceManager.GetString("testandapply", resourceCulture);
             }
         }
         

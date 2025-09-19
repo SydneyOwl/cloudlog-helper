@@ -92,7 +92,7 @@
             
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="PointerPressed">
-                    <InvokeCommandAction Command="{Binding StartStopRigctldCommand}" />
+                    <InvokeCommandAction Command="{Binding StartStopRigBackendCommand}" />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             
@@ -115,8 +115,8 @@
                         Orientation="Horizontal" Spacing="10">
                 
                 <Border Width="22" Height="22" CornerRadius="11"
-                        Background="{Binding RigctldRunningStatus, Converter={StaticResource StatusToColor}}"
-                        BoxShadow="{Binding RigctldRunningStatus, Converter={StaticResource StatusToShadow}}"
+                        Background="{Binding RigBackendRunningStatus, Converter={StaticResource StatusToColor}}"
+                        BoxShadow="{Binding RigBackendRunningStatus, Converter={StaticResource StatusToShadow}}"
                         VerticalAlignment="Center">
                     <Border.Styles>
                         <Style Selector="Border">
@@ -127,7 +127,7 @@
                 
                 <StackPanel Orientation="Vertical" Spacing="2">
                     <TextBlock Text="RIGCTLD" Classes="StatusLabel"/>
-                    <TextBlock Text="{Binding CurrentRigctldAddress}" Classes="AddressText"/>
+                    <TextBlock Text="{Binding CurrentRigBackendAddress}" Classes="AddressText"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

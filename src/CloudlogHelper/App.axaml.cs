@@ -310,14 +310,22 @@ public class App : Application
     private static void _initializeLogger(LogLevel logLevel, bool writeToFile = false)
     {
         var config = new LoggingConfiguration();
-        var consoleTarget = new ConsoleTarget("console");
+        var consoleTarget = new ConsoleTarget("console")
+        {
+            Layout = logLevel > LogLevel.Debug 
+                ? null 
+                : "${longdate} [${level:uppercase=true}] ${message} ${exception} ${callsite:fileName=true:includeLineNumbers=true}"
+        };
         config.AddTarget(consoleTarget);
         config.AddRule(logLevel, LogLevel.Fatal, consoleTarget);
         if (writeToFile)
         {
             var fileTarget = new FileTarget("file")
             {
-                FileName = "${basedir}/logs/${shortdate}.log"
+                FileName = "${basedir}/logs/${shortdate}.log",
+                Layout = logLevel > LogLevel.Debug 
+                    ? null 
+                    : "${longdate} [${level:uppercase=true}] ${message} ${exception} ${callsite:fileName=true:includeLineNumbers=true}"
             };
             config.AddTarget(fileTarget);
             config.AddRule(logLevel, LogLevel.Fatal, fileTarget);

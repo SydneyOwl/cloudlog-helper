@@ -42,6 +42,10 @@ public class MaidenheadCalcTests
     [InlineData("OL94", "OM89", 354)]
     [InlineData("OL94", "IN82", 321)]
     [InlineData("OL94", "DM97", 32)]
+    [InlineData("OL94", "OL94", 0)]
+    [InlineData("OL94", "PL02", 137)]
+    [InlineData("OL94", "FE40", 165)]
+    [InlineData("OL94", "HQ40", 350)]
     public void TestBearingBetweenGrids_ReturnsCorrectResult(string deGrid, string dxGrid, double expectBearing)
     {
         Assert.Equal(expectBearing, MaidenheadGridUtil.CalculateBearing(deGrid, dxGrid), 5f);

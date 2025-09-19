@@ -16,11 +16,16 @@ namespace CloudlogHelper.Services;
 public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    private readonly IClassicDesktopStyleApplicationLifetime desktop;
+    private readonly IClassicDesktopStyleApplicationLifetime _desktop;
 
     public MessageBoxManagerService(IClassicDesktopStyleApplicationLifetime topLevel)
     {
-        desktop = topLevel;
+        _desktop = topLevel;
+    }
+
+    public MessageBoxManagerService()
+    {
+        
     }
 
     public void Dispose()
@@ -35,9 +40,9 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
         {
             try
             {
-                if (desktop.MainWindow is null && toplevel is null) return;
+                if (_desktop.MainWindow is null && toplevel is null) return;
                 result = await MessageBoxManager.GetMessageBoxCustom(
-                   cParams).ShowWindowDialogAsync(toplevel??desktop.MainWindow);
+                   cParams).ShowWindowDialogAsync(toplevel??_desktop.MainWindow);
             }
             catch (Exception ex)
             {
@@ -70,10 +75,10 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
         {
             try
             {
-                if (desktop.MainWindow is null && toplevel is null) return;
+                if (_desktop.MainWindow is null && toplevel is null) return;
                 result = await MessageBoxManager.GetMessageBoxStandard(title,
                     message, bType,
-                    iconType).ShowWindowDialogAsync(toplevel??desktop.MainWindow!);
+                    iconType).ShowWindowDialogAsync(toplevel??_desktop.MainWindow!);
             }
             catch (Exception ex)
             {

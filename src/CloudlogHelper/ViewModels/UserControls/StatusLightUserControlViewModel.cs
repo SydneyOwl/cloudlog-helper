@@ -24,7 +24,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private IRigctldService _rigctldService;
+    private IRigBackendManager _rigBackendManager;
     private IUdpServerService _udpServerService;
     private IApplicationSettingsService _applicationSettingsService;
     private IInAppNotificationService _inAppNotificationService;
@@ -37,10 +37,10 @@ public class StatusLightUserControlViewModel : ViewModelBase
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         StartStopUdpCommand = ReactiveCommand.Create(() => { });
-        StartStopRigctldCommand = ReactiveCommand.Create(() => { });
+        StartStopRigBackendCommand = ReactiveCommand.Create(() => { });
     }
 
-    public StatusLightUserControlViewModel(IRigctldService rSer,
+    public StatusLightUserControlViewModel(IRigBackendManager rigBackendManager,
         IUdpServerService uSer,
         IApplicationSettingsService ss,
         IInAppNotificationService nw,
@@ -48,7 +48,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
     {
         _applicationSettingsService = ss;
         _udpServerService = uSer;
-        _rigctldService = rSer;
+        _rigBackendManager = rigBackendManager;
         _inAppNotificationService = nw;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         if (!InitSkipped)
@@ -74,13 +74,13 @@ public class StatusLightUserControlViewModel : ViewModelBase
                     _applingSettings = false;
                 }
             });
-            StartStopRigctldCommand = ReactiveCommand.CreateFromTask(async () =>
+            StartStopRigBackendCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (_applingSettings)return;
                 _applingSettings = true;
                 try
                 {
-                    RigctldRunningStatus = StatusLightEnum.Loading;
+                    RigBackendRunningStatus = StatusLightEnum.Loading;
                     if (_applicationSettingsService.TryGetDraftSettings(this, out var draft))
                     {
                         draft!.HamlibSettings.PollAllowed = !draft!.HamlibSettings.PollAllowed;
@@ -96,23 +96,23 @@ public class StatusLightUserControlViewModel : ViewModelBase
             });
 
             StartStopUdpCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
-            StartStopRigctldCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
+            StartStopRigBackendCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
         }
         else
         {
             StartStopUdpCommand = ReactiveCommand.Create(() => { });
-            StartStopRigctldCommand = ReactiveCommand.Create(() => { });
+            StartStopRigBackendCommand = ReactiveCommand.Create(() => { });
         }
     }
 
-    [Reactive] public string CurrentRigctldAddress { get; set; } = "(?)";
+    [Reactive] public string CurrentRigBackendAddress { get; set; } = "(?)";
     [Reactive] public string CurrentUDPServerAddress { get; set; } = "(?)";
-    [Reactive] public StatusLightEnum RigctldRunningStatus { get; set; } = StatusLightEnum.Loading;
+    [Reactive] public StatusLightEnum RigBackendRunningStatus { get; set; } = StatusLightEnum.Loading;
     [Reactive] public StatusLightEnum UdpServerRunningStatus { get; set; } = StatusLightEnum.Loading;
     [Reactive] public bool InitSkipped { get; set; }
     
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
-    [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigctldCommand { get; set; }
+    [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigBackendCommand { get; set; }
 
     private void Initialize()
     {
@@ -136,7 +136,11 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 if(_applingSettings)return;
                 
                 UdpServerRunningStatus = _udpServerService.IsUdpServerRunning() ? StatusLightEnum.Running : StatusLightEnum.Stopped;
-                RigctldRunningStatus = (_rigctldService.IsRigctldClientRunning() || _isRigctldUsingExternal) ? StatusLightEnum.Running : StatusLightEnum.Stopped;
+                
+                RigBackendRunningStatus = (_rigBackendManager.IsServiceRunning() 
+                                           || (_isRigctldUsingExternal && _rigBackendManager.GetServiceType() == RigBackendServiceEnum.Hamlib)) 
+                    ? StatusLightEnum.Running 
+                    : StatusLightEnum.Stopped;
             }).DisposeWith(disposables);
         });
 
@@ -157,7 +161,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
             {
                 _isRigctldUsingExternal = true;
                 (ip, port) = IPAddrUtil.ParseAddress(settings.ExternalRigctldHostAddress);
-                CurrentRigctldAddress = $"({ip}:{port})";
+                CurrentRigBackendAddress = $"({ip}:{port})";
                 return;
             }
 
@@ -174,7 +178,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 }
                 else
                 {
-                    CurrentRigctldAddress = "(?)";
+                    CurrentRigBackendAddress = "(?)";
                     throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
                 }
 
@@ -185,27 +189,27 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 }
                 else
                 {
-                    CurrentRigctldAddress = "(?)";
+                    CurrentRigBackendAddress = "(?)";
                     throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
                 }
 
-                CurrentRigctldAddress = $"({ip}:{port})";
+                CurrentRigBackendAddress = $"({ip}:{port})";
                 return;
             }
 
             if (settings is { UseRigAdvanced: true, AllowExternalControl: true })
             {
-                CurrentRigctldAddress = $"(0.0.0.0:{port})";
+                CurrentRigBackendAddress = $"(0.0.0.0:{port})";
                 return;
             }
 
-            CurrentRigctldAddress = $"({ip}:{port})";
+            CurrentRigBackendAddress = $"({ip}:{port})";
         }
         catch (Exception a)
         {
             ClassLogger.Error(a);
             // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
-            CurrentRigctldAddress = "(?)";
+            CurrentRigBackendAddress = "(?)";
         }
     }
 

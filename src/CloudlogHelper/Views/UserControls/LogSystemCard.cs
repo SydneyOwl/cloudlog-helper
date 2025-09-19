@@ -193,9 +193,8 @@ public class LogSystemCard : UserControl
             Grid.SetColumn(uploadCheckbox, 0);
             grid.Children.Add(uploadCheckbox);
 
-            var testButtonViewModel = new TestButtonUserControlViewModel();
             var methodInfo = config.RawType.GetMethod(nameof(ThirdPartyLogService.TestConnectionAsync));
-            testButtonViewModel.SetTestButtonCommand(ReactiveCommand.CreateFromTask(async () =>
+            var testButtonViewModel = new TestButtonUserControlViewModel(ReactiveCommand.CreateFromTask(async () =>
             {
                 try
                 {

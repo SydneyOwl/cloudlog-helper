@@ -51,7 +51,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private readonly IInAppNotificationService _inAppNotification;
 
-    private readonly IRigctldService _rigctldService;
+    private readonly IRigBackendManager _rigBackendManager;
     private readonly IWindowManagerService _windowManagerService;
     private IApplicationSettingsService _applicationSettingsService;
 
@@ -82,7 +82,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     }
 
     public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd,
-        IRigctldService rs,
+        IRigBackendManager rs,
         IInAppNotificationService ws,
         IWindowManagerService wm,
         IMessageBoxManagerService mm,
@@ -93,10 +93,10 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _messageBoxManagerService = mm;
         _applicationSettingsService = ss;
         _windowManagerService = wm;
-        _rigctldService = rs;
+        _rigBackendManager = rs;
         _inAppNotification = ws;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
-        RefreshRigInfoCommand = ReactiveCommand.Create(() => { });
+        _ = rs.InitializeAsync();
         if (!InitSkipped) Initialize();
     }
 
@@ -122,32 +122,15 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     
-    public ReactiveCommand<Unit, Unit> RefreshRigInfoCommand { get; set; }
 
     private void Initialize()
     {
         // check if conf is available, then start rigctld
         _pollCommand = ReactiveCommand.CreateFromTask(() => _refreshRigInfo());
-        RefreshRigInfoCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            try
-            {
-                IsCoolingDown = true;
-                // reset pool counter
-                _disposeAllTimers();
-                await _refreshRigInfo(true);
-                _createNewTimer();
-                await Task.Delay(3000);
-            }
-            finally
-            {
-                IsCoolingDown = false;
-            }
-        }, this.WhenAnyValue(x => x.IsCoolingDown, isCoolingDown => !isCoolingDown));
+        
         this.WhenActivated(disposables =>
         {
             _syncRigInfoAddr.AddRange(_hamlibSettings.SyncRigInfoAddress.Split(";"));
-            _rigctldService.InitScheduler();
             _cancel = new Subject<Unit>().DisposeWith(disposables);
             MessageBus.Current.Listen<SettingsChanged>()
                 .SelectMany(async x =>
@@ -156,16 +139,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
                     if (x.Part == ChangedPart.Hamlib)
                     {
-                        ClassLogger.Trace("Setting changed; updating hamlib info");
-                        if (_applicationSettingsService.RestartHamlibNeeded())
-                        {
-                            _resetStatus();
-                            // check if we can start rigctld
-                            if (_hamlibSettings is { UseExternalRigctld: false })
-                                await _restartRigctldStrict(false);
-                            else
-                                _rigctldService.TerminateBackgroundProcess();
-                        }
+                        if (_applicationSettingsService.RestartHamlibNeeded()) _resetStatus();
 
                         _syncRigInfoAddr.Clear();
                         _syncRigInfoAddr.AddRange(_hamlibSettings.SyncRigInfoAddress.Split(";"));
@@ -175,12 +149,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                     {
                         _rigConnFailedTimes = 0;
                         _holdRigUpdate = false;
-                        if (!_hamlibSettings.PollAllowed)
-                        {
-                            // shut every service down
-                            _rigctldService.TerminateBackgroundProcess();
-                            _rigctldService.TerminateOnetimeProcess();
-                        }
                     }
 
                     return Unit.Default;
@@ -195,14 +163,13 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 })
                 .DisposeWith(disposables);
 
-            RefreshRigInfoCommand.ThrownExceptions.Subscribe(err =>
-                _inAppNotification.SendErrorNotificationSync(err.Message));
+           
 
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
                     try
                     {
-                        await _defaultExceptionHandler(err.Message);
+                        await _defaultExceptionHandler(err);
                         if (_rigConnFailedTimes++ >= DefaultConfigs.MaxRigctldErrorCount)
                         {
                             // avoid following errors
@@ -221,7 +188,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                             {
                                 case "Retry":
                                     _rigConnFailedTimes = 0;
-                                    await _restartRigctldStrict(false);
+                                    await _rigBackendManager.RestartService();
                                     Observable.Return(Unit.Default)
                                         .InvokeCommand(_pollCommand)
                                         .DisposeWith(disposables);
@@ -243,49 +210,14 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 })
                 .DisposeWith(disposables);
 
-
             _createNewTimer().DisposeWith(disposables);
 
-            // do setup
-            if (!_hamlibSettings.PollAllowed) return;
-            if (_hamlibSettings is { UseExternalRigctld: false }) _ = _restartRigctldStrict(false);
-            // poll immediately after vm inited, but wait for rigctld start.
             Observable.Return(Unit.Default)
                 .Delay(TimeSpan.FromMilliseconds(1000))
                 .InvokeCommand(_pollCommand)
                 .DisposeWith(disposables);
         });
     }
-
-    // the endpoint we're sending requests to.
-    // the ip is always 127.0.0.1 expect useing external rigctld.
-    private (string, int) _getRigctldIpAndPort()
-    {
-        // parse addr
-        var ip = DefaultConfigs.RigctldDefaultHost;
-        var port = DefaultConfigs.RigctldDefaultPort;
-
-        if (_hamlibSettings.UseExternalRigctld) return IPAddrUtil.ParseAddress(_hamlibSettings.ExternalRigctldHostAddress);
-
-        if (_hamlibSettings.UseRigAdvanced &&
-            !string.IsNullOrEmpty(_hamlibSettings.OverrideCommandlineArg))
-        {
-            var matchPort = Regex.Match(_hamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
-            if (matchPort.Success)
-            {
-                port = int.Parse(matchPort.Groups[1].Value);
-                ClassLogger.Debug($"Match port from args: {port}");
-            }
-            else
-            {
-                throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
-            }
-        }
-
-        return (ip, port);
-    }
-
-
     private void _resetStatus()
     {
         CurrentRxFrequency = "-------";
@@ -301,15 +233,15 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         NextUploadTime = TranslationHelper.GetString(LangKeys.unknown);
     }
 
-    private async Task _defaultExceptionHandler(string exceptionMsg)
+    private async Task _defaultExceptionHandler(Exception exception)
     {
         UploadStatus = TranslationHelper.GetString(LangKeys.failed);
         CurrentRxFrequency = "ERROR";
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
         CurrentRxMode = string.Empty;
-        await _inAppNotification.SendErrorNotificationAsync(exceptionMsg);
-        ClassLogger.Error(exceptionMsg);
+        await _inAppNotification.SendErrorNotificationAsync(exception.Message);
+        ClassLogger.Error(exception);
     }
 
     private async Task _refreshRigInfo(bool force = false)
@@ -329,21 +261,13 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             return;
         }
 
-        // ClassLogger.Debug($"Let's see if its really? {_settings.SelectedRigInfo.ToString()}");
-
         if (_hamlibSettings.IsHamlibHasErrors())
         {
             _rigConnFailedTimes = 0;
             throw new Exception(TranslationHelper.GetString(LangKeys.confhamlibfirst));
         }
 
-        // check rigctld background
-        if (!_holdRigUpdate && !_hamlibSettings.UseExternalRigctld) _ = await _restartRigctldStrict(true);
-
-        // parse addr
-        var (ip, port) = _getRigctldIpAndPort();
-        var allInfo = await _rigctldService.GetAllRigInfo(ip, port, _hamlibSettings.ReportRFPower, _hamlibSettings.ReportSplitInfo,
-            CancellationToken.None);
+        var allInfo = await _rigBackendManager.GetAllRigInfo();
         ClassLogger.Debug(allInfo.ToString());
         CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);
         CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
@@ -444,35 +368,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     {
         _cancel.OnNext(Unit.Default);
     }
-
-    private async Task<bool> _restartRigctldStrict(bool ignoreIfRunning)
-    {
-        ClassLogger.Trace("trying to restart rigctld..");
-        if (!_hamlibSettings.IsHamlibHasErrors())
-            if (!string.IsNullOrEmpty(_hamlibSettings.SelectedRigInfo?.Id))
-            {
-                var defaultArgs =
-                    _rigctldService.GenerateRigctldCmdArgs(_hamlibSettings.SelectedRigInfo.Id, _hamlibSettings.SelectedPort);
-
-                if (_hamlibSettings.UseRigAdvanced)
-                {
-                    if (string.IsNullOrEmpty(_hamlibSettings.OverrideCommandlineArg))
-                        defaultArgs = _rigctldService.GenerateRigctldCmdArgs(_hamlibSettings.SelectedRigInfo.Id,
-                            _hamlibSettings.SelectedPort,
-                            _hamlibSettings.DisablePTT,
-                            _hamlibSettings.AllowExternalControl);
-                    else
-                        defaultArgs = _hamlibSettings.OverrideCommandlineArg;
-                }
-
-                return (await _rigctldService.RestartRigctldBackgroundProcessAsync(defaultArgs, ignoreIfRunning)).Item1;
-            }
-
-        ClassLogger.Debug("Errors in hamlib confs. Shutting down rigctld and ignoring _restartRigctldStrict");
-        _rigctldService.TerminateBackgroundProcess();
-        return false;
-    }
-
+    
     public async Task UploadRigInfoToUserSpecifiedAddressAsync(string url, string rigName,
         RadioData data, CancellationToken token)
     {

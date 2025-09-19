@@ -455,6 +455,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable two radio backend control services simultaneously is not allowed..
+        /// </summary>
+        public static string duperigservdetected {
+            get {
+                return ResourceManager.GetString("duperigservdetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced.
         /// </summary>
         public static string enableadvanced {
@@ -1416,6 +1425,16 @@ namespace CloudlogHelper.Resources {
         public static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * After each configuration change, you must click &quot;Test&quot; to test and apply the changes.
+        ///.
+        /// </summary>
+        public static string testandapply {
+            get {
+                return ResourceManager.GetString("testandapply", resourceCulture);
             }
         }
         

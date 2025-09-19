@@ -101,7 +101,6 @@
                     ViewModel="{Binding}" />
             </StackPanel>
     
-            <!-- B: UDP Log - 高度绑定到左侧容器 -->
             <userControls1:UDPLogInfoGroupboxUserControl 
                 Grid.Row="0" Grid.Column="1"
                 Grid.RowSpan="2"

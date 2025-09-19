@@ -168,6 +168,16 @@ public class DefaultConfigs
     ///     Allowed time offset when comparing qso.
     /// </summary>
     public static readonly int AllowedTimeOffsetMinutes = 10;
+    
+    /// <summary>
+    ///     Default host address for flrig.
+    /// </summary>
+    public static readonly string FLRigDefaultHost = "127.0.0.1";
+    
+    /// <summary>
+    ///     Default host address for flrig.
+    /// </summary>
+    public static readonly string FLRigDefaultPort = "12345";
 
     /// <summary>
     ///     Default host address for Rigctld.
@@ -267,6 +277,10 @@ public class DefaultConfigs
     
     public static readonly int UpdateChartsThrottleTime = 3;
     
+    /// <summary>
+    ///     Default timeout (in seconds) for start/stop.
+    /// </summary>
+    public static readonly int DefaultProcessTPStartStopTimeout = 5;
 
     /// <summary>
     ///     Default Hamlib files for windows

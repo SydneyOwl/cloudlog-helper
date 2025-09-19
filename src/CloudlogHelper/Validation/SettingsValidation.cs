@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 
@@ -49,5 +50,16 @@ public static class SettingsValidation
     {
         if (!int.TryParse(st, out var res)) return false;
         return !string.IsNullOrEmpty(st) && res >= 1;
+    }
+    
+    public static bool CheckHttpPort(string? st)
+    {
+        if (!int.TryParse(st, out var res)) return false;
+        return !string.IsNullOrEmpty(st) && res is >= 1 and <= 65535;
+    }
+    
+    public static bool CheckHttpIp(string? st)
+    {
+        return IPAddress.TryParse(st, out _);
     }
 }

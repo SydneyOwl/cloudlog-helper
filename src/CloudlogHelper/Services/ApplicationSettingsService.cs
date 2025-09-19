@@ -140,6 +140,18 @@ public class ApplicationSettingsService: IApplicationSettingsService
     }
 
     /// <summary>
+    ///     Check if firig configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsFlrigConfChanged()
+    {
+        if (_oldSettings is null) return false;
+        var oldI = _oldSettings.FLRigSettings;
+        var newI = _currentSettings!.FLRigSettings;
+        return !oldI.Equals(newI);
+    }
+
+    /// <summary>
     ///     Check if udp server configs has been changed.
     /// </summary>
     /// <returns></returns>
@@ -164,6 +176,13 @@ public class ApplicationSettingsService: IApplicationSettingsService
                a.OverrideCommandlineArg != b.OverrideCommandlineArg ||
                a.UseExternalRigctld != b.UseExternalRigctld ||
                a.ExternalRigctldHostAddress != b.ExternalRigctldHostAddress;
+    }
+    
+    public bool RestartFLRigNeeded()
+    {
+        var a = _currentSettings!.FLRigSettings;
+        var b = _oldSettings!.FLRigSettings;
+        return a.PollAllowed != b.PollAllowed;
     }
     
     public bool RestartUDPNeeded()
@@ -222,6 +241,12 @@ public class ApplicationSettingsService: IApplicationSettingsService
                 ClassLogger.Trace("hamlib settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
             }
+            
+            if (IsFlrigConfChanged())
+            {
+                ClassLogger.Trace("flrig settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
+            }
 
             if (IsUDPConfChanged())
             {
@@ -253,6 +278,11 @@ public class ApplicationSettingsService: IApplicationSettingsService
         return _currentSettings!;
     }
 
+    public ApplicationSettings GetCurrentDraftSettingsSnapshot()
+    {
+        return _draftSettings.DeepClone()!;
+    }
+
     public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings)
     {
         draftSettings = null;
@@ -264,6 +294,7 @@ public class ApplicationSettingsService: IApplicationSettingsService
         }
         _draftSettings!.CloudlogSettings.ApplyValidationRules();
         _draftSettings!.HamlibSettings.ApplyValidationRules();
+        _draftSettings!.FLRigSettings.ApplyValidationRules();
         _draftSettings!.UDPSettings.ApplyValidationRules();
         _draftSettings!.QsoSyncAssistantSettings.ApplyValidationRules();
         draftSettings = _draftSettings;

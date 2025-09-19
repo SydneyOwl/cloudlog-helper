@@ -6,13 +6,8 @@ namespace CloudlogHelper.Services.Interfaces;
 
 public interface IApplicationSettingsService
 {
-    public bool IsCloudlogConfChanged();
-
-    public bool IsHamlibConfChanged();
-
-    public bool IsUDPConfChanged();
-
     public bool RestartHamlibNeeded();
+    public bool RestartFLRigNeeded();
 
     public bool RestartUDPNeeded();
 
@@ -21,5 +16,6 @@ public interface IApplicationSettingsService
     public void RestoreSettings(object owner);
     
     public ApplicationSettings GetCurrentSettings();
+    public ApplicationSettings GetCurrentDraftSettingsSnapshot();
     public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings);
 }

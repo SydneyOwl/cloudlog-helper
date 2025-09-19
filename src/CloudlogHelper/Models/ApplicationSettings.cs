@@ -61,6 +61,12 @@ public class ApplicationSettings : ReactiveValidationObject
     public HamlibSettings HamlibSettings { get; set; } = new();
 
     /// <summary>
+    ///     FLRig settings.
+    /// </summary>
+    [JsonProperty]
+    public FLRigSettings FLRigSettings { get; set; } = new();
+
+    /// <summary>
     ///     UDP Settings.
     /// </summary>
     [JsonProperty]
@@ -71,7 +77,4 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public QsoSyncAssistantSettings QsoSyncAssistantSettings { get; set; } = new();
-
-
-   
 }

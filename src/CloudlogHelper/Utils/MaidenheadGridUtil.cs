@@ -336,6 +336,7 @@ namespace CloudlogHelper.Utils
         /// <returns>两个网格之间的距离</returns>
         public static double GetDist(string? mGrid1, string? mGrid2)
         {
+            if (mGrid1 == mGrid2) return 0;
             var latLng1 = GridToLatLng(mGrid1);
             var latLng2 = GridToLatLng(mGrid2);
             if (latLng1 != null && latLng2 != null)
@@ -415,21 +416,23 @@ namespace CloudlogHelper.Utils
             var lon1Rad = lon1 * Math.PI / 180.0;
             var lat2Rad = lat2 * Math.PI / 180.0;
             var lon2Rad = lon2 * Math.PI / 180.0;
-    
+
             var deltaLon = lon2Rad - lon1Rad;
-    
-            var x = Math.Sin(deltaLon) * Math.Cos(lat2Rad);
-            var y = Math.Cos(lat1Rad) * Math.Sin(lat2Rad) - 
+
+            var y = Math.Sin(deltaLon) * Math.Cos(lat2Rad);
+            var x = Math.Cos(lat1Rad) * Math.Sin(lat2Rad) - 
                     Math.Sin(lat1Rad) * Math.Cos(lat2Rad) * Math.Cos(deltaLon);
-    
-            var theta = Math.Atan2(x, y) * 180.0 / Math.PI;
-    
+
+            var theta = Math.Atan2(y, x) * 180.0 / Math.PI;
+
+            // 确保结果在 0-360 范围内
             return (theta + 360) % 360;
         }
         
         // 计算网格间航向角
         public static double CalculateBearing(string grid1, string grid2)
         {
+            if (grid1 == grid2) return 0;
             var gridToLatLng1 = GridToLatLng(grid1);
             var gridToLatLng2 = GridToLatLng(grid2);
             return CalculateBearing(gridToLatLng1!.Longitude, gridToLatLng1.Latitude,

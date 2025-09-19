@@ -64,11 +64,11 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
 
-    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
-
     [Reactive]
     [JsonProperty]
     public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
+
+    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
 
     public IObservable<bool> IsHamlibValid => this.WhenAnyValue(
         x => x.SelectedRigInfo,

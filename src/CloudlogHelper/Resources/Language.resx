@@ -601,4 +601,11 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="chartsdisabled" xml:space="preserve">
         <value>Chart feature is disabled, please enable it in settings!</value>
     </data>
+    <data name="testandapply" xml:space="preserve">
+        <value>* After each configuration change, you must click "Test" to test and apply the changes.
+</value>
+    </data>
+    <data name="duperigservdetected" xml:space="preserve">
+        <value>Enable two radio backend control services simultaneously is not allowed.</value>
+    </data>
 </root>

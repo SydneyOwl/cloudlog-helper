@@ -144,7 +144,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             FailReason = null
         };
 
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
             FilteredQsos.Add(testQso);
         }

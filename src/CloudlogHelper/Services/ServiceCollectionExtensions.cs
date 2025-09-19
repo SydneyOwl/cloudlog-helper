@@ -22,8 +22,9 @@ public static class ServiceCollectionExtensions
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     public static Task AddCommonServicesAsync(this IServiceCollection services)
     {
+        services.AddSingleton<IRigBackendManager, RigBackendManager>();
         services.AddSingleton<IDatabaseService, DatabaseService>();
-        services.AddSingleton<IRigctldService, RigctldService>();
+        services.AddSingleton<IRigService, RigctldService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
         services.AddSingleton<IChartDataCacheService<ChartQSOPoint>, ChartDataCacheService<ChartQSOPoint>>();
@@ -83,6 +84,7 @@ public static class ServiceCollectionExtensions
         services.AddAutoMapper(cfg =>
         {
             cfg.CreateMap<HamlibSettings, HamlibSettings>();
+            cfg.CreateMap<FLRigSettings, FLRigSettings>();
             cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
