@@ -197,7 +197,7 @@ public class DefaultConfigs
     /// <summary>
     ///     Default poll interval for Rigctld.
     /// </summary>
-    public static readonly int RigctldDefaultPollingInterval = 15;
+    public static readonly int RigDefaultPollingInterval = 15;
 
     /// <summary>
     ///     The maximum number of output lines to retain from rigctld.

@@ -608,4 +608,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="duperigservdetected" xml:space="preserve">
         <value>Enable two radio backend control services simultaneously is not allowed.</value>
     </data>
+    <data name="confflrigfirst" xml:space="preserve">
+        <value>Error in flrig settings - correct them first!</value>
+    </data>
 </root>

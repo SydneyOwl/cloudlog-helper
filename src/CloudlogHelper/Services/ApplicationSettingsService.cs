@@ -245,7 +245,7 @@ public class ApplicationSettingsService: IApplicationSettingsService
             if (IsFlrigConfChanged())
             {
                 ClassLogger.Trace("flrig settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Hamlib }); // maybe user clickedTest
+                MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.FLRig }); // maybe user clickedTest
             }
 
             if (IsUDPConfChanged())

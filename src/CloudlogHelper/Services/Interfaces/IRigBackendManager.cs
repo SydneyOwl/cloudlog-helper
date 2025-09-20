@@ -15,16 +15,22 @@ public interface IRigBackendManager
     Task InitializeAsync();
 
     RigBackendServiceEnum GetServiceType();
+    IRigService GetServiceByName(RigBackendServiceEnum rigBackend);
 
     bool IsServiceRunning();
     
     Task RestartService();
+    Task StopService();
+    Task StartService();
 
     Task<List<RigInfo>> GetSupportedRigModels();
 
     Task<RadioData> GetAllRigInfo();
 
     Task<string> GetServiceVersion();
+
+    bool GetPollingAllowed();
+    int GetPollingInterval();
 
     Task ExecuteTest(RigBackendServiceEnum backendServiceEnum,
         ApplicationSettings draftSettings);

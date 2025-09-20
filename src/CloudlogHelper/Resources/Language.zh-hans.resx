@@ -608,4 +608,7 @@
     <data name="duperigservdetected" xml:space="preserve">
         <value>不允许同时启用两个电台后端控制服务！</value>
     </data>
+    <data name="confflrigfirst" xml:space="preserve">
+        <value>FLRIG配置有误，请在设置中修正！</value>
+    </data>
 </root>

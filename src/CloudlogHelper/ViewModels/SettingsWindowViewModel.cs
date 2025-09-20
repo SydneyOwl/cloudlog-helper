@@ -112,6 +112,8 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
             hamlibCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
+            flrigCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
+                .DisposeWith(disposables);
             cloudCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
 
@@ -215,10 +217,12 @@ public class SettingsWindowViewModel : ViewModelBase
         try
         {
             if (_initSkipped) return;
-            var output = await _rigBackendManager.GetServiceVersion();
+            var output = await _rigBackendManager
+                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetServiceVersion();
             HamlibVersion = output;
 
-            var opt = await _rigBackendManager.GetSupportedRigModels();
+            var opt = await _rigBackendManager
+                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetSupportedRigModels();
 
             SupportedModels = opt
                 .OrderBy(x => x.Model)

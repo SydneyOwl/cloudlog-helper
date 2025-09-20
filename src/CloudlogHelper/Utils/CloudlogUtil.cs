@@ -155,13 +155,13 @@ public class CloudlogUtil
     /// <param name="rigName"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public static async Task<CommonCloudlogResp> UploadRigInfoAsync(string url, string key, string rigName,
+    public static async Task<CommonCloudlogResp> UploadRigInfoAsync(string url, string key, 
         RadioData data, CancellationToken token)
     {
         var payloadI = new RadioApiCallV2
         {
             Key = key,
-            Radio = rigName,
+            Radio = data.RigName,
             Frequency = data.FrequencyTx,
             Mode = data.ModeTx,
             FrequencyRx = data.FrequencyRx,

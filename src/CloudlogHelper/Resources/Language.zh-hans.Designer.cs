@@ -294,6 +294,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FLRIG配置有误，请在设置中修正！.
+        /// </summary>
+        public static string confflrigfirst {
+            get {
+                return ResourceManager.GetString("confflrigfirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hamlib配置无效，请在设置中修改！.
         /// </summary>
         public static string confhamlibfirst {

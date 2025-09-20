@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRigBackendManager, RigBackendManager>();
         services.AddSingleton<IDatabaseService, DatabaseService>();
         services.AddSingleton<IRigService, RigctldService>();
+        services.AddSingleton<IRigService, FLRigService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
         services.AddSingleton<IChartDataCacheService<ChartQSOPoint>, ChartDataCacheService<ChartQSOPoint>>();

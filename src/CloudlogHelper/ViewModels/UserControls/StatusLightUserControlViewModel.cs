@@ -83,7 +83,16 @@ public class StatusLightUserControlViewModel : ViewModelBase
                     RigBackendRunningStatus = StatusLightEnum.Loading;
                     if (_applicationSettingsService.TryGetDraftSettings(this, out var draft))
                     {
-                        draft!.HamlibSettings.PollAllowed = !draft!.HamlibSettings.PollAllowed;
+                        switch (_rigBackendManager.GetServiceType())
+                        {
+                            case RigBackendServiceEnum.Hamlib:
+                                draft!.HamlibSettings.PollAllowed = !draft.HamlibSettings.PollAllowed;
+                                break;
+                            case RigBackendServiceEnum.FLRig:
+                                draft!.FLRigSettings.PollAllowed = !draft.FLRigSettings.PollAllowed;
+                                break;
+                        }
+                        
                         _applicationSettingsService.ApplySettings(this);
                     }
                     

@@ -294,6 +294,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error in flrig settings - correct them first!.
+        /// </summary>
+        public static string confflrigfirst {
+            get {
+                return ResourceManager.GetString("confflrigfirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid hamlib configuration; Please check them in settings!.
         /// </summary>
         public static string confhamlibfirst {

@@ -46,7 +46,7 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive]
     [JsonProperty]
-    public string PollInterval { get; set; } = DefaultConfigs.RigctldDefaultPollingInterval.ToString();
+    public string PollInterval { get; set; } = DefaultConfigs.RigDefaultPollingInterval.ToString();
 
     [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
 
