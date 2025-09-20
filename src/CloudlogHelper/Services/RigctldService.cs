@@ -178,6 +178,8 @@ public class RigctldService : IRigService, IDisposable
             ClassLogger.Trace("Rigctld service is already running. Ignored.");
             return;
         }
+        
+        ClassLogger.Info("Starting hamlib...");
 
         TerminateBackgroundProcess();
         ClassLogger.Debug("tRigctld offline....Trying to restart Rigctld background process...");
@@ -587,6 +589,7 @@ public class RigctldService : IRigService, IDisposable
 
     public Task StopService(CancellationToken token)
     {
+        ClassLogger.Info("Stoping hamlib...");
         TerminateBackgroundProcess();
         TerminateOnetimeProcess();
         return Task.CompletedTask;

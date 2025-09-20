@@ -313,7 +313,7 @@ public class App : Application
         var consoleTarget = new ConsoleTarget("console")
         {
             Layout = logLevel > LogLevel.Debug 
-                ? null 
+                ? "${longdate} [${level:uppercase=true}] ${message} ${exception}"
                 : "${longdate} [${level:uppercase=true}] ${message} ${exception} ${callsite:fileName=true:includeLineNumbers=true}"
         };
         config.AddTarget(consoleTarget);
@@ -324,7 +324,7 @@ public class App : Application
             {
                 FileName = "${basedir}/logs/${shortdate}.log",
                 Layout = logLevel > LogLevel.Debug 
-                    ? null 
+                    ? "${longdate} [${level:uppercase=true}] ${message} ${exception}"
                     : "${longdate} [${level:uppercase=true}] ${message} ${exception} ${callsite:fileName=true:includeLineNumbers=true}"
             };
             config.AddTarget(fileTarget);

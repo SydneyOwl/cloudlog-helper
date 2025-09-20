@@ -53,9 +53,6 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             try
             {
                 var currentRigService = _getCurrentRigService();
-                
-                Console.WriteLine($"CHANGED SERVICE TO {currentRigService.GetServiceType()}");
-            
                 if (currentRigService.GetServiceType() != _currentService?.GetServiceType())
                 {
                     await _currentService?.StopService(_getNewCancellationProcessToken())!;
@@ -106,7 +103,7 @@ public class RigBackendManager:IRigBackendManager, IDisposable
     {
         if (_appSettings.HamlibSettings.PollAllowed)return _services[RigBackendServiceEnum.Hamlib];
         if (_appSettings.FLRigSettings.PollAllowed)return _services[RigBackendServiceEnum.FLRig];
-        throw new ArgumentException("Invalid parameter");
+        return _services[RigBackendServiceEnum.Hamlib];    
     }
 
     public async Task InitializeAsync()
@@ -150,13 +147,13 @@ public class RigBackendManager:IRigBackendManager, IDisposable
 
     public bool IsServiceRunning()
     {
-        return _currentService.IsServiceRunning() && GetPollingAllowed();
+        return _currentService.IsServiceRunning();
     }
 
     public async Task RestartService()
     {
-        await _currentService.StopService(CancellationToken.None);
-        await _currentService.StartService(_getNewCancellationProcessToken());
+        await StopService();
+        await StartService();
     }
     
     public async Task StopService()
@@ -166,6 +163,11 @@ public class RigBackendManager:IRigBackendManager, IDisposable
     
     public async Task StartService()
     {
+        if (GetServiceType() == RigBackendServiceEnum.Hamlib)
+        {
+            await _startRigctld();
+            return;
+        }
         await _currentService.StartService(_getNewCancellationProcessToken());
     }
 

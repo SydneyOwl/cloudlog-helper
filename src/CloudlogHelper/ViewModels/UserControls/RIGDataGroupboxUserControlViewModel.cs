@@ -114,7 +114,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private void Initialize()
     {
         // check if conf is available, then start rigctld
-        _pollCommand = ReactiveCommand.CreateFromTask(() => _refreshRigInfo());
+        _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
         
         this.WhenActivated(disposables =>
         {
@@ -140,7 +140,8 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 .Subscribe(_ =>
                 {
                     // poll immediately after settings changed.
-                    Observable.Return(Unit.Default)
+                    Observable.Timer(TimeSpan.FromSeconds(2))
+                        .Select(_ => Unit.Default)
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
                     _createNewTimer().DisposeWith(disposables);

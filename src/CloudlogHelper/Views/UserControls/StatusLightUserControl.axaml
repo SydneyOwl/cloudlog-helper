@@ -92,7 +92,7 @@
             
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="PointerPressed">
-                    <InvokeCommandAction Command="{Binding StartStopRigBackendCommand}" />
+                    <!-- <InvokeCommandAction Command="{Binding StartStopRigBackendCommand}" /> -->
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             
@@ -111,7 +111,7 @@
                     <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
                 </Transitions>
             </StackPanel.Transitions>
-            <StackPanel Background="Transparent" Cursor="Hand" ToolTip.Tip="Start/Stop"
+            <StackPanel Background="Transparent"
                         Orientation="Horizontal" Spacing="10">
                 
                 <Border Width="22" Height="22" CornerRadius="11"
