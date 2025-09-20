@@ -86,7 +86,7 @@
             </StackPanel>
         </StackPanel>
         
-        <!-- Rigctld Status -->
+        <!-- backend Status -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
                     Classes="StatusContainer">
             
@@ -126,7 +126,7 @@
                 </Border>
                 
                 <StackPanel Orientation="Vertical" Spacing="2">
-                    <TextBlock Text="RIGCTLD" Classes="StatusLabel"/>
+                    <TextBlock Text="{Binding BackendService}" Classes="StatusLabel"/>
                     <TextBlock Text="{Binding CurrentRigBackendAddress}" Classes="AddressText"/>
                 </StackPanel>
             </StackPanel>

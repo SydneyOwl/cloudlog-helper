@@ -102,7 +102,7 @@ public class SettingsWindowViewModel : ViewModelBase
                         Notification?.SendWarningNotificationSync(TranslationHelper.GetString(LangKeys.duperigservdetected));
                         DraftSettings.FLRigSettings.PollAllowed = false;
                     }
-                });
+                }).DisposeWith(disposables);
             
             // Subscribe language change
             this.WhenAnyValue(x => x.DraftSettings.BasicSettings.LanguageType).Subscribe(language =>

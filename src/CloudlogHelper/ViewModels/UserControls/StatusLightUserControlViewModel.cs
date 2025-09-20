@@ -119,6 +119,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
     [Reactive] public StatusLightEnum RigBackendRunningStatus { get; set; } = StatusLightEnum.Loading;
     [Reactive] public StatusLightEnum UdpServerRunningStatus { get; set; } = StatusLightEnum.Loading;
     [Reactive] public bool InitSkipped { get; set; }
+    [Reactive] public string BackendService { get; set; }
     
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigBackendCommand { get; set; }
@@ -132,7 +133,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 switch (res.Part)
                 {
                     case ChangedPart.Hamlib:
-                        _updateRigctldListeningAddress();
+                    case ChangedPart.FLRig:
+                        _updateRigListeningAddress();
                         break;
                     case ChangedPart.UDPServer:
                         _updateUdpServerListeningAddress();
@@ -154,71 +156,81 @@ public class StatusLightUserControlViewModel : ViewModelBase
         });
 
         _updateUdpServerListeningAddress();
-        _updateRigctldListeningAddress();
+        _updateRigListeningAddress();
     }
 
-    private void _updateRigctldListeningAddress()
+    private void _updateRigListeningAddress()
     {
-        var settings = _applicationSettingsService.GetCurrentSettings().HamlibSettings;
-        var ip = DefaultConfigs.RigctldDefaultHost;
-        var port = DefaultConfigs.RigctldDefaultPort;
-
-
-        try
+        if (_rigBackendManager.GetServiceType() == RigBackendServiceEnum.Hamlib)
         {
-            if (settings.UseExternalRigctld)
+            BackendService = "Hamlib";
+            var hamlibSettings = _applicationSettingsService.GetCurrentSettings().HamlibSettings;
+            var ip = DefaultConfigs.RigctldDefaultHost;
+            var port = DefaultConfigs.RigctldDefaultPort;
+
+            try
             {
-                _isRigctldUsingExternal = true;
-                (ip, port) = IPAddrUtil.ParseAddress(settings.ExternalRigctldHostAddress);
+                if (hamlibSettings.UseExternalRigctld)
+                {
+                    _isRigctldUsingExternal = true;
+                    (ip, port) = IPAddrUtil.ParseAddress(hamlibSettings.ExternalRigctldHostAddress);
+                    CurrentRigBackendAddress = $"({ip}:{port})";
+                    return;
+                }
+
+                _isRigctldUsingExternal = false;
+
+                if (hamlibSettings.UseRigAdvanced &&
+                    !string.IsNullOrEmpty(hamlibSettings.OverrideCommandlineArg))
+                {
+                    var matchIp = Regex.Match(hamlibSettings.OverrideCommandlineArg, @"-T\s+(\S+)");
+                    if (matchIp.Success)
+                    {
+                        ip = matchIp.Groups[1].Value;
+                        ClassLogger.Debug($"Match ip from args: {ip}");
+                    }
+                    else
+                    {
+                        CurrentRigBackendAddress = "(?)";
+                        throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
+                    }
+
+                    var matchPort = Regex.Match(hamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
+                    if (matchPort.Success)
+                    {
+                        port = int.Parse(matchPort.Groups[1].Value);
+                    }
+                    else
+                    {
+                        CurrentRigBackendAddress = "(?)";
+                        throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
+                    }
+
+                    CurrentRigBackendAddress = $"({ip}:{port})";
+                    return;
+                }
+
+                if (hamlibSettings is { UseRigAdvanced: true, AllowExternalControl: true })
+                {
+                    CurrentRigBackendAddress = $"(0.0.0.0:{port})";
+                    return;
+                }
+
                 CurrentRigBackendAddress = $"({ip}:{port})";
-                return;
             }
-
-            _isRigctldUsingExternal = false;
-
-            if (settings.UseRigAdvanced &&
-                !string.IsNullOrEmpty(settings.OverrideCommandlineArg))
+            catch (Exception a)
             {
-                var matchIp = Regex.Match(settings.OverrideCommandlineArg, @"-T\s+(\S+)");
-                if (matchIp.Success)
-                {
-                    ip = matchIp.Groups[1].Value;
-                    ClassLogger.Debug($"Match ip from args: {ip}");
-                }
-                else
-                {
-                    CurrentRigBackendAddress = "(?)";
-                    throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
-                }
-
-                var matchPort = Regex.Match(settings.OverrideCommandlineArg, @"-t\s+(\S+)");
-                if (matchPort.Success)
-                {
-                    port = int.Parse(matchPort.Groups[1].Value);
-                }
-                else
-                {
-                    CurrentRigBackendAddress = "(?)";
-                    throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
-                }
-
-                CurrentRigBackendAddress = $"({ip}:{port})";
-                return;
+                ClassLogger.Error(a);
+                // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
+                CurrentRigBackendAddress = "(?)";
             }
-
-            if (settings is { UseRigAdvanced: true, AllowExternalControl: true })
-            {
-                CurrentRigBackendAddress = $"(0.0.0.0:{port})";
-                return;
-            }
-
-            CurrentRigBackendAddress = $"({ip}:{port})";
         }
-        catch (Exception a)
+
+        if (_rigBackendManager.GetServiceType() == RigBackendServiceEnum.FLRig)
         {
-            ClassLogger.Error(a);
-            // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
-            CurrentRigBackendAddress = "(?)";
+            BackendService = "FLRig";
+            var flrigSettings = _applicationSettingsService.GetCurrentSettings().FLRigSettings;
+            CurrentRigBackendAddress = $"({flrigSettings.FLRigHost}:{flrigSettings.FLRigPort})";
         }
     }
 

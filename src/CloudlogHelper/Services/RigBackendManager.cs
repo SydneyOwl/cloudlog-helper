@@ -53,6 +53,8 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             try
             {
                 var currentRigService = _getCurrentRigService();
+                
+                Console.WriteLine($"CHANGED SERVICE TO {currentRigService.GetServiceType()}");
             
                 if (currentRigService.GetServiceType() != _currentService?.GetServiceType())
                 {
@@ -102,8 +104,9 @@ public class RigBackendManager:IRigBackendManager, IDisposable
 
     private IRigService _getCurrentRigService()
     {
-        var defaultService = _services[RigBackendServiceEnum.Hamlib];
-        return defaultService;
+        if (_appSettings.HamlibSettings.PollAllowed)return _services[RigBackendServiceEnum.Hamlib];
+        if (_appSettings.FLRigSettings.PollAllowed)return _services[RigBackendServiceEnum.FLRig];
+        throw new ArgumentException("Invalid parameter");
     }
 
     public async Task InitializeAsync()
@@ -147,7 +150,7 @@ public class RigBackendManager:IRigBackendManager, IDisposable
 
     public bool IsServiceRunning()
     {
-        return _currentService.IsServiceRunning();
+        return _currentService.IsServiceRunning() && GetPollingAllowed();
     }
 
     public async Task RestartService()
