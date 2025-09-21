@@ -260,36 +260,46 @@ public class RigBackendManager:IRigBackendManager, IDisposable
     }
 
     public async Task ExecuteTest(RigBackendServiceEnum backendServiceEnum,
-        ApplicationSettings draftSettings)
+        ApplicationSettings draftSettings,
+        CancellationToken token)
     {
-        var service = _services[backendServiceEnum];
-        if (backendServiceEnum == RigBackendServiceEnum.Hamlib)
+        try
         {
-            var (ip, port) = _getRigctldIpAndPort(draftSettings.HamlibSettings);
-            
-            if (draftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
+            var service = _services[backendServiceEnum];
+            if (backendServiceEnum == RigBackendServiceEnum.Hamlib)
             {
-                // local rigctld
-                await service.StopService(_getNewCancellationProcessToken());
-                await _startRigctld(draftSettings.HamlibSettings);
+                var (ip, port) = _getRigctldIpAndPort(draftSettings.HamlibSettings);
+
+                if (draftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
+                {
+                    // local rigctld
+                    await service.StopService(_getNewCancellationProcessToken());
+                    await _startRigctld(draftSettings.HamlibSettings);
+                }
+
+                _ = await service.GetAllRigInfo(draftSettings.HamlibSettings.ReportRFPower,
+                    draftSettings.HamlibSettings.ReportSplitInfo, CancellationToken.None, ip, port);
+
+                if (!_appSettings.HamlibSettings.PollAllowed)
+                {
+                    // stop if polling is not enabled
+                    await service.StopService(_getNewCancellationProcessToken());
+                }
             }
 
-            _ = await service.GetAllRigInfo(draftSettings.HamlibSettings.ReportRFPower,
-                draftSettings.HamlibSettings.ReportSplitInfo, CancellationToken.None, ip, port);
-
-            if (!_appSettings.HamlibSettings.PollAllowed)
+            if (backendServiceEnum == RigBackendServiceEnum.FLRig)
             {
-                // stop if polling is not enabled
-                await service.StopService(_getNewCancellationProcessToken());
+                ClassLogger.Debug("FLRig ver" + await service.GetServiceVersion(draftSettings.FLRigSettings.FLRigHost,
+                    draftSettings.FLRigSettings.FLRigPort));
+                await service.GetAllRigInfo(false, false, CancellationToken.None,
+                    draftSettings.FLRigSettings.FLRigHost, draftSettings.FLRigSettings.FLRigPort);
             }
         }
-
-        if (backendServiceEnum == RigBackendServiceEnum.FLRig)
+        catch
         {
-            ClassLogger.Debug("FLRig ver" + await service.GetServiceVersion(draftSettings.FLRigSettings.FLRigHost, draftSettings.FLRigSettings.FLRigPort));
-            await service.GetAllRigInfo(false, false, CancellationToken.None,
-                draftSettings.FLRigSettings.FLRigHost, draftSettings.FLRigSettings.FLRigPort);
+            if (!token.IsCancellationRequested) throw;
         }
+        
     }
 
     private async Task _startRigctld(HamlibSettings? overrideSettings = null)

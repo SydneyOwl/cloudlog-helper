@@ -179,7 +179,7 @@ public class RigctldService : IRigService, IDisposable
             return;
         }
         
-        ClassLogger.Info("Starting hamlib...");
+        ClassLogger.Info($"Starting hamlib({string.Join(" ", args)})...");
 
         TerminateBackgroundProcess();
         ClassLogger.Debug("tRigctld offline....Trying to restart Rigctld background process...");
@@ -270,6 +270,7 @@ public class RigctldService : IRigService, IDisposable
         {
             var ip = args[0].ToString()!;
             var port = int.Parse(args[1].ToString()!);
+            ClassLogger.Debug($"Querying rig info with ip:{ip} port:{port}");
             var testbk = new RadioData();
             var raw = await ExecuteCommand(ip, port, "f");
             ClassLogger.Trace($"we got: {raw}");

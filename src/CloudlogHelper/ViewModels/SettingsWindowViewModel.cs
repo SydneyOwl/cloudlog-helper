@@ -294,12 +294,12 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _testHamlib()
     {
-        await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.Hamlib, DraftSettings);
+        await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.Hamlib, DraftSettings, _source.Token);
     }
     
     private async Task _testFLRig()
     {
-        await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.FLRig, DraftSettings);
+        await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.FLRig, DraftSettings, _source.Token);
     }
 
     private async Task _refreshPort()

@@ -33,5 +33,6 @@ public interface IRigBackendManager
     int GetPollingInterval();
 
     Task ExecuteTest(RigBackendServiceEnum backendServiceEnum,
-        ApplicationSettings draftSettings);
+        ApplicationSettings draftSettings,
+        CancellationToken cancellationToken);
 }
