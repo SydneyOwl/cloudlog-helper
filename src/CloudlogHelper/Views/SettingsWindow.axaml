@@ -108,7 +108,7 @@
             <TabItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="8" Margin="0 8 0 0">
-                        <Border Classes="setting-card">
+                        <!-- <Border Classes="setting-card"> -->
                             <StackPanel Spacing="10">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Language/语言" Classes="setting-label" />
@@ -127,7 +127,7 @@
                                               IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}"/>
                                 </StackPanel>
                             </StackPanel>
-                        </Border>
+                        <!-- </Border> -->
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -211,7 +211,7 @@
             </TabItem>
 
             <!-- Rig Control Tab -->
-            <TabItem Header="Rig Backend System">
+            <TabItem Header="{I18N {x:Static resources:LangKeys.rigbackendsystem}}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <!-- HamLib Settings -->
@@ -387,7 +387,7 @@
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
-                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                                     <!-- Enable UDP -->
                                     <CheckBox Content="{I18N {x:Static resources:LangKeys.enableudpserver}}"
                                               Grid.Column="0" Grid.ColumnSpan="2"
@@ -410,16 +410,24 @@
                                     <TextBox Classes="setting-control" Grid.Row="4" Grid.Column="1"
                                              Text="{Binding DraftSettings.UDPSettings.RetryCount}" />
 
-                                    <!-- Forwarding -->
+                                    <!-- UDP Forwarding -->
                                     <CheckBox Grid.Row="5" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.forwardmsg}}"
-                                              Margin="0,10,0,0" x:Name="forward"
+                                              Margin="0,10,0,0" x:Name="forwardudp"
                                               IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessage}" />
                                     <TextBox Grid.Row="5" Grid.Column="1"  Classes="setting-control" Margin="0,10,0,0" 
                                                          Text="{Binding DraftSettings.UDPSettings.ForwardAddress}"
-                                                         IsEnabled="{Binding #forward.IsChecked}"/>
+                                                         IsEnabled="{Binding #forwardudp.IsChecked}"/>
+                                    
+                                    <!-- TDP Forwarding -->
+                                    <CheckBox Grid.Row="6" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.forward2tcp}}"
+                                              Margin="0,10,0,0" x:Name="forwardtcp"
+                                              IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessageToHttp}" />
+                                    <TextBox Grid.Row="6" Grid.Column="1"  Classes="setting-control" Margin="0,10,0,0" 
+                                             Text="{Binding DraftSettings.UDPSettings.ForwardHttpAddress}"
+                                             IsEnabled="{Binding #forwardtcp.IsChecked}"/>
                                     
                                     <!-- Notifications -->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2" Margin="0,10,0,0">
                                         <TextBlock Text="{I18N {x:Static resources:LangKeys.pushnotificationon}}" VerticalAlignment="Center"/>
                                         <CheckBox Margin="30,0,0,0" IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOMade}"
                                                   Content="{I18N {x:Static resources:LangKeys.qsofinished}}"/>

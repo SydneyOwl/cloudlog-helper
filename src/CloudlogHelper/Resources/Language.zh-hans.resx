@@ -421,10 +421,10 @@
         <value>自动上传QSO到</value>
     </data>
     <data name="forwardmsg" xml:space="preserve">
-        <value>转发原始数据包到</value>
+        <value>转发原始UDP数据包到</value>
     </data>
     <data name="forwardto" xml:space="preserve">
-        <value>转发原始数据包到</value>
+        <value>转发原始UDP数据包到</value>
     </data>
     <data name="advancedsettings" xml:space="preserve">
         <value>高级设置</value>
@@ -610,5 +610,11 @@
     </data>
     <data name="confflrigfirst" xml:space="preserve">
         <value>FLRIG配置有误，请在设置中修正！</value>
+    </data>
+    <data name="rigbackendsystem" xml:space="preserve">
+        <value>电台后端控制系统</value>
+    </data>
+    <data name="forward2tcp" xml:space="preserve">
+        <value>转发解码信息到http服务器</value>
     </data>
 </root>

@@ -635,7 +635,16 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发原始数据包到.
+        ///   Looks up a localized string similar to 转发解码信息到http服务器.
+        /// </summary>
+        public static string forward2tcp {
+            get {
+                return ResourceManager.GetString("forward2tcp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 转发原始UDP数据包到.
         /// </summary>
         public static string forwardmsg {
             get {
@@ -644,7 +653,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发原始数据包到.
+        ///   Looks up a localized string similar to 转发原始UDP数据包到.
         /// </summary>
         public static string forwardto {
             get {
@@ -1183,6 +1192,15 @@ namespace CloudlogHelper.Resources {
         public static string rfpowerhelp {
             get {
                 return ResourceManager.GetString("rfpowerhelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 电台后端控制系统.
+        /// </summary>
+        public static string rigbackendsystem {
+            get {
+                return ResourceManager.GetString("rigbackendsystem", resourceCulture);
             }
         }
         

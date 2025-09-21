@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,17 @@ type RadioRequest struct {
 
 func main() {
 	r := gin.Default()
+
+	r.POST("/decode", func(ctx *gin.Context) {
+		res, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			fmt.Printf("Error while processing json: %s\n", err.Error())
+			ctx.String(http.StatusBadRequest, "Invalid JSON: ")
+			return
+		}
+		fmt.Println(string(res))
+		ctx.String(http.StatusOK, "OK")
+	})
 
 	r.POST("/radio", func(c *gin.Context) {
 		var request RadioRequest

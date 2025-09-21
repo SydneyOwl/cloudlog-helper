@@ -635,6 +635,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send decoded data to HTTP server.
+        /// </summary>
+        public static string forward2tcp {
+            get {
+                return ResourceManager.GetString("forward2tcp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Forward raw UDP Packet to.
         /// </summary>
         public static string forwardmsg {
@@ -1182,6 +1191,15 @@ namespace CloudlogHelper.Resources {
         public static string rfpowerhelp {
             get {
                 return ResourceManager.GetString("rfpowerhelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rig Backend System.
+        /// </summary>
+        public static string rigbackendsystem {
+            get {
+                return ResourceManager.GetString("rigbackendsystem", resourceCulture);
             }
         }
         

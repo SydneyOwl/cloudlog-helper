@@ -3,10 +3,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Flurl.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NLog;
+using WsjtxUtilsPatch.WsjtxMessages;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using WsjtxUtilsPatch.WsjtxUdpServer;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -44,7 +48,7 @@ public class UdpServerService : IUdpServerService, IDisposable
         return _udpServer.IsRunning;
     }
 
-    public async Task ForwardMessageAsync(Memory<byte> message, IPEndPoint endPoint)
+    public async Task ForwardUDPMessageAsync(Memory<byte> message, IPEndPoint endPoint)
     {
         lock (_syncLock)
         {
@@ -63,12 +67,34 @@ public class UdpServerService : IUdpServerService, IDisposable
 
         try
         {
-            await _forwardedClient.SendAsync(message, endPoint);
+            await _forwardedClient.SendAsync(message, endPoint, new CancellationTokenSource(
+                TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout)).Token);
         }
         catch (Exception ex)
         {
             ClassLogger.Error(ex, "Failed to send message.");
             throw;
+        }
+    }
+
+    public async Task ForwardTCPMessageAsync(Memory<byte> message, string server)
+    {
+        var deserializeWsjtxMessage = message.DeserializeWsjtxMessage();
+        if (deserializeWsjtxMessage is null)
+        {
+            ClassLogger.Debug("deserializeWsjtxMessage is empty so skipped,,");
+            return;
+        }
+
+        var receiveString = await server.WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+            .WithHeader("Content-Type", "application/json")
+            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout))
+            .PostStringAsync(JsonConvert.SerializeObject(deserializeWsjtxMessage))
+            .ReceiveString();
+
+        if (receiveString != "OK")
+        {
+            throw new Exception($"Result does not return as expected: expect \"OK\" but we got {receiveString}");
         }
     }
 

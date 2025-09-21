@@ -442,7 +442,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         {
             if (_udpSettings.ForwardMessage)
                 // ClassLogger.Trace(message.DeserializeWsjtxMessage().MessageType);
-                await _udpServerService.ForwardMessageAsync(message, IPEndPoint.Parse(_udpSettings.ForwardAddress));
+                await _udpServerService.ForwardUDPMessageAsync(message, IPEndPoint.Parse(_udpSettings.ForwardAddress));
+
+            if (_udpSettings.ForwardMessageToHttp)
+                await _udpServerService.ForwardTCPMessageAsync(message, _udpSettings.ForwardHttpAddress);
         }
         catch (Exception e)
         {

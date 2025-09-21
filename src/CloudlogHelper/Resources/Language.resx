@@ -611,4 +611,10 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="confflrigfirst" xml:space="preserve">
         <value>Error in flrig settings - correct them first!</value>
     </data>
+    <data name="rigbackendsystem" xml:space="preserve">
+        <value>Rig Backend System</value>
+    </data>
+    <data name="forward2tcp" xml:space="preserve">
+        <value>Send decoded data to HTTP server</value>
+    </data>
 </root>

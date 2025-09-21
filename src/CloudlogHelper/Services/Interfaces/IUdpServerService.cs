@@ -10,7 +10,8 @@ public interface IUdpServerService
 {
     bool IsUdpServerRunning();
 
-    Task ForwardMessageAsync(Memory<byte> message, IPEndPoint endPoint);
+    Task ForwardUDPMessageAsync(Memory<byte> message, IPEndPoint endPoint);
+    Task ForwardTCPMessageAsync(Memory<byte> message, string server);
 
     Task RestartUDPServerAsync(IPAddress ip, int port,
         Action<WsjtxMessage> handler,

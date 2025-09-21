@@ -33,7 +33,11 @@ public class DefaultConfigs
     ///     Default timeout (in seconds) for HTTP(s) requests.
     /// </summary>
     public static readonly int DefaultRequestTimeout = 10;
-
+    
+    /// <summary>
+    ///     Default timeout (in seconds) for HTTP(s) forwarding requests.
+    /// </summary>
+    public static readonly int DefaultForwardingRequestTimeout = 3;
 
     /// <summary>
     ///     Default timeout (in seconds) for QSODownload HTTP(s) requests.
