@@ -1367,6 +1367,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 解码站点统计.
+        /// </summary>
+        public static string stationstatisticgraph {
+            get {
+                return ResourceManager.GetString("stationstatisticgraph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 停止位.
         /// </summary>
         public static string stopbit {

@@ -617,4 +617,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="forward2tcp" xml:space="preserve">
         <value>Send decoded data to HTTP server</value>
     </data>
+    <data name="stationstatisticgraph" xml:space="preserve">
+        <value>Received Station Statistic</value>
+    </data>
 </root>

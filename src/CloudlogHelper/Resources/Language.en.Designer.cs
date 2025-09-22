@@ -1366,6 +1366,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Received Station Statistic.
+        /// </summary>
+        public static string stationstatisticgraph {
+            get {
+                return ResourceManager.GetString("stationstatisticgraph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stop Bit.
         /// </summary>
         public static string stopbit {

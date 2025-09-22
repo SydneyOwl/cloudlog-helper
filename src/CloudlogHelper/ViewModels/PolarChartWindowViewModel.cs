@@ -171,11 +171,11 @@ public class PolarChartWindowViewModel : ViewModelBase
             _isExecutingChartUpdate = true;
             PlotControl.Plot.Clear();
 
-            var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples, FilterDupeCallsign, ChartQSOPoint.ChartQsoPointComparer)
-                                                .Where(x => x.Band == SelectedBand
-                                                            && x.Mode == SelectedMode
-                                                            && x.Client == SelectedClient)
+            var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples,
+                    FilterDupeCallsign ? ChartQSOPoint.ChartQsoPointComparer : null,
+                    point => point.Band == SelectedBand && point.Mode == SelectedMode && point.Client == SelectedClient)
                                                 .ToArray();
+            
             var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData) + 500;
             ClassLogger.Trace($"Use maxDistance:{maxDistance}");
             var densities = new double[1];

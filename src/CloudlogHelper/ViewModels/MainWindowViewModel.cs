@@ -61,8 +61,10 @@ public class MainWindowViewModel : ViewModelBase
         OpenAboutWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(AboutWindowViewModel), true));
         OpenQSOAssistantWindow =
             ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(QsoSyncAssistantWindowViewModel), true));
-        OpenSignalPolarChatWindow =
+        OpenSignalPolarChartWindow =
             ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(PolarChartWindowViewModel), false));
+        OpenStationStatisticChartWindow =
+            ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(StationStatisticsChartWindowViewModel), false));
         SwitchLightTheme = ReactiveCommand.Create(() => { Application.Current!.RequestedThemeVariant = ThemeVariant.Light; });
         SwitchDarkTheme = ReactiveCommand.Create(() => { Application.Current!.RequestedThemeVariant = ThemeVariant.Dark; });
 
@@ -163,7 +165,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> OpenAboutWindow { get; }
     public ReactiveCommand<Unit, Unit> OpenQSOAssistantWindow { get; }
-    public ReactiveCommand<Unit, Unit> OpenSignalPolarChatWindow { get; }
+    public ReactiveCommand<Unit, Unit> OpenSignalPolarChartWindow { get; }
+    public ReactiveCommand<Unit, Unit> OpenStationStatisticChartWindow { get; }
     public ReactiveCommand<Unit, Unit> SwitchLightTheme { get; }
     public ReactiveCommand<Unit, Unit> SwitchDarkTheme { get; }
 

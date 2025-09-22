@@ -617,4 +617,7 @@
     <data name="forward2tcp" xml:space="preserve">
         <value>转发解码信息到http服务器</value>
     </data>
+    <data name="stationstatisticgraph" xml:space="preserve">
+        <value>解码站点统计</value>
+    </data>
 </root>

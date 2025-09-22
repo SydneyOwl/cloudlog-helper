@@ -46,6 +46,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<UserBasicDataGroupboxUserControlViewModel>();
         services.AddSingleton<StatusLightUserControlViewModel>();
         services.AddSingleton<PolarChartWindowViewModel>();
+        services.AddSingleton<StationStatisticsChartWindowViewModel>();
         return Task.CompletedTask;
     }
 

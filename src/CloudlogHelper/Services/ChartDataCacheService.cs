@@ -21,10 +21,10 @@ public class ChartDataCacheService<T> : IChartDataCacheService<T>, IDisposable
     private int _count = 0;
     private readonly object _lock = new();
     
-    private readonly Subject<Unit> _itemAddedSubject = new();
-    private IObservable<Unit> ItemAdded => _itemAddedSubject.AsObservable();
+    private readonly Subject<T> _itemAddedSubject = new();
+    private IObservable<T> ItemAdded => _itemAddedSubject.AsObservable();
 
-    public IObservable<Unit> GetItemAddedObservable()
+    public IObservable<T> GetItemAddedObservable()
     {
         return ItemAdded;
     }
@@ -36,7 +36,7 @@ public class ChartDataCacheService<T> : IChartDataCacheService<T>, IDisposable
             _buffer[_nextIndex] = item;
             _nextIndex = (_nextIndex + 1) % _buffer.Length;
             _count = Math.Min(_count + 1, _buffer.Length);
-            _itemAddedSubject.OnNext(Unit.Default);
+            _itemAddedSubject.OnNext(item);
         }
     }
 
@@ -50,29 +50,33 @@ public class ChartDataCacheService<T> : IChartDataCacheService<T>, IDisposable
         }
     }
 
-    public IEnumerable<T> TakeLatestN(int count, bool filterDupe = false, IEqualityComparer<T>? comparer = null)
+    public IEnumerable<T> TakeLatestN(int count, IEqualityComparer<T>? comparer = null, Func<T, bool>? filterCondition = null)
     {
         lock (_lock)
         {
-            count = Math.Min(count, _count);
-            var result = new List<T>(count);
+            var result = new List<T>();
             var seen = new HashSet<T>(comparer);
-            
-            var startIndex = (_nextIndex - count + _buffer.Length) % _buffer.Length;
-            
-            for (var i = 0; i < count; i++)
-            {
-                var index = (startIndex + i) % _buffer.Length;
-                var cur = _buffer[index];
+        
+            var takeCount = Math.Min(count, _count);
+            var itemsTaken = 0;
 
-                if (filterDupe)
-                {
-                    if (seen.Add(cur)) result.Add(cur);
+            for (var i = 1; itemsTaken < takeCount && i <= _count; i++)
+            {
+                var index = (_nextIndex - i + _buffer.Length) % _buffer.Length;
+                var item = _buffer[index];
+
+                if (filterCondition != null && !filterCondition.Invoke(item))
                     continue;
-                }
-                result.Add(cur);
+
+                if (comparer != null && seen.Contains(item))
+                    continue;
+
+                if (comparer != null) seen.Add(item);
+                
+                result.Add(item);
+                itemsTaken++;
             }
-            
+
             return result;
         }
     }
