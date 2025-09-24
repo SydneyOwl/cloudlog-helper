@@ -19,46 +19,27 @@ using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.PlotStyles;
 using ScottPlot.Plottables;
-using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
-namespace CloudlogHelper.ViewModels;
+namespace CloudlogHelper.ViewModels.Charts;
 
-public class PolarChartWindowViewModel : ViewModelBase
+public class PolarChartWindowViewModel : ChartWindowViewModel
 {
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    [Reactive] public string LastDataUpdatedAt{ get; set; } = "No data yet";
-
-
-    private bool _isExecutingChartUpdate;
-
-    [Reactive] public ObservableCollection<string> Bands { get; set; } = new();
-    [Reactive] public ObservableCollection<string> Clients { get; set; } = new();
-    [Reactive] public ObservableCollection<string> Modes { get; set; } = new();
-
-    [Reactive] public string SelectedBand { get; set; } = string.Empty;
-    [Reactive] public string SelectedClient { get; set; } = string.Empty;
-    [Reactive] public string SelectedMode { get; set; } = string.Empty;
-
-    [Reactive] public bool AutoSwitchEnabled { get; set; } = true;
-
     [Reactive] public int KValue { get; set; } = DefaultConfigs.DefaulPolarKValue;
     [Reactive] public double AngWeightValue { get; set; } = DefaultConfigs.DefaulPolarAngWeightValue;
     [Reactive] public double DistWeightValue { get; set; } = DefaultConfigs.DefaulPolarDistWeightValue;
     [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
     [Reactive] public bool ShowDestColor { get; set; } = true;
-    [Reactive] public bool FilterDupeCallsign { get; set; } = true;
-    [Reactive] public bool UpdatePaused { get; set; }
     
     [Reactive] public bool ShowErrorMsg { get; set; }
     [Reactive] public string ErrorMessage { get; set; }
 
     public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
-    public ReactiveCommand<Unit, Unit> Test { get; }
     public ReactiveCommand<Unit, Unit> RefreshChart { get; }
     public AvaPlot PlotControl { get; private set; }
 
@@ -90,29 +71,9 @@ public class PolarChartWindowViewModel : ViewModelBase
         });
 
         RefreshChart = ReactiveCommand.Create(UpdatePolar);
-        
+      
         this.WhenActivated(disposable =>
         {
-            MessageBus.Current.Listen<ClientStatusChanged>().Subscribe(x =>
-            {
-                var currStatusMode = x.CurrStatus.Mode;
-                var currStatusDialFrequencyInHz = x.CurrStatus.DialFrequencyInHz;
-                var currStatusId = x.CurrStatus.Id;
-                var currBand = FreqHelper.GetMeterFromFreq(currStatusDialFrequencyInHz);
-                
-                if (!Bands.Contains(currBand)) Bands.Add(currBand);
-                if (!Clients.Contains(currStatusId))Clients.Add(currStatusId);
-                if (!Modes.Contains(currStatusMode))Modes.Add(currStatusMode);
-
-                if (AutoSwitchEnabled)
-                {
-                    SelectedBand = currBand;
-                    SelectedClient = currStatusId;
-                    SelectedMode = currStatusMode;
-                }
-            }, exception => ClassLogger.Error(exception))
-            .DisposeWith(disposable);
-            
             SaveChart.ThrownExceptions.Subscribe().DisposeWith(disposable);
 
             _chartDataCacheService.GetItemAddedObservable()
@@ -120,7 +81,6 @@ public class PolarChartWindowViewModel : ViewModelBase
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe((_) =>
                 {
-                    LastDataUpdatedAt = "Last data recv at:" + DateTime.Now.ToLongTimeString();
                     UpdatePolar();
                 })
                 .DisposeWith(disposable);
@@ -129,8 +89,7 @@ public class PolarChartWindowViewModel : ViewModelBase
                     x => x.AngWeightValue,
                     x => x.DistWeightValue,
                     x => x.ShowDestColor,
-                    x => x.QSOSamples,
-                    x => x.UpdatePaused)
+                    x => x.QSOSamples)
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe((_) => UpdatePolar())
@@ -138,7 +97,8 @@ public class PolarChartWindowViewModel : ViewModelBase
             
             this.WhenAnyValue(x => x.SelectedBand,
                     x => x.SelectedClient,
-                    x=>x.SelectedMode)
+                    x=> x.SelectedMode,
+                    x => x.UpdatePaused)
                 .Throttle(TimeSpan.FromMilliseconds(352))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe((_) => UpdatePolar())
@@ -150,7 +110,7 @@ public class PolarChartWindowViewModel : ViewModelBase
 
     private void UpdatePolar()
     {
-        if (_isExecutingChartUpdate || UpdatePaused) return;
+        if (IsExecutingChartUpdate || UpdatePaused) return;
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
             ErrorMessage = TranslationHelper.GetString(LangKeys.griderror);
@@ -168,12 +128,13 @@ public class PolarChartWindowViewModel : ViewModelBase
         {
             ShowErrorMsg = false;
             ClassLogger.Trace("Updating polar.");
-            _isExecutingChartUpdate = true;
+            IsExecutingChartUpdate = true;
             PlotControl.Plot.Clear();
 
             var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples,
                     FilterDupeCallsign ? ChartQSOPoint.ChartQsoPointComparer : null,
-                    point => point.Band == SelectedBand && point.Mode == SelectedMode && point.Client == SelectedClient)
+                    point => point.Band == SelectedBand && point.Mode == SelectedMode
+                                                        && point.Client == SelectedClient && point.Distance >= 0)
                                                 .ToArray();
             
             var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData) + 500;
@@ -239,7 +200,8 @@ public class PolarChartWindowViewModel : ViewModelBase
             _refreshTheme();
             PlotControl.Plot.Axes.AutoScale();
             PlotControl.Refresh();
-            _isExecutingChartUpdate = false;
+            LastDataUpdatedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
+            IsExecutingChartUpdate = false;
         }
     }
 

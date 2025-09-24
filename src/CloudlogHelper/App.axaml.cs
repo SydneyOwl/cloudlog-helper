@@ -26,6 +26,7 @@ using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
 using CloudlogHelper.Views.UserControls;

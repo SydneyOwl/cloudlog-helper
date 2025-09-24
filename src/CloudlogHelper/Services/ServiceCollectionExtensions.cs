@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
 using DesktopNotifications;

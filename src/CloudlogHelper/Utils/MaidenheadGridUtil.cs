@@ -344,7 +344,7 @@ namespace CloudlogHelper.Utils
                 return GetDist(latLng1, latLng2);
             }
 
-            return 0;
+            return -1;
         }
 
         /// <summary>

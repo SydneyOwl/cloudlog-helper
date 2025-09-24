@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
-using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.Charts;
 using ReactiveUI;
-using ScottPlot;
 
-namespace CloudlogHelper.Views;
+namespace CloudlogHelper.Views.Charts;
 
 public partial class PolarChartWindow : ReactiveWindow<PolarChartWindowViewModel>
 {

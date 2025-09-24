@@ -272,7 +272,8 @@ public class DefaultConfigs
     public static readonly int DefaulPolarKValue = 5;
     public static readonly double DefaulPolarAngWeightValue = 0.5;
     public static readonly double DefaulPolarDistWeightValue = 0.5;
-    public static readonly int DefaultPolarQSOSamples = 1000;
+    public static readonly int DefaultPolarQSOSamples = 3000;
+    public static readonly int DefaultHistogramQSOSamples = 9000;
     
     /// <summary>
     /// Default cache size for qso points.

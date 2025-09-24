@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
 using CloudlogHelper.Views.UserControls;
@@ -44,6 +45,8 @@ public class MainWindowViewModel : ViewModelBase
         RIGDataGroupboxUserControlViewModel rigdataGroupboxUserControlViewModel,
         UserBasicDataGroupboxUserControlViewModel userBasicDataGroupboxUserControlViewModel,
         StatusLightUserControlViewModel statusLightUserControlViewModel,
+        PolarChartWindowViewModel ignored1, // force init - DO NOT REMOVE IT!
+        StationStatisticsChartWindowViewModel ignored2, // force init - DO NOT REMOVE IT!
         CommandLineOptions cmd,
         IWindowManagerService wm,
         IInAppNotificationService inAppNotificationService

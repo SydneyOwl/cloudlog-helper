@@ -5,15 +5,16 @@
         xmlns:avalonia="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:charts="clr-namespace:CloudlogHelper.ViewModels"
+        xmlns:charts1="clr-namespace:CloudlogHelper.ViewModels.Charts"
         Width="850" Height="650"
         CanResize="True"
-        x:Class="CloudlogHelper.Views.PolarChartWindow"
+        x:Class="CloudlogHelper.Views.Charts.PolarChartWindow"
         Title="信号极坐标图"
         WindowStartupLocation="CenterScreen"
-        x:DataType="charts:PolarChartWindowViewModel">
+        x:DataType="charts1:PolarChartWindowViewModel">
     
     <Design.DataContext>
-        <charts:PolarChartWindowViewModel />
+        <charts1:PolarChartWindowViewModel />
     </Design.DataContext>
     
     <Window.Styles>
@@ -107,7 +108,7 @@
                         <TextBlock Text="{Binding #qsoSlider.Value}" VerticalAlignment="Center"
                                    Width="40" TextAlignment="Right"
                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                        <Slider Minimum="100" Maximum="5000" 
+                        <Slider Minimum="100" Maximum="8000" 
                                 Value="{Binding QSOSamples}"
                                 IsSnapToTickEnabled="True" TickFrequency="100" x:Name="qsoSlider" 
                                 Margin="10,0" Width="180"/>

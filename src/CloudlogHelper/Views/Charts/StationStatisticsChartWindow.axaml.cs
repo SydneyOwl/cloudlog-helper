@@ -1,11 +1,8 @@
 ﻿using System;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.Charts;
 
-namespace CloudlogHelper.Views;
+namespace CloudlogHelper.Views.Charts;
 
 public partial class StationStatisticsChartWindow : ReactiveWindow<StationStatisticsChartWindowViewModel>
 {
