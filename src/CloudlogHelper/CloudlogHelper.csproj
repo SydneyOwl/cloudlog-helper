@@ -74,6 +74,7 @@
         <EmbeddedResource Remove="Hamlib\**"/>
         <None Remove="Hamlib\**"/>
         <None Remove="cloudlog-helper.zip"/>
+        <EmbeddedResource Include="Resources\NE2_50M_SR_W_proc_small.jpg" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">

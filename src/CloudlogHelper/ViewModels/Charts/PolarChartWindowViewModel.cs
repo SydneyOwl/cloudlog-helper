@@ -34,9 +34,6 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     [Reactive] public double DistWeightValue { get; set; } = DefaultConfigs.DefaulPolarDistWeightValue;
     [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
     [Reactive] public bool ShowDestColor { get; set; } = true;
-    
-    [Reactive] public bool ShowErrorMsg { get; set; }
-    [Reactive] public string ErrorMessage { get; set; }
 
     public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
@@ -45,7 +42,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
     private PolarAxis _polarAxis;
 
-    private IChartDataCacheService<ChartQSOPoint> _chartDataCacheService;
+    private IChartDataCacheService _chartDataCacheService;
     
     private BasicSettings _basicSettings;
 
@@ -53,7 +50,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     {
     }
 
-    public PolarChartWindowViewModel(IChartDataCacheService<ChartQSOPoint> chartDataCacheService,
+    public PolarChartWindowViewModel(IChartDataCacheService chartDataCacheService,
         IApplicationSettingsService applicationSettingsService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
@@ -124,6 +121,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             ShowErrorMsg = true;
             return;
         }
+        
         try
         {
             ShowErrorMsg = false;
@@ -194,6 +192,8 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         {
             ClassLogger.Error(e);
             PlotControl.Plot.Clear();
+            ShowErrorMsg = true;
+            ErrorMessage = e.Message;
         }
         finally
         {

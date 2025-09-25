@@ -108,7 +108,7 @@
                         <TextBlock Text="{Binding #qsoSlider.Value}" VerticalAlignment="Center"
                                    Width="40" TextAlignment="Right"
                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                        <Slider Minimum="100" Maximum="8000" 
+                        <Slider Minimum="100" Maximum="5000" 
                                 Value="{Binding QSOSamples}"
                                 IsSnapToTickEnabled="True" TickFrequency="100" x:Name="qsoSlider" 
                                 Margin="10,0" Width="180"/>
@@ -165,7 +165,7 @@
                 <TextBlock Text="{Binding ErrorMessage}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           Foreground="{DynamicResource SystemControlHighlightAltListAccentHighBrush}"
+                           Foreground="{DynamicResource SystemControlForegroundAccentBrush}"
                            FontWeight="Medium" FontSize="15"
                            IsVisible="{Binding ShowErrorMsg}"
                            Margin="5" TextWrapping="Wrap" TextAlignment="Center"/>

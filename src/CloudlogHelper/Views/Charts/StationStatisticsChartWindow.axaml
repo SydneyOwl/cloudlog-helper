@@ -102,6 +102,21 @@
             
         </StackPanel>
         
-        <ContentControl x:Name="plotControl" Content="{Binding PlotControl, Mode=OneTime}"/>
+        <Grid>
+            <ContentControl x:Name="plotControl" 
+                           Content="{Binding PlotControl, Mode=OneTime}"
+                           IsVisible="{Binding !ShowErrorMsg}"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch"/>
+            
+            <TextBlock Text="{Binding ErrorMessage}"
+                      IsVisible="{Binding ShowErrorMsg}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      FontSize="16"
+                      FontWeight="Bold"
+                      Foreground="{DynamicResource SystemControlForegroundAccentBrush}"
+                      TextAlignment="Center"/>
+        </Grid>
     </DockPanel>
 </Window>

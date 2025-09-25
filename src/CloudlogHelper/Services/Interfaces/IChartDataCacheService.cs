@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive;
+using CloudlogHelper.Models;
+using ScottPlot.Statistics;
 
 namespace CloudlogHelper.Services.Interfaces;
 
-public interface IChartDataCacheService<T>
+public interface IChartDataCacheService
 {
-    IObservable<T> GetItemAddedObservable();
-    IEnumerable<T> TakeLatestN(int count, IEqualityComparer<T>? comparer = null, Func<T, bool>? filterCondition = null);
-    void Add(T item);
+    IObservable<ChartQSOPoint> GetItemAddedObservable();
+    IEnumerable<ChartQSOPoint> TakeLatestN(int count, IEqualityComparer<ChartQSOPoint>? comparer = null, Func<ChartQSOPoint, bool>? filterCondition = null);
+    public double[,]? GetGridStationCountByBand(string? band);
+    Histogram? GetDistanceHistogramByBand(string? band);
+    Histogram? GetBearingHistogramByBand(string? band);
+    public Dictionary<string, double?>? GetStationCountByBand(string? band);
+    void Add(ChartQSOPoint item);
     void Clear();
 }

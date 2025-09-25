@@ -19,6 +19,9 @@ internal struct CallsignDataCache
 {
     public double Bearing { get; set; }
     public double Distance{ get; set; }
+    public double Latitude{ get; set; }
+    
+    public double Longitude{ get; set; }
     public string Dxcc{ get; set; }
     public bool IsAccurate{ get; set; }
 }
@@ -39,7 +42,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
     
     private IDatabaseService _databaseService;
     
-    private IChartDataCacheService<ChartQSOPoint> _dataCacheService;
+    private IChartDataCacheService _dataCacheService;
 
     private string _myGrid;
     
@@ -47,7 +50,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
 
     public DecodedDataProcessorService(IDatabaseService databaseService,
         IApplicationSettingsService applicationSettingsService,
-        IChartDataCacheService<ChartQSOPoint> chartDataCacheService)
+        IChartDataCacheService chartDataCacheService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _databaseService = databaseService;
@@ -119,7 +122,10 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 {
                     ClassLogger.Debug($"Cache hits - {callsign}");
                     chartQsoPoint.Azimuth = value.Bearing;
-                    chartQsoPoint.Distance = value.Distance;
+                    chartQsoPoint.Distance = value.Distance; 
+                    chartQsoPoint.DXCC = value.Dxcc;
+                    chartQsoPoint.Latitude = value!.Latitude;
+                    chartQsoPoint.Longitude = value!.Longitude;
                     _dataCacheService.Add(chartQsoPoint);
                     continue;
                 }
@@ -156,20 +162,25 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 }
             }
             
-            if (MaidenheadGridUtil.CheckMaidenhead(_myGrid) 
-                && MaidenheadGridUtil.CheckMaidenhead(iGrid))return;
+            if (!MaidenheadGridUtil.CheckMaidenhead(_myGrid) 
+                || !MaidenheadGridUtil.CheckMaidenhead(iGrid))return;
             
             var bearing = MaidenheadGridUtil.CalculateBearing(_myGrid, iGrid);
             var distance = MaidenheadGridUtil.GetDist(_myGrid, iGrid);
+            var gridToLatLng = MaidenheadGridUtil.GridToLatLng(iGrid);
             var dxcc = await _databaseService.GetCallsignDetailAsync(callsign);
             chartQsoPoint.Azimuth = bearing;
             chartQsoPoint.Distance = distance;
             chartQsoPoint.DXCC = dxcc.Dxcc;
+            chartQsoPoint.Latitude = gridToLatLng?.Latitude ?? 0;
+            chartQsoPoint.Longitude = gridToLatLng?.Longitude ?? 0;
             
             _callsignDistanceAndBearing[callsign] = new CallsignDataCache
             {
                 Bearing = bearing,
                 Distance = distance,
+                Latitude = chartQsoPoint.Latitude,
+                Longitude = chartQsoPoint.Latitude,
                 Dxcc = dxcc.Dxcc,
                 IsAccurate = isAccurate
             };

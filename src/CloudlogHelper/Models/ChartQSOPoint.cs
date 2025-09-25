@@ -24,6 +24,8 @@ public struct ChartQSOPoint
     /// Distance in km
     /// </summary>
     public double Distance { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
     public string Mode { get; set; }
     public int Snr { get; set; }
     

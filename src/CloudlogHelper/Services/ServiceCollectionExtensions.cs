@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRigService, FLRigService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
-        services.AddSingleton<IChartDataCacheService<ChartQSOPoint>, ChartDataCacheService<ChartQSOPoint>>();
+        services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         return Task.CompletedTask;
     }
