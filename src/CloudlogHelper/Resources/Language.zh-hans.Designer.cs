@@ -105,6 +105,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 角度权重.
+        /// </summary>
+        public static string angweight {
+            get {
+                return ResourceManager.GetString("angweight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自动更新台站信息.
         /// </summary>
         public static string autopollstatus {
@@ -119,6 +128,15 @@ namespace CloudlogHelper.Resources {
         public static string autoqsoupload {
             get {
                 return ResourceManager.GetString("autoqsoupload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动选择.
+        /// </summary>
+        public static string autosel {
+            get {
+                return ResourceManager.GetString("autosel", resourceCulture);
             }
         }
         
@@ -222,6 +240,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 清空.
+        /// </summary>
+        public static string clear {
+            get {
+                return ResourceManager.GetString("clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 关闭窗口.
         /// </summary>
         public static string close {
@@ -317,6 +344,15 @@ namespace CloudlogHelper.Resources {
         public static string conflicthamlib {
             get {
                 return ResourceManager.GetString("conflicthamlib", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 控制面板.
+        /// </summary>
+        public static string controlpanel {
+            get {
+                return ResourceManager.GetString("controlpanel", resourceCulture);
             }
         }
         
@@ -446,6 +482,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 距离权重.
+        /// </summary>
+        public static string distweight {
+            get {
+                return ResourceManager.GetString("distweight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 双击查看更多.
         /// </summary>
         public static string doubletap2seemore {
@@ -523,6 +568,15 @@ namespace CloudlogHelper.Resources {
         public static string exit {
             get {
                 return ResourceManager.GetString("exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 导出.
+        /// </summary>
+        public static string export {
+            get {
+                return ResourceManager.GetString("export", resourceCulture);
             }
         }
         
@@ -631,6 +685,15 @@ namespace CloudlogHelper.Resources {
         public static string fillall {
             get {
                 return ResourceManager.GetString("fillall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 过滤重复样本（呼号）.
+        /// </summary>
+        public static string filterdupebycallsign {
+            get {
+                return ResourceManager.GetString("filterdupebycallsign", resourceCulture);
             }
         }
         
@@ -807,6 +870,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to K值(KNN).
+        /// </summary>
+        public static string kval {
+            get {
+                return ResourceManager.GetString("kval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to APIKEY需要读/写权限但提供的apikey只有读权限！.
         /// </summary>
         public static string lackwriteaccess {
@@ -830,6 +902,15 @@ namespace CloudlogHelper.Resources {
         public static string madeaqso {
             get {
                 return ResourceManager.GetString("madeaqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 最大取样点数量.
+        /// </summary>
+        public static string maxsamplecount {
+            get {
+                return ResourceManager.GetString("maxsamplecount", resourceCulture);
             }
         }
         
@@ -920,6 +1001,15 @@ namespace CloudlogHelper.Resources {
         public static string password {
             get {
                 return ResourceManager.GetString("password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂停.
+        /// </summary>
+        public static string pause {
+            get {
+                return ResourceManager.GetString("pause", resourceCulture);
             }
         }
         
@@ -1133,6 +1223,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 刷新.
+        /// </summary>
+        public static string refresh {
+            get {
+                return ResourceManager.GetString("refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 记住我的选择.
         /// </summary>
         public static string remembermychoice {
@@ -1250,6 +1349,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 样本数 = .
+        /// </summary>
+        public static string samplecount {
+            get {
+                return ResourceManager.GetString("samplecount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 应用更改.
         /// </summary>
         public static string save {
@@ -1291,6 +1399,15 @@ namespace CloudlogHelper.Resources {
         public static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 展示密度颜色.
+        /// </summary>
+        public static string showdensitycolor {
+            get {
+                return ResourceManager.GetString("showdensitycolor", resourceCulture);
             }
         }
         

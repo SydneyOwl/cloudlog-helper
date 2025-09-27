@@ -38,7 +38,7 @@ public struct ChartQSOPoint
     public override string ToString()
     {
         return
-            $"{nameof(DxCallsign)}: {DxCallsign}, {nameof(Azimuth)}: {Azimuth}, {nameof(Distance)}: {Distance}, {nameof(Mode)}: {Mode}, {nameof(Snr)}: {Snr}, {nameof(Band)}: {Band}, {nameof(Client)}: {Client}";
+            $"{nameof(DxCallsign)}: {DxCallsign}, {nameof(DXCC)}: {DXCC}, {nameof(Azimuth)}: {Azimuth}, {nameof(Distance)}: {Distance}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(Mode)}: {Mode}, {nameof(Snr)}: {Snr}, {nameof(Band)}: {Band}, {nameof(Client)}: {Client}";
     }
 
     private sealed class ChartQsoPointEqualityComparer : IEqualityComparer<ChartQSOPoint>

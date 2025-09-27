@@ -18,6 +18,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.AxisRules;
 using ScottPlot.Statistics;
 
 namespace CloudlogHelper.ViewModels.Charts;
@@ -47,6 +48,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     };
     
     public ReactiveCommand<Unit, Unit> RefreshChart { get; }
+    public ReactiveCommand<Unit, Unit> ClearChart { get; }
     [Reactive] public int SampleCount { get; set; } = 0;
 
     public StationStatisticsChartWindowViewModel()
@@ -66,6 +68,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         };
         
         RefreshChart = ReactiveCommand.Create(UpdateChart);
+        ClearChart = ReactiveCommand.Create(ClearData);
 
         PlotControl = new AvaPlot();
         PlotControl.Multiplot.AddPlots(4);
@@ -83,7 +86,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         this.WhenActivated(disposable =>
         {
-            // SelectedBand = "10m";
             this.WhenAnyValue(x => x.SelectedBand,
                     x => x.SelectedClient,
                     x=> x.SelectedMode,
@@ -254,7 +256,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         var plot4 = PlotControl.Multiplot.GetPlot(3);
         plot4.Clear();
     
-        plot4.Title($"World heatmap - {SelectedBand} Band");
+        plot4.Title($"World Heatmap - {SelectedBand} Band");
     
         plot4.XLabel("Longitude");
         plot4.YLabel("Latitude");
@@ -275,22 +277,40 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         plot4.Add.ImageRect(img, worldRect);
 
         var gridStationCountByBand = _chartDataCacheService.GetGridStationCountByBand(SelectedBand);
-        if (gridStationCountByBand is null)
+        if (gridStationCountByBand is null || gridStationCountByBand.Length == 0)
         {
-            gridStationCountByBand = new double[,] { {0d} };
+            gridStationCountByBand = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
         }
+        
+        var smoothedData = QSOPointUtil.ApplyGaussianBlur(gridStationCountByBand, 1); 
 
-        var heatmap = plot4.Add.Heatmap(gridStationCountByBand);
+        var heatmap = plot4.Add.Heatmap(smoothedData);
         heatmap.Extent = new CoordinateRect(-180, 180, -90, 90);
         heatmap.Colormap = new ScottPlot.Colormaps.MellowRainbow();
-        // heatmap.Smooth = true;
 
-        heatmap.Opacity = 0.5;
+        heatmap.Opacity = 0.35;
         heatmap.FlipVertically = true;
+        heatmap.Smooth = true;
+        
         plot4.Axes.SetLimitsX(-180, 180);
         plot4.Axes.SetLimitsY(-90, 90);
+        
+        var maximumSpan = new MaximumSpan(
+            xAxis: plot4!.Axes.Bottom,
+            yAxis: plot4!.Axes.Left,
+            xSpan: 360,
+            ySpan: 180);
+        
+        plot4!.Axes.Rules.Add(maximumSpan);
     }
-    
+
+    private void ClearData()
+    {
+        _chartDataCacheService.ClearAccuBuffer();
+        SampleCount = 0;
+        UpdateChart();
+    }
+
     private void UpdateChart()
     {
         if (UpdatePaused || IsExecutingChartUpdate) return;

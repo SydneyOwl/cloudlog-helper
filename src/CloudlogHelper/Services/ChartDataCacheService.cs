@@ -73,25 +73,15 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             if (!_accumulatedGridStationCount.TryGetValue(item.Band, out _))
             {
                 var tmp = new double[DefaultConfigs.WorldHeatmapHeight,DefaultConfigs.WorldHeatmapWidth];
-                for (var i = 0; i < DefaultConfigs.WorldHeatmapWidth; i++)
-                {
-                    for (var j = 0; j < DefaultConfigs.WorldHeatmapHeight; j++)
-                    {
-                        tmp[j, i] = double.NaN;
-                    }
-                }
-
                 _accumulatedGridStationCount[item.Band] = tmp;
             }
             
-            
-            var xIndex = (int)((item.Longitude + 180) / 360 * DefaultConfigs.WorldHeatmapWidth);
-            var yIndex = (int)((item.Latitude + 90) / 180 * DefaultConfigs.WorldHeatmapHeight);
+            var xIndex = (int)Math.Round((item.Longitude + 180) / 360 * (DefaultConfigs.WorldHeatmapWidth - 1));
+            var yIndex = (int)Math.Round((item.Latitude + 90) / 180 * (DefaultConfigs.WorldHeatmapHeight - 1));
         
             xIndex = Math.Clamp(xIndex, 0, DefaultConfigs.WorldHeatmapWidth - 1);
             yIndex = Math.Clamp(yIndex, 0, DefaultConfigs.WorldHeatmapHeight - 1);
             
-            if (double.IsNaN(_accumulatedGridStationCount[item.Band][yIndex, xIndex])) _accumulatedGridStationCount[item.Band][yIndex, xIndex] = 0;
             _accumulatedGridStationCount[item.Band][yIndex, xIndex] += 1;
             
             _itemAddedSubject.OnNext(item);
@@ -100,15 +90,28 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
 
     public void Clear()
     {
+       ClearPolarBuffer();
+       ClearAccuBuffer();
+    }
+
+    public void ClearPolarBuffer()
+    {
         lock (_lock)
         {
             _buffer = new ChartQSOPoint[DefaultConfigs.DefaultChartDataCacheNumber];
             _nextIndex = 0;
             _count = 0;
-            
+        }
+    }
+    
+    public void ClearAccuBuffer()
+    {
+        lock (_lock)
+        {
             _accumulatedStationCount.Clear();
             _accumulatedStationBearing.Clear();
             _accumulatedStationDistance.Clear();
+            _accumulatedGridStationCount.Clear();
         }
     }
     

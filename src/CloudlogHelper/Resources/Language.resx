@@ -620,4 +620,43 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="stationstatisticgraph" xml:space="preserve">
         <value>Received Station Statistic</value>
     </data>
+    <data name="controlpanel" xml:space="preserve">
+        <value>Control Panel</value>
+    </data>
+    <data name="pause" xml:space="preserve">
+        <value>Pause</value>
+    </data>
+    <data name="export" xml:space="preserve">
+        <value>Export</value>
+    </data>
+    <data name="refresh" xml:space="preserve">
+        <value>Refresh</value>
+    </data>
+    <data name="showdensitycolor" xml:space="preserve">
+        <value>Show density color</value>
+    </data>
+    <data name="filterdupebycallsign" xml:space="preserve">
+        <value>Filter dupe samples by callsign</value>
+    </data>
+    <data name="maxsamplecount" xml:space="preserve">
+        <value>Max sample count</value>
+    </data>
+    <data name="kval" xml:space="preserve">
+        <value>K Value(KNN)</value>
+    </data>
+    <data name="distweight" xml:space="preserve">
+        <value>Distance weight</value>
+    </data>
+    <data name="angweight" xml:space="preserve">
+        <value>Angle weight</value>
+    </data>
+    <data name="autosel" xml:space="preserve">
+        <value>Auto selection</value>
+    </data>
+    <data name="samplecount" xml:space="preserve">
+        <value>Sample count = </value>
+    </data>
+    <data name="clear" xml:space="preserve">
+        <value>Clear</value>
+    </data>
 </root>

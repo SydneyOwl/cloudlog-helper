@@ -6,6 +6,7 @@
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:charts="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:charts1="clr-namespace:CloudlogHelper.ViewModels.Charts"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         Width="850" Height="650"
         CanResize="True"
         x:Class="CloudlogHelper.Views.Charts.PolarChartWindow"
@@ -73,36 +74,41 @@
                 Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
             <StackPanel Spacing="10">
-                <TextBlock Text="控制面板" Classes="header"
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.controlpanel}}" Classes="header"
                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 
                 <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="10">
-                    <ToggleButton Grid.Row="0" Grid.Column="0" Content="暂停更新" 
+                    <ToggleButton Grid.Row="0" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.pause}}" 
                                   HorizontalAlignment="Stretch" IsChecked="{Binding UpdatePaused}"
                                   Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                                   BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
                     
-                    <Button Grid.Row="0" Grid.Column="1" Content="导出图表" 
+                    <Button Grid.Row="0" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.export}}" 
                             HorizontalAlignment="Stretch" Command="{Binding SaveChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
                     
-                    <Button Grid.Row="1" Grid.Column="0" Content="刷新" 
+                    <Button Grid.Row="1" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.refresh}}" 
                             HorizontalAlignment="Stretch" Command="{Binding RefreshChart}"
+                            Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
+                    
+                    <Button Grid.Row="1" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.clear}}" 
+                            HorizontalAlignment="Stretch" Command="{Binding ClearChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
                 </Grid>
                 
                 <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
                 
-                <CheckBox Content="显示密度颜色" IsChecked="{Binding ShowDestColor}"
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.showdensitycolor}}" IsChecked="{Binding ShowDestColor}"
                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 
-                <CheckBox Content="过滤重复样本（呼号）" IsChecked="{Binding FilterDupeCallsign}"
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}" IsChecked="{Binding FilterDupeCallsign}"
                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 
                 <StackPanel>
-                    <TextBlock Text="最大取样点数量" FontWeight="SemiBold" Margin="0,0,0,5"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.maxsamplecount}}" FontWeight="SemiBold" Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #qsoSlider.Value}" VerticalAlignment="Center"
@@ -116,7 +122,7 @@
                 </StackPanel>
                 
                 <StackPanel>
-                    <TextBlock Text="KNN K值" FontWeight="SemiBold" Margin="0,0,0,5"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.kval}}" FontWeight="SemiBold" Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #kSlider.Value}" 
@@ -130,7 +136,7 @@
                 </StackPanel>
                 
                 <StackPanel>
-                    <TextBlock Text="距离权重" FontWeight="SemiBold" Margin="0,0,0,5"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.distweight}}" FontWeight="SemiBold" Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #distSlider.Value,
@@ -144,7 +150,7 @@
                 </StackPanel>
                 
                 <StackPanel>
-                    <TextBlock Text="角度权重" FontWeight="SemiBold" Margin="0,0,0,5"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.angweight}}" FontWeight="SemiBold" Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #angSlider.Value, 
@@ -186,7 +192,7 @@
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" 
                             Orientation="Horizontal" 
                              Spacing="5">
-                    <CheckBox Content="自动选择" IsChecked="{Binding AutoSwitchEnabled}" 
+                    <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}" IsChecked="{Binding AutoSwitchEnabled}" 
                               VerticalAlignment="Center" Margin="0,0,5,0"/>
                     
                     <ComboBox ItemsSource="{Binding Bands}"
@@ -195,7 +201,7 @@
                     
                     <ComboBox ItemsSource="{Binding Modes}"
                               SelectedValue="{Binding SelectedMode}"
-                              Width="80"/>
+                              Width="80" IsVisible="False"/>
                     
                     <ComboBox ItemsSource="{Binding Clients}"
                               SelectedValue="{Binding SelectedClient}"

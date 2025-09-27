@@ -620,4 +620,43 @@
     <data name="stationstatisticgraph" xml:space="preserve">
         <value>解码站点统计</value>
     </data>
+    <data name="controlpanel" xml:space="preserve">
+        <value>控制面板</value>
+    </data>
+    <data name="pause" xml:space="preserve">
+        <value>暂停</value>
+    </data>
+    <data name="export" xml:space="preserve">
+        <value>导出</value>
+    </data>
+    <data name="refresh" xml:space="preserve">
+        <value>刷新</value>
+    </data>
+    <data name="showdensitycolor" xml:space="preserve">
+        <value>展示密度颜色</value>
+    </data>
+    <data name="filterdupebycallsign" xml:space="preserve">
+        <value>过滤重复样本（呼号）</value>
+    </data>
+    <data name="maxsamplecount" xml:space="preserve">
+        <value>最大取样点数量</value>
+    </data>
+    <data name="kval" xml:space="preserve">
+        <value>K值(KNN)</value>
+    </data>
+    <data name="distweight" xml:space="preserve">
+        <value>距离权重</value>
+    </data>
+    <data name="angweight" xml:space="preserve">
+        <value>角度权重</value>
+    </data>
+    <data name="autosel" xml:space="preserve">
+        <value>自动选择</value>
+    </data>
+    <data name="samplecount" xml:space="preserve">
+        <value>样本数 = </value>
+    </data>
+    <data name="clear" xml:space="preserve">
+        <value>清空</value>
+    </data>
 </root>

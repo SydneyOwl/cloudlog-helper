@@ -53,7 +53,117 @@ public class QSOPointUtil
 
         return data;
     }
+    
+    // 应用高斯卷积
+    public static double[,] ApplyGaussianBlur(double[,] data, double sigma = 1.0)
+    {
+        var height = data.GetLength(0);
+        var width = data.GetLength(1);
+        var result = new double[height, width];
+    
+        var kernelSize = (int)(sigma * 3) * 2 + 1; // 核大小
+        var kernel = CreateGaussianKernel(kernelSize, sigma);
+    
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                double sum = 0;
+                double weightSum = 0;
+            
+                for (var ky = -kernelSize/2; ky <= kernelSize/2; ky++)
+                {
+                    for (var kx = -kernelSize/2; kx <= kernelSize/2; kx++)
+                    {
+                        var nx = x + kx;
+                        var ny = y + ky;
+                    
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height)
+                        {
+                            var weight = kernel[ky + kernelSize/2, kx + kernelSize/2];
+                            sum += data[ny, nx] * weight;
+                            weightSum += weight;
+                        }
+                    }
+                }
+            
+                result[y, x] = sum / weightSum;
+            }
+        }
+    
+        return result;
+    }
 
+    private static double[,] CreateGaussianKernel(int size, double sigma)
+    {
+        var kernel = new double[size, size];
+        double sum = 0;
+        var center = size / 2;
+    
+        for (var y = 0; y < size; y++)
+        {
+            for (var x = 0; x < size; x++)
+            {
+                double dx = x - center;
+                double dy = y - center;
+                kernel[y, x] = Math.Exp(-(dx*dx + dy*dy) / (2 * sigma * sigma));
+                sum += kernel[y, x];
+            }
+        }
+    
+        for (var y = 0; y < size; y++)
+        for (var x = 0; x < size; x++)
+            kernel[y, x] /= sum;
+    
+        return kernel;
+    }
+
+    // 数据插值
+    public static double[,] InterpolateData(double[,] originalData, int factor)
+    {
+        var origHeight = originalData.GetLength(0);
+        var origWidth = originalData.GetLength(1);
+        var newHeight = origHeight * factor;
+        var newWidth = origWidth * factor;
+    
+        var result = new double[newHeight, newWidth];
+    
+        for (var y = 0; y < newHeight; y++)
+        {
+            for (var x = 0; x < newWidth; x++)
+            {
+                var origY = (double)y / factor;
+                var origX = (double)x / factor;
+            
+                result[y, x] = BilinearInterpolate(originalData, origX, origY);
+            }
+        }
+    
+        return result;
+    }
+
+    // 双线性插值
+    public static double BilinearInterpolate(double[,] data, double x, double y)
+    {
+        var x1 = (int)Math.Floor(x);
+        var y1 = (int)Math.Floor(y);
+        var x2 = Math.Min(x1 + 1, data.GetLength(1) - 1);
+        var y2 = Math.Min(y1 + 1, data.GetLength(0) - 1);
+    
+        var dx = x - x1;
+        var dy = y - y1;
+    
+        var v11 = data[y1, x1];
+        var v12 = data[y1, x2];
+        var v21 = data[y2, x1];
+        var v22 = data[y2, x2];
+    
+        return v11 * (1 - dx) * (1 - dy) +
+               v12 * dx * (1 - dy) +
+               v21 * (1 - dx) * dy +
+               v22 * dx * dy;
+    }
+    
     /// <summary>
     /// 用KNN算法评估信号点之间的接近程度。支持使用距离或角度评估。
     /// </summary>

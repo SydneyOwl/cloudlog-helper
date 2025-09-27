@@ -105,6 +105,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Angle weight.
+        /// </summary>
+        public static string angweight {
+            get {
+                return ResourceManager.GetString("angweight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto refresh station info.
         /// </summary>
         public static string autopollstatus {
@@ -119,6 +128,15 @@ namespace CloudlogHelper.Resources {
         public static string autoqsoupload {
             get {
                 return ResourceManager.GetString("autoqsoupload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto selection.
+        /// </summary>
+        public static string autosel {
+            get {
+                return ResourceManager.GetString("autosel", resourceCulture);
             }
         }
         
@@ -222,6 +240,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string clear {
+            get {
+                return ResourceManager.GetString("clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string close {
@@ -317,6 +344,15 @@ namespace CloudlogHelper.Resources {
         public static string conflicthamlib {
             get {
                 return ResourceManager.GetString("conflicthamlib", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Control Panel.
+        /// </summary>
+        public static string controlpanel {
+            get {
+                return ResourceManager.GetString("controlpanel", resourceCulture);
             }
         }
         
@@ -446,6 +482,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Distance weight.
+        /// </summary>
+        public static string distweight {
+            get {
+                return ResourceManager.GetString("distweight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Double tap QSO to see more.
         /// </summary>
         public static string doubletap2seemore {
@@ -523,6 +568,15 @@ namespace CloudlogHelper.Resources {
         public static string exit {
             get {
                 return ResourceManager.GetString("exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        public static string export {
+            get {
+                return ResourceManager.GetString("export", resourceCulture);
             }
         }
         
@@ -631,6 +685,15 @@ namespace CloudlogHelper.Resources {
         public static string fillall {
             get {
                 return ResourceManager.GetString("fillall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter dupe samples by callsign.
+        /// </summary>
+        public static string filterdupebycallsign {
+            get {
+                return ResourceManager.GetString("filterdupebycallsign", resourceCulture);
             }
         }
         
@@ -806,6 +869,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to K Value(KNN).
+        /// </summary>
+        public static string kval {
+            get {
+                return ResourceManager.GetString("kval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apikey needs read/write access but only read is given here!.
         /// </summary>
         public static string lackwriteaccess {
@@ -829,6 +901,15 @@ namespace CloudlogHelper.Resources {
         public static string madeaqso {
             get {
                 return ResourceManager.GetString("madeaqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max sample count.
+        /// </summary>
+        public static string maxsamplecount {
+            get {
+                return ResourceManager.GetString("maxsamplecount", resourceCulture);
             }
         }
         
@@ -919,6 +1000,15 @@ namespace CloudlogHelper.Resources {
         public static string password {
             get {
                 return ResourceManager.GetString("password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        public static string pause {
+            get {
+                return ResourceManager.GetString("pause", resourceCulture);
             }
         }
         
@@ -1132,6 +1222,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string refresh {
+            get {
+                return ResourceManager.GetString("refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remember my choice.
         /// </summary>
         public static string remembermychoice {
@@ -1249,6 +1348,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sample count = .
+        /// </summary>
+        public static string samplecount {
+            get {
+                return ResourceManager.GetString("samplecount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply&amp;Save.
         /// </summary>
         public static string save {
@@ -1290,6 +1398,15 @@ namespace CloudlogHelper.Resources {
         public static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show density color.
+        /// </summary>
+        public static string showdensitycolor {
+            get {
+                return ResourceManager.GetString("showdensitycolor", resourceCulture);
             }
         }
         

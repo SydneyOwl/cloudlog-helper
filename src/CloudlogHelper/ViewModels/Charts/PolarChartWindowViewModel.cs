@@ -38,6 +38,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
     public ReactiveCommand<Unit, Unit> RefreshChart { get; }
+    public ReactiveCommand<Unit, Unit> ClearChart { get; }
     public AvaPlot PlotControl { get; private set; }
 
     private PolarAxis _polarAxis;
@@ -68,6 +69,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         });
 
         RefreshChart = ReactiveCommand.Create(UpdatePolar);
+        ClearChart = ReactiveCommand.Create(ClearData);
       
         this.WhenActivated(disposable =>
         {
@@ -105,6 +107,12 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         UpdatePolar();
     }
 
+    private void ClearData()
+    {
+        _chartDataCacheService.ClearPolarBuffer();
+        UpdatePolar();
+    }
+
     private void UpdatePolar()
     {
         if (IsExecutingChartUpdate || UpdatePaused) return;
@@ -131,8 +139,9 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
             var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples,
                     FilterDupeCallsign ? ChartQSOPoint.ChartQsoPointComparer : null,
-                    point => point.Band == SelectedBand && point.Mode == SelectedMode
-                                                        && point.Client == SelectedClient && point.Distance >= 0)
+                    point => point.Band == SelectedBand 
+                                 // && point.Mode == SelectedMode 
+                                 && point.Client == SelectedClient && point.Distance >= 0)
                                                 .ToArray();
             
             var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData) + 500;

@@ -112,6 +112,8 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
             chartQsoPoint.DxCallsign = callsign;
             chartQsoPoint.Band = _currentClientBand.GetValueOrDefault(tmp.Id, string.Empty);
             chartQsoPoint.Client = tmp.Id;
+            // there's some bug here; for example ft4 messages will be recognized as q65 here;
+            // so we just simply cancel filter of modes...
             chartQsoPoint.Mode = tmp.DecodeModeNotationsToString();
             chartQsoPoint.Snr = tmp.Snr;
 
@@ -158,7 +160,8 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                     var detail = await _databaseService.GetCallsignDetailAsync(callsign);
                     if (detail.CountryNameEn == "Unknown") continue;
                     iGrid = MaidenheadGridUtil.GetGridSquare(new LatLng(detail.Latitude, detail.Longitude));
-                    ClassLogger.Trace($"Calculating {callsign} from default country");
+                    ClassLogger.Debug($"Calculating {callsign} from default country: " +
+                                      $"lat {detail.Latitude} lon {detail.Longitude}");
                 }
             }
             
@@ -180,7 +183,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 Bearing = bearing,
                 Distance = distance,
                 Latitude = chartQsoPoint.Latitude,
-                Longitude = chartQsoPoint.Latitude,
+                Longitude = chartQsoPoint.Longitude,
                 Dxcc = dxcc.Dxcc,
                 IsAccurate = isAccurate
             };

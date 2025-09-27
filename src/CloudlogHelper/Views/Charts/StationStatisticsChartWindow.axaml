@@ -4,8 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:charts="clr-namespace:CloudlogHelper.ViewModels.Charts"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
-        Width="1000" Height="700"
+        Width="1000" Height="700" CanResize="False"
         x:Class="CloudlogHelper.Views.Charts.StationStatisticsChartWindow"
         x:DataType="charts:StationStatisticsChartWindowViewModel"
         Title="StationStatisticsChartWindow">
@@ -56,35 +57,33 @@
                     Margin="10"
                     Height="40">
             
-            <Button Content="刷新" 
+            <Button Content="{I18N {x:Static resources:LangKeys.refresh}}" 
                     HorizontalAlignment="Stretch"
                     Command="{Binding RefreshChart}"
                     Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
             
-            <ToggleButton Content="暂停更新" 
+            <ToggleButton Content="{I18N {x:Static resources:LangKeys.pause}}" 
                           HorizontalAlignment="Stretch"
                           IsChecked="{Binding UpdatePaused}"
                           Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                           BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
             
-            <CheckBox Content="自动选择" IsChecked="{Binding AutoSwitchEnabled}" 
+            <Button Content="{I18N {x:Static resources:LangKeys.clear}}" 
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding ClearChart}"
+                    Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
+
+            <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}" IsChecked="{Binding AutoSwitchEnabled}" 
                       VerticalAlignment="Center" Margin="20,0,5,0"/>
             
             <ComboBox ItemsSource="{Binding Bands}"
                       SelectedValue="{Binding SelectedBand}"
-                      Width="80"/>
-                    
-            <ComboBox ItemsSource="{Binding Modes}"
-                      SelectedValue="{Binding SelectedMode}"
-                      Width="80"/>
-                    
-            <ComboBox ItemsSource="{Binding Clients}"
-                      SelectedValue="{Binding SelectedClient}"
-                      Width="100"/>
+                      VerticalAlignment="Center" Width="80"/>
             
             <TextBlock Margin="10,0,0,0"
-                       Text="已收到样本数 = "
+                       Text="{I18N {x:Static resources:LangKeys.samplecount}}"
                        Foreground="{DynamicResource HighlightForegroundBrush}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" FontWeight="Black" />

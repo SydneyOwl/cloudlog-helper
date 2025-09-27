@@ -16,4 +16,6 @@ public interface IChartDataCacheService
     public Dictionary<string, double?>? GetStationCountByBand(string? band);
     void Add(ChartQSOPoint item);
     void Clear();
+    void ClearPolarBuffer();
+    void ClearAccuBuffer();
 }

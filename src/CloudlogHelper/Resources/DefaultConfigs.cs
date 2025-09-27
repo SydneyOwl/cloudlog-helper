@@ -317,8 +317,8 @@ public class DefaultConfigs
     /// </summary>
     public static string DefaultWorldMapFile = "NE2_50M_SR_W_proc_small.jpg";
 
-    public static int WorldHeatmapWidth = 180;
-    public static int WorldHeatmapHeight = 90;
+    public static int WorldHeatmapWidth = 360;
+    public static int WorldHeatmapHeight = 180;
 
     /// <summary>
     ///     Default path to SQLite database file.
