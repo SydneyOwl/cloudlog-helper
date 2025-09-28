@@ -20,6 +20,7 @@ using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.AxisRules;
 using ScottPlot.Statistics;
+using Range = ScottPlot.Range;
 
 namespace CloudlogHelper.ViewModels.Charts;
 
@@ -282,11 +283,12 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             gridStationCountByBand = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
         }
         
-        var smoothedData = QSOPointUtil.ApplyGaussianBlur(gridStationCountByBand, 1); 
+        var smoothedData = QSOPointUtil.ApplyGaussianBlur(gridStationCountByBand, 1.2);
+        smoothedData = QSOPointUtil.NormalizeData(smoothedData, 0.7, 1);
 
         var heatmap = plot4.Add.Heatmap(smoothedData);
         heatmap.Extent = new CoordinateRect(-180, 180, -90, 90);
-        heatmap.Colormap = new ScottPlot.Colormaps.MellowRainbow();
+        heatmap.Colormap = new ScottPlot.Colormaps.Turbo();
 
         heatmap.Opacity = 0.35;
         heatmap.FlipVertically = true;
@@ -339,6 +341,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             _updatePlot_bearing();
             _updatePlot_world_heatmap();
             _refreshTheme();
+            ClassLogger.Debug("Charts updated");
         }
         catch (Exception e)
         {

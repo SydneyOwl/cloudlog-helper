@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
+using NLog;
 using ScottPlot.Collections;
 using ScottPlot.Statistics;
 
@@ -18,6 +19,7 @@ namespace CloudlogHelper.Services;
 /// <typeparam name="ChartQSOPoint"></typeparam>
 public class ChartDataCacheService : IChartDataCacheService, IDisposable
 { 
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     // <Band, <Dxcc, count>>
     private Dictionary<string, Dictionary<string, double?>?> _accumulatedStationCount = new();
     
@@ -43,46 +45,56 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
     {
         lock (_lock)
         {
-            // cycle buffer
-            _buffer[_nextIndex] = item;
-            _nextIndex = (_nextIndex + 1) % _buffer.Length;
-            _count = Math.Min(_count + 1, _buffer.Length);
-            
-            // acc count
-            if (!_accumulatedStationCount.TryGetValue(item.Band, out _))
-                _accumulatedStationCount[item.Band] = new Dictionary<string, double?>();
-
-            if (!_accumulatedStationCount[item.Band]!.TryGetValue(item.DXCC, out _))
-                _accumulatedStationCount[item.Band]![item.DXCC] = 0;
-
-            _accumulatedStationCount[item.Band]![item.DXCC] += 1;
-                
-            // acc dist
-            if (!_accumulatedStationDistance.TryGetValue(item.Band, out _))
-                _accumulatedStationDistance[item.Band] = Histogram.WithBinCount(50,0,20000);
-                
-            if (item.Distance >= 0) _accumulatedStationDistance[item.Band].Add(item.Distance);
-                
-            // acc bearing
-            if (!_accumulatedStationBearing.TryGetValue(item.Band, out _))
-                _accumulatedStationBearing[item.Band] = Histogram.WithBinSize(22.5,0,360);
-                
-            if (item.Azimuth >= 0) _accumulatedStationBearing[item.Band].Add(item.Azimuth);
-            
-            // acc grid data
-            if (!_accumulatedGridStationCount.TryGetValue(item.Band, out _))
+            try
             {
-                var tmp = new double[DefaultConfigs.WorldHeatmapHeight,DefaultConfigs.WorldHeatmapWidth];
-                _accumulatedGridStationCount[item.Band] = tmp;
+                // cycle buffer
+                _buffer[_nextIndex] = item;
+                _nextIndex = (_nextIndex + 1) % _buffer.Length;
+                _count = Math.Min(_count + 1, _buffer.Length);
+
+                // acc count
+                if (!_accumulatedStationCount.TryGetValue(item.Band, out _))
+                    _accumulatedStationCount[item.Band] = new Dictionary<string, double?>();
+
+                if (!_accumulatedStationCount[item.Band]!.TryGetValue(item.DXCC, out _))
+                    _accumulatedStationCount[item.Band]![item.DXCC] = 0;
+
+                _accumulatedStationCount[item.Band]![item.DXCC] += 1;
+
+                if (item.IsAccurate)
+                {
+                    // acc dist
+                    if (!_accumulatedStationDistance.TryGetValue(item.Band, out _))
+                        _accumulatedStationDistance[item.Band] = Histogram.WithBinCount(50, 0, 20000);
+
+                    if (item.Distance >= 0) _accumulatedStationDistance[item.Band].Add(item.Distance);
+
+                    // acc bearing
+                    if (!_accumulatedStationBearing.TryGetValue(item.Band, out _))
+                        _accumulatedStationBearing[item.Band] = Histogram.WithBinSize(22.5, 0, 360);
+
+                    if (item.Azimuth >= 0) _accumulatedStationBearing[item.Band].Add(item.Azimuth);
+
+                    // acc grid data
+                    if (!_accumulatedGridStationCount.TryGetValue(item.Band, out _))
+                    {
+                        var tmp = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
+                        _accumulatedGridStationCount[item.Band] = tmp;
+                    }
+
+                    var xIndex = (int)Math.Round((item.Longitude + 180) / 360 * (DefaultConfigs.WorldHeatmapWidth - 1));
+                    var yIndex = (int)Math.Round((item.Latitude + 90) / 180 * (DefaultConfigs.WorldHeatmapHeight - 1));
+
+                    xIndex = Math.Clamp(xIndex, 0, DefaultConfigs.WorldHeatmapWidth - 1);
+                    yIndex = Math.Clamp(yIndex, 0, DefaultConfigs.WorldHeatmapHeight - 1);
+
+                    _accumulatedGridStationCount[item.Band][yIndex, xIndex] += 1;
+                }
             }
-            
-            var xIndex = (int)Math.Round((item.Longitude + 180) / 360 * (DefaultConfigs.WorldHeatmapWidth - 1));
-            var yIndex = (int)Math.Round((item.Latitude + 90) / 180 * (DefaultConfigs.WorldHeatmapHeight - 1));
-        
-            xIndex = Math.Clamp(xIndex, 0, DefaultConfigs.WorldHeatmapWidth - 1);
-            yIndex = Math.Clamp(yIndex, 0, DefaultConfigs.WorldHeatmapHeight - 1);
-            
-            _accumulatedGridStationCount[item.Band][yIndex, xIndex] += 1;
+            catch (Exception e)
+            {
+                ClassLogger.Error(e);
+            }
             
             _itemAddedSubject.OnNext(item);
         }

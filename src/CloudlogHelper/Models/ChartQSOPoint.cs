@@ -5,6 +5,8 @@ namespace CloudlogHelper.Models;
 
 public struct ChartQSOPoint
 {
+    public bool IsAccurate;
+    
     /// <summary>
     /// Callsign of DX
     /// </summary>

@@ -54,6 +54,38 @@ public class QSOPointUtil
         return data;
     }
     
+    public static double[,] NormalizeData(double[,] data, double newMin, double newMax)
+    {
+        var height = data.GetLength(0);
+        var width = data.GetLength(1);
+        var result = new double[height, width];
+
+        var oldMin = data.Cast<double>().Min();
+        var oldMax = data.Cast<double>().Max();
+
+        if (Math.Abs(oldMax - oldMin) < 0.0001)
+        {
+            for (var y = 0; y < height; y++)
+            for (var x = 0; x < width; x++)
+                result[y, x] = newMin;
+            return result;
+        }
+
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var normalized = (data[y, x] - oldMin) / (oldMax - oldMin);
+                var scaled = newMin + normalized * (newMax - newMin);
+
+                // Clamp the value to [newMin, newMax]
+                result[y, x] = Math.Max(newMin, Math.Min(newMax, scaled));
+            }
+        }
+
+        return result;
+    }
+    
     // 应用高斯卷积
     public static double[,] ApplyGaussianBlur(double[,] data, double sigma = 1.0)
     {

@@ -128,6 +128,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                     chartQsoPoint.DXCC = value.Dxcc;
                     chartQsoPoint.Latitude = value!.Latitude;
                     chartQsoPoint.Longitude = value!.Longitude;
+                    chartQsoPoint.IsAccurate = value.IsAccurate;
                     _dataCacheService.Add(chartQsoPoint);
                     continue;
                 }
@@ -137,6 +138,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
 
             string iGrid;
             var isAccurate = false;
+            var countryDetail = await _databaseService.GetCallsignDetailAsync(callsign);
             
             // calc from grid
             if (grid is not null)
@@ -152,31 +154,31 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 if (gridByCallsign is not null)
                 {
                     iGrid = gridByCallsign;
+                    isAccurate = false;
                     ClassLogger.Trace($"Calculating {callsign} from grid - database cache...");
                 }
                 else
                 {
-                    // fallback option 02: find target country and use that grid
-                    var detail = await _databaseService.GetCallsignDetailAsync(callsign);
-                    if (detail.CountryNameEn == "Unknown") continue;
-                    iGrid = MaidenheadGridUtil.GetGridSquare(new LatLng(detail.Latitude, detail.Longitude));
+                    // fallback option 02: find target country and use that gridcountryDetail
+                    if (countryDetail.CountryNameEn == "Unknown") continue;
+                    iGrid = MaidenheadGridUtil.GetGridSquare(new LatLng(countryDetail.Latitude, countryDetail.Longitude));
                     ClassLogger.Debug($"Calculating {callsign} from default country: " +
-                                      $"lat {detail.Latitude} lon {detail.Longitude}");
+                                      $"lat {countryDetail.Latitude} lon {countryDetail.Longitude}");
                 }
             }
             
             if (!MaidenheadGridUtil.CheckMaidenhead(_myGrid) 
-                || !MaidenheadGridUtil.CheckMaidenhead(iGrid))return;
+                || !MaidenheadGridUtil.CheckMaidenhead(iGrid))continue;
             
             var bearing = MaidenheadGridUtil.CalculateBearing(_myGrid, iGrid);
             var distance = MaidenheadGridUtil.GetDist(_myGrid, iGrid);
             var gridToLatLng = MaidenheadGridUtil.GridToLatLng(iGrid);
-            var dxcc = await _databaseService.GetCallsignDetailAsync(callsign);
             chartQsoPoint.Azimuth = bearing;
             chartQsoPoint.Distance = distance;
-            chartQsoPoint.DXCC = dxcc.Dxcc;
+            chartQsoPoint.DXCC = countryDetail.Dxcc;
             chartQsoPoint.Latitude = gridToLatLng?.Latitude ?? 0;
             chartQsoPoint.Longitude = gridToLatLng?.Longitude ?? 0;
+            chartQsoPoint.IsAccurate = isAccurate;
             
             _callsignDistanceAndBearing[callsign] = new CallsignDataCache
             {
@@ -184,7 +186,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 Distance = distance,
                 Latitude = chartQsoPoint.Latitude,
                 Longitude = chartQsoPoint.Longitude,
-                Dxcc = dxcc.Dxcc,
+                Dxcc = countryDetail.Dxcc,
                 IsAccurate = isAccurate
             };
             
