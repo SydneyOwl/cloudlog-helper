@@ -85,7 +85,25 @@ public class QSOPointUtil
 
         return result;
     }
-    
+
+    // 范围
+    public static double[,] ApplyValueCompression(double[,] data)
+    {
+        var maxVal = data.Cast<double>().Max();
+        var logData = new double[data.GetLength(0), data.GetLength(1)];
+        for (var i = 0; i < data.GetLength(0); i++)
+        {
+            for (var j = 0; j < data.GetLength(1); j++) 
+            {
+                var value = data[i, j];
+                if (value == 0) continue;
+                // if (value is > 0 and < 10) value = 10;
+                logData[i, j] = Math.Log10(value + 1);
+            }
+        }
+        return logData;
+    }
+
     // 应用高斯卷积
     public static double[,] ApplyGaussianBlur(double[,] data, double sigma = 1.0)
     {

@@ -225,7 +225,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         plot3.XLabel("Bearing (degrees)");
         plot3.YLabel("Signal Count");
         
-        // 设置X轴刻度为方位角
         var ticks = new List<Tick>();
         for (var i = 0; i <= 360; i += 45)
         {
@@ -261,6 +260,17 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     
         plot4.XLabel("Longitude");
         plot4.YLabel("Latitude");
+        
+        plot4.Axes.SetLimitsX(-180, 180);
+        plot4.Axes.SetLimitsY(-90, 90);
+        
+        var maximumSpan = new MaximumSpan(
+            xAxis: plot4!.Axes.Bottom,
+            yAxis: plot4!.Axes.Left,
+            xSpan: 360,
+            ySpan: 180);
+        
+        plot4!.Axes.Rules.Add(maximumSpan);
     
         var resourceStream = ApplicationStartUpUtil.GetResourceStream(DefaultConfigs.DefaultWorldMapFile);
         if (resourceStream is null)
@@ -278,13 +288,15 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         plot4.Add.ImageRect(img, worldRect);
 
         var gridStationCountByBand = _chartDataCacheService.GetGridStationCountByBand(SelectedBand);
-        if (gridStationCountByBand is null || gridStationCountByBand.Length == 0)
+        // gridStationCountByBand = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
+        if (gridStationCountByBand is null || gridStationCountByBand.Cast<double>().All(x => x == 0))
         {
-            gridStationCountByBand = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
+            plot4.Title($"World heatmap(No data available) - {SelectedBand} Band");
+            return;
         }
         
-        var smoothedData = QSOPointUtil.ApplyGaussianBlur(gridStationCountByBand, 1.2);
-        smoothedData = QSOPointUtil.NormalizeData(smoothedData, 0.7, 1);
+        var smoothedData = QSOPointUtil.ApplyValueCompression(gridStationCountByBand);
+        smoothedData = QSOPointUtil.ApplyGaussianBlur(smoothedData, 1.2);
 
         var heatmap = plot4.Add.Heatmap(smoothedData);
         heatmap.Extent = new CoordinateRect(-180, 180, -90, 90);
@@ -293,17 +305,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         heatmap.Opacity = 0.35;
         heatmap.FlipVertically = true;
         heatmap.Smooth = true;
-        
-        plot4.Axes.SetLimitsX(-180, 180);
-        plot4.Axes.SetLimitsY(-90, 90);
-        
-        var maximumSpan = new MaximumSpan(
-            xAxis: plot4!.Axes.Bottom,
-            yAxis: plot4!.Axes.Left,
-            xSpan: 360,
-            ySpan: 180);
-        
-        plot4!.Axes.Rules.Add(maximumSpan);
     }
 
     private void ClearData()
