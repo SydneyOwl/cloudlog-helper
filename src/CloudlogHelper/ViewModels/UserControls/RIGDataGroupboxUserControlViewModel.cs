@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
+using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -37,6 +38,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     ///     Settings for cloudlog
     /// </summary>
     private readonly CloudlogSettings _cloudlogSettings;
+    private readonly List<ThirdPartyLogService> _tpService;
 
     private readonly IMessageBoxManagerService _messageBoxManagerService;
 
@@ -83,6 +85,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _windowManagerService = wm;
         _rigBackendManager = rs;
         _inAppNotification = ws;
+        _tpService = ss.GetCurrentSettings().LogServices;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         _ = rs.InitializeAsync();
         if (!InitSkipped) Initialize();
@@ -264,6 +267,19 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IsSplit = allInfo.IsSplit;
 
         _rigConnFailedTimes = 0;
+        
+        foreach (var thirdPartyLogService in _tpService)
+        {
+            try
+            {
+                await thirdPartyLogService.UploadRigInfoAsync(allInfo, CancellationToken.None);
+            } catch (Exception ex)
+            {
+                UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+                ClassLogger.Warn(ex, "Failed to upload rig info");
+                await _inAppNotification.SendWarningNotificationAsync(ex.Message);
+            }
+        }
 
         // freq read from hamlib is already in hz!
         if (!_cloudlogSettings.IsCloudlogHasErrors())

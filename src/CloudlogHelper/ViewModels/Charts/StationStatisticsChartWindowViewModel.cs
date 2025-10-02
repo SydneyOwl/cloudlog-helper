@@ -114,7 +114,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             plot1.Title($"Station Distance Distribution - {SelectedBand} Band\n(No data available)");
             return;
         }
-        
         var orderedData = bandData.OrderByDescending(x => x.Value)
             .Where(x => x.Value is not null && x.Value > 0)
             .Take(10)

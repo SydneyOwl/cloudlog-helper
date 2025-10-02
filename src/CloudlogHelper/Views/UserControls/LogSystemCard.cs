@@ -215,8 +215,12 @@ public class LogSystemCard : UserControl
                     foreach (var logSystemField in config.Fields)
                     {
                         // check required fields
-                        if (logSystemField.IsRequired && string.IsNullOrWhiteSpace(logSystemField.Value as string))
-                            throw new ArgumentException(TranslationHelper.GetString("fillall"));
+                        if (logSystemField.IsRequired)
+                        {
+                            if (logSystemField.Value is string logVal && string.IsNullOrWhiteSpace(
+                                    logVal))
+                                throw new ArgumentException(TranslationHelper.GetString("fillall"));
+                        }
 
                         var propertyInfo = config.RawType
                             .GetProperty(logSystemField.PropertyName);
