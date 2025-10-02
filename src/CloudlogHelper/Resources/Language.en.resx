@@ -235,7 +235,7 @@
         <value>Failed!</value>
     </data>
     <data name="success" xml:space="preserve">
-        <value>success</value>
+        <value>Success</value>
     </data>
     <data name="gettinginfo" xml:space="preserve">
         <value>Getting info...</value>
@@ -664,5 +664,35 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     </data>
     <data name="opentempfolder" xml:space="preserve">
         <value>Open cache folder</value>
+    </data>
+    <data name="top10decoded" xml:space="preserve">
+        <value>Top 10 DXCCs - {0} Band {1}</value>
+    </data>
+    <data name="nodata" xml:space="preserve">
+        <value>(No data)</value>
+    </data>
+    <data name="signalcount" xml:space="preserve">
+        <value>Signal count</value>
+    </data>
+    <data name="stationdistance" xml:space="preserve">
+        <value>Station Distance Distribution - {0} Band {1}</value>
+    </data>
+    <data name="distkm" xml:space="preserve">
+        <value>Distance (km)</value>
+    </data>
+    <data name="stationbearing" xml:space="preserve">
+        <value>Station Bearing Distribution - {0} Band {1}</value>
+    </data>
+    <data name="bearingdeg" xml:space="preserve">
+        <value>Bearing (degrees)</value>
+    </data>
+    <data name="worldheatmap" xml:space="preserve">
+        <value>World Heatmap - {0} Band {1}</value>
+    </data>
+    <data name="longitude" xml:space="preserve">
+        <value>Longitude</value>
+    </data>
+    <data name="latitude" xml:space="preserve">
+        <value>Latitude</value>
     </data>
 </root>

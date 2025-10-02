@@ -186,6 +186,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bearing (degrees).
+        /// </summary>
+        public static string bearingdeg {
+            get {
+                return ResourceManager.GetString("bearingdeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to start applicaiton. Would you like to reset application?.
         /// </summary>
         public static string bootfail {
@@ -478,6 +487,15 @@ namespace CloudlogHelper.Resources {
         public static string disclaimer {
             get {
                 return ResourceManager.GetString("disclaimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Distance (km).
+        /// </summary>
+        public static string distkm {
+            get {
+                return ResourceManager.GetString("distkm", resourceCulture);
             }
         }
         
@@ -887,11 +905,29 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Latitude.
+        /// </summary>
+        public static string latitude {
+            get {
+                return ResourceManager.GetString("latitude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
         public static string light {
             get {
                 return ResourceManager.GetString("light", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Longitude.
+        /// </summary>
+        public static string longitude {
+            get {
+                return ResourceManager.GetString("longitude", resourceCulture);
             }
         }
         
@@ -946,6 +982,15 @@ namespace CloudlogHelper.Resources {
         public static string nextuploadtime {
             get {
                 return ResourceManager.GetString("nextuploadtime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (No data).
+        /// </summary>
+        public static string nodata {
+            get {
+                return ResourceManager.GetString("nodata", resourceCulture);
             }
         }
         
@@ -1447,6 +1492,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Signal count.
+        /// </summary>
+        public static string signalcount {
+            get {
+                return ResourceManager.GetString("signalcount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Signal distribution.
         /// </summary>
         public static string signalpolarchart {
@@ -1492,6 +1546,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Station Bearing Distribution - {0} Band {1}.
+        /// </summary>
+        public static string stationbearing {
+            get {
+                return ResourceManager.GetString("stationbearing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Station Distance Distribution - {0} Band {1}.
+        /// </summary>
+        public static string stationdistance {
+            get {
+                return ResourceManager.GetString("stationdistance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cloudlog Station ID.
         /// </summary>
         public static string stationid {
@@ -1519,7 +1591,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to success.
+        ///   Looks up a localized string similar to Success.
         /// </summary>
         public static string success {
             get {
@@ -1687,6 +1759,15 @@ namespace CloudlogHelper.Resources {
         public static string tools {
             get {
                 return ResourceManager.GetString("tools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top 10 DXCCs - {0} Band {1}.
+        /// </summary>
+        public static string top10decoded {
+            get {
+                return ResourceManager.GetString("top10decoded", resourceCulture);
             }
         }
         
@@ -1912,6 +1993,15 @@ namespace CloudlogHelper.Resources {
         public static string within5min {
             get {
                 return ResourceManager.GetString("within5min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World Heatmap - {0} Band {1}.
+        /// </summary>
+        public static string worldheatmap {
+            get {
+                return ResourceManager.GetString("worldheatmap", resourceCulture);
             }
         }
         

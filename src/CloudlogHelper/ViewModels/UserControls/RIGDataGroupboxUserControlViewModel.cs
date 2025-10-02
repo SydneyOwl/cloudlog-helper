@@ -268,7 +268,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         _rigConnFailedTimes = 0;
         
-        foreach (var thirdPartyLogService in _tpService)
+        foreach (var thirdPartyLogService in _tpService.ToArray())
         {
             try
             {

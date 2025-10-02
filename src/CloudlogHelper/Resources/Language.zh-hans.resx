@@ -665,4 +665,34 @@
     <data name="opentempfolder" xml:space="preserve">
         <value>打开缓存目录</value>
     </data>
+    <data name="top10decoded" xml:space="preserve">
+        <value>前10 DXCC - {0}波段 {1}</value>
+    </data>
+    <data name="nodata" xml:space="preserve">
+        <value>（无数据）</value>
+    </data>
+    <data name="signalcount" xml:space="preserve">
+        <value>信号计数</value>
+    </data>
+    <data name="stationdistance" xml:space="preserve">
+        <value>站点距离分布 - {0}波段 {1}</value>
+    </data>
+    <data name="distkm" xml:space="preserve">
+        <value>距离（千米）</value>
+    </data>
+    <data name="stationbearing" xml:space="preserve">
+        <value>站点方位分布 - {0}波段 {1}</value>
+    </data>
+    <data name="bearingdeg" xml:space="preserve">
+        <value>角度（度）</value>
+    </data>
+    <data name="worldheatmap" xml:space="preserve">
+        <value>热力图 - {0}波段 {1}</value>
+    </data>
+    <data name="longitude" xml:space="preserve">
+        <value>经度</value>
+    </data>
+    <data name="latitude" xml:space="preserve">
+        <value>纬度</value>
+    </data>
 </root>

@@ -186,6 +186,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 角度（度）.
+        /// </summary>
+        public static string bearingdeg {
+            get {
+                return ResourceManager.GetString("bearingdeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 启动失败！是否尝试重置所有设置？.
         /// </summary>
         public static string bootfail {
@@ -478,6 +487,15 @@ namespace CloudlogHelper.Resources {
         public static string disclaimer {
             get {
                 return ResourceManager.GetString("disclaimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 距离（千米）.
+        /// </summary>
+        public static string distkm {
+            get {
+                return ResourceManager.GetString("distkm", resourceCulture);
             }
         }
         
@@ -888,11 +906,29 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 纬度.
+        /// </summary>
+        public static string latitude {
+            get {
+                return ResourceManager.GetString("latitude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 浅色模式.
         /// </summary>
         public static string light {
             get {
                 return ResourceManager.GetString("light", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 经度.
+        /// </summary>
+        public static string longitude {
+            get {
+                return ResourceManager.GetString("longitude", resourceCulture);
             }
         }
         
@@ -947,6 +983,15 @@ namespace CloudlogHelper.Resources {
         public static string nextuploadtime {
             get {
                 return ResourceManager.GetString("nextuploadtime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to （无数据）.
+        /// </summary>
+        public static string nodata {
+            get {
+                return ResourceManager.GetString("nodata", resourceCulture);
             }
         }
         
@@ -1448,6 +1493,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 信号计数.
+        /// </summary>
+        public static string signalcount {
+            get {
+                return ResourceManager.GetString("signalcount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 信号分布极坐标图.
         /// </summary>
         public static string signalpolarchart {
@@ -1489,6 +1543,24 @@ namespace CloudlogHelper.Resources {
         public static string startwithhttp {
             get {
                 return ResourceManager.GetString("startwithhttp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 站点方位分布 - {0}波段 {1}.
+        /// </summary>
+        public static string stationbearing {
+            get {
+                return ResourceManager.GetString("stationbearing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 站点距离分布 - {0}波段 {1}.
+        /// </summary>
+        public static string stationdistance {
+            get {
+                return ResourceManager.GetString("stationdistance", resourceCulture);
             }
         }
         
@@ -1687,6 +1759,15 @@ namespace CloudlogHelper.Resources {
         public static string tools {
             get {
                 return ResourceManager.GetString("tools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 前10 DXCC - {0}波段 {1}.
+        /// </summary>
+        public static string top10decoded {
+            get {
+                return ResourceManager.GetString("top10decoded", resourceCulture);
             }
         }
         
@@ -1912,6 +1993,15 @@ namespace CloudlogHelper.Resources {
         public static string within5min {
             get {
                 return ResourceManager.GetString("within5min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 热力图 - {0}波段 {1}.
+        /// </summary>
+        public static string worldheatmap {
+            get {
+                return ResourceManager.GetString("worldheatmap", resourceCulture);
             }
         }
         

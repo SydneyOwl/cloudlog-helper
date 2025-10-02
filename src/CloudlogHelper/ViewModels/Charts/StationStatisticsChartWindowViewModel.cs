@@ -111,7 +111,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         var bandData = _chartDataCacheService.GetStationCountByBand(SelectedBand);
         if (bandData is null)
         {
-            plot1.Title($"Station Distance Distribution - {SelectedBand} Band\n(No data available)");
+            plot1.Title($"Top 10 DXCCs - {SelectedBand} Band\n(No data available)");
             return;
         }
         var orderedData = bandData.OrderByDescending(x => x.Value)
