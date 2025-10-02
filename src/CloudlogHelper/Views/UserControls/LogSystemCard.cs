@@ -123,6 +123,18 @@ public class LogSystemCard : UserControl
                             }
                         };
                         break;
+                    case FieldType.CheckBox:
+                        inputControl = new CheckBox()
+                        {
+                            Classes = { "setting-control" },
+                            DataContext = config.Fields[i],
+                            [!CheckBox.IsCheckedProperty] = new Binding("Value")
+                            {
+                                Mode = BindingMode.TwoWay,
+                                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                            }
+                        };
+                        break;
                     case FieldType.ComboBox:
                         inputControl = new ComboBox()
                         {
@@ -139,7 +151,7 @@ public class LogSystemCard : UserControl
                     case FieldType.FilePicker:
                         var filePickerTextboxUserControlViewModel = new FilePickerTextboxUserControlViewModel
                             {
-                                SelectedFilePath = config.Fields[i].Value!
+                                SelectedFilePath = (config.Fields[i].Value as string)!
                             };
 
                         filePickerTextboxUserControlViewModel.WhenAnyValue(vm => vm.SelectedFilePath)
@@ -203,10 +215,19 @@ public class LogSystemCard : UserControl
                     foreach (var logSystemField in config.Fields)
                     {
                         // check required fields
-                        if (logSystemField.IsRequired && string.IsNullOrWhiteSpace(logSystemField.Value))
+                        if (logSystemField.IsRequired && string.IsNullOrWhiteSpace(logSystemField.Value as string))
                             throw new ArgumentException(TranslationHelper.GetString("fillall"));
-                        config.RawType
-                            .GetProperty(logSystemField.PropertyName)!
+
+                        var propertyInfo = config.RawType
+                            .GetProperty(logSystemField.PropertyName);
+                        if (propertyInfo!.PropertyType == typeof(bool))
+                        {
+                            propertyInfo!
+                                .SetValue(instance, (string)logSystemField.Value! == "True");
+                            continue;
+                        }
+                         
+                        propertyInfo!
                             .SetValue(instance, logSystemField.Value);
                     }
 

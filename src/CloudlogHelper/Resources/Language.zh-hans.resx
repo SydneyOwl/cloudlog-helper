@@ -659,4 +659,10 @@
     <data name="clear" xml:space="preserve">
         <value>清空</value>
     </data>
+    <data name="openconfpath" xml:space="preserve">
+        <value>打开配置目录</value>
+    </data>
+    <data name="opentempfolder" xml:space="preserve">
+        <value>打开缓存目录</value>
+    </data>
 </root>

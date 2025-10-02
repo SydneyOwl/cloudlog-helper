@@ -329,6 +329,12 @@ public class ApplicationSettingsService: IApplicationSettingsService
                     continue;
                 }
 
+                if (fieldInfo.PropertyType == typeof(bool) && logSystemField.Value is string logVal)
+                {
+                    fieldInfo.SetValue(logService, logVal == "True");
+                    continue;
+                }
+                
                 fieldInfo.SetValue(logService, logSystemField.Value);
             }
         }

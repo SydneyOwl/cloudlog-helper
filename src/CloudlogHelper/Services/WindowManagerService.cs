@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using CloudlogHelper.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
@@ -154,6 +156,18 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     public void CloseWindowBySeq(string seq)
     {
         GetWindowBySeq(seq)?.Close();
+    }
+
+    public async Task LaunchBrowser(string uri, Window? topLevel = null)
+    {
+        var tl = topLevel ?? _desktop.MainWindow;
+        await tl!.Launcher.LaunchUriAsync(new Uri(uri));
+    }
+    
+    public async Task LaunchDir(string path, Window? topLevel = null)
+    {
+        var tl = topLevel ?? _desktop.MainWindow;
+        await tl!.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
     }
 
     private void AutoRemove()

@@ -659,4 +659,10 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="clear" xml:space="preserve">
         <value>Clear</value>
     </data>
+    <data name="openconfpath" xml:space="preserve">
+        <value>Open configuration directory</value>
+    </data>
+    <data name="opentempfolder" xml:space="preserve">
+        <value>Open cache folder</value>
+    </data>
 </root>

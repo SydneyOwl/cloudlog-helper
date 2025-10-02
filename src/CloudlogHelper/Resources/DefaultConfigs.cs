@@ -63,6 +63,7 @@ public class DefaultConfigs
     ///     Default name for our application.
     /// </summary>
     public static string DefaultApplicationName = $"CloudlogHelper {VersionInfo.Version}";
+    public static string DefaultApplicationNameNoVersion = $"CloudlogHelper";
 
     /// <summary>
     ///     QSOSampleCountChoice

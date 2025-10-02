@@ -31,5 +31,5 @@ public class LogSystemField : ReactiveObject
     /// </summary>
     public string[]? Selections { get; set; }
 
-    [Reactive] public string? Value { get; set; }
+    [Reactive] public object? Value { get; set; }
 }

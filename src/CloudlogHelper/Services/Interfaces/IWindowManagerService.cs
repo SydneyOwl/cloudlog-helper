@@ -12,7 +12,10 @@ public interface IWindowManagerService
     
     Task CreateAndShowWindowByVm(Type wType, Window? toplevel = null, bool dialog = true);
 
-    public T GetViewModelInstance<T>();
+   T GetViewModelInstance<T>();
 
-    public void CloseWindowBySeq(string seq);
+   void CloseWindowBySeq(string seq);
+
+   Task LaunchBrowser(string uri, Window? topLevel = null);
+   Task LaunchDir(string path, Window? topLevel = null);
 }

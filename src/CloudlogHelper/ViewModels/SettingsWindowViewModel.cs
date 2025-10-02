@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
@@ -42,12 +43,15 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly IRigBackendManager _rigBackendManager;
     private readonly IApplicationSettingsService _settingsService;
     private readonly INotificationManager _nativeNotificationManager;
+    private readonly IWindowManagerService _windowManagerService;
 
     public SettingsWindowViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         DraftSettings = new ApplicationSettings();
         DiscardConf = ReactiveCommand.Create(() => { });
+        OpenConfDir = ReactiveCommand.Create(()=>{});
+        OpenTempDir = ReactiveCommand.Create(()=>{});
         SaveAndApplyConf = ReactiveCommand.Create(() => { });
         HamlibInitPassed = true;
         // InitializeLogSystems();
@@ -55,10 +59,12 @@ public class SettingsWindowViewModel : ViewModelBase
 
 
     public SettingsWindowViewModel(CommandLineOptions cmd,
+        IWindowManagerService windowManager,
         IApplicationSettingsService ss,
         IRigBackendManager rs,
         INotificationManager nm)
     {
+        _windowManagerService = windowManager;
         _settingsService = ss;
         _rigBackendManager = rs;
         _nativeNotificationManager = nm;
@@ -87,6 +93,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
+        OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
+        OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
         SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
 
         this.WhenActivated(disposables =>
@@ -141,6 +149,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
+    public ReactiveCommand<Unit, Unit> OpenConfDir { get; }
+    public ReactiveCommand<Unit, Unit> OpenTempDir { get; }
 
     public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
@@ -232,7 +242,10 @@ public class SettingsWindowViewModel : ViewModelBase
             DraftSettings.HamlibSettings.SelectedRigInfo = null;
             if (selection is not null && SupportedModels.Contains(selection))
                 DraftSettings.HamlibSettings.SelectedRigInfo = selection;
-            HamlibInitPassed = true;
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                HamlibInitPassed = true;
+            });
         }
         catch (Exception e)
         {
@@ -321,9 +334,22 @@ public class SettingsWindowViewModel : ViewModelBase
         _settingsService.RestoreSettings(this);
         _source.Cancel();
     }
+    
+    private async Task _openConf()
+    {
+        if (Design.IsDesignMode) return;
+        await _windowManagerService.LaunchDir(ApplicationStartUpUtil.GetConfigDir());
+    }
+    
+    private async Task _openTemp()
+    {
+        if (Design.IsDesignMode) return;
+        await _windowManagerService.LaunchDir(DefaultConfigs.DefaultTempFilePath);
+    }
 
     private void _saveAndApplyConf()
     {
+        if (Design.IsDesignMode) return;
         _settingsService.ApplySettings(this, LogSystems.ToList());
         _source.Cancel();
     }

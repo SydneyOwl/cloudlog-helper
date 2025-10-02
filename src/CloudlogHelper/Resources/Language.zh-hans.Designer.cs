@@ -996,6 +996,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 打开配置目录.
+        /// </summary>
+        public static string openconfpath {
+            get {
+                return ResourceManager.GetString("openconfpath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 打开缓存目录.
+        /// </summary>
+        public static string opentempfolder {
+            get {
+                return ResourceManager.GetString("opentempfolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 密码.
         /// </summary>
         public static string password {

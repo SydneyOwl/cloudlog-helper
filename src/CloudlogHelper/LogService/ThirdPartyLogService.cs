@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Models;
 
 namespace CloudlogHelper.LogService;
 
@@ -20,6 +21,11 @@ public abstract class ThirdPartyLogService
     /// </summary>
     /// <param name="adif"></param>
     public abstract Task UploadQSOAsync(string? adif, CancellationToken token);
+
+    public virtual Task UploadRigInfoAsync(RadioData rigData, CancellationToken token)
+    {
+        return Task.CompletedTask;
+    }
 
     /// <summary>
     /// Preinit works. This will be called each time setting window opened!

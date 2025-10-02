@@ -995,6 +995,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open configuration directory.
+        /// </summary>
+        public static string openconfpath {
+            get {
+                return ResourceManager.GetString("openconfpath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open cache folder.
+        /// </summary>
+        public static string opentempfolder {
+            get {
+                return ResourceManager.GetString("opentempfolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string password {

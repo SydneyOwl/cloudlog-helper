@@ -126,6 +126,13 @@
                                     <CheckBox HorizontalAlignment="Left" Height="20" Content="{I18N {x:Static resources:LangKeys.disablecharts}}"
                                               IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}"/>
                                 </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="15">
+                                    <Button Content="{I18N {x:Static resources:LangKeys.openconfpath}}"
+                                            Command="{Binding OpenConfDir}"/>
+                                
+                                    <Button Content="{I18N {x:Static resources:LangKeys.opentempfolder}}"
+                                            Command="{Binding OpenTempDir}"/>
+                                </StackPanel>
                             </StackPanel>
                         <!-- </Border> -->
                     </StackPanel>

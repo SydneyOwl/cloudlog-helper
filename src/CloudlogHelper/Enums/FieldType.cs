@@ -6,5 +6,6 @@ public enum FieldType
     Text,
     Password,
     FilePicker,
-    ComboBox
+    ComboBox,
+    CheckBox
 }
