@@ -13,29 +13,16 @@
 
 [**🌍阅读中文版本**](./readme_cn.md)
 
-A lightweight, cross-platform helper application for `Cloudlog`/`Wavelog`. 
-Automatically uploads current radio information and real-time QSO data to your server or other log services.
+A lightweight, cross-platform helper application for `Cloudlog`/`Wavelog` that automatically uploads current radio information (`FLRig`/`Hamlib`) and real-time QSO data to multiple logging systems.
 Supports most mainstream radios, and works seamlessly with software like `JTDX`/`WSJT-X`!
 
-If your computer is resource-constrained, or you simply need a tool for automating QSO/radio information uploads, give `Cloudlog Helper` a try!
+If your computer is resource-constrained and cannot run `GridTracker` smoothly, or you simply need a tool for automating QSO/radio information uploads, give `Cloudlog Helper` a try!
 
-  <img src="./md_assets/img.png" alt="img.png" width="60%" />
+  <img src="./md_assets/image-20251003205204844.png" alt="image-20251003205204844" style="zoom:67%;" />
+
+(Some call signs have been anonymized)
 
 </div>
-
-## ✨ Features
-
-+ 📨 **Real-time QSO Uploading**: Listens for decoded spots from WSJT-X / JTDX and automatically upload completed QSOs to your logbook.
-
-+ 🌐 **Multi-Service Support**: Seamlessly supports uploading to multiple logging services simultaneously, including Cloudlog/Wavelog, Clublog, eQSL, and HamCQ.
-
-+ 🤖 **Automatic Radio Data Reporting**: Keeps your Cloudlog/Wavelog server updated with your radio's current frequency, mode, and status in real-time, eliminating manual data entry.
-
-+ 🔄 **QSO Sync Tool**: Compares your local log files with your cloud logbook to find and upload any missing QSOs, ensuring nothing is missed.
-
-+ 🖥️ **Cross-Platform & Lightweight**: Runs smoothly on Windows and Linux as a single executable file - no installation needed and no burden on your system.
-
-+ 🔧 **Extensible & Customizable**: Easily add support for new log services or push your radio data to custom APIs for your own projects.
 
 
 ## 💻 Supported Platforms
@@ -49,79 +36,136 @@ If your computer is resource-constrained, or you simply need a tool for automati
 > [!TIP]
 > You can also choose to compile it yourself. Please refer to the `Compilation` section below.
 
-+ Download the software version for your system from the `Releases` section. If you are using Linux and require radio data upload functionality, please launch the software using `sudo`.
++ Download the software version for your system from `Releases`. If you're using Linux and **need to use the hamlib backend** for radio data reporting, please start the software with sudo.
 
 + Open the software, click `Settings` -> `Basic Settings` to open the settings page.
 
-### 📌 Cloudlog Configuration
+### 📌 Basic Settings
 
-+ Enter your Cloudlog / Wavelog server (hereinafter referred to as Cloudlog) address and the corresponding API KEY. You can obtain the URL and API KEY by following the steps shown in the image below:
+Please enter your Maidenhead locator (4 characters) here.
 
-  <img src="./md_assets/image-20250510205625912.png" alt="image-20250510205625912" width="80%" />
+![image-20251003210553113](./md_assets/image-20251003210553113.png)
 
-+ Click "Test". If your input is correct, a dropdown for selecting the Station ID will appear below the API key. If you have multiple stations set up in Cloudlog / Wavelog, please select the correct ID here. All subsequent QSOs will be uploaded to this ID.
+### 📌 Cloudlog/Wavelog Configuration
 
-  ![image-20250615191924477](./md_assets/image-20250615191603704.png)
+Enter your Cloudlog / Wavelog server (hereinafter referred to as Cloudlog) address and corresponding API KEY, then click "Test". If entered correctly, a dropdown for selecting the station ID will appear below the API key. If you have multiple stations set up in Cloudlog / Wavelog, please select the correct ID here. Subsequent QSOs will be uploaded to this ID.
 
-### 📌 Clublog Configuration
+![image-20251003210624803](./md_assets/image-20251003210624803.png)
 
-+ Enter the callsign, email, and password you used when registering on Clublog, and click "Test".
-
-  ![image-20250615191934943](./md_assets/image-20250615191626100.png)
-
-### 📌 eQSL Configuration
-
-+ Enter the callsign, email, and QTH Nickname (optional) you used when registering on eQSL.cc, and click "Test".
-
-  ![img.png](./md_assets/img-eqsl.png)
-
-### 📌 HamCQ Configuration
-
-[HamCQ](https://forum.hamcq.cn) is an amateur radio enthusiast community. This software integrates with HamCQ's log upload feature. After passing the community's license verification and obtaining an API key, simply enter it in the corresponding input field in the software.
-
-![img.png](./md_assets/image-20250602140113552.png)
-
-### 📌 Hamlib Configuration
+### 📌 Third-party Logging System Configuration
 
 > [!NOTE]
 >
-> You can skip this step entirely if you do not need automatic radio data upload functionality.
+> You can also add your own logging services. See below for details.
+
+This software supports uploading logs to:
+
++ Cloudlog / Wavelog
++ Clublog
++ eqsl.cc
++ HamCQ
++ HRDLOG
++ LoTW
++ QRZ.com
+
+Enter your call sign/password or other configuration information in the corresponding fields.
+
+<img src="./md_assets/image-20251003210652017.png" alt="image-20251003210652017" style="zoom: 33%;" />
+
+### 📌 Radio Configuration
+
+> [!NOTE]
+>
+> If you don't need automatic radio data upload functionality, you can skip this step directly.
 
 > [!WARNING]
 >
-> After starting JTDX (or WSJT-X, hereinafter referred to as JTDX), exclusive control of the radio will be held by JTDX. Therefore, without configuring JTDX first, this feature cannot be used simultaneously with JTDX. Refer to the `Working with JTDX` section for a solution.
+> You can only choose either Hamlib or FLRig as the radio backend control system. Both cannot be enabled simultaneously.
 
-This software can periodically upload radio information (frequency, mode, etc.) to your Cloudlog server. When you need to log a QSO, Cloudlog will automatically retrieve the current frequency, mode, and other data, populating the corresponding input fields to avoid manual entry errors. Simultaneously, the Cloudlog main interface will display the radio's frequency, mode, and other information in real-time for reference during operation.
+This software supports `Hamlib` and `FLRig` as control backends for radios, allowing periodic uploads of radio information (frequency, mode, etc.) to your Cloudlog server, HRDLog, or other specified backends. When you need to record QSO information, Cloudlog will automatically retrieve the current frequency, mode, or other data, and automatically populate the corresponding input fields to avoid manual entry errors. Meanwhile, the Cloudlog main interface will also display the radio's frequency, mode, and other information in real-time for reference during operation.
 
-+ Select the model of your radio from the `Radio Model` dropdown.
-+ Select the port where your device is located in the `Device Port` dropdown.
-+ Click the "Test" button. Only after a successful test should you check the "Automatically Report Radio Data" option. Click "Confirm" to save the configuration.
+![image-20251003210929186](./md_assets/image-20251003210929186.png)
 
-  <img src="./md_assets/image-20250615191803125.png" width="50%" />
+<img src="./md_assets/image-20251003210857242.png" alt="image-20251003210857242" style="zoom:50%;" />
 
-+ The software's main interface should now display the retrieved radio information. Open your Cloudlog website; the homepage should show your radio's information:
+> [!WARNING]
+>
+> If you **use Hamlib** as the control backend, since opening JTDX (or WSJT-X, hereinafter referred to as JTDX) will obtain exclusive control of the radio, this feature and JTDX cannot be enabled simultaneously before configuring JTDX. Please check the `Working with JTDX` section for solutions.
+
++ Select your radio model from `Radio Model` dropdown.
++ Choose the port where your device is located in the `Device Port` field.
++ Click the "Test" button. Only after successful testing should you check "Automatic Radio Data Reporting". Click "Confirm" to save the configuration.
+
+  <img src="./md_assets/image-20250615192010245.png" width="50%" />
+
++ The software's main interface should now display the retrieved radio information. Open your Cloudlog website, and the homepage should show your radio information:
 
   <img src="./md_assets/image-20250511120812425.png" alt="image-20250510221517526" width="50%" />
 
-+ Select your radio under "Station". Thereafter, when you fill in QSO information, Cloudlog will automatically populate the frequency, mode, and other details for you.
++ Select your radio in "Station". Thereafter, when you fill in QSO information, Cloudlog will automatically populate frequency, mode, and other details for you.
 
   <img src="./md_assets/image-20250510221120607.png" alt="image-20250510221120607" width="50%" />
 
-### 📌 UDP Server Configuration
+### 📌 UDP Server  Configuration
 
-This functionality works similarly to `GridTracker`. `JTDX` broadcasts decoded information such as callsign, frequency, signal report, etc., via the UDP protocol. `CloudlogHelper` receives and decodes this information, uploading the QSO results to your Cloudlog server in real-time.
+This part works similarly to `GridTracker`. `JTDX` broadcasts information about currently decoded call signs, frequencies, signal reports, etc., via UDP protocol, and `CloudlogHelper` receives and decodes this information, uploading the communication results to your Cloudlog server in real-time.
 
-+ This section requires minimal configuration. If you change the port number here, please update the UDP server configuration in JTDX accordingly. **Note: If JTDX and Cloudlog Helper are not running on the same machine, you need to check the "Allow External Connections" option and change the IP address part of the UDP server configuration in JTDX to the IP address of the machine running Cloudlog Helper.**
-
-  <img src="./md_assets/image-20250615191831895.png" alt="image-20250510222349765" width="60%" />
-
-+ After this, whenever JTDX is in transmit mode or completes a QSO, the software's main interface will display the corresponding information.
-
-  <img src="./md_assets/image-20250524115350845.png" alt="image-20250510223010041" width="30%" />
++ This part doesn't require much configuration. If you change the port number here, please also update the UDP server configuration in JTDX. **Note: If JTDX and Cloudlog Helper are not running on the same machine, you need to check the "Allow External Connections" option and change the IP address part of the UDP server in JTDX to the IP of the machine running Cloudlog Helper.**
+  
+  ![image-20251003211112602](./md_assets/image-20251003211112602.png)
+  
++ Thereafter, when JTDX is in transmit mode or completes a QSO, the software's main interface will display the corresponding information.
 
 ## 🚀 Advanced
 
-### 🎯 Working with JTDX/WSJT-X
+### 📊 Charts - Signal Distribution Polar Plot
+
+This chart displays the azimuth and distance distribution of received signals on a polar coordinate system, where the **polar coordinate origin** is the geographic location corresponding to the **"My Maidenhead Grid"** you entered in the settings.
+
+The calculated distance is the **great-circle distance**, and the angle is the **true north azimuth**. Darker signal points indicate higher communication density in that area. For example, the chart below clearly shows that most signals come from Europe, Japan, and Indonesia.
+
+When "Auto Select" is checked and status information from `wsjt-x` or `jtdx` is received, the chart will automatically switch bands and display the QSO distribution that meets the criteria.
+
+<img src="./md_assets/image-20251003211217422.png" alt="image-20251003211217422" style="zoom: 67%;" />
+
+| Configuration Item | Description |
+|-------------------|-------------|
+| Display Density Colors | Calculate the density estimate for each signal point using the KNN algorithm based on the given k-value, distance, and angle weights. Map the density values to corresponding colors according to the selected colormap, and finally present it as a heatmap on the polar plot. This step is computationally intensive and can be disabled when the data volume is too large or device performance is poor. |
+| Filter Duplicate Samples | Remove duplicate data by call sign. |
+| Maximum Sample Points | Number of signal points displayed on the polar plot. Recommended within 1000, maximum support 8000. |
+| K Value | K-nearest neighbors algorithm parameter that affects density calculation accuracy. |
+| Distance Weight | Weight of distance in density calculation. |
+| Angle Weight | Weight of angle in density calculation. |
+
+### 📊 Charts - Station Statistics
+
+From left to right, top to bottom, the displayed charts are:
+
++ Top 10 decoded DXCCs
++ Station distance distribution
++ Station azimuth distribution
++ Heatmap worldwide
+
+Similarly, when "Auto Select" is checked and status information from `wsjt-x` or `jtdx` is received, the charts will automatically switch bands and display the QSO distribution that meets the criteria.
+
+<img src="./md_assets/image-20251003211358747.png" alt="image-20251003211358747" style="zoom:67%;" />
+
+### 🔧 Utilities - QSO Upload Assistant
+
+This tool can automatically download uploaded QSOs from your Cloudlog server, compare them with local QSOs (**currently only supports Wsjtx and JTDX format logs**), filter out unuploaded QSOs, and help you automatically upload and complete them. For example, if you started jtdx but forgot to start the logging software, or the network was accidentally disconnected unnoticed, there might be missed QSOs not uploaded. This tool aims to solve this problem.
+
+  <img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
+
+| Configuration Item | Description |
+|-------------------|-------------|
+| Execute sync on startup | If checked, this tool will open and automatically start synchronization every time the software starts. |
+| Username | Cloudlog login username. |
+| Password | Cloudlog password. |
+| Cloud Sample (days) | Number of latest QSOs downloaded from Cloudlog by days. These QSOs will serve as baseline data for comparison with local QSOs.<br/>Please set according to your needs. If communication is infrequent, this value should be appropriately larger to ensure the downloaded cloud QSO sample size is sufficient to cover local QSOs. **For example, setting it to `10` means the tool will get the latest 10 days of QSO records from the cloud.** |
+| Local Sample (QSOs) | Number of recent QSO records read from local log files for comparison with cloud records. For example, setting it to `50` means the tool will check if the latest 50 local QSOs have all been uploaded to the cloud (i.e., whether they all exist in the latest QSOs downloaded from the cloud, with quantity equal to Cloud Sample). |
+| Local Log Paths | Local log paths. |
+
+### 🎯 (Hamlib) Working with JTDX/WSJT-X
 
 If you wish to report radio data in real-time while JTDX is running, please refer to the following. The process for WSJT-X is similar.
 
