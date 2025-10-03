@@ -11,12 +11,13 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=for-the-badge)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
 
-轻量级、跨平台的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息以及实时QSO数据，支持大部分主流电台以及与`JTDX`/`WSJT-X`
-等软件协同工作！
+轻量级、跨平台的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息（`FLRig`/`Hamlib`）以及实时QSO数据到多种日志系统，支持大部分主流电台以及与`JTDX`/`WSJT-X`等软件协同工作！
 
 如果您的电脑性能捉襟见肘，或单纯需要一个自动化QSO/电台信息上传工具，不妨来试试`Cloudlog Helper`！
 
   <img src="./md_assets/img_cn.jpg" alt="img.png"  width="60%" />
+
+（部分呼号已作隐藏处理）
 
 </div>
 
@@ -31,40 +32,44 @@
 > [!TIP]
 > 您也可以选择自行编译，请参照下文的`编译`章节。
 
-+ 从`Release`中下载对应系统版本的软件。如果您使用Linux且需要使用电台数据上报功能，请使用sudo启动软件。
++ 从`Release`中下载对应系统版本的软件。如果您使用Linux且**需要使用hamlib后端的**电台数据上报功能，请使用sudo启动软件。
 
 + 打开软件，点击`设置`->`基础设置`打开设置页面。
 
-### 📌 Cloudlog配置
+### 📌 基础设置
 
-+ 输入您的Cloudlog / Wavelog服务器（下称Cloudlog）地址以及对应的API KEY。您可以按照下图所示的步骤获取URL和API KEY:
+请在此填写您的梅登海格坐标（四位）。
 
-  <img src="./md_assets/image-20250510205625912.png" alt="image-20250510205625912"  width="80%" />
+![image-20251003104554084](./md_assets/image-20251003104554084.png)
 
-+ 点击“测试”，如您输入正确，在apikey下方将出现选择站点ID的下拉框。如果您在Cloudlog /
-  Wavelog设置了多个站点请在此选择正确的id，后续的QSO都将上传到此id中。
+### 📌 Cloudlog/Wavelog配置
 
-  ![image-20250615191924477](./md_assets/image-20250615191924477.png)
+输入您的Cloudlog / Wavelog服务器（下称Cloudlog）地址以及对应的API KEY，并点击“测试”，如您输入正确，在apikey下方将出现选择站点ID的下拉框。如果您在Cloudlog /Wavelog设置了多个站点请在此选择正确的id，后续的QSO都将上传到此id中。
 
-### 📌 Clublog配置
+![image-20251003104730555](./md_assets/image-20251003104730555.png)
 
-+ 输入您在Clublog上注册时使用的呼号、邮箱和密码，并点击“测试”。
+### 📌 第三方日志系统配置
 
-  ![image-20250615191934943](./md_assets/image-20250615191934943.png)
+> [!NOTE]
+>
+> 您也可以自行增加自己的日志服务，详见下文。
 
-### 📌 eqsl配置
+本软件支持上传日志到:
 
-+ 输入您在eqsl.cc上注册时使用的呼号、邮箱和QTH昵称（可选），并点击“测试”。
++ Cloudlog / Wavelog
++ Clublog
++ eqsl.cc
++ HamCQ
++ HRDLOG
++ LoTW
++ QRZ.com
 
-  ![img.png](./md_assets/img-eqsl.png)
+在对应位置输入您的呼号/密码或其他配置信息即可。
 
-### 📌 HamCQ配置
+<img src="./md_assets/image-20251003105237766.png" alt="image-20251003105237766" style="zoom: 67%;" />
 
-[HamCQ](https://forum.hamcq.cn)社区是国内的业余无线电爱好者交流社区。本软件集成了HamCQ社区的日志上传功能，您只需在通过社区的执照认证，获取apikey后在软件对应输入框中填写即可。
 
-![img.png](./md_assets/image-20250602140113552.png)
-
-### 📌 Hamlib配置
+### 📌 电台配置
 
 > [!NOTE]
 >
@@ -72,11 +77,16 @@
 
 > [!WARNING]
 >
-> 由于在开启JTDX（或WSJT-X，下称JTDX）后，电台的控制权将被JTDX独占，因此在未设置JTDX前，此功能和JTDX不能同时启用。可查看
-`与JTDX协同工作`部分获取解决方法。
+> 您只能选择Hamlib或FLRig中的一种作为电台后端控制系统，两者无法同时启用。
 
-本软件可以定时上传电台信息（频率、模式等）到您的Cloudlog服务器。当您需要记录QSO信息时，Cloudlog会自动获取当前的频率、模式等数据，并自动填充至对应输入框中，避免手动输入错误。同时，
-Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方便操作时参考。
+本软件支持`Hamlib`和`FLRig`作为电台的控制后端，可以定时上传电台信息（频率、模式等）到您的Cloudlog服务器、HRDLog或您指定的其他后端。当您需要记录QSO信息时，Cloudlog会自动获取当前的频率、模式等数据，并自动填充至对应输入框中，避免手动输入错误。同时，Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方便操作时参考。
+
+![image-20251003110143584](./md_assets/image-20251003110143584.png)
+
+
+> [!WARNING]
+>
+> 如您**使用Hamlib**作为控制后端，由于在开启JTDX（或WSJT-X，下称JTDX）后，电台的控制权将被JTDX独占，因此在未设置JTDX前，此功能和JTDX不能同时启用。可查看`与JTDX协同工作`部分获取解决方法。
 
 + 在`电台型号`下拉框中选择您使用的电台的型号。
 + 在`设备端口`中选择您的设备所在的端口。
@@ -98,52 +108,51 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 将接收这些信息并解码，将通联结果实时上传至您的Cloudlog服务器。
 
 + 此部分不须过多配置，如果您更改了此部分的端口号，请同步更改JTDX中的UDP服务器配置。**注意，如果JTDX和Cloudlog
-  Helper不在同一台机器上运行，您需要勾选“允许外部连接”选项，并更改JTDX中UDP服务器的ip地址部分为运行Cloudlog Helper机器的ip。
-  **
-
-  <img src="./md_assets/image-20250615192042489.png" alt="image-20250510222349765" width="60%" />
-
+  Helper不在同一台机器上运行，您需要勾选“允许外部连接”选项，并更改JTDX中UDP服务器的ip地址部分为运行Cloudlog Helper机器的ip。**
+  
+  ![image-20251003110305894](./md_assets/image-20251003110305894.png)
+  
 + 此后，当JTDX处于发射模式，或完成了一个QSO之后，软件主界面都会显示对应信息。
 
   <img src="./md_assets/image-20250510223010041.png" alt="image-20250510223010041" width="30%" />
 
 ## 🚀 高级
 
-### 🎯 与JTDX/Wsjt-x协同工作
+### 📊 图表 - 信号分布极坐标图
 
-如果您希望在开启JTDX的情况下实时上报电台数据，请参考以下内容。Wsjt-x的操作过程与此类似。
+此图表在极坐标上展示已收到信号的方位角和距离分布情况，其中**极坐标原点**是您在设置中输入的 **“我的梅登黑德网格”** 所对应的地理位置。
 
-当您开启JTDX后，电台的控制权将被JTDX独占，此时您将无法通过本软件读取电台频率。幸运的是，JTDX和本软件均可以使用Rigctld作为电台的控制后端，您只需修改一下JTDX中的网络服务器地址，使
-本软件和JTDX共享一个Rigctld后端即可。
+计算出的距离为**大圆距离**，角度为**真北方位角**，信号点颜色越深表示该区域通信越密集。例如通过下图可以直观看出大部分信号来自欧洲、日本和印尼方向。
 
-> [!IMPORTANT]
->
-> 请勿将JTDX和本软件的轮询间隔设置得过小，太频繁的数据请求可能导致电台来不及反应导致出错。一个建议值是在JTDX的设置-电台中设置时间间隔为8s，本软件的轮询间隔为15s。
-**请注意，两者不能为整数倍数**
+当勾选了“自动选择”且收到来自`wsjt-x`或`jtdx`的状态信息时，图表将自动切换波段并显示符合条件的QSO分布。
 
-具体做法如下（以Windows7为例）：
+<img src="./md_assets/s82013.png" alt="屏幕截图 2025-10-02 182013" style="zoom: 33%;" />
 
-+ 打开Cloudlog Helper，进入“设置”页面，填写电台相关信息后勾选“电台信息自动上报”。注意，**不要**勾选`禁用PTT控制`
-  。JTDX依赖此功能控制电台发射。
+| 配置项         | 说明                                                         |
+| -------------- | ------------------------------------------------------------ |
+| 展示密度颜色   | 按照给定的k值、距离和角度权重，根据KNN算法计算出每个信号点的密度估计值，根据选定的色图，将密度值映射为对应的颜色，最终在极坐标图上以热力图的形式呈现。此步骤性能消耗较大，当数据量过大或设备性能差时可以关闭。 |
+| 过滤重复样本   | 按照呼号剔除重复数据。                                       |
+| 最大取样点数量 | 在极坐标上展示的信号点数量，建议1000个以内，最大支持8000个。 |
+| K值            | K近邻算法参数，影响密度计算的精度。                          |
+| 距离权重       | 距离在密度计算中的权重。                                     |
+| 角度权重       | 角度在密度计算中的权重。                                     |
 
-+ 点击“应用更改”。
+### 📊 图表 - 站点统计
 
-+ 打开`JTDX`，进入`设置`-`电台`，将`无线电设备`更改为`Hamlib NET rigctl`
-  ，CAT控制中的网络服务器填写rigctld后端地址（默认为127.0.0.1:4534），PTT方法保持原配置不变.
+从左到右，从上到下，展示的图表依次为：
 
-  <img src="./md_assets/image-20250519212931093.png" alt="image-20250517151541410" width="60%" />
++ 解码出的前10位DXCC
++ 站点距离分布
++ 站点方位分布
++ 世界范围内的热力图
 
-+ 测试CAT和PTT均可用后，点击“确定”。
+同样地，当勾选了“自动选择”且收到来自`wsjt-x`或`jtdx`的状态信息时，图表将自动切换波段并显示符合条件的QSO分布。
 
-+ 现在您就成功实现了CloudlogHelper和JTDX的协同工作。
+<img src="./md_assets/image-20251003113810834.png" alt="image-20251003113810834" style="zoom: 33%;" />
 
-  <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" width="70%" />
+### 🔧 实用工具 - QSO上传助手
 
-### 🔧 实用工具
-
-#### QSO上传助手
-
-此工具能够自动从您的Cloudlog服务器上下载已上传的QSO，并于本地QSO(**目前仅支持Wsjtx和JTDX格式的日志**)
+此工具能够自动从您的Cloudlog服务器上下载已上传的QSO，并与本地QSO(**目前仅支持Wsjtx和JTDX格式的日志**)
 进行对比，筛选出未上传的QSO并帮您自动上传补齐。例如您启动了jtdx， 但是忘记启动日志记录软件，或者网络不小心断开了没发现，
 这时候就会存在遗漏 QSO 没上传的情况。此工具旨在解决这一问题。
 
@@ -157,6 +166,34 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 | Cloud Sample (days)     | 从Cloudlog上按照天数下载的最新的QSO数量，这些QSO将作为基准数据，用于与本地QSO进行对比。<br/>请按照自己的需求设置。如果通联不频繁，这个值应当适当大一些以确保下载的云端QSO样本量足够覆盖本地QSO。**例如设为 `10` 表示工具会获取云端最新的 10 天内的 QSO 记录。** |
 | Local Sample (QSOs)     | 从本地日志文件读取的最近 QSO 记录数量，用于与云端记录对比。例如设为 `50` 表示工具会检查本地最新的 50 条 QSO 是否都已上传到云端（即是否在从云端下载的，数量为Cloud Sample的最新QSO中都存在）。                                        |
 | Local Log Paths         | 本地的日志路径。                                                                                                                                                |
+
+### 🎯（仅Hamlib） 与JTDX/Wsjt-x协同工作
+
+如果您希望在开启JTDX的情况下实时上报电台数据，请参考以下内容。Wsjt-x的操作过程与此类似。
+
+当您开启JTDX后，电台的控制权将被JTDX独占，此时您将无法通过本软件读取电台频率。幸运的是，JTDX和本软件均可以使用Rigctld作为电台的控制后端，您只需修改一下JTDX中的网络服务器地址，使本软件和JTDX共享一个Rigctld后端即可。
+
+> [!IMPORTANT]
+>
+> 请勿将JTDX和本软件的轮询间隔设置得过小，太频繁的数据请求可能导致电台来不及反应导致出错。一个建议值是在JTDX的设置-电台中设置时间间隔为8s，本软件的轮询间隔为15s。**请注意，两者不能为整数倍数**
+
+具体做法如下（以Windows7为例）：
+
++ 打开Cloudlog Helper，进入“设置”页面，填写电台相关信息后勾选“电台信息自动上报”。注意，**不要**勾选`禁用PTT控制`
+  。JTDX依赖此功能控制电台发射。
+
++ 点击“应用更改”。
+
++ 打开`JTDX`，进入`设置`-`电台`，将`无线电设备`更改为`Hamlib NET rigctl`，CAT控制中的网络服务器填写rigctld后端地址（默认为127.0.0.1:4534），PTT方法保持原配置不变.
+  
+  <img src="./md_assets/image-20250519212931093.png" alt="image-20250517151541410" width="60%" />
+  
++ 测试CAT和PTT均可用后，点击“确定”。
+
++ 现在您就成功实现了CloudlogHelper和JTDX的协同工作。
+
+  <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" width="70%" />
+
 
 ### 🎯 各配置项说明
 
@@ -175,17 +212,22 @@ Cloudlog 主界面中也会实时显示电台的 频率、模式等信息，方�
 | 高级设置-允许外部控制      | 允许从localhost以外的设备与rigctld后端交互（增加参数 `-T 0.0.0.0` ）。                                                                                                |
 | ~~高级设置-允许请求代理~~  | ~~启动一个代理服务器，可以将外部的请求代理至软件中，由软件按照优先级按顺序自动发送至rigctld。~~                                                                                             |
 | 使用外部rigctld服务    | 使用外部的rigctld作为软件的rigctld后端。例如您手动启动了一个rigctld实例，就可以勾选此选项，配置软件使用您指定的rigctld后端。                                                                      |
-| 同时报告电台信息         | 将获取到的电台信息同时上报到指定URL。可以同时输入多个，用分号分开，例如“http://a.com/api;http://b.com/rig;http://c.cn/a”。详见 `高级` -> `报告电台信息`                                        |
+| 同时报告电台信息         | 将获取到的电台信息同时上报到指定URL。可以同时输入多个，用分号分开，例如“http://a.com/api;http://b.com/rig;http://c.cn/a”。可在`Demo/go`中查看示例。                      |
+
+#### ⚙️ FLRig配置
+
+与` Hamlib配置`类似，此处不再赘述。
 
 #### ⚙️ UDP服务器配置
 
-| 配置项              | 说明                                   |
-|------------------|--------------------------------------|
-| 启用UDP服务器         | 启动一个UDP服务器，用于接收来自第三方软件发送的QSO数据。      |
-| 端口号              | UDP服务器的端口号。                          |
-| 允许外部连接           | 允许接收localhost以外的设备发来的请求。             |
-| QSO上传失败重试次数      | 指定QSO上传失败重试次数。                       |
-| 转发UDP数据包         | 转发收到的UDP数据包到指定的UDP服务器，例如GridTracker. |
+| 配置项                   | 说明                                                         |
+| ------------------------ | ------------------------------------------------------------ |
+| 启用UDP服务器            | 启动一个UDP服务器，用于接收来自第三方软件发送的QSO数据。     |
+| 端口号                   | UDP服务器的端口号。                                          |
+| 允许外部连接             | 允许接收localhost以外的设备发来的请求。                      |
+| QSO上传失败重试次数      | 指定QSO上传失败重试次数。                                    |
+| 转发原始UDP数据包        | 转发收到的UDP数据包到指定的UDP服务器，例如GridTracker。      |
+| 转发解码信息到http服务器 | 转发解码后的数据包，以json形式发送到指定的TCP服务器。可在`Demo/go`中查看示例。 |
 
 #### ⚙️ 命令行参数
 
@@ -241,9 +283,7 @@ make -j$(nproc) all
 make install-strip DESTDIR=""
 ```
 
-编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`
-。请将它放到Resources/Dependencies/hamlib/linux-64中，后续rigctld将嵌入到编译的软件中。
-您也可以从[hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild)直接下载对应架构的rigctld。
+编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`。请将它放到Resources/Dependencies/hamlib/linux-64中，后续rigctld将嵌入到编译的软件中。您也可以从[hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild)直接下载对应架构的rigctld。
 
 ### 🔨 编译软件本体
 
@@ -276,13 +316,10 @@ dotnet publish -c Release -r linux-x64 -f net6.0 -p:PublishSingleFile=true \
 
 ### 🔍 集成其他日志系统
 
-如果您有集成其他日志系统到软件中的需求，可参考`LogService`中的相关配置。
-如您有过C#开发经验，应该能够轻松地完成新配置的添加。
+如果您有集成其他日志系统到软件中的需求，可参考`LogService`中的相关配置。如您有过C#开发经验，应该能够轻松地完成新配置的添加。
 （添加后可以考虑提个PR~）
 
-CloudlogHelper 使用基于属性的系统来定义日志服务，使开发者能够轻松地添加新的日志服务。每个日志服务都继承自
-`ThirdPartyLogService`，并使用特定的Attribute来定义其配置。
-程序会自动发现带有 LogServiceAttribute 的类，同时UI会自动生成配置界面（UserInputAttribute 标注的字段）。简单来说，您只需完成这三步：
+CloudlogHelper 使用基于属性的系统来定义日志服务，使开发者能够轻松地添加新的日志服务。每个日志服务都继承自`ThirdPartyLogService`，并使用特定的Attribute来定义其配置。程序会自动发现带有 LogServiceAttribute 的类，同时UI会自动生成配置界面（UserInputAttribute 标注的字段）。简单来说，您只需完成这三步：
 
 + 创建继承自`ThirdPartyLogService`的类，并用 `[LogService("服务名")]` 标注。
 + 为每个需要用户配置的字段（如API密钥、用户名等）添加属性，并用 `[UserInput("显示名")]` 标注。
