@@ -114,6 +114,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to API密钥.
+        /// </summary>
+        public static string apikey {
+            get {
+                return ResourceManager.GetString("apikey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自动更新台站信息.
         /// </summary>
         public static string autopollstatus {
@@ -532,6 +541,15 @@ namespace CloudlogHelper.Resources {
         public static string duperigservdetected {
             get {
                 return ResourceManager.GetString("duperigservdetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 电子邮箱.
+        /// </summary>
+        public static string email {
+            get {
+                return ResourceManager.GetString("email", resourceCulture);
             }
         }
         
@@ -1268,6 +1286,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QTH昵称（可选）.
+        /// </summary>
+        public static string qthnickname {
+            get {
+                return ResourceManager.GetString("qthnickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 轮询间隔应当大于一秒！.
         /// </summary>
         public static string reachminiumpollinterval {
@@ -1574,6 +1601,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 站点名称.
+        /// </summary>
+        public static string stationname {
+            get {
+                return ResourceManager.GetString("stationname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 解码站点统计.
         /// </summary>
         public static string stationstatisticgraph {
@@ -1790,6 +1826,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TQSL密码.
+        /// </summary>
+        public static string tqslpassword {
+            get {
+                return ResourceManager.GetString("tqslpassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TQSL路径.
+        /// </summary>
+        public static string tqslpath {
+            get {
+                return ResourceManager.GetString("tqslpath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 透明度.
         /// </summary>
         public static string transparency {
@@ -1930,6 +1984,15 @@ namespace CloudlogHelper.Resources {
         public static string uploadingqso {
             get {
                 return ResourceManager.GetString("uploadingqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 上传电台信息.
+        /// </summary>
+        public static string uploadriginfo {
+            get {
+                return ResourceManager.GetString("uploadriginfo", resourceCulture);
             }
         }
         

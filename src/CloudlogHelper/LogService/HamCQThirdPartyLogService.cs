@@ -15,7 +15,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
 {
     private const string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
-    [UserInput("API Key")] public string ApiKey { get; set; }
+    [UserInput("apikey")] public string ApiKey { get; set; }
 
     public override Task TestConnectionAsync(CancellationToken token)
     {

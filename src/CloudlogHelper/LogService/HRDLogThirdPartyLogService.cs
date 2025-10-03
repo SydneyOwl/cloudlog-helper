@@ -17,13 +17,13 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
     private const string HRDLOGUploadEndpoint = "http://robot.hrdlog.net/NewEntry.aspx";
     private const string HRDLOGOnAirEndpoint = "http://robot.hrdlog.net/OnAir.aspx";
     
-    [UserInput("Callsign")]
+    [UserInput("callsign")]
     public string Callsign { get; set; }
     
     [UserInput("Code", Description = "Upload code received via email after registration to HRDLOG.net")]
     public string Code { get; set; }
     
-    [UserInput("Upload rig info", InputType = FieldType.CheckBox)]
+    [UserInput("uploadriginfo", InputType = FieldType.CheckBox)]
     public bool AllowUploadRigInfo { get; set; }
     
     public override async Task TestConnectionAsync(CancellationToken token)

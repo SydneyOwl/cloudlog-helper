@@ -87,7 +87,7 @@ public class LogSystemCard : UserControl
 
                 var label = new TextBlock
                 {
-                    Text = config.Fields[i].DisplayName,
+                    Text = TranslationHelper.GetString(config.Fields[i].DisplayNameLangKey),
                     Classes = { "setting-label" }
                 };
                 Grid.SetRow(label, i);

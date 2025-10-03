@@ -19,7 +19,7 @@ public class LogSystemConfig : ReactiveObject
 
 public class LogSystemField : ReactiveObject
 {
-    public string DisplayName { get; set; }
+    public string DisplayNameLangKey { get; set; }
     public string PropertyName { get; set; }
     public FieldType Type { get; set; }
     public string? Watermark { get; set; }

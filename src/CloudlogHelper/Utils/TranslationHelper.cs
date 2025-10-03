@@ -24,7 +24,7 @@ public static class TranslationHelper
     /// <returns>The translated string, or empty string if not found.</returns>
     public static string GetString(string key)
     {
-        return I18NExtension.Translate(key) ?? string.Empty;
+        return I18NExtension.Translate(key) ?? (key ?? string.Empty);
     }
 
     /// <summary>

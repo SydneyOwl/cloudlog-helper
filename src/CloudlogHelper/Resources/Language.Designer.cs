@@ -114,6 +114,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to API Key.
+        /// </summary>
+        public static string apikey {
+            get {
+                return ResourceManager.GetString("apikey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto refresh station info.
         /// </summary>
         public static string autopollstatus {
@@ -532,6 +541,15 @@ namespace CloudlogHelper.Resources {
         public static string duperigservdetected {
             get {
                 return ResourceManager.GetString("duperigservdetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to e-mail.
+        /// </summary>
+        public static string email {
+            get {
+                return ResourceManager.GetString("email", resourceCulture);
             }
         }
         
@@ -1267,6 +1285,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QTH Nickname (Optional).
+        /// </summary>
+        public static string qthnickname {
+            get {
+                return ResourceManager.GetString("qthnickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Polling interval should be more than 1s!.
         /// </summary>
         public static string reachminiumpollinterval {
@@ -1573,6 +1600,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Station name.
+        /// </summary>
+        public static string stationname {
+            get {
+                return ResourceManager.GetString("stationname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Received Station Statistic.
         /// </summary>
         public static string stationstatisticgraph {
@@ -1790,6 +1826,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TQSL Password.
+        /// </summary>
+        public static string tqslpassword {
+            get {
+                return ResourceManager.GetString("tqslpassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TQSL Path.
+        /// </summary>
+        public static string tqslpath {
+            get {
+                return ResourceManager.GetString("tqslpath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transparency.
         /// </summary>
         public static string transparency {
@@ -1930,6 +1984,15 @@ namespace CloudlogHelper.Resources {
         public static string uploadingqso {
             get {
                 return ResourceManager.GetString("uploadingqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload RIG info.
+        /// </summary>
+        public static string uploadriginfo {
+            get {
+                return ResourceManager.GetString("uploadriginfo", resourceCulture);
             }
         }
         

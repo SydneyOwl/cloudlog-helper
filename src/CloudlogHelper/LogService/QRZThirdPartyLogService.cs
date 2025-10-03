@@ -13,7 +13,7 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
 {
     private const string QRZQsoUploadEndpoint = "https://logbook.qrz.com/api";
     
-    [UserInput("API Key", Description = "API Key of your logbook. Note you must have an" +
+    [UserInput("apikey", Description = "API Key of your logbook. Note you must have an" +
                                         " active subscription of qrz to use this function.")]
     public string ApiKey { get; set; }
     

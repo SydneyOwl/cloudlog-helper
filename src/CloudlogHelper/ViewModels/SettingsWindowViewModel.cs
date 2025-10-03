@@ -201,7 +201,7 @@ public class SettingsWindowViewModel : ViewModelBase
                     
                     return new LogSystemField
                     {
-                        DisplayName = t.attr.DisplayName,
+                        DisplayNameLangKey = t.attr.DisplayNameLangKey,
                         PropertyName = t.prop.Name,
                         Type = t.attr.InputType,
                         Watermark = t.attr.WaterMark,

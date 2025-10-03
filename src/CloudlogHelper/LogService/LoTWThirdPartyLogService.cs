@@ -25,14 +25,14 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     
-    [UserInput("TQSL Path", InputType = FieldType.FilePicker)]
+    [UserInput("tqslpath", InputType = FieldType.FilePicker)]
     public string LotwFilePath { get; set; }
     
     
-    [UserInput("Station Name", InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
+    [UserInput("stationname", InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
     public string? StationName { get; set; }
     
-    [UserInput("TQSL Password", InputType = FieldType.Password, IsRequired = false)]
+    [UserInput("tqslpassword", InputType = FieldType.Password, IsRequired = false)]
     public string? TqslPassword { get; set; }
 
     public string?[]? Stations = Array.Empty<string>();

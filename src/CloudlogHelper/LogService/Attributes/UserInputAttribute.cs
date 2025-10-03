@@ -7,16 +7,16 @@ namespace CloudlogHelper.LogService.Attributes;
 [AttributeUsage(AttributeTargets.Property)]
 public class UserInputAttribute : Attribute
 {
-    public UserInputAttribute(string displayName)
+    public UserInputAttribute(string displayNameLangKey)
     {
-        DisplayName = displayName;
+        DisplayNameLangKey = displayNameLangKey;
     }
 
     /// <summary>
-    ///     Name that will be displayed on UI. e.g. Password
+    ///     I18N Name that will be displayed on UI. e.g. Password
     ///     Will use the name of the field as display name.
     /// </summary>
-    public string DisplayName { get; set; } = "Log Service";
+    public string DisplayNameLangKey { get; set; } = "Log Service";
 
     /// <summary>
     ///     Will be displayed if user hover the mouse on the help button.

@@ -695,4 +695,25 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="latitude" xml:space="preserve">
         <value>Latitude</value>
     </data>
+    <data name="email" xml:space="preserve">
+        <value>e-mail</value>
+    </data>
+    <data name="qthnickname" xml:space="preserve">
+        <value>QTH Nickname (Optional)</value>
+    </data>
+    <data name="apikey" xml:space="preserve">
+        <value>API Key</value>
+    </data>
+    <data name="uploadriginfo" xml:space="preserve">
+        <value>Upload RIG info</value>
+    </data>
+    <data name="tqslpath" xml:space="preserve">
+        <value>TQSL Path</value>
+    </data>
+    <data name="stationname" xml:space="preserve">
+        <value>Station name</value>
+    </data>
+    <data name="tqslpassword" xml:space="preserve">
+        <value>TQSL Password</value>
+    </data>
 </root>

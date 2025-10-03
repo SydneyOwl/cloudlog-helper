@@ -17,13 +17,13 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
     private const string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
 
-    [UserInput("Callsign", Description = "Enter your callsign registered at clublog.")]
+    [UserInput("callsign", Description = "Enter your callsign registered at clublog.")]
     public string Callsign { get; set; }
 
-    [UserInput("Password", InputType = FieldType.Password)]
+    [UserInput("password", InputType = FieldType.Password)]
     public string Password { get; set; }
 
-    [UserInput("Email")] public string Email { get; set; }
+    [UserInput("email")] public string Email { get; set; }
 
 
     public override async Task TestConnectionAsync(CancellationToken token)
