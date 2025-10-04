@@ -354,10 +354,11 @@ CPU and memory usage after 1 hour of operation are shown below. The CPU spikes c
 
 ## 🙏 Acknowledgments
 
-+ [Hamlib](https://github.com/Hamlib/Hamlib): Amateur Radio Control Libraries (supports radios, rotators, tuners, and amplifiers)
-+ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): C# class library and sample code for interacting with WSJT-X via UDP using .NET & .NET Framework 4.8
-+ [ADIFLib](https://github.com/kv9y/ADIFLib): A C# library for reading, parsing, and writing ADIF (version 3.1.0) files.
-+ [FT8CN](https://github.com/N0BOY/FT8CN): Run FT8 on Android. This software's callsign attribution parsing logic and corresponding DXCC Chinese translations were extracted from this project.
++ [Hamlib](https://github.com/Hamlib/Hamlib): Amateur Radio Control Libraries (supports radios, rotators, tuners, and amplifiers) (GPL, LGPL, callable via binary files)
++ [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): C# class library and sample code for interacting with WSJT-X via UDP using .NET & .NET Framework 4.8 (MIT)
++ [ADIFLib](https://github.com/kv9y/ADIFLib): A C# library for reading, parsing, and writing ADIF (version 3.1.0) files. (MIT)
++ [FT8CN](https://github.com/N0BOY/FT8CN): Run FT8 on Android. This software's callsign attribution parsing logic and corresponding DXCC Chinese translations were extracted from this project. (MIT)
++ [Cloudlog](https://github.com/magicbug/Cloudlog): Web-based amateur radio logging application. The icons in this software are modified from the icons of this project. (MIT)
 
 ## 📝 License
 

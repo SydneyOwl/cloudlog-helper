@@ -360,11 +360,12 @@ CloudlogHelper 使用基于属性的系统来定义日志服务，使开发者�
 
 ## 🙏 致谢
 
-+ [Hamlib](https://github.com/Hamlib/Hamlib): 业余无线电设备控制库（支持电台、旋转器、调谐器及功放）
++ [Hamlib](https://github.com/Hamlib/Hamlib): 业余无线电设备控制库（支持电台、旋转器、调谐器及功放） （GPL, LGPL, 以二进制文件形式调用）
 + [WsjtxUtils](https://github.com/KC3PIB/WsjtxUtils): 基于 C# 的类库及示例代码，通过 .NET & .NET Framework 4.8 的 UDP 接口与
-  WSJT-X 交互
-+ [ADIFLib](https://github.com/kv9y/ADIFLib): 用于读取、解析和写入 ADIF（版本 3.1.0）文件的 C# 库。
-+ [FT8CN](https://github.com/N0BOY/FT8CN): 在安卓上运行FT8。本软件的呼号归属解析逻辑以及对应的DXCC中文翻译提取自此软件。
+  WSJT-X 交互 （MIT）
++ [ADIFLib](https://github.com/kv9y/ADIFLib): 用于读取、解析和写入 ADIF（版本 3.1.0）文件的 C# 库。 (MIT)
++ [FT8CN](https://github.com/N0BOY/FT8CN): 在安卓上运行FT8。本软件的呼号归属解析逻辑以及对应的DXCC中文翻译提取自此软件。 (MIT)
++ [Cloudlog](https://github.com/magicbug/Cloudlog): 基于网络的业余无线电记录应用程序, 本软件图标由此项目图标修改而来。（MIT）
 
 ## 📝 许可证
 
