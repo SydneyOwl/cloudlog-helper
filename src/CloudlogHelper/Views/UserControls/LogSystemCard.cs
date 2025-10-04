@@ -217,9 +217,9 @@ public class LogSystemCard : UserControl
                         // check required fields
                         if (logSystemField.IsRequired)
                         {
-                            if (logSystemField.Value is string logVal && string.IsNullOrWhiteSpace(
-                                    logVal))
-                                throw new ArgumentException(TranslationHelper.GetString("fillall"));
+                            if (logSystemField.Value is null || (logSystemField.Value is string logVal && string.IsNullOrWhiteSpace(
+                                    logVal)))
+                                throw new ArgumentException($"{TranslationHelper.GetString("fillall")}({ logSystemField.PropertyName})");
                         }
 
                         var propertyInfo = config.RawType

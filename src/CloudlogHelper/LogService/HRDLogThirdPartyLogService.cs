@@ -22,9 +22,9 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
     
     [UserInput("Code", Description = "Upload code received via email after registration to HRDLOG.net")]
     public string Code { get; set; }
-    
+
     [UserInput("uploadriginfo", InputType = FieldType.CheckBox)]
-    public bool AllowUploadRigInfo { get; set; }
+    public bool AllowUploadRigInfo { get; set; } = false;
     
     public override async Task TestConnectionAsync(CancellationToken token)
     {
