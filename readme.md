@@ -13,17 +13,18 @@
 
 [**🌍阅读中文版本**](./readme_cn.md)
 
-A lightweight, cross-platform helper application for `Cloudlog`/`Wavelog` that automatically uploads current radio information (`FLRig`/`Hamlib`) and real-time QSO data to multiple logging systems.
+A lightweight, cross-platform, portable helper application for `Cloudlog`/`Wavelog`
+that automatically syncs real-time rig data (via FLRig/Hamlib) and QSO information to multiple logging platforms.
 Supports most mainstream radios, and works seamlessly with software like `JTDX`/`WSJT-X`!
 
-If your computer is resource-constrained and cannot run `GridTracker` smoothly, or you simply need a tool for automating QSO/radio information uploads, give `Cloudlog Helper` a try!
+If you’re looking for a simple way to automate logging — whether due to limited system resources 
+or a preference for streamlined tools — `Cloudlog Helper` offers an efficient and portable solution!
 
   <img src="./md_assets/image-20251003205204844.png" alt="image-20251003205204844" style="zoom:67%;" />
 
 (Some call signs have been anonymized)
 
 </div>
-
 
 ## 💻 Supported Platforms
 
@@ -191,23 +192,6 @@ Here are the specific steps (using Windows 7 as an example):
 + You have now successfully enabled collaboration between CloudlogHelper and JTDX.
 
   <img src="./md_assets/image-20250510140025232.png" alt="image-20250510140025232" width="70%" />
-
-### 🔧 Utilities
-
-#### QSO Upload Assistant
-
-This tool can automatically download uploaded QSOs from your Cloudlog server, compare them with local QSOs (**currently only supports logs in Wsjtx and JTDX format**), filter out QSOs that haven't been uploaded, and help you upload them automatically to fill the gaps. For example, if you started JTDX but forgot to start the logging software, or the network disconnected unnoticed, some QSOs might have been missed. This tool aims to solve this problem.
-
-  <img src="./md_assets/image-20250615192509149.png" alt="image-20250517151541410" width="60%" />
-
-| Configuration Item       | Description                                                                                                                                                                                                                             |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Execute sync on startup  | If checked, this tool will open automatically upon software startup and begin synchronization.                                                                                                                                          |
-| Username                 | Your Cloudlog login username.                                                                                                                                                                                                           |
-| Password                 | Your Cloudlog password.                                                                                                                                                                                                                 |
-| Cloud Sample (days)      | The number of recent QSOs (by days) downloaded from Cloudlog to use as baseline data for comparison with local QSOs.<br/>Set this according to your needs. If activity is infrequent, this value should be larger to ensure enough cloud QSOs are downloaded to cover local QSOs. **E.g., setting it to `10` means the tool will fetch QSO records from the cloud from the last 10 days.** |
-| Local Sample (QSOs)      | The number of recent QSO records read from the local log file for comparison with cloud records. E.g., setting it to `50` means the tool will check if the latest 50 local QSOs have all been uploaded to the cloud (i.e., exist within the cloud sample of QSOs downloaded, whose size is defined by Cloud Sample). |
-| Local Log Paths          | Path(s) to the local log file(s).                                                                                                                                                                                                       |
 
 ### 🎯 Configuration Item Descriptions
 

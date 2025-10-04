@@ -11,7 +11,7 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=for-the-badge)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
 
-轻量级、跨平台的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息（`FLRig`/`Hamlib`）以及实时QSO数据到多种日志系统，支持大部分主流电台以及与`JTDX`/`WSJT-X`等软件协同工作！
+轻量级、跨平台、无需安装的`Cloudlog`/`Wavelog`辅助程序，自动上传当前电台信息（`FLRig`/`Hamlib`）以及实时QSO数据到多种日志系统，支持大部分主流电台以及与`JTDX`/`WSJT-X`等软件协同工作！
 
 如果您的电脑性能捉襟见肘，或单纯需要一个自动化QSO/电台信息上传工具，不妨来试试`Cloudlog Helper`！
 
