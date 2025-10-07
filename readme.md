@@ -93,8 +93,8 @@ This software supports `Hamlib` and `FLRig` as control backends for radios, allo
 >
 > If you **use Hamlib** as the control backend, since opening JTDX (or WSJT-X, hereinafter referred to as JTDX) will obtain exclusive control of the radio, this feature and JTDX cannot be enabled simultaneously before configuring JTDX. Please check the `Working with JTDX` section for solutions.
 
-+ Select your radio model from `Radio Model` dropdown.
-+ Choose the port where your device is located in the `Device Port` field.
++ For Hamlib, Select your radio model from `Radio Model` dropdown and choose the port where your device is located in the `Device Port` field. For FLRig, input correct ip address and port.
+
 + Click the "Test" button. Only after successful testing should you check "Automatic Radio Data Reporting". Click "Confirm" to save the configuration.
 
   <img src="./md_assets/image-20250615192010245.png" width="50%" />
@@ -166,7 +166,7 @@ This tool can automatically download uploaded QSOs from your Cloudlog server, co
 | Local Sample (QSOs) | Number of recent QSO records read from local log files for comparison with cloud records. For example, setting it to `50` means the tool will check if the latest 50 local QSOs have all been uploaded to the cloud (i.e., whether they all exist in the latest QSOs downloaded from the cloud, with quantity equal to Cloud Sample). |
 | Local Log Paths | Local log paths. |
 
-### 🎯 (Hamlib) Working with JTDX/WSJT-X
+### 🎯 (Hamlib only) Working with JTDX/WSJT-X
 
 If you wish to report radio data in real-time while JTDX is running, please refer to the following. The process for WSJT-X is similar.
 
