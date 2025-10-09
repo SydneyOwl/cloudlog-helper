@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 <img src="./md_assets/logo.png" alt="cloudlog_helper_logo" width="25%" />
 
 # Cloudlog Helper [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SydneyOwl/cloudlog-helper)
@@ -23,6 +23,8 @@ or a preference for streamlined tools — `Cloudlog Helper` offers an efficient 
   <img src="./md_assets/image-20251003205204844.png" alt="image-20251003205204844" style="zoom:67%;" />
 
 (Some call signs have been anonymized)
+
+**⚠️ This is an UNOFFICIAL community project. It is NOT endorsed by, directly affiliated with, maintained, or sponsored by the Cloudlog/Wavelog development teams.**
 
 </div>
 
