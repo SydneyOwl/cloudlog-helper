@@ -240,7 +240,7 @@ public class DefaultConfigs
     //     $@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" -T {RigctldDefaultHost} -t {RigctldDefaultPort} -vvvvv";
 
     /// <summary>
-    ///     A list of supported radio modes for Rigctld.
+    ///     A list of supported radio modes.
     /// </summary>
     public static readonly List<string> AvailableRigModes = new()
     {
