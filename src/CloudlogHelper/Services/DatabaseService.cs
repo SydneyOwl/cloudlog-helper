@@ -104,7 +104,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         ClassLogger.Trace($"DBVer:{_dbVersion}");
         ClassLogger.Trace($"appVersion:{_appVersion}");
 
-        if (_appVersion > _dbVersion || forceInitDatabase || !formalRelease)
+        if (_appVersion > _dbVersion || forceInitDatabase)
         {
             _upgradeNeeded = true;
             ClassLogger.Info("Upgrade needed.");
