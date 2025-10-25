@@ -8,7 +8,6 @@ public class DefaultDesktopNotificationManager : INotificationManager
 {
     public void Dispose()
     {
-        return;
     }
 
     public Task Initialize()

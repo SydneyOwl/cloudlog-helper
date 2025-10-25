@@ -17,16 +17,17 @@ public class FLRigTests
     public async Task GetFlrigVersion_ReturnCorrectVersion()
     {
         var flRigService = new FLRigService();
-        var serviceVersion = await flRigService.GetServiceVersion("127.0.0.1","12345");
+        var serviceVersion = await flRigService.GetServiceVersion("127.0.0.1", "12345");
         _testOutputHelper.WriteLine(serviceVersion);
     }
-    
-    
+
+
     [Fact(Skip = "CI")]
     public async Task GetFlrigRigInfo_ReturnCorrectResult()
     {
         var flRigService = new FLRigService();
-        var serviceVersion = await flRigService.GetAllRigInfo(false,false, CancellationToken.None, "127.0.0.1","12345");
+        var serviceVersion =
+            await flRigService.GetAllRigInfo(false, false, CancellationToken.None, "127.0.0.1", "12345");
         _testOutputHelper.WriteLine(JsonConvert.SerializeObject(serviceVersion));
     }
 }

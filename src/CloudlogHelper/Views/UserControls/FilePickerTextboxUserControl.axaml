@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
              xmlns:userControls1="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="60"
              x:Class="CloudlogHelper.Views.UserControls.FilePickerTextboxUserControl"
@@ -13,8 +12,8 @@
     </Design.DataContext>
     <Grid ColumnDefinitions="*,Auto">
         <TextBox Grid.Column="0" Name="FilePathTextBox" Height="30" MaxWidth="200"
-                 Watermark="Select a file..." Text="{Binding SelectedFilePath}"/>
-        <Button Grid.Column="1" 
+                 Watermark="Select a file..." Text="{Binding SelectedFilePath}" />
+        <Button Grid.Column="1"
                 Click="FilePickerButton_OnClick"
                 Margin="10,0,0,0" Content="{avalonia:MaterialIconExt Kind=FolderOpen}" />
     </Grid>

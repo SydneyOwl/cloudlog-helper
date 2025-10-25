@@ -41,6 +41,7 @@ public static class RigUtils
         if (codeDesMap.TryGetValue(code, out var result)) return "Hamlib error:" + result;
         return "Failed to init hamlib!";
     }
+
     public static string GenerateRigctldCmdArgs(string radioId, string port, bool disablePtt = false,
         bool allowExternal = false)
     {
@@ -57,6 +58,7 @@ public static class RigUtils
         args.Append("-vvvvv");
         return args.ToString();
     }
+
     public static List<(int Start, int End)> GetColumnBounds(string header)
     {
         var bounds = new List<(int, int)>();

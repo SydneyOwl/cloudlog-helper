@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
-using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using Flurl;
 using Flurl.Http;
@@ -37,8 +36,6 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
         if (!string.IsNullOrEmpty(QTHNickname)) defaultParam += $"&QTHNickname={Uri.EscapeDataString(QTHNickname)}";
         var result = await EqslTestEndpoint
             .AppendQueryParam(defaultParam)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .GetAsync(cancellationToken: token);
         var responseText = await result.GetStringAsync();
         if (!string.IsNullOrEmpty(responseText) && (responseText.Contains("Your ADIF log file has been built") ||
@@ -73,8 +70,6 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             $"ADIFData={Uri.EscapeDataString(adif)}&EQSL_USER={Uri.EscapeDataString(Username)}&EQSL_PSWD={Uri.EscapeDataString(Password)}";
         var results = await EqslQsoUploadEndpoint
             .AppendQueryParam(param)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .GetAsync(cancellationToken: token);
         var responseText = await results.GetStringAsync();
         var htmlDoc = new HtmlDocument();

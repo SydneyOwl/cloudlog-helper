@@ -3,24 +3,21 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.ViewModels;
-using CloudlogHelper.ViewModels.UserControls;
-using CloudlogHelper.Views.UserControls;
 
 namespace CloudlogHelper.Views;
 
 public partial class FloatingWindow : ReactiveWindow<FloatingWindowViewModel>
 {
-    private bool _isResizing = false;
-    private Point _startPoint;
+    private bool _isResizing;
     private double _startHeight;
+    private Point _startPoint;
 
     public FloatingWindow()
     {
         InitializeComponent();
-        
+
         PointerPressed += (s, e) =>
         {
             if (_isResizing) return;
@@ -35,7 +32,7 @@ public partial class FloatingWindow : ReactiveWindow<FloatingWindowViewModel>
         {
             _isResizing = true;
             _startPoint = e.GetPosition(this);
-            _startHeight = this.Height;
+            _startHeight = Height;
         }
     }
 
@@ -59,9 +56,6 @@ public partial class FloatingWindow : ReactiveWindow<FloatingWindowViewModel>
     {
         if (sender is not MenuItem menuItem) return;
         var transparencyText = menuItem.Header!.ToString()!.Replace("%", "");
-        if (double.TryParse(transparencyText, out var percentage))
-        {
-            Opacity = percentage / 100.0;
-        }
+        if (double.TryParse(transparencyText, out var percentage)) Opacity = percentage / 100.0;
     }
 }

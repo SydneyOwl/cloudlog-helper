@@ -2,12 +2,9 @@ using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Enums;
-using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
@@ -24,8 +21,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IInAppNotificationService _inAppNotification;
     private readonly IApplicationSettingsService _applicationSettingsService;
+
+    private readonly IInAppNotificationService _inAppNotification;
 
     private bool _isManualClosing;
 
@@ -69,8 +67,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                             args.EventArgs.Cancel = false;
                             return;
                         }
-                        
-                        if (await windowManagerService.CreateAndShowWindowByVm<bool>(typeof(AskExitOrMinimizeWindowViewModel)))
+
+                        if (await windowManagerService.CreateAndShowWindowByVm<bool>(
+                                typeof(AskExitOrMinimizeWindowViewModel)))
                         {
                             Hide();
                             return;
@@ -89,10 +88,12 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             // Start qso assistant, if required.
             if (_applicationSettingsService.GetCurrentSettings().QsoSyncAssistantSettings.ExecuteOnStart)
             {
-                var qsoSyncAssistantWindowViewModel = windowManagerService.GetViewModelInstance<QsoSyncAssistantWindowViewModel>();
+                var qsoSyncAssistantWindowViewModel =
+                    windowManagerService.GetViewModelInstance<QsoSyncAssistantWindowViewModel>();
                 qsoSyncAssistantWindowViewModel.EnableExecuteOnStart();
-                windowManagerService.Track(new QsoSyncAssistantWindow{DataContext = qsoSyncAssistantWindowViewModel});
-                
+                windowManagerService.Track(new QsoSyncAssistantWindow
+                    { DataContext = qsoSyncAssistantWindowViewModel });
+
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
                     .Do(_ => _inAppNotification.SendInfoNotificationSync(

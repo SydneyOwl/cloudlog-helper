@@ -18,28 +18,28 @@ namespace CloudlogHelper.Services;
 
 public class QSOUploadService : IQSOUploadService, IDisposable
 {
-    
-    /// <summary>
-    ///     Settings for cloudlog.
-    /// </summary>
-    private readonly CloudlogSettings _extraCloudlogSettings;
-    
-    /// <summary>
-    ///     Settings for log services.
-    /// </summary>
-    private readonly List<ThirdPartyLogService> _logServices;
-    
-    /// <summary>
-    ///     Settings for UDPServer.
-    /// </summary>
-    private readonly UDPServerSettings _udpSettings;
-    private readonly INotificationManager _nativeNativeNotificationManager;
-    
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
+
+    /// <summary>
+    ///     Settings for cloudlog.
+    /// </summary>
+    private readonly CloudlogSettings _extraCloudlogSettings;
+
+    /// <summary>
+    ///     Settings for log services.
+    /// </summary>
+    private readonly List<ThirdPartyLogService> _logServices;
+
+    private readonly INotificationManager _nativeNativeNotificationManager;
+
+    /// <summary>
+    ///     Settings for UDPServer.
+    /// </summary>
+    private readonly UDPServerSettings _udpSettings;
+
     /// <summary>
     ///     To be uploaded QSOs queue.
     /// </summary>
@@ -53,6 +53,13 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         _udpSettings = ss.GetCurrentSettings().UDPSettings;
         _nativeNativeNotificationManager = nativeNotificationManager;
         Task.Run(UploadQSOFromQueue);
+    }
+
+    public void Dispose()
+    {
+        _extraCloudlogSettings.Dispose();
+        _udpSettings.Dispose();
+        _nativeNativeNotificationManager.Dispose();
     }
 
     public void EnqueueQSOForUpload(RecordedCallsignDetail rcd)
@@ -71,7 +78,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
     private async Task UploadQSOFromQueue()
     {
-         while (true)
+        while (true)
             try
             {
                 if (!_uploadQueue.TryDequeue(out var rcd)) continue;
@@ -149,25 +156,21 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
                         rcd.UploadStatus = UploadStatus.Fail;
                         rcd.FailReason = failOutput.ToString();
-                        
+
                         if (_udpSettings.PushNotificationOnQSOUploaded)
                         {
                             if (rcd.UploadStatus == UploadStatus.Success)
-                            {
                                 _ = _nativeNativeNotificationManager.ShowNotification(new Notification
                                 {
-                                    Title = TranslationHelper.GetString(LangKeys.uploadedaqso) + (rcd.DXCall),
+                                    Title = TranslationHelper.GetString(LangKeys.uploadedaqso) + rcd.DXCall,
                                     Body = rcd.FormatToReadableContent(true)
                                 });
-                            }
                             else
-                            {
                                 _ = _nativeNativeNotificationManager.ShowNotification(new Notification
                                 {
                                     Title = TranslationHelper.GetString(LangKeys.uploadfailedaqso),
                                     Body = rcd.FailReason
                                 });
-                            }
                         }
 
                         await Task.Delay(1000);
@@ -188,12 +191,5 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             {
                 await Task.Delay(500);
             }
-    }
-
-    public void Dispose()
-    {
-        _extraCloudlogSettings.Dispose();
-        _udpSettings.Dispose();
-        _nativeNativeNotificationManager.Dispose();
     }
 }

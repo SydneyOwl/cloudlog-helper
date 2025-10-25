@@ -25,7 +25,6 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
 
     public MessageBoxManagerService()
     {
-        
     }
 
     public void Dispose()
@@ -42,7 +41,7 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
             {
                 if (_desktop.MainWindow is null && toplevel is null) return;
                 result = await MessageBoxManager.GetMessageBoxCustom(
-                   cParams).ShowWindowDialogAsync(toplevel??_desktop.MainWindow);
+                    cParams).ShowWindowDialogAsync(toplevel ?? _desktop.MainWindow);
             }
             catch (Exception ex)
             {
@@ -51,7 +50,7 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
         });
         return result;
     }
-    
+
     public async Task<string> DoShowCustomMessageboxDialogAsync(List<ButtonDefinition> buttons, Icon iconType,
         string title, string message, Window? toplevel = null)
     {
@@ -68,7 +67,8 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
         }, toplevel);
     }
 
-    public async Task<ButtonResult> DoShowStandardMessageboxDialogAsync(Icon iconType, ButtonEnum bType, string title, string message, Window? toplevel = null)
+    public async Task<ButtonResult> DoShowStandardMessageboxDialogAsync(Icon iconType, ButtonEnum bType, string title,
+        string message, Window? toplevel = null)
     {
         var result = ButtonResult.Abort;
         await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -78,7 +78,7 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
                 if (_desktop.MainWindow is null && toplevel is null) return;
                 result = await MessageBoxManager.GetMessageBoxStandard(title,
                     message, bType,
-                    iconType).ShowWindowDialogAsync(toplevel??_desktop.MainWindow!);
+                    iconType).ShowWindowDialogAsync(toplevel ?? _desktop.MainWindow!);
             }
             catch (Exception ex)
             {
@@ -87,8 +87,9 @@ public class MessageBoxManagerService : IMessageBoxManagerService, IDisposable
         });
         return result;
     }
-    
-    public async Task<ButtonResult> DoShowStandardMessageboxAsync(Icon iconType, ButtonEnum bType, string title, string message)
+
+    public async Task<ButtonResult> DoShowStandardMessageboxAsync(Icon iconType, ButtonEnum bType, string title,
+        string message)
     {
         return await MessageBoxManager.GetMessageBoxStandard(title,
             message, bType,

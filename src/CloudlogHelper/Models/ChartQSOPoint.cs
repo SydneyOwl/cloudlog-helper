@@ -6,35 +6,37 @@ namespace CloudlogHelper.Models;
 public struct ChartQSOPoint
 {
     public bool IsAccurate;
-    
+
     /// <summary>
-    /// Callsign of DX
+    ///     Callsign of DX
     /// </summary>
     public string DxCallsign { get; set; }
-    
+
     /// <summary>
-    /// DXCC
+    ///     DXCC
     /// </summary>
     public string DXCC { get; set; }
-    
+
     /// <summary>
-    /// Degrees
+    ///     Degrees
     /// </summary>
     public double Azimuth { get; set; }
-    
+
     /// <summary>
-    /// Distance in km
+    ///     Distance in km
     /// </summary>
     public double Distance { get; set; }
+
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public string Mode { get; set; }
     public int Snr { get; set; }
-    
+
     /// <summary>
-    /// Current band
+    ///     Current band
     /// </summary>
     public string Band { get; set; }
+
     public string Client { get; set; }
 
     public override string ToString()

@@ -18,7 +18,7 @@ public class AdifUtil
         adif.AppendLine();
         return adif.ToString();
     }
-    
+
     /// <summary>
     ///     Generate adif format log
     /// </summary>
@@ -45,7 +45,7 @@ public class AdifUtil
         adif.Append("<eor>");
         return adif.ToString();
     }
-    
+
     private static string EscapeAdif(string input)
     {
         if (string.IsNullOrEmpty(input))

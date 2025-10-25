@@ -35,13 +35,13 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private readonly IInAppNotificationService _inAppNotification;
 
+    private readonly IApplicationSettingsService settingsService;
+
     private bool _executeOnStart;
 
-    private CancellationTokenSource _source = new();
+    private readonly IMapper _mapper;
 
-    private IMapper _mapper;
-    
-    private readonly IApplicationSettingsService settingsService;
+    private CancellationTokenSource _source = new();
 
     public QsoSyncAssistantWindowViewModel()
     {
@@ -60,7 +60,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         _inAppNotification = winNotification;
         settingsService = ss;
         Settings = settingsService.GetCurrentSettings().DeepClone();
-        
+
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
         StartSyncCommand =
@@ -74,10 +74,10 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
         AddLogPathCommand = ReactiveCommand.CreateFromTask(AddLogPath);
         Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
-        
+
         this.WhenActivated(disposable =>
         {
-            Disposable.Create(async void () => 
+            Disposable.Create(async void () =>
             {
                 try
                 {
@@ -182,7 +182,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         try
         {
             var stationCallsign = Settings.CloudlogSettings.CloudlogStationInfo?.StationCallsign;
-            await Dispatcher.UIThread.InvokeAsync(()=>
+            await Dispatcher.UIThread.InvokeAsync(() =>
                 SyncStarted = true);
             _logProgress("Starting login and downloading qsos from cloudlog/wavelog...", 10);
             var cookies = await QsoSyncAssistantUtil.LoginAndGetCookies(Settings.CloudlogSettings.CloudlogUrl,
@@ -311,7 +311,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         finally
         {
             _executeOnStart = false;
-            await Dispatcher.UIThread.InvokeAsync(()=>
+            await Dispatcher.UIThread.InvokeAsync(() =>
                 SyncStarted = false);
         }
     }

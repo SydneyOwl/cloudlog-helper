@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive;
 using CloudlogHelper.Models;
 using ScottPlot.Statistics;
 
@@ -9,7 +8,10 @@ namespace CloudlogHelper.Services.Interfaces;
 public interface IChartDataCacheService
 {
     IObservable<ChartQSOPoint> GetItemAddedObservable();
-    IEnumerable<ChartQSOPoint> TakeLatestN(int count, IEqualityComparer<ChartQSOPoint>? comparer = null, Func<ChartQSOPoint, bool>? filterCondition = null);
+
+    IEnumerable<ChartQSOPoint> TakeLatestN(int count, IEqualityComparer<ChartQSOPoint>? comparer = null,
+        Func<ChartQSOPoint, bool>? filterCondition = null);
+
     public double[,]? GetGridStationCountByBand(string? band);
     Histogram? GetDistanceHistogramByBand(string? band);
     Histogram? GetBearingHistogramByBand(string? band);

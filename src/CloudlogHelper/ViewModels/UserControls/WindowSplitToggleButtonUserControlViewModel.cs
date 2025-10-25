@@ -11,9 +11,6 @@ namespace CloudlogHelper.ViewModels.UserControls;
 public class WindowSplitToggleButtonUserControlViewModel : ViewModelBase
 {
     private bool _isSplited;
-    
-    [Reactive] public bool IsSplit { get; set; }
-    [Reactive] public string? WindowSeq { get; set; }
 
     public WindowSplitToggleButtonUserControlViewModel()
     {
@@ -40,4 +37,7 @@ public class WindowSplitToggleButtonUserControlViewModel : ViewModelBase
                 .DisposeWith(disposable);
         });
     }
+
+    [Reactive] public bool IsSplit { get; set; }
+    [Reactive] public string? WindowSeq { get; set; }
 }

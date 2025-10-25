@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -19,8 +18,9 @@ using ReactiveUI.Fody.Helpers;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.AxisRules;
-using ScottPlot.Statistics;
-using Range = ScottPlot.Range;
+using ScottPlot.Colormaps;
+using ScottPlot.MultiplotLayouts;
+using ScottPlot.TickGenerators;
 
 namespace CloudlogHelper.ViewModels.Charts;
 
@@ -30,13 +30,9 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    public AvaPlot PlotControl { get; private set; }
-    
-    private IChartDataCacheService _chartDataCacheService;
-    
-    private BasicSettings _basicSettings;
-    
-    private readonly Color[] colors = {
+
+    private readonly Color[] colors =
+    {
         Color.FromHex("#64B5F6"),
         Color.FromHex("#4DB6AC"),
         Color.FromHex("#81C784"),
@@ -45,16 +41,15 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         Color.FromHex("#BA68C8"),
         Color.FromHex("#4FC3F7"),
         Color.FromHex("#AED581"),
-        Color.FromHex("#7986CB") 
+        Color.FromHex("#7986CB")
     };
-    
-    public ReactiveCommand<Unit, Unit> RefreshChart { get; }
-    public ReactiveCommand<Unit, Unit> ClearChart { get; }
-    [Reactive] public int SampleCount { get; set; } = 0;
+
+    private readonly BasicSettings _basicSettings;
+
+    private readonly IChartDataCacheService _chartDataCacheService;
 
     public StationStatisticsChartWindowViewModel()
     {
-        
     }
 
     public StationStatisticsChartWindowViewModel(IChartDataCacheService chartDataCacheService,
@@ -63,48 +58,48 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;
 
-        Application.Current!.ActualThemeVariantChanged += (sender, args) =>
-        {
-            UpdateChart();
-        };
-        
+        Application.Current!.ActualThemeVariantChanged += (sender, args) => { UpdateChart(); };
+
         RefreshChart = ReactiveCommand.Create(UpdateChart);
         ClearChart = ReactiveCommand.Create(ClearData);
 
         PlotControl = new AvaPlot();
         PlotControl.Multiplot.AddPlots(4);
-        PlotControl.Multiplot.Layout = new ScottPlot.MultiplotLayouts.Grid(rows: 2, columns: 2);
+        PlotControl.Multiplot.Layout = new Grid(2, 2);
         // PlotControl.UserInputProcessor.Disable();
 
         _chartDataCacheService.GetItemAddedObservable()
             .Do(item => SampleCount += 1)
             .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleTime))
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe((_) =>
-            {
-                UpdateChart();
-            });
+            .Subscribe(_ => { UpdateChart(); });
 
         this.WhenActivated(disposable =>
         {
             this.WhenAnyValue(x => x.SelectedBand,
                     x => x.SelectedClient,
-                    x=> x.SelectedMode,
+                    x => x.SelectedMode,
                     x => x.UpdatePaused)
                 .Throttle(TimeSpan.FromMilliseconds(352))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe((_) => UpdateChart())
+                .Subscribe(_ => UpdateChart())
                 .DisposeWith(disposable);
         });
-        
+
         // _ = _addFake();
         UpdateChart();
     }
 
+    public AvaPlot PlotControl { get; }
+
+    public ReactiveCommand<Unit, Unit> RefreshChart { get; }
+    public ReactiveCommand<Unit, Unit> ClearChart { get; }
+    [Reactive] public int SampleCount { get; set; }
+
     private void _updatePlot_top10decoded()
     {
         ClassLogger.Trace("Updating bar1.");
-        
+
         var plot1 = PlotControl.Multiplot.GetPlot(0);
         plot1.Clear();
 
@@ -114,6 +109,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             plot1.Title($"Top 10 DXCCs - {SelectedBand} Band\n(No data available)");
             return;
         }
+
         var orderedData = bandData.OrderByDescending(x => x.Value)
             .Where(x => x.Value is not null && x.Value > 0)
             .Take(10)
@@ -123,10 +119,10 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         var ticks = new List<Tick>();
         var bars = new List<Bar>();
-        
+
         for (var i = 0; i < orderedData.Count; i++)
         {
-            bars.Add(new Bar()
+            bars.Add(new Bar
             {
                 Position = i + 1,
                 Value = orderedData[i].Value ?? 0,
@@ -135,9 +131,10 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             });
             ticks.Add(new Tick(i + 1, orderedData[i].Key));
         }
-        
+
         var barPlot = plot1.Add.Bars(bars);
-        barPlot.ValueLabelStyle.ForeColor = Application.Current!.ActualThemeVariant == ThemeVariant.Dark ? Colors.White : Colors.Black;
+        barPlot.ValueLabelStyle.ForeColor =
+            Application.Current!.ActualThemeVariant == ThemeVariant.Dark ? Colors.White : Colors.Black;
         barPlot.ValueLabelStyle.FontSize = 10;
 
         foreach (var bar in barPlot.Bars)
@@ -145,85 +142,85 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             bar.Label = bar.Value.ToString("N0");
             bar.LineWidth = 0;
         }
-        
+
         plot1.Title($"Top 10 DXCCs - {SelectedBand} Band");
         plot1.YLabel("Signal Count");
-        plot1.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticks.ToArray());
+        plot1.Axes.Bottom.TickGenerator = new NumericManual(ticks.ToArray());
         plot1.Axes.Bottom.MajorTickStyle.Length = 0;
         plot1.Axes.Bottom.TickLabelStyle.Alignment = Alignment.MiddleCenter;
         // plot1.Axes.Bottom.TickLabelStyle.Rotation = 45;
-        plot1.Axes.Margins(bottom: 0, top: 0.3, left: 0.05, right: 0.05); 
+        plot1.Axes.Margins(bottom: 0, top: 0.3, left: 0.05, right: 0.05);
         plot1.Axes.AutoScale();
     }
-    
+
     private void _updatePlot_distance()
-    { 
+    {
         ClassLogger.Trace("Updating distance histogram.");
-        
-        var barColor = Application.Current!.ActualThemeVariant == ThemeVariant.Dark 
-            ? Color.FromHex("#64B5F6")  
-            : Color.FromHex("#4DB6AC"); 
-        
+
+        var barColor = Application.Current!.ActualThemeVariant == ThemeVariant.Dark
+            ? Color.FromHex("#64B5F6")
+            : Color.FromHex("#4DB6AC");
+
         var plot2 = PlotControl.Multiplot.GetPlot(1);
         plot2.Clear();
 
         var bandData = _chartDataCacheService.GetDistanceHistogramByBand(SelectedBand);
 
-        if (bandData is null || bandData.Counts.Sum() == 0) 
+        if (bandData is null || bandData.Counts.Sum() == 0)
         {
             plot2.Title($"Station Distance Distribution - {SelectedBand} Band\n(No data available)");
             return;
         }
-        
+
         var histogramBars = plot2.Add.Histogram(bandData);
-        
+
         foreach (var histogramBarsBar in histogramBars.Bars)
         {
             histogramBarsBar.FillColor = barColor.WithAlpha(0.7);
-            histogramBarsBar.LineColor = barColor;                     
+            histogramBarsBar.LineColor = barColor;
         }
-        
+
         plot2.Title($"Station Distance Distribution - {SelectedBand} Band");
         plot2.XLabel("Distance (km)");
         plot2.YLabel("Signal Count");
-        plot2.Axes.Margins(bottom:0,top: 0.15,  left: 0.05, right: 0.05); 
-        
+        plot2.Axes.Margins(bottom: 0, top: 0.15, left: 0.05, right: 0.05);
+
         plot2.Axes.AutoScale();
     }
-    
+
     private void _updatePlot_bearing()
-    { 
+    {
         ClassLogger.Trace("Updating bearing histogram.");
-        
-        var barColor = Application.Current!.ActualThemeVariant == ThemeVariant.Dark 
-            ? Color.FromHex("#FFB74D") 
+
+        var barColor = Application.Current!.ActualThemeVariant == ThemeVariant.Dark
+            ? Color.FromHex("#FFB74D")
             : Color.FromHex("#FF9800");
-        
+
         var plot3 = PlotControl.Multiplot.GetPlot(2);
         plot3.Clear();
-        
+
         var bandData = _chartDataCacheService.GetBearingHistogramByBand(SelectedBand);
 
-        if (bandData is null || bandData.Counts.Sum() == 0) 
+        if (bandData is null || bandData.Counts.Sum() == 0)
         {
             plot3.Title($"Station Bearing Distribution - {SelectedBand} Band\n(No data available)");
             return;
         }
-        
+
         var histogramBars = plot3.Add.Histogram(bandData);
-        
+
         for (var i = 0; i < histogramBars.Bars.Length; i++)
         {
             var bar = histogramBars.Bars[i];
             bar.FillColor = barColor.WithAlpha(0.7);
             bar.LineColor = barColor;
         }
-        
-        plot3.Axes.Margins(bottom: 0, top: 0.18, left: 0.05, right: 0.1); 
+
+        plot3.Axes.Margins(bottom: 0, top: 0.18, left: 0.05, right: 0.1);
         plot3.Title($"Station Bearing Distribution - {SelectedBand} Band");
         plot3.XLabel("Bearing (degrees)");
         plot3.YLabel("Signal Count");
-        
+
         var ticks = new List<Tick>();
         for (var i = 0; i <= 360; i += 45)
         {
@@ -242,35 +239,36 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             };
             ticks.Add(new Tick(i, label));
         }
-        plot3.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticks.ToArray());
-        
+
+        plot3.Axes.Bottom.TickGenerator = new NumericManual(ticks.ToArray());
+
         plot3.Axes.AutoScale();
         // plot3.Grid.MajorLineStyle.Width = 0.5f;
     }
-    
+
     private void _updatePlot_world_heatmap()
     {
         ClassLogger.Trace("Updating heatmap plot.");
-    
+
         var plot4 = PlotControl.Multiplot.GetPlot(3);
         plot4.Clear();
-    
+
         plot4.Title($"World Heatmap - {SelectedBand} Band");
-    
+
         plot4.XLabel("Longitude");
         plot4.YLabel("Latitude");
-        
+
         plot4.Axes.SetLimitsX(-180, 180);
         plot4.Axes.SetLimitsY(-90, 90);
-        
+
         var maximumSpan = new MaximumSpan(
-            xAxis: plot4!.Axes.Bottom,
-            yAxis: plot4!.Axes.Left,
-            xSpan: 360,
-            ySpan: 180);
-        
+            plot4!.Axes.Bottom,
+            plot4!.Axes.Left,
+            360,
+            180);
+
         plot4!.Axes.Rules.Add(maximumSpan);
-    
+
         var resourceStream = ApplicationStartUpUtil.GetResourceStream(DefaultConfigs.DefaultWorldMapFile);
         if (resourceStream is null)
         {
@@ -278,12 +276,12 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             plot4.Title($"World heatmap(No map available) - {SelectedBand} Band");
             return;
         }
-    
+
         using var ms = new MemoryStream();
         resourceStream.CopyTo(ms);
         var img = new Image(ms.ToArray());
 
-        CoordinateRect worldRect = new(left: -180, right: 180, bottom: -90, top: 90);
+        CoordinateRect worldRect = new(-180, 180, -90, 90);
         plot4.Add.ImageRect(img, worldRect);
 
         var gridStationCountByBand = _chartDataCacheService.GetGridStationCountByBand(SelectedBand);
@@ -293,13 +291,13 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             plot4.Title($"World heatmap(No data available) - {SelectedBand} Band");
             return;
         }
-        
+
         var smoothedData = QSOPointUtil.ApplyValueCompression(gridStationCountByBand);
         smoothedData = QSOPointUtil.ApplyGaussianBlur(smoothedData, 1.2);
 
         var heatmap = plot4.Add.Heatmap(smoothedData);
         heatmap.Extent = new CoordinateRect(-180, 180, -90, 90);
-        heatmap.Colormap = new ScottPlot.Colormaps.Turbo();
+        heatmap.Colormap = new Turbo();
 
         heatmap.Opacity = 0.35;
         heatmap.FlipVertically = true;
@@ -316,7 +314,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     private void UpdateChart()
     {
         if (UpdatePaused || IsExecutingChartUpdate) return;
-        
+
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
             ErrorMessage = TranslationHelper.GetString(LangKeys.griderror);
@@ -330,7 +328,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ShowErrorMsg = true;
             return;
         }
-        
+
         try
         {
             ShowErrorMsg = false;
@@ -361,13 +359,9 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     private void _refreshTheme()
     {
         if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
-        {
             _setDarkTheme();
-        }
         else
-        {
             _setLightTheme();
-        }
     }
 
     private void _setDarkTheme()
@@ -388,11 +382,11 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             plot.Axes.Color(themeColor);
             plot.Grid.MajorLineColor = gridColor;
             plot.Grid.MinorLineColor = gridColor.WithAlpha(0.3);
-        
+
             plot.Legend.BackgroundColor = legendBgColor;
             plot.Legend.FontColor = legendFontColor;
             plot.Legend.OutlineColor = legendOutlineColor;
-            
+
             plot.Axes.Title.Label.FontSize = 14;
             plot.Axes.Left.Label.FontSize = 11;
             plot.Axes.Bottom.Label.FontSize = 11;
@@ -417,11 +411,11 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             plot.Axes.Color(themeColor);
             plot.Grid.MajorLineColor = gridColor;
             plot.Grid.MinorLineColor = gridColor.WithAlpha(0.3);
-        
+
             plot.Legend.BackgroundColor = legendBgColor;
             plot.Legend.FontColor = legendFontColor;
             plot.Legend.OutlineColor = legendOutlineColor;
-            
+
             plot.Axes.Title.Label.FontSize = 14;
             plot.Axes.Left.Label.FontSize = 11;
             plot.Axes.Bottom.Label.FontSize = 11;
@@ -430,13 +424,13 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
     private async Task _addFake()
     {
-        var ranBand = new string[] { "6m", "10m", "15m", "20m", "40m" };
-        var ranDxcc = new string[]
+        var ranBand = new[] { "6m", "10m", "15m", "20m", "40m" };
+        var ranDxcc = new[]
             { "BY", "JA", "K", "P5", "VK", "VE", "PY", "DL", "G", "F", "I", "EA" };
-        
+
         try
         {
-            for (; ;)
+            for (;;)
             {
                 _chartDataCacheService.Add(new ChartQSOPoint
                 {

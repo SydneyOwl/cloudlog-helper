@@ -13,8 +13,8 @@
         <viewModels:ErrorReportWindowViewModel />
     </Design.DataContext>
     <Canvas>
-        <avalonia:MaterialIcon Kind="WarningCircleOutline" Foreground="Orange"  Canvas.Top="30" Canvas.Left="10"
-                               Height="120" Width="120"/>
+        <avalonia:MaterialIcon Kind="WarningCircleOutline" Foreground="Orange" Canvas.Top="30" Canvas.Left="10"
+                               Height="120" Width="120" />
         <Label Canvas.Top="30" Canvas.Left="180" FontSize="25"
                Content="{I18N {x:Static resources:LangKeys.errorccurred}}" />
         <TextBlock TextWrapping="Wrap" Width="400" Canvas.Top="80" Canvas.Left="180" FontSize="20"

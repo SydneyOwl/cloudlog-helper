@@ -33,9 +33,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
 
         var result = await HamCQQsoUploadEndpoint
             .AllowHttpStatus(406)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithHeader("Content-Type", "application/json")
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostStringAsync(reqJson.ToString(), cancellationToken: token);
         var responseText = await result.GetStringAsync();
         var code = result.StatusCode;

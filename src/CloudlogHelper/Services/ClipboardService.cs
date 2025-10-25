@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input.Platform;
 using CloudlogHelper.Services.Interfaces;
 
 namespace CloudlogHelper.Services;
@@ -19,7 +18,7 @@ public class ClipboardService : IClipboardService, IDisposable
     {
         return _desktop.MainWindow!.Clipboard!.GetTextAsync();
     }
-    
+
     public Task SetTextAsync(string? text)
     {
         return _desktop.MainWindow!.Clipboard!.SetTextAsync(text);

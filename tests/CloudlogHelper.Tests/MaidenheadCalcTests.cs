@@ -1,6 +1,4 @@
-using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using Xunit.Abstractions;
 
 namespace CloudlogHelper.Tests;
 
@@ -17,7 +15,7 @@ public class MaidenheadCalcTests
     {
         Assert.Equal(expected, MaidenheadGridUtil.CheckMaidenhead(grid));
     }
-    
+
     [Theory]
     [InlineData("OL94", 118.91, 24.45)]
     [InlineData("OM89", 116.91, 39.45)]
@@ -25,10 +23,10 @@ public class MaidenheadCalcTests
     [InlineData("DM97", -101.36, 37.08)]
     public void TestMaidenheadToLatLon_ReturnsCorrectResult(string grid, double longitude, double latitude)
     {
-       Assert.Equal(latitude, MaidenheadGridUtil.GridToLatLng(grid)!.Latitude, 0.5f);
-       Assert.Equal(longitude, MaidenheadGridUtil.GridToLatLng(grid)!.Longitude, 0.5f);
+        Assert.Equal(latitude, MaidenheadGridUtil.GridToLatLng(grid)!.Latitude, 0.5f);
+        Assert.Equal(longitude, MaidenheadGridUtil.GridToLatLng(grid)!.Longitude, 0.5f);
     }
-    
+
     [Theory]
     [InlineData("OL94", "OM89", 1655.39)]
     [InlineData("OL94", "IN82", 10436.66)]
@@ -37,7 +35,7 @@ public class MaidenheadCalcTests
     {
         Assert.Equal(expectDistance, MaidenheadGridUtil.GetDist(deGrid, dxGrid), 70f);
     }
-    
+
     [Theory]
     [InlineData("OL94", "OM89", 354)]
     [InlineData("OL94", "IN82", 321)]

@@ -7,10 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Avalonia.Controls.Shapes;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
-using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using NLog;
@@ -24,25 +22,23 @@ namespace CloudlogHelper.LogService;
 public class LoTWThirdPartyLogService : ThirdPartyLogService
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
+
+    public string?[]? Stations = Array.Empty<string>();
+
     [UserInput("tqslpath", InputType = FieldType.FilePicker)]
     public string LotwFilePath { get; set; }
-    
-    
+
+
     [UserInput("stationname", InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
     public string? StationName { get; set; }
-    
+
     [UserInput("tqslpassword", InputType = FieldType.Password, IsRequired = false)]
     public string? TqslPassword { get; set; }
 
-    public string?[]? Stations = Array.Empty<string>();
-    
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        await ProcessUtil.ExecFile(LotwFilePath, new []{"-q", "-v"}, (stdout, stderr) =>
-        {
-            ClassLogger.Debug($"Lotw stderr detected: {stderr}");
-        }, token);
+        await ProcessUtil.ExecFile(LotwFilePath, new[] { "-q", "-v" },
+            (stdout, stderr) => { ClassLogger.Debug($"Lotw stderr detected: {stderr}"); }, token);
     }
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
@@ -57,13 +53,14 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         var args = new List<string>();
         args.Add("-a");
         args.Add("all");
-        args.Add($"-l");
+        args.Add("-l");
         args.Add(StationName);
         if (!string.IsNullOrWhiteSpace(TqslPassword))
         {
-            args.Add($"-p");
+            args.Add("-p");
             args.Add(TqslPassword);
         }
+
         args.Add("-q");
         args.Add("-x");
         args.Add("-d");
@@ -71,15 +68,15 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         args.Add(tempFileName);
 
         var result = string.Empty;
-        
+
         await ProcessUtil.ExecFile(LotwFilePath, args.ToArray(), (stdout, stderr) =>
         {
             result = stderr;
             ClassLogger.Debug($"Lotw stderr detected: {stderr}");
             ClassLogger.Debug($"Lotw stdout detected: {stdout}");
         }, token);
-        
-        if(result.Contains("Final Status: Success(0)"))return;
+
+        if (result.Contains("Final Status: Success(0)")) return;
         throw new Exception($"Upload failed: {result}");
     }
 
@@ -104,10 +101,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
                     combine = Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA") ?? string.Empty,
                         "TrustedQSL",
                         "station_data");
-                    if (File.Exists(combine))
-                    {
-                        stationDataPath = combine;
-                    }
+                    if (File.Exists(combine)) stationDataPath = combine;
                 }
             }
             else
@@ -115,12 +109,9 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
                 combine = Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? string.Empty,
                     ".tqsl",
                     "station_data");
-                if (File.Exists(combine))
-                {
-                    stationDataPath = combine;
-                }
+                if (File.Exists(combine)) stationDataPath = combine;
             }
-            
+
             // check if file valid
             if (!string.IsNullOrEmpty(stationDataPath))
             {
@@ -131,7 +122,8 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
                     .Select(stationElement => stationElement.Attribute("name")?.Value)
                     .ToList();
                 Stations = nameList?.ToArray();
-                if (Stations is not null && Stations.Length > 0 && !string.IsNullOrWhiteSpace(Stations[0])) StationName = Stations[0];
+                if (Stations is not null && Stations.Length > 0 && !string.IsNullOrWhiteSpace(Stations[0]))
+                    StationName = Stations[0];
             }
         }
 
@@ -143,16 +135,13 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
                 var combine = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)") ?? string.Empty,
                     "TrustedQSL",
                     "tqsl.exe");
-                if (File.Exists(combine))
-                {
-                    LotwFilePath = combine;
-                }
+                if (File.Exists(combine)) LotwFilePath = combine;
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                if (File.Exists("/usr/bin/tqsl")) LotwFilePath =  "/usr/bin/tqsl";
-                if (File.Exists("/usr/local/bin/tqsl")) LotwFilePath =  "/usr/local/bin/tqsl";
+                if (File.Exists("/usr/bin/tqsl")) LotwFilePath = "/usr/bin/tqsl";
+                if (File.Exists("/usr/local/bin/tqsl")) LotwFilePath = "/usr/local/bin/tqsl";
             }
         }
     }

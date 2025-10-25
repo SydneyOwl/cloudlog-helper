@@ -11,7 +11,6 @@ using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Flurl.Http;
-using Newtonsoft.Json;
 using NLog;
 
 namespace CloudlogHelper.Services;
@@ -19,6 +18,11 @@ namespace CloudlogHelper.Services;
 public class FLRigService : IRigService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    public void Dispose()
+    {
+    }
+
     public RigBackendServiceEnum GetServiceType()
     {
         return RigBackendServiceEnum.FLRig;
@@ -51,7 +55,8 @@ public class FLRigService : IRigService, IDisposable
         return _getResultValue(await _sendXMLCmd(ip, port, "main.get_version"));
     }
 
-    public async Task<RadioData> GetAllRigInfo(bool reportRfPower, bool reportSplitInfo, CancellationToken token, params object[] args)
+    public async Task<RadioData> GetAllRigInfo(bool reportRfPower, bool reportSplitInfo, CancellationToken token,
+        params object[] args)
     {
         var ip = args[0].ToString();
         var port = args[1].ToString();
@@ -59,13 +64,13 @@ public class FLRigService : IRigService, IDisposable
 
         var freqStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfo"));
         var mode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_mode"));
-        
+
         if (!long.TryParse(freqStr, out var freq))
             throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
-        
+
         // if (!DefaultConfigs.AvailableRigModes.Contains(mode))
         //     throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
-        
+
         testbk.FrequencyRx = freq;
         testbk.FrequencyTx = freq;
         testbk.ModeRx = mode;
@@ -89,12 +94,12 @@ public class FLRigService : IRigService, IDisposable
             }
             else
             {
-                var txFreqStr =  _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfoB"));
+                var txFreqStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfoB"));
                 var txMode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_modeB"));
 
                 if (!long.TryParse(txFreqStr, out var txFreq))
                     throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
-        
+
                 // We no longer check if tx mode is available due to complex flrig digi modes
                 // if (!DefaultConfigs.AvailableRigModes.Contains(txMode))
                 //     throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode) + mode);
@@ -103,24 +108,18 @@ public class FLRigService : IRigService, IDisposable
                 testbk.FrequencyTx = txFreq;
             }
         }
-        
-        var rigName =  _getResultValue(await _sendXMLCmd(ip, port, "rig.get_xcvr"));
+
+        var rigName = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_xcvr"));
         testbk.RigName = rigName;
         return testbk;
-    }
-
-    public void Dispose()
-    {
-        
     }
 
     private async Task<string> _sendXMLCmd(string ip, string port, string cmd)
     {
         var template = $"<?xml version=\"1.0\"?><methodCall><methodName>{cmd}</methodName></methodCall>";
         var targetServer = $"http://{ip}:{port}";
-        return await targetServer 
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout)).WithHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+        return await targetServer
+            .WithHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
             .PostStringAsync(template)
             .ReceiveString();
     }
@@ -132,17 +131,18 @@ public class FLRigService : IRigService, IDisposable
         var faultElement = xDoc.Descendants("fault").FirstOrDefault();
         if (faultElement != null)
         {
-            var faultCode = faultElement.Descendants("name").FirstOrDefault(n => n.Value == "faultCode")?.Parent?.Element("value")?.Value ?? "Unknown Code";
-            var faultString = faultElement.Descendants("name").FirstOrDefault(n => n.Value == "faultString")?.Parent?.Element("value")?.Value ?? "Unknown Error";
+            var faultCode =
+                faultElement.Descendants("name").FirstOrDefault(n => n.Value == "faultCode")?.Parent?.Element("value")
+                    ?.Value ?? "Unknown Code";
+            var faultString =
+                faultElement.Descendants("name").FirstOrDefault(n => n.Value == "faultString")?.Parent?.Element("value")
+                    ?.Value ?? "Unknown Error";
             throw new Exception($"XML-RPC Fault (Code {faultCode}): {faultString}");
         }
 
         var valueElement = xDoc.Descendants("value").FirstOrDefault();
-        if (valueElement != null)
-        {
-            return valueElement.Value;
-        }
-        
+        if (valueElement != null) return valueElement.Value;
+
         throw new Exception("Invalid XML-RPC response: response is neither a param nor a fault.");
     }
 }

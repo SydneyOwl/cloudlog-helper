@@ -3,7 +3,6 @@ using System.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Force.DeepCloner;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -15,32 +14,6 @@ namespace CloudlogHelper.Models;
 [JsonObject(MemberSerialization.OptIn)]
 public class HamlibSettings : ReactiveValidationObject
 {
-    public HamlibSettings()
-    {
-        
-    }
-
-    public void ApplyValidationRules()
-    {
-        this.ClearValidationRules();
-        this.ValidationRule(x => x.SelectedRigInfo,
-            st => st?.Id is not null,
-            TranslationHelper.GetString(LangKeys.notnull)
-        );
-        this.ValidationRule(x => x.SelectedPort,
-            SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.notnull)
-        );
-        this.ValidationRule(x => x.ExternalRigctldHostAddress,
-            IPAddrUtil.CheckAddress!,
-            TranslationHelper.GetString(LangKeys.invalidaddr)
-        );
-        this.ValidationRule(x => x.PollInterval,
-            SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.pollintervalreq)
-        );
-    }
-
     [Reactive] [JsonProperty] public RigInfo? SelectedRigInfo { get; set; } = new();
     [Reactive] [JsonProperty] public string SelectedPort { get; set; } = string.Empty;
 
@@ -81,6 +54,27 @@ public class HamlibSettings : ReactiveValidationObject
         (a, b, c, e, f, g, h) =>
             !IsHamlibHasErrors()
     );
+
+    public void ApplyValidationRules()
+    {
+        this.ClearValidationRules();
+        this.ValidationRule(x => x.SelectedRigInfo,
+            st => st?.Id is not null,
+            TranslationHelper.GetString(LangKeys.notnull)
+        );
+        this.ValidationRule(x => x.SelectedPort,
+            SettingsValidation.CheckStringNotNull,
+            TranslationHelper.GetString(LangKeys.notnull)
+        );
+        this.ValidationRule(x => x.ExternalRigctldHostAddress,
+            IPAddrUtil.CheckAddress!,
+            TranslationHelper.GetString(LangKeys.invalidaddr)
+        );
+        this.ValidationRule(x => x.PollInterval,
+            SettingsValidation.CheckInt,
+            TranslationHelper.GetString(LangKeys.pollintervalreq)
+        );
+    }
 
 
     private bool IsPropertyHasErrors(string propertyName)

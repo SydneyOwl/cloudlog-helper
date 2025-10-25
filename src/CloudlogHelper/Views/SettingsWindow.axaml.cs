@@ -5,7 +5,6 @@ using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using Avalonia.VisualTree;
 using CloudlogHelper.Services;
-using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.ViewModels;
 using NLog;
 using ReactiveUI;

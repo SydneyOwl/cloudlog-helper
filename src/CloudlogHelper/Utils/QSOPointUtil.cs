@@ -44,16 +44,16 @@ public class QSOPointUtil
                 DxCallsign = null,
                 Azimuth = azimuth,
                 Distance = distance,
-                Mode = new[]{"FT8","FT4"}[new Random().Next(0,2)],
+                Mode = new[] { "FT8", "FT4" }[new Random().Next(0, 2)],
                 Snr = 0,
-                Band = new[]{"40m","20m","10m"}[new Random().Next(0,3)],
-                Client = new[]{"WSJT-X","JTDX","PPSK"}[new Random().Next(0,3)],
+                Band = new[] { "40m", "20m", "10m" }[new Random().Next(0, 3)],
+                Client = new[] { "WSJT-X", "JTDX", "PPSK" }[new Random().Next(0, 3)]
             });
         }
 
         return data;
     }
-    
+
     public static double[,] NormalizeData(double[,] data, double newMin, double newMax)
     {
         var height = data.GetLength(0);
@@ -72,15 +72,13 @@ public class QSOPointUtil
         }
 
         for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
         {
-            for (var x = 0; x < width; x++)
-            {
-                var normalized = (data[y, x] - oldMin) / (oldMax - oldMin);
-                var scaled = newMin + normalized * (newMax - newMin);
+            var normalized = (data[y, x] - oldMin) / (oldMax - oldMin);
+            var scaled = newMin + normalized * (newMax - newMin);
 
-                // Clamp the value to [newMin, newMax]
-                result[y, x] = Math.Max(newMin, Math.Min(newMax, scaled));
-            }
+            // Clamp the value to [newMin, newMax]
+            result[y, x] = Math.Max(newMin, Math.Min(newMax, scaled));
         }
 
         return result;
@@ -92,15 +90,14 @@ public class QSOPointUtil
         var maxVal = data.Cast<double>().Max();
         var logData = new double[data.GetLength(0), data.GetLength(1)];
         for (var i = 0; i < data.GetLength(0); i++)
+        for (var j = 0; j < data.GetLength(1); j++)
         {
-            for (var j = 0; j < data.GetLength(1); j++) 
-            {
-                var value = data[i, j];
-                if (value == 0) continue;
-                // if (value is > 0 and < 10) value = 10;
-                logData[i, j] = Math.Log10(value + 1);
-            }
+            var value = data[i, j];
+            if (value == 0) continue;
+            // if (value is > 0 and < 10) value = 10;
+            logData[i, j] = Math.Log10(value + 1);
         }
+
         return logData;
     }
 
@@ -110,37 +107,33 @@ public class QSOPointUtil
         var height = data.GetLength(0);
         var width = data.GetLength(1);
         var result = new double[height, width];
-    
+
         var kernelSize = (int)(sigma * 3) * 2 + 1; // 核大小
         var kernel = CreateGaussianKernel(kernelSize, sigma);
-    
+
         for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
         {
-            for (var x = 0; x < width; x++)
+            double sum = 0;
+            double weightSum = 0;
+
+            for (var ky = -kernelSize / 2; ky <= kernelSize / 2; ky++)
+            for (var kx = -kernelSize / 2; kx <= kernelSize / 2; kx++)
             {
-                double sum = 0;
-                double weightSum = 0;
-            
-                for (var ky = -kernelSize/2; ky <= kernelSize/2; ky++)
+                var nx = x + kx;
+                var ny = y + ky;
+
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height)
                 {
-                    for (var kx = -kernelSize/2; kx <= kernelSize/2; kx++)
-                    {
-                        var nx = x + kx;
-                        var ny = y + ky;
-                    
-                        if (nx >= 0 && nx < width && ny >= 0 && ny < height)
-                        {
-                            var weight = kernel[ky + kernelSize/2, kx + kernelSize/2];
-                            sum += data[ny, nx] * weight;
-                            weightSum += weight;
-                        }
-                    }
+                    var weight = kernel[ky + kernelSize / 2, kx + kernelSize / 2];
+                    sum += data[ny, nx] * weight;
+                    weightSum += weight;
                 }
-            
-                result[y, x] = sum / weightSum;
             }
+
+            result[y, x] = sum / weightSum;
         }
-    
+
         return result;
     }
 
@@ -149,22 +142,20 @@ public class QSOPointUtil
         var kernel = new double[size, size];
         double sum = 0;
         var center = size / 2;
-    
+
         for (var y = 0; y < size; y++)
+        for (var x = 0; x < size; x++)
         {
-            for (var x = 0; x < size; x++)
-            {
-                double dx = x - center;
-                double dy = y - center;
-                kernel[y, x] = Math.Exp(-(dx*dx + dy*dy) / (2 * sigma * sigma));
-                sum += kernel[y, x];
-            }
+            double dx = x - center;
+            double dy = y - center;
+            kernel[y, x] = Math.Exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
+            sum += kernel[y, x];
         }
-    
+
         for (var y = 0; y < size; y++)
         for (var x = 0; x < size; x++)
             kernel[y, x] /= sum;
-    
+
         return kernel;
     }
 
@@ -175,20 +166,18 @@ public class QSOPointUtil
         var origWidth = originalData.GetLength(1);
         var newHeight = origHeight * factor;
         var newWidth = origWidth * factor;
-    
+
         var result = new double[newHeight, newWidth];
-    
+
         for (var y = 0; y < newHeight; y++)
+        for (var x = 0; x < newWidth; x++)
         {
-            for (var x = 0; x < newWidth; x++)
-            {
-                var origY = (double)y / factor;
-                var origX = (double)x / factor;
-            
-                result[y, x] = BilinearInterpolate(originalData, origX, origY);
-            }
+            var origY = (double)y / factor;
+            var origX = (double)x / factor;
+
+            result[y, x] = BilinearInterpolate(originalData, origX, origY);
         }
-    
+
         return result;
     }
 
@@ -199,23 +188,23 @@ public class QSOPointUtil
         var y1 = (int)Math.Floor(y);
         var x2 = Math.Min(x1 + 1, data.GetLength(1) - 1);
         var y2 = Math.Min(y1 + 1, data.GetLength(0) - 1);
-    
+
         var dx = x - x1;
         var dy = y - y1;
-    
+
         var v11 = data[y1, x1];
         var v12 = data[y1, x2];
         var v21 = data[y2, x1];
         var v22 = data[y2, x2];
-    
+
         return v11 * (1 - dx) * (1 - dy) +
                v12 * dx * (1 - dy) +
                v21 * (1 - dx) * dy +
                v22 * dx * dy;
     }
-    
+
     /// <summary>
-    /// 用KNN算法评估信号点之间的接近程度。支持使用距离或角度评估。
+    ///     用KNN算法评估信号点之间的接近程度。支持使用距离或角度评估。
     /// </summary>
     /// <param name="points"></param>
     /// <param name="maxDistance"></param>
@@ -270,7 +259,7 @@ public class QSOPointUtil
     }
 
     /// <summary>
-    /// 保守地计算数据集中前n%的平均值作为最大值
+    ///     保守地计算数据集中前n%的平均值作为最大值
     /// </summary>
     /// <param name="points"></param>
     /// <param name="percentile"></param>

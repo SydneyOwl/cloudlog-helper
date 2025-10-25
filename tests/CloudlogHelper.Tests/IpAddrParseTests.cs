@@ -14,7 +14,7 @@ public class IpAddrParseTests
     {
         // Act
         var result = IPAddrUtil.ParseAddress(input);
-        
+
         // Assert
         Assert.Equal(expectedIp, result.Item1);
         Assert.Equal(expectedPort, result.Item2);
@@ -80,7 +80,7 @@ public class IpAddrParseTests
     {
         // Act
         var result = IPAddrUtil.ParseAddress(input);
-        
+
         // Assert
         Assert.Equal(expectedPort, result.Item2);
     }

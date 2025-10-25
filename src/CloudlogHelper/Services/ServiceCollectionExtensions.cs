@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
     public static Task AddCommonServicesAsync(this IServiceCollection services)
     {
         services.AddSingleton<IRigBackendManager, RigBackendManager>();
@@ -55,7 +56,8 @@ public static class ServiceCollectionExtensions
     {
         try
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.OSVersion.Version >= new Version(10, 0))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+                Environment.OSVersion.Version >= new Version(10, 0))
             {
                 // only enabled on win10 or later
                 ClassLogger.Info("Using windows native notification.");
@@ -83,7 +85,7 @@ public static class ServiceCollectionExtensions
             ClassLogger.Warn(e, "Failed to apply native notification - Using fallback options.");
             services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
         }
-        
+
         services.AddAutoMapper(cfg =>
         {
             cfg.CreateMap<HamlibSettings, HamlibSettings>();

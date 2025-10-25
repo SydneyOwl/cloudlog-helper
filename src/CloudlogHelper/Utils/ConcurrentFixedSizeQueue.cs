@@ -4,39 +4,17 @@ using System.Collections.Generic;
 namespace CloudlogHelper.Utils;
 
 /// <summary>
-///  Thread-safe dynamic fixed-size queue with auto-eviction
-///  Not a very good approach, but it just works...
+///     Thread-safe dynamic fixed-size queue with auto-eviction
+///     Not a very good approach, but it just works...
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class ConcurrentFixedSizeQueue<T>
 {
+    private readonly object _lockObject = new();
+    private readonly int _maxCapacity;
+    private readonly int _minCapacity;
     private readonly Queue<T> _queue;
     private int _currentCapacity;
-    private readonly int _minCapacity;
-    private readonly int _maxCapacity;
-    private readonly object _lockObject = new object();
-
-    public int Count 
-    { 
-        get 
-        {
-            lock (_lockObject)
-            {
-                return _queue.Count;
-            }
-        }
-    }
-    
-    public int Capacity 
-    { 
-        get 
-        {
-            lock (_lockObject)
-            {
-                return _currentCapacity;
-            }
-        }
-    }
 
     public ConcurrentFixedSizeQueue(int initialCapacity, int minCapacity = 1, int maxCapacity = int.MaxValue)
     {
@@ -49,16 +27,35 @@ public class ConcurrentFixedSizeQueue<T>
         _queue = new Queue<T>(initialCapacity);
     }
 
+    public int Count
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _queue.Count;
+            }
+        }
+    }
+
+    public int Capacity
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _currentCapacity;
+            }
+        }
+    }
+
     public void Enqueue(T item)
     {
         lock (_lockObject)
         {
             _queue.Enqueue(item);
-            
-            while (_queue.Count > _currentCapacity)
-            {
-                _queue.Dequeue();
-            }
+
+            while (_queue.Count > _currentCapacity) _queue.Dequeue();
         }
     }
 
@@ -95,6 +92,7 @@ public class ConcurrentFixedSizeQueue<T>
                 result = _queue.Dequeue();
                 return true;
             }
+
             result = default;
             return false;
         }
@@ -109,6 +107,7 @@ public class ConcurrentFixedSizeQueue<T>
                 result = _queue.Peek();
                 return true;
             }
+
             result = default;
             return false;
         }
@@ -123,11 +122,8 @@ public class ConcurrentFixedSizeQueue<T>
                 throw new ArgumentOutOfRangeException(nameof(newCapacity));
 
             _currentCapacity = newCapacity;
-            
-            while (_queue.Count > _currentCapacity)
-            {
-                _queue.Dequeue();
-            }
+
+            while (_queue.Count > _currentCapacity) _queue.Dequeue();
         }
     }
 

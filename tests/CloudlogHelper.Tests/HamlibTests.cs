@@ -1,8 +1,5 @@
-﻿using System.Net;
-using CloudlogHelper.Resources;
-using CloudlogHelper.Services;
+﻿using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
-using Xunit.Abstractions;
 
 namespace CloudlogHelper.Tests;
 
@@ -20,17 +17,18 @@ public class HamlibTests : IClassFixture<HamlibFixture>
     {
         // todo
     }
-    
+
     [Fact]
     public async Task GetAllRigInfo_ReturnDetailedRigInfo()
     {
         // todo
     }
 }
+
 public class HamlibFixture : IAsyncLifetime
 {
     public IRigService RigctldService { get; private set; }
-    
+
     public Task InitializeAsync()
     {
         RigctldService = new RigctldService();

@@ -18,35 +18,35 @@ namespace CloudlogHelper.Services;
 internal struct CallsignDataCache
 {
     public double Bearing { get; set; }
-    public double Distance{ get; set; }
-    public double Latitude{ get; set; }
-    
-    public double Longitude{ get; set; }
-    public string Dxcc{ get; set; }
-    public bool IsAccurate{ get; set; }
+    public double Distance { get; set; }
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
+    public string Dxcc { get; set; }
+    public bool IsAccurate { get; set; }
 }
 
-public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposable
+public class DecodedDataProcessorService : IDecodedDataProcessorService, IDisposable
 {
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private Dictionary<string, string>　_currentClientBand = new();
-    
-    // az, dist, isAccu
-    private Dictionary<string, CallsignDataCache> _callsignDistanceAndBearing = new();
+    private readonly BasicSettings _basicSettings;
 
-    private ObservableCollection<Decode> _decodedCache = new();
-    
-    private IDatabaseService _databaseService;
-    
-    private IChartDataCacheService _dataCacheService;
+    // az, dist, isAccu
+    private readonly Dictionary<string, CallsignDataCache> _callsignDistanceAndBearing = new();
+
+    private readonly Dictionary<string, string>　_currentClientBand = new();
+
+    private readonly IDatabaseService _databaseService;
+
+    private readonly IChartDataCacheService _dataCacheService;
+
+    private readonly ObservableCollection<Decode> _decodedCache = new();
 
     private string _myGrid;
-    
-    private BasicSettings _basicSettings;
 
     public DecodedDataProcessorService(IDatabaseService databaseService,
         IApplicationSettingsService applicationSettingsService,
@@ -55,7 +55,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _databaseService = databaseService;
         _dataCacheService = chartDataCacheService;
-       _decodedCache.ObserveCollectionChanges()
+        _decodedCache.ObserveCollectionChanges()
             .Throttle(TimeSpan.FromSeconds(3))
             .ObserveOn(RxApp.TaskpoolScheduler)
             .Subscribe(async void (a) =>
@@ -63,7 +63,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 try
                 {
                     var decodes = _decodedCache.ToArray();
-                    if (decodes.Length == 0)return;
+                    if (decodes.Length == 0) return;
                     _decodedCache.Clear();
                     // refresh all data if my grid changed
                     if (_myGrid != _basicSettings.MyMaidenheadGrid)
@@ -73,29 +73,33 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                         _dataCacheService.Clear();
                         _myGrid = string.Empty;
                         if (MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
-                        {
                             _myGrid = _basicSettings.MyMaidenheadGrid!;
-                        }
                     }
+
                     await _saveCallsignGridInfo(decodes);
                     await _cacheChartData(decodes);
                 }
                 catch (Exception ex)
                 {
-                    ClassLogger.Error(ex,"Error while processing decoded data...");
+                    ClassLogger.Error(ex, "Error while processing decoded data...");
                 }
             });
     }
 
     public void ProcessDecoded(Decode decode)
     {
-        if (_basicSettings.DisableAllCharts)return;
+        if (_basicSettings.DisableAllCharts) return;
         _decodedCache.Add(decode);
     }
-    
+
     public void UpdateClientBand(string clientId, string band)
     {
         _currentClientBand[clientId] = band;
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
     }
 
     private async Task _cacheChartData(Decode[] decode)
@@ -106,9 +110,9 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
             var chartQsoPoint = new ChartQSOPoint();
             var callsign = WsjtxMessageUtil.ExtractDeFromMessage(tmp.Message);
             var grid = WsjtxMessageUtil.ExtractGridFromMessage(tmp.Message);
-          
+
             if (callsign is null) continue;
-            
+
             chartQsoPoint.DxCallsign = callsign;
             chartQsoPoint.Band = _currentClientBand.GetValueOrDefault(tmp.Id, string.Empty);
             chartQsoPoint.Client = tmp.Id;
@@ -124,7 +128,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 {
                     ClassLogger.Debug($"Cache hits - {callsign}");
                     chartQsoPoint.Azimuth = value.Bearing;
-                    chartQsoPoint.Distance = value.Distance; 
+                    chartQsoPoint.Distance = value.Distance;
                     chartQsoPoint.DXCC = value.Dxcc;
                     chartQsoPoint.Latitude = value!.Latitude;
                     chartQsoPoint.Longitude = value!.Longitude;
@@ -132,14 +136,14 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                     _dataCacheService.Add(chartQsoPoint);
                     continue;
                 }
-                
+
                 ClassLogger.Debug($"{callsign} Cache hits but we could get a more accurate result by recalc grid...");
             }
 
             string iGrid;
             var isAccurate = false;
             var countryDetail = await _databaseService.GetCallsignDetailAsync(callsign);
-            
+
             // calc from grid
             if (grid is not null)
             {
@@ -161,15 +165,16 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 {
                     // fallback option 02: find target country and use that gridcountryDetail
                     if (countryDetail.CountryNameEn == "Unknown") continue;
-                    iGrid = MaidenheadGridUtil.GetGridSquare(new LatLng(countryDetail.Latitude, countryDetail.Longitude));
+                    iGrid = MaidenheadGridUtil.GetGridSquare(
+                        new LatLng(countryDetail.Latitude, countryDetail.Longitude));
                     ClassLogger.Debug($"Calculating {callsign} from default country: " +
                                       $"lat {countryDetail.Latitude} lon {countryDetail.Longitude}");
                 }
             }
-            
-            if (!MaidenheadGridUtil.CheckMaidenhead(_myGrid) 
-                || !MaidenheadGridUtil.CheckMaidenhead(iGrid))continue;
-            
+
+            if (!MaidenheadGridUtil.CheckMaidenhead(_myGrid)
+                || !MaidenheadGridUtil.CheckMaidenhead(iGrid)) continue;
+
             var bearing = MaidenheadGridUtil.CalculateBearing(_myGrid, iGrid);
             var distance = MaidenheadGridUtil.GetDist(_myGrid, iGrid);
             var gridToLatLng = MaidenheadGridUtil.GridToLatLng(iGrid);
@@ -179,7 +184,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
             chartQsoPoint.Latitude = gridToLatLng?.Latitude ?? 0;
             chartQsoPoint.Longitude = gridToLatLng?.Longitude ?? 0;
             chartQsoPoint.IsAccurate = isAccurate;
-            
+
             _callsignDistanceAndBearing[callsign] = new CallsignDataCache
             {
                 Bearing = bearing,
@@ -189,7 +194,7 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
                 Dxcc = countryDetail.Dxcc,
                 IsAccurate = isAccurate
             };
-            
+
             _dataCacheService.Add(chartQsoPoint);
         }
     }
@@ -202,21 +207,14 @@ public class DecodedDataProcessorService:IDecodedDataProcessorService,IDisposabl
             var call = WsjtxMessageUtil.ExtractDeFromMessage(decMsg.Message);
             var grid = WsjtxMessageUtil.ExtractGridFromMessage(decMsg.Message);
             if (call is not null && grid is not null)
-            {
-                collectedGrid.Add(new CollectedGridDatabase()
+                collectedGrid.Add(new CollectedGridDatabase
                 {
                     Callsign = call,
                     GridSquare = grid
                 });
-            }
         }
-        
+
         await _databaseService.BatchAddOrUpdateCallsignGridAsync(collectedGrid);
         ClassLogger.Info($"Added {collectedGrid.Count} grids.");
-    }
-
-    public void Dispose()
-    {
-        // TODO release managed resources here
     }
 }

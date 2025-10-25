@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.ViewModels.UserControls;
@@ -27,8 +24,8 @@ public partial class FilePickerTextboxUserControl : ReactiveUserControl<FilePick
             {
                 AllowMultiple = false
             });
-            
-            if (file.Count == 0)return;
+
+            if (file.Count == 0) return;
             var pathAbsolutePath = file[0].Path.AbsolutePath;
             ViewModel!.SelectedFilePath = pathAbsolutePath;
         }

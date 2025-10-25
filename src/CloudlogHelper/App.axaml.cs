@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -26,10 +25,8 @@ using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
-using CloudlogHelper.ViewModels.Charts;
-using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
-using CloudlogHelper.Views.UserControls;
+using Flurl.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Mono.Unix;
 using MsBox.Avalonia.Dto;
@@ -53,7 +50,7 @@ public class App : Application
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
     private static ReactiveCommand<Unit, Unit>? _openCommand;
-    
+
     private DateTime _lastClickTime = DateTime.MinValue;
 
     public App(CommandLineOptions? options)
@@ -74,6 +71,19 @@ public class App : Application
         if (_cmdOptions.Verbose) DefaultConfigs.MaxRigctldErrorCount = 100;
         var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
+
+        FlurlHttp.Clients.WithDefaults(builder =>
+            builder.BeforeCall(call =>
+                {
+                    call.Client
+                        .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
+                        .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout));
+                })
+                .ConfigureInnerHandler(handler =>
+                {
+                    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                })
+        );
     }
 
     public override void Initialize()
@@ -85,14 +95,14 @@ public class App : Application
     private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop, Window splashLevel)
     {
         _preInit();
-        _safeExecute(()=> Directory.Delete(DefaultConfigs.DefaultTempFilePath, true));
-        _safeExecute(()=> Directory.CreateDirectory(DefaultConfigs.DefaultTempFilePath));
-        
+        _safeExecute(() => Directory.Delete(DefaultConfigs.DefaultTempFilePath, true));
+        _safeExecute(() => Directory.CreateDirectory(DefaultConfigs.DefaultTempFilePath));
+
         var collection = new ServiceCollection();
         await collection.AddCommonServicesAsync();
         await collection.AddViewModelsAsync();
         await collection.AddExtraAsync();
-        
+
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
@@ -111,8 +121,8 @@ public class App : Application
         collection.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
             ApplicationSettingsService.GenerateApplicationSettingsService(
                 logServices.ToArray(), _cmdOptions.ReinitSettings, pr.GetRequiredService<IMapper>()
-                ));
-        
+            ));
+
         collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
         collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
             new WindowManagerService(prov, desktop));
@@ -122,11 +132,13 @@ public class App : Application
             new MessageBoxManagerService(desktop));
         collection.AddSingleton<IClipboardService, ClipboardService>(_ =>
             new ClipboardService(desktop));
-        
+
         _servProvider = collection.BuildServiceProvider();
-        
+
         var applicationSettingsService = _servProvider.GetRequiredService<IApplicationSettingsService>();
-        I18NExtension.Culture = TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
+        I18NExtension.Culture =
+            TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings
+                .LanguageType);
 
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
@@ -145,7 +157,7 @@ public class App : Application
                         {
                             new ButtonDefinition
                             {
-                                Name = accept,
+                                Name = accept
                             },
                             new ButtonDefinition
                             {
@@ -170,16 +182,18 @@ public class App : Application
                 Environment.Exit(0);
                 return;
             }
+
             ClassLogger.Info("User accepted disclaimer.");
             await dbSer.UpgradeDatabaseAsync();
         }
+
         _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
     }
 
     private async Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
     {
         if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
-        
+
         var mainWindow = _servProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
         mainWindow.Focus();
@@ -224,11 +238,8 @@ public class App : Application
             {
                 var currentTime = DateTime.Now;
                 var elapsed = currentTime - _lastClickTime;
-                
-                if (elapsed.TotalMilliseconds < 500)
-                {
-                    mainWindow.Show();
-                }
+
+                if (elapsed.TotalMilliseconds < 500) mainWindow.Show();
                 _lastClickTime = currentTime;
             };
         }
@@ -262,7 +273,7 @@ public class App : Application
                     { ViewModel = new ErrorReportWindowViewModel() };
             else
                 desktop.MainWindow = new SplashWindow(() => PreExec(desktop),
-                    (win) => Workload(desktop, win),
+                    win => Workload(desktop, win),
                     () => PostExec(desktop));
         }
 
@@ -306,14 +317,14 @@ public class App : Application
             ClassLogger.Error(e);
         }
     }
-    
+
 
     private static void _initializeLogger(LogLevel logLevel, bool writeToFile = false)
     {
         var config = new LoggingConfiguration();
         var consoleTarget = new ConsoleTarget("console")
         {
-            Layout = logLevel > LogLevel.Debug 
+            Layout = logLevel > LogLevel.Debug
                 ? "${longdate} [${level:uppercase=true}] ${message} ${exception}"
                 : "${longdate} [${level:uppercase=true}] ${message} ${exception} ${callsite:fileName=true:includeLineNumbers=true}"
         };
@@ -324,7 +335,7 @@ public class App : Application
             var fileTarget = new FileTarget("file")
             {
                 FileName = "${basedir}/logs/${shortdate}.log",
-                Layout = logLevel > LogLevel.Debug 
+                Layout = logLevel > LogLevel.Debug
                     ? "${longdate} [${level:uppercase=true}] ${message} ${exception}"
                     : "${longdate} [${level:uppercase=true}] ${message} ${exception} ${callsite:fileName=true:includeLineNumbers=true}"
             };
@@ -369,7 +380,7 @@ public class App : Application
                     ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
                     continue;
                 }
-                
+
                 using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
                 resourceFileStream.Seek(0, SeekOrigin.Begin);
                 resourceFileStream.CopyTo(fileStream);
@@ -378,7 +389,7 @@ public class App : Application
             }
             catch (Exception ex)
             {
-                ClassLogger.Warn(ex,$"Failed to extract {defaultHamlibFile}, Skipping...");
+                ClassLogger.Warn(ex, $"Failed to extract {defaultHamlibFile}, Skipping...");
                 continue;
             }
 

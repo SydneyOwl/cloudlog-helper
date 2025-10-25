@@ -9,7 +9,6 @@ namespace CloudlogHelper.ViewModels.UserControls;
 
 public class TestButtonUserControlViewModel : ViewModelBase
 {
-
     private ObservableAsPropertyHelper<bool> _checkExecuting;
 
     public TestButtonUserControlViewModel(ReactiveCommand<Unit, Unit> cmd)
@@ -33,7 +32,7 @@ public class TestButtonUserControlViewModel : ViewModelBase
                 .ThrownExceptions
                 .Subscribe(async void (ex) => { CheckPassed = false; })
                 .DisposeWith(disposables);
-            
+
             _checkExecuting = this.WhenAnyValue(x => x.TestCommand)
                 .Select(cmd => cmd?.IsExecuting ?? Observable.Return(false)) // just observe IsExecuting flow.....
                 .Switch() // maybe command does not exist at initial?

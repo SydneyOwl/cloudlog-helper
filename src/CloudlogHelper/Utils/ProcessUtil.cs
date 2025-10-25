@@ -22,18 +22,15 @@ public class ProcessUtil
             CreateNoWindow = true
         };
 
-        foreach (var option in options)
-        {
-            startInfo.ArgumentList.Add(option);
-        }
+        foreach (var option in options) startInfo.ArgumentList.Add(option);
 
         using var process = new Process();
         process.StartInfo = startInfo;
         process.Start();
-            
+
         var stdout = await process.StandardOutput.ReadToEndAsync();
         var stderr = await process.StandardError.ReadToEndAsync();
-            
+
         await process.WaitForExitAsync(token);
 
         callback(stdout, stderr);

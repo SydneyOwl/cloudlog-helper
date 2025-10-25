@@ -25,7 +25,7 @@ public class LogSystemField : ReactiveObject
     public string? Watermark { get; set; }
     public string? Description { get; set; }
     public bool IsRequired { get; set; }
-    
+
     /// <summary>
     ///     (Combobox only)
     /// </summary>

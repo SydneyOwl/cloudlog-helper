@@ -1,6 +1,4 @@
-﻿using CloudlogHelper.Services;
-using CloudlogHelper.Services.Interfaces;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
 namespace CloudlogHelper.Tests;
 

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,13 +8,11 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
-using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -25,7 +21,6 @@ using CloudlogHelper.Utils;
 using DesktopNotifications;
 using DynamicData;
 using DynamicData.Binding;
-using Force.DeepCloner;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
 using NLog;
@@ -44,22 +39,17 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IDatabaseService _databaseService;
-    
-    private readonly IClipboardService _clipboardService;
-    
-    private readonly INotificationManager _nativeNativeNotificationManager;
+    /// <summary>
+    ///     All qsologged message received.
+    /// </summary>
+    private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
 
-    private readonly IInAppNotificationService _inAppNotification; 
-    
-    private readonly IMessageBoxManagerService _messageBoxManagerService;
-
-    private readonly IUdpServerService _udpServerService;
-    
     private readonly IApplicationSettingsService _applicationSettingsService;
-    
-    private readonly IQSOUploadService _qsoUploadService;
-    
+
+    private readonly IClipboardService _clipboardService;
+
+    private readonly IDatabaseService _databaseService;
+
     private readonly IDecodedDataProcessorService _decodedDataProcessorService;
 
 
@@ -67,18 +57,23 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     ///     UDP Timeout watchdog.
     /// </summary>
     private readonly Subject<Unit> _heartbeatSubject = new();
-    
+
+    private readonly IInAppNotificationService _inAppNotification;
+
+    private readonly IMessageBoxManagerService _messageBoxManagerService;
+
+    private readonly INotificationManager _nativeNativeNotificationManager;
+
+    private readonly IQSOUploadService _qsoUploadService;
+
+    private readonly ReactiveCommand<Unit, Unit> _restartUdpCommand;
+
+    private readonly IUdpServerService _udpServerService;
+
     /// <summary>
     ///     Settings for UDPServer.
     /// </summary>
     private readonly UDPServerSettings _udpSettings;
-    
-    /// <summary>
-    ///     All qsologged message received.
-    /// </summary>
-    private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
-    
-    private readonly ReactiveCommand<Unit, Unit> _restartUdpCommand;
 
     /// <summary>
     ///     Total decoded number.
@@ -90,11 +85,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     /// </summary>
     private uint _qsosCount;
 
-    public UDPLogInfoGroupboxUserControlViewModel():base()
+    public UDPLogInfoGroupboxUserControlViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         SelectAllCommand = ReactiveCommand.Create(() => { });
-        ShowQSODetailCommand = ReactiveCommand.Create<RecordedCallsignDetail, Unit>(_  => Unit.Default);
+        ShowQSODetailCommand = ReactiveCommand.Create<RecordedCallsignDetail, Unit>(_ => Unit.Default);
         ReuploadSelectedCommand = ReactiveCommand.Create(() => { });
         ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
@@ -112,10 +107,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             Longitude = 139.6917f,
             GmtOffset = 9.0f,
             Dxcc = "JA",
-            
+
             DateTimeOff = DateTime.Now,
             DateTimeOn = DateTime.Now.AddMinutes(-5),
-            
+
             DXCall = "JA1ABC",
             DXGrid = "PM95",
             MyCall = "BA1ABC",
@@ -144,10 +139,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             FailReason = null
         };
 
-        for (var i = 0; i < 10; i++)
-        {
-            FilteredQsos.Add(testQso);
-        }
+        for (var i = 0; i < 10; i++) FilteredQsos.Add(testQso);
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,
@@ -158,7 +150,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IApplicationSettingsService ss,
         IQSOUploadService qu,
         INotificationManager nativeNotificationManager,
-        IDecodedDataProcessorService decodedDataProcessorService):base()
+        IDecodedDataProcessorService decodedDataProcessorService)
     {
         _applicationSettingsService = ss;
         _clipboardService = clipboardService;
@@ -167,32 +159,30 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         _qsoUploadService = qu;
         _udpSettings = ss.GetCurrentSettings().UDPSettings;
-        
+
         _udpServerService = udpServerService;
         _databaseService = dbService;
         _messageBoxManagerService = messageBoxManagerService;
         _inAppNotification = inAppNotification;
-        
+
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _udpSettings.EnableUDPServer;
-        
+
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {
             var content = callDet.FormatToReadableContent();
             var msgResult = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(
-                new List<ButtonDefinition>() { new (){ Name = "OK" }, new (){Name = "Copy info"} },
+                new List<ButtonDefinition> { new() { Name = "OK" }, new() { Name = "Copy info" } },
                 Icon.Info, "Detail", content);
             if (msgResult == "Copy info")
-            {
                 // copy to clipboard
                 await _clipboardService.SetTextAsync(content);
-            }
             return Unit.Default;
         });
         SelectAllCommand = ReactiveCommand.Create(() => { SelectAll = !SelectAll; });
         ReuploadSelectedCommand = ReactiveCommand.CreateFromTask(_uploadCheckedQSO);
-        ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);//
-        IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);//
+        ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO); //
+        IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO); //
         DeleteSelectedCommand = ReactiveCommand.Create(() =>
         {
             _allQsos.Edit(innerList =>
@@ -202,7 +192,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                         innerList.RemoveAt(i);
             });
         });
-        _restartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp);//
+        _restartUdpCommand = ReactiveCommand.CreateFromTask(_restartUdp); //
 
         this.WhenActivated(disposables =>
         {
@@ -258,15 +248,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                         }
                     });
                 }).DisposeWith(disposables);
-            
+
             ShowQSODetailCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
-            
+
             SelectAllCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
-            
+
             ReuploadSelectedCommand.ThrownExceptions.Subscribe(async void (err) =>
                     await _inAppNotification.SendErrorNotificationAsync(err.Message))
                 .DisposeWith(disposables);
@@ -331,7 +321,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public bool WaitFirstConn { get; set; }
     [Reactive] public bool TxStatus { get; set; }
     [Reactive] public string MsgSending { get; set; }
-    
+
     [Reactive] public string? QsAvgMin { get; set; } = "0Qsos/min";
     [Reactive] public string QsosCountData { get; set; } = "0/0"; // total/qsos
 
@@ -370,7 +360,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             _wsjtxMsgLogger
         );
     }
-    
+
     private async Task _uploadCheckedQSO()
     {
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
@@ -422,9 +412,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         var currentVersion = VersionInfo.Version;
         var adif = new StringBuilder(AdifUtil.GenerateHeader());
         foreach (var recordedCallsignDetail in _allQsos.Items.Where(x => x.Checked))
-        {
             adif.AppendLine(recordedCallsignDetail.GenerateAdif());
-        }
 
         // ask user to save 
         var file = await ShowFilePickerDialog.Handle(Unit.Default);
@@ -463,26 +451,25 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     // No need to add semaphore; It is not async.
                     _allDecodedCount += 1;
                     _qsosCount += 1;
-                    
+
                     // process message
                     var msg = (QsoLogged)message;
                     var cty = await _databaseService.GetCallsignDetailAsync(msg.DXCall);
-                    var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg, _applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
+                    var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, msg,
+                        _applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
                     rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
-                    
+
                     // log it into that
                     _allQsos.Add(rcd);
                     _qsoUploadService.EnqueueQSOForUpload(rcd);
-                    
+
                     // notify users
                     if (_udpSettings.PushNotificationOnQSOMade)
-                    {
                         _ = _nativeNativeNotificationManager.ShowNotification(new Notification
                         {
-                            Title = TranslationHelper.GetString(LangKeys.madeaqso) + (rcd.DXCall),
+                            Title = TranslationHelper.GetString(LangKeys.madeaqso) + rcd.DXCall,
                             Body = rcd.FormatToReadableContent(true)
                         });
-                    }
                     break;
                 case MessageType.Decode:
                     _allDecodedCount += 1;
@@ -495,12 +482,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     MsgSending = string.IsNullOrEmpty(stat.TXMessage)
                         ? TranslationHelper.GetString(LangKeys.txing)
                         : stat.TXMessage;
-                    _decodedDataProcessorService.UpdateClientBand(stat.Id,FreqHelper.GetMeterFromFreq(stat.DialFrequencyInHz));
-                    MessageBus.Current.SendMessage(new ClientStatusChanged()
+                    _decodedDataProcessorService.UpdateClientBand(stat.Id,
+                        FreqHelper.GetMeterFromFreq(stat.DialFrequencyInHz));
+                    MessageBus.Current.SendMessage(new ClientStatusChanged
                     {
                         CurrStatus = stat
                     });
-                    ClassLogger.Trace($"Status changed: {stat.DialFrequencyInHz} {stat.ConfigurationName} {""} {stat.Mode}" );
+                    ClassLogger.Trace(
+                        $"Status changed: {stat.DialFrequencyInHz} {stat.ConfigurationName} {""} {stat.Mode}");
                     break;
             }
 

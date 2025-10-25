@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -7,7 +6,6 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
-using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
@@ -17,6 +15,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.Colormaps;
 using ScottPlot.PlotStyles;
 using ScottPlot.Plottables;
 
@@ -29,23 +28,11 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    [Reactive] public int KValue { get; set; } = DefaultConfigs.DefaulPolarKValue;
-    [Reactive] public double AngWeightValue { get; set; } = DefaultConfigs.DefaulPolarAngWeightValue;
-    [Reactive] public double DistWeightValue { get; set; } = DefaultConfigs.DefaulPolarDistWeightValue;
-    [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
-    [Reactive] public bool ShowDestColor { get; set; } = true;
+    private readonly BasicSettings _basicSettings;
 
-    public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
-    public ReactiveCommand<Unit, Unit> SaveChart { get; }
-    public ReactiveCommand<Unit, Unit> RefreshChart { get; }
-    public ReactiveCommand<Unit, Unit> ClearChart { get; }
-    public AvaPlot PlotControl { get; private set; }
+    private readonly IChartDataCacheService _chartDataCacheService;
 
     private PolarAxis _polarAxis;
-
-    private IChartDataCacheService _chartDataCacheService;
-    
-    private BasicSettings _basicSettings;
 
     public PolarChartWindowViewModel()
     {
@@ -70,7 +57,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
         RefreshChart = ReactiveCommand.Create(UpdatePolar);
         ClearChart = ReactiveCommand.Create(ClearData);
-      
+
         this.WhenActivated(disposable =>
         {
             SaveChart.ThrownExceptions.Subscribe().DisposeWith(disposable);
@@ -78,10 +65,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             _chartDataCacheService.GetItemAddedObservable()
                 .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleTime))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe((_) =>
-                {
-                    UpdatePolar();
-                })
+                .Subscribe(_ => { UpdatePolar(); })
                 .DisposeWith(disposable);
 
             this.WhenAnyValue(x => x.KValue,
@@ -91,21 +75,33 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
                     x => x.QSOSamples)
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe((_) => UpdatePolar())
+                .Subscribe(_ => UpdatePolar())
                 .DisposeWith(disposable);
-            
+
             this.WhenAnyValue(x => x.SelectedBand,
                     x => x.SelectedClient,
-                    x=> x.SelectedMode,
+                    x => x.SelectedMode,
                     x => x.UpdatePaused)
                 .Throttle(TimeSpan.FromMilliseconds(352))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe((_) => UpdatePolar())
+                .Subscribe(_ => UpdatePolar())
                 .DisposeWith(disposable);
         });
 
         UpdatePolar();
     }
+
+    [Reactive] public int KValue { get; set; } = DefaultConfigs.DefaulPolarKValue;
+    [Reactive] public double AngWeightValue { get; set; } = DefaultConfigs.DefaulPolarAngWeightValue;
+    [Reactive] public double DistWeightValue { get; set; } = DefaultConfigs.DefaulPolarDistWeightValue;
+    [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
+    [Reactive] public bool ShowDestColor { get; set; } = true;
+
+    public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
+    public ReactiveCommand<Unit, Unit> SaveChart { get; }
+    public ReactiveCommand<Unit, Unit> RefreshChart { get; }
+    public ReactiveCommand<Unit, Unit> ClearChart { get; }
+    public AvaPlot PlotControl { get; }
 
     private void ClearData()
     {
@@ -129,7 +125,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             ShowErrorMsg = true;
             return;
         }
-        
+
         try
         {
             ShowErrorMsg = false;
@@ -139,39 +135,34 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
             var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples,
                     FilterDupeCallsign ? ChartQSOPoint.ChartQsoPointComparer : null,
-                    point => point.Band == SelectedBand 
-                                 // && point.Mode == SelectedMode 
-                                 && point.Client == SelectedClient && point.Distance >= 0)
-                                                .ToArray();
-            
+                    point => point.Band == SelectedBand
+                             // && point.Mode == SelectedMode 
+                             && point.Client == SelectedClient && point.Distance >= 0)
+                .ToArray();
+
             var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData) + 500;
             ClassLogger.Trace($"Use maxDistance:{maxDistance}");
             var densities = new double[1];
             if (ShowDestColor)
-            {
-                densities = QSOPointUtil.CalculateDensitiesKNN(cacheData, maxDistance, k: KValue,
-                    distanceWeight: DistWeightValue, angleWeight: AngWeightValue);
-            }
+                densities = QSOPointUtil.CalculateDensitiesKNN(cacheData, maxDistance, KValue,
+                    DistWeightValue, AngWeightValue);
 
-            _polarAxis = PlotControl.Plot.Add.PolarAxis(radius: maxDistance <= 1000 ? 1000 : maxDistance);
+            _polarAxis = PlotControl.Plot.Add.PolarAxis(maxDistance <= 1000 ? 1000 : maxDistance);
             _polarAxis.Rotation = Angle.FromDegrees(-90);
             _polarAxis.Clockwise = true;
 
             if (cacheData.Length == 0) return;
-            var distLina = (double)((int)((maxDistance / 5) / 100) * 100);
-            if (maxDistance <= 1000)
-            {
-                distLina = 200;
-            }
+            var distLina = (double)((int)(maxDistance / 5 / 100) * 100);
+            if (maxDistance <= 1000) distLina = 200;
             var circleDistance = new[] { distLina, distLina * 2, distLina * 3, distLina * 4, distLina * 5 };
-            
+
             var labels = circleDistance.Select(x => x + "km").ToArray();
             // polarAxis.SetCircles(distLina,5);
             _polarAxis.SetCircles(circleDistance, labels);
 
             IColormap colormap = Application.Current!.ActualThemeVariant == ThemeVariant.Dark
-                ? new ScottPlot.Colormaps.MellowRainbow()
-                : new ScottPlot.Colormaps.Turbo();
+                ? new MellowRainbow()
+                : new Turbo();
 
             if (densities.Length == 0) return;
 
@@ -217,13 +208,9 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     private void _refreshTheme()
     {
         if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
-        {
             _setDarkTheme();
-        }
         else
-        {
             _setLightTheme();
-        }
     }
 
     private void _setDarkTheme()
@@ -251,7 +238,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         PlotControl.Plot.SetStyle(new Light());
         foreach (var polarAxisCircle in _polarAxis.Circles)
         {
-            polarAxisCircle.LineStyle = new LineStyle()
+            polarAxisCircle.LineStyle = new LineStyle
             {
                 Width = 1f,
                 Color = Colors.Black.WithAlpha(0.5)
@@ -261,7 +248,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
         foreach (var spoke in _polarAxis.Spokes)
         {
-            spoke.LineStyle = new LineStyle()
+            spoke.LineStyle = new LineStyle
             {
                 Width = 1f,
                 Color = Colors.Black.WithAlpha(0.5)

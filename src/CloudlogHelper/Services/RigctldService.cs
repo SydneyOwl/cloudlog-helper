@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -25,15 +24,10 @@ public class RigctldService : IRigService, IDisposable
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    ///     Semaphore for controlling access to the one-time process.
-    /// </summary>
-    private readonly SemaphoreSlim _onetimeSemaphore = new(1, 1);
-
-    /// <summary>
     ///     Semaphore for controlling access to the background process.
     /// </summary>
     private readonly SemaphoreSlim _backgroundProcessSemaphore = new(1, 1);
-    
+
     /// <summary>
     ///     Semaphore for controlling access to ExecuteCommand.
     /// </summary>
@@ -45,15 +39,15 @@ public class RigctldService : IRigService, IDisposable
     private readonly object _lock = new();
 
     /// <summary>
+    ///     Semaphore for controlling access to the one-time process.
+    /// </summary>
+    private readonly SemaphoreSlim _onetimeSemaphore = new(1, 1);
+
+    /// <summary>
     ///     Log buffer of rigctld.
     /// </summary>
     private readonly Queue<string> _rigctldLogBuffer = new();
-    
-    /// <summary>
-    ///     One-time rigctld client process.
-    /// </summary>
-    private Process? _onetimeRigctldClient;
-    
+
     /// <summary>
     ///     Rigctld processes residing in the background.
     /// </summary>
@@ -63,6 +57,11 @@ public class RigctldService : IRigService, IDisposable
     ///     Whether this is disposed or not.
     /// </summary>
     private bool _disposed;
+
+    /// <summary>
+    ///     One-time rigctld client process.
+    /// </summary>
+    private Process? _onetimeRigctldClient;
 
     /// <summary>
     ///     Keep-alive tcp client for rigctld communications.
@@ -97,74 +96,6 @@ public class RigctldService : IRigService, IDisposable
     }
 
     /// <summary>
-    ///     Starts a one-time rigctld process with specified arguments.
-    /// </summary>
-    /// <param name="args">Command line arguments for rigctld.</param>
-    /// <param name="timeoutMilliseconds">Timeout in milliseconds for process execution.</param>
-    /// <returns>Tuple containing success status and output/error message.</returns>
-    private async Task<string> StartOnetimeRigctldAsync(string args,
-        int timeoutMilliseconds = 5000)
-    {
-        var outputBuilder = new StringBuilder();
-        await _onetimeSemaphore.WaitAsync();
-        try
-        {
-            TerminateOnetimeProcess();
-
-            _onetimeRigctldClient = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = DefaultConfigs.ExecutableRigctldPath,
-                    Arguments = args,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.UTF8,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = DefaultConfigs.HamlibFilePath
-                },
-                EnableRaisingEvents = true
-            };
-
-            _onetimeRigctldClient.OutputDataReceived += (sender, e) =>
-            {
-                AppendRigctldLog(e.Data);
-                if (!string.IsNullOrEmpty(e.Data)) outputBuilder.AppendLine(e.Data);
-            };
-
-            _onetimeRigctldClient.ErrorDataReceived += (sender, e) => { AppendRigctldLog(e.Data); };
-
-
-            if (!_onetimeRigctldClient.Start())
-                throw new Exception(TranslationHelper.GetString(LangKeys.inithamlibfailed));
-
-            _onetimeRigctldClient.BeginOutputReadLine();
-            _onetimeRigctldClient.BeginErrorReadLine();
-
-            await _onetimeRigctldClient.WaitForExitAsync(new CancellationTokenSource(timeoutMilliseconds).Token);
-
-            var exitCode = _onetimeRigctldClient.ExitCode;
-            if (exitCode != 0)
-            {
-                outputBuilder.Clear();
-                outputBuilder.Append("Rigctld Error: ");
-                outputBuilder.Append(RigUtils.GetDescriptionFromReturnCode(exitCode.ToString()));
-
-                ClassLogger.Warn(
-                    $"Failed to start onetime rigctld:\n============================={ReadAndClearRigctldLog()}\n==============================\n");
-            }
-
-            return outputBuilder.ToString();
-        }
-        finally
-        {
-            TerminateOnetimeProcess();
-            _onetimeSemaphore.Release();
-        }
-    }
-
-    /// <summary>
     ///     Restarts the background rigctld process with specified arguments.
     /// </summary>
     /// <param name="args">Command line arguments for rigctld.</param>
@@ -178,7 +109,7 @@ public class RigctldService : IRigService, IDisposable
             ClassLogger.Trace("Rigctld service is already running. Ignored.");
             return;
         }
-        
+
         ClassLogger.Info($"Starting hamlib({string.Join(" ", args)})...");
 
         TerminateBackgroundProcess();
@@ -248,9 +179,9 @@ public class RigctldService : IRigService, IDisposable
                 readyTcs.TrySetResult((false, "Execution Timeout"));
             });
 
-             var (item1, item2) = await readyTcs.Task;
-             if (item1)return;
-             throw new Exception(item2);
+            var (item1, item2) = await readyTcs.Task;
+            if (item1) return;
+            throw new Exception(item2);
         }
         finally
         {
@@ -386,6 +317,93 @@ public class RigctldService : IRigService, IDisposable
         }
     }
 
+    public async Task<string> GetServiceVersion(params object[] args)
+    {
+        return await StartOnetimeRigctldAsync("--version");
+    }
+
+    public async Task<List<RigInfo>> GetSupportedRigModels()
+    {
+        var rigListText = await StartOnetimeRigctldAsync("--list");
+        return _parseAllModelsFromRawOutput(rigListText);
+    }
+
+    public Task StopService(CancellationToken token)
+    {
+        ClassLogger.Info("Stoping hamlib...");
+        TerminateBackgroundProcess();
+        TerminateOnetimeProcess();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Starts a one-time rigctld process with specified arguments.
+    /// </summary>
+    /// <param name="args">Command line arguments for rigctld.</param>
+    /// <param name="timeoutMilliseconds">Timeout in milliseconds for process execution.</param>
+    /// <returns>Tuple containing success status and output/error message.</returns>
+    private async Task<string> StartOnetimeRigctldAsync(string args,
+        int timeoutMilliseconds = 5000)
+    {
+        var outputBuilder = new StringBuilder();
+        await _onetimeSemaphore.WaitAsync();
+        try
+        {
+            TerminateOnetimeProcess();
+
+            _onetimeRigctldClient = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = DefaultConfigs.ExecutableRigctldPath,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = DefaultConfigs.HamlibFilePath
+                },
+                EnableRaisingEvents = true
+            };
+
+            _onetimeRigctldClient.OutputDataReceived += (sender, e) =>
+            {
+                AppendRigctldLog(e.Data);
+                if (!string.IsNullOrEmpty(e.Data)) outputBuilder.AppendLine(e.Data);
+            };
+
+            _onetimeRigctldClient.ErrorDataReceived += (sender, e) => { AppendRigctldLog(e.Data); };
+
+
+            if (!_onetimeRigctldClient.Start())
+                throw new Exception(TranslationHelper.GetString(LangKeys.inithamlibfailed));
+
+            _onetimeRigctldClient.BeginOutputReadLine();
+            _onetimeRigctldClient.BeginErrorReadLine();
+
+            await _onetimeRigctldClient.WaitForExitAsync(new CancellationTokenSource(timeoutMilliseconds).Token);
+
+            var exitCode = _onetimeRigctldClient.ExitCode;
+            if (exitCode != 0)
+            {
+                outputBuilder.Clear();
+                outputBuilder.Append("Rigctld Error: ");
+                outputBuilder.Append(RigUtils.GetDescriptionFromReturnCode(exitCode.ToString()));
+
+                ClassLogger.Warn(
+                    $"Failed to start onetime rigctld:\n============================={ReadAndClearRigctldLog()}\n==============================\n");
+            }
+
+            return outputBuilder.ToString();
+        }
+        finally
+        {
+            TerminateOnetimeProcess();
+            _onetimeSemaphore.Release();
+        }
+    }
+
     /// <summary>
     ///     Parses all rig models from raw hamlib output.
     /// </summary>
@@ -414,17 +432,6 @@ public class RigctldService : IRigService, IDisposable
         return result;
     }
 
-    public async Task<string> GetServiceVersion(params object[] args)
-    {
-        return await StartOnetimeRigctldAsync("--version");
-    }
-    
-    public async Task<List<RigInfo>> GetSupportedRigModels()
-    {
-        var rigListText = await StartOnetimeRigctldAsync("--list");
-        return _parseAllModelsFromRawOutput(rigListText);
-    }
-    
     /// <summary>
     ///     Terminates the background rigctld process if running.
     /// </summary>
@@ -548,7 +555,7 @@ public class RigctldService : IRigService, IDisposable
 
             var sp = strData.ToString();
             var results = sp.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-            if (results.Length == 0)throw new RigCommException("Invalid data format - maybe there's a dupe process?");
+            if (results.Length == 0) throw new RigCommException("Invalid data format - maybe there's a dupe process?");
             // for commands that may return a code
             var rprtCode = results.Last();
             if (rprtCode.Contains("RPRT") && throwExceptionIfRprtError)
@@ -586,13 +593,5 @@ public class RigctldService : IRigService, IDisposable
         }
 
         _disposed = true;
-    }
-
-    public Task StopService(CancellationToken token)
-    {
-        ClassLogger.Info("Stoping hamlib...");
-        TerminateBackgroundProcess();
-        TerminateOnetimeProcess();
-        return Task.CompletedTask;
     }
 }

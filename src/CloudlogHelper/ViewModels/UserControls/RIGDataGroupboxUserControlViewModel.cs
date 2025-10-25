@@ -4,7 +4,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -16,11 +15,8 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using Flurl.Http;
-using Force.DeepCloner;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
-using Newtonsoft.Json;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -38,15 +34,15 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     ///     Settings for cloudlog
     /// </summary>
     private readonly CloudlogSettings _cloudlogSettings;
-    private readonly List<ThirdPartyLogService> _tpService;
-
-    private readonly IMessageBoxManagerService _messageBoxManagerService;
 
     private readonly IInAppNotificationService _inAppNotification;
 
+    private readonly IMessageBoxManagerService _messageBoxManagerService;
+
     private readonly IRigBackendManager _rigBackendManager;
+    private readonly List<ThirdPartyLogService> _tpService;
     private readonly IWindowManagerService _windowManagerService;
-    
+
 
     /// <summary>
     ///     observable sequence. Whether to cancel the timer or not.
@@ -103,22 +99,23 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public string? CurrentTxFrequency { get; set; } = "-------";
     [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
     [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
-    
+
     /// <summary>
-    /// Whether rig refresh button is cooling down or not.
+    ///     Whether rig refresh button is cooling down or not.
     /// </summary>
-    [Reactive] public bool IsCoolingDown { get; set; }
+    [Reactive]
+    public bool IsCoolingDown { get; set; }
 
     [Reactive] public bool IsSplit { get; set; }
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-    
+
 
     private void Initialize()
     {
         // check if conf is available, then start rigctld
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
-        
+
         this.WhenActivated(disposables =>
         {
             _cancel = new Subject<Unit>().DisposeWith(disposables);
@@ -127,10 +124,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
 
-                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig )
-                    {
-                        _resetStatus();
-                    }
+                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig) _resetStatus();
 
                     if (x.Part == ChangedPart.NothingJustClosed)
                     {
@@ -151,7 +145,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 })
                 .DisposeWith(disposables);
 
-           
 
             _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
                 {
@@ -160,13 +153,13 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                         _rigConnFailedTimes = 0;
                         return;
                     }
-                    
+
                     if (err is InvalidConfigurationException)
                     {
                         _rigConnFailedTimes = 0;
                         return;
                     }
-                    
+
                     try
                     {
                         await _defaultExceptionHandler(err);
@@ -195,7 +188,8 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                     _createNewTimer().DisposeWith(disposables);
                                     break;
                                 case "Open Settings":
-                                    await _windowManagerService.CreateAndShowWindowByVm(typeof(SettingsWindowViewModel));
+                                    await _windowManagerService.CreateAndShowWindowByVm(
+                                        typeof(SettingsWindowViewModel));
                                     break;
                                 case "Cancel":
                                     break;
@@ -218,6 +212,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 .DisposeWith(disposables);
         });
     }
+
     private void _resetStatus()
     {
         CurrentRxFrequency = "-------";
@@ -267,19 +262,18 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IsSplit = allInfo.IsSplit;
 
         _rigConnFailedTimes = 0;
-        
+
         foreach (var thirdPartyLogService in _tpService.ToArray())
-        {
             try
             {
                 await thirdPartyLogService.UploadRigInfoAsync(allInfo, CancellationToken.None);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 UploadStatus = TranslationHelper.GetString(LangKeys.failed);
                 ClassLogger.Warn(ex, "Failed to upload rig info");
                 await _inAppNotification.SendWarningNotificationAsync(ex.Message);
             }
-        }
 
         // freq read from hamlib is already in hz!
         if (!_cloudlogSettings.IsCloudlogHasErrors())
@@ -320,7 +314,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                     .TakeWhile(sec => sec >= 0)
                     .Do(sec =>
                     {
-                        if ((!_rigBackendManager.GetPollingAllowed()) || _rigConnFailedTimes < 0) return;
+                        if (!_rigBackendManager.GetPollingAllowed() || _rigConnFailedTimes < 0) return;
                         if (sec == 0)
                         {
                             NextUploadTime = TranslationHelper.GetString(LangKeys.gettinginfo);

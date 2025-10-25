@@ -7,7 +7,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -28,7 +27,6 @@ using Flurl.Http;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Notification = DesktopNotifications.Notification;
 
 namespace CloudlogHelper.ViewModels;
 
@@ -38,11 +36,12 @@ public class SettingsWindowViewModel : ViewModelBase
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    private readonly CancellationTokenSource _source;
+
     private readonly bool _initSkipped;
+    private readonly INotificationManager _nativeNotificationManager;
     private readonly IRigBackendManager _rigBackendManager;
     private readonly IApplicationSettingsService _settingsService;
-    private readonly INotificationManager _nativeNotificationManager;
+    private readonly CancellationTokenSource _source;
     private readonly IWindowManagerService _windowManagerService;
 
     public SettingsWindowViewModel()
@@ -50,8 +49,8 @@ public class SettingsWindowViewModel : ViewModelBase
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         DraftSettings = new ApplicationSettings();
         DiscardConf = ReactiveCommand.Create(() => { });
-        OpenConfDir = ReactiveCommand.Create(()=>{});
-        OpenTempDir = ReactiveCommand.Create(()=>{});
+        OpenConfDir = ReactiveCommand.Create(() => { });
+        OpenTempDir = ReactiveCommand.Create(() => { });
         SaveAndApplyConf = ReactiveCommand.Create(() => { });
         HamlibInitPassed = true;
         // InitializeLogSystems();
@@ -70,18 +69,16 @@ public class SettingsWindowViewModel : ViewModelBase
         _nativeNotificationManager = nm;
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
-        {
             throw new Exception("Draft setting instance is held by another viewmodel!");
-        }
         DraftSettings = settings!;
         _source = new CancellationTokenSource();
         InitializeLogSystems();
-        
+
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
         HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
-        
+
         var flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
         FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
 
@@ -89,7 +86,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
         var cloudCmd =
             ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
-        CloudlogTestButtonUserControl= new TestButtonUserControlViewModel(cloudCmd);
+        CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
 
         // save or discard conf
         DiscardConf = ReactiveCommand.Create(_discardConf);
@@ -107,11 +104,12 @@ public class SettingsWindowViewModel : ViewModelBase
                     var (flEnabled, hamEnabled) = e;
                     if (flEnabled && hamEnabled)
                     {
-                        Notification?.SendWarningNotificationSync(TranslationHelper.GetString(LangKeys.duperigservdetected));
+                        Notification?.SendWarningNotificationSync(
+                            TranslationHelper.GetString(LangKeys.duperigservdetected));
                         DraftSettings.FLRigSettings.PollAllowed = false;
                     }
                 }).DisposeWith(disposables);
-            
+
             // Subscribe language change
             this.WhenAnyValue(x => x.DraftSettings.BasicSettings.LanguageType).Subscribe(language =>
                 {
@@ -159,10 +157,7 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         try
         {
-            foreach (var draftSettingsLogService in DraftSettings.LogServices)
-            {
-                draftSettingsLogService.PreInitSync();
-            }
+            foreach (var draftSettingsLogService in DraftSettings.LogServices) draftSettingsLogService.PreInitSync();
         }
         catch (Exception e)
         {
@@ -178,12 +173,12 @@ public class SettingsWindowViewModel : ViewModelBase
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.IsDefined(typeof(UserInputAttribute), false));
 
-            var fields = (properties.Select(prop => 
+            var fields = properties.Select(prop =>
                     new { prop, attr = prop.GetCustomAttribute<UserInputAttribute>()! })
                 .Select(t =>
                 {
                     var selections = Array.Empty<string>();
-                    
+
                     if (!string.IsNullOrWhiteSpace(t.attr.SelectionsArrayName))
                     {
                         var draftType = draftSettingsLogService.GetType();
@@ -198,7 +193,7 @@ public class SettingsWindowViewModel : ViewModelBase
 
                         if (value is string[] ss) selections = ss;
                     }
-                    
+
                     return new LogSystemField
                     {
                         DisplayNameLangKey = t.attr.DisplayNameLangKey,
@@ -210,7 +205,7 @@ public class SettingsWindowViewModel : ViewModelBase
                         Selections = selections,
                         Value = t.prop.GetValue(draftSettingsLogService)?.ToString()
                     };
-                })).ToList();
+                }).ToList();
 
             LogSystems.Add(new LogSystemConfig
             {
@@ -242,10 +237,7 @@ public class SettingsWindowViewModel : ViewModelBase
             DraftSettings.HamlibSettings.SelectedRigInfo = null;
             if (selection is not null && SupportedModels.Contains(selection))
                 DraftSettings.HamlibSettings.SelectedRigInfo = selection;
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                HamlibInitPassed = true;
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => { HamlibInitPassed = true; });
         }
         catch (Exception e)
         {
@@ -298,7 +290,8 @@ public class SettingsWindowViewModel : ViewModelBase
                 CloudlogInfoPanelUserControl.InfoMessage = TranslationHelper.GetString(LangKeys.instanceuncompitable)
                     .Replace("{replace01}", instType.ToString());
         }
-        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException && _source.IsCancellationRequested)
+        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException &&
+                                            _source.IsCancellationRequested)
         {
             ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }
@@ -309,7 +302,7 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.Hamlib, DraftSettings, _source.Token);
     }
-    
+
     private async Task _testFLRig()
     {
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.FLRig, DraftSettings, _source.Token);
@@ -334,13 +327,13 @@ public class SettingsWindowViewModel : ViewModelBase
         _settingsService.RestoreSettings(this);
         _source.Cancel();
     }
-    
+
     private async Task _openConf()
     {
         if (Design.IsDesignMode) return;
         await _windowManagerService.LaunchDir(ApplicationStartUpUtil.GetConfigDir());
     }
-    
+
     private async Task _openTemp()
     {
         if (Design.IsDesignMode) return;

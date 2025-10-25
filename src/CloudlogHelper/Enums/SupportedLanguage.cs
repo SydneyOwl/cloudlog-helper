@@ -1,6 +1,5 @@
 ﻿namespace CloudlogHelper.Enums;
 
-
 public enum SupportedLanguage
 {
     NotSpecified = -1,

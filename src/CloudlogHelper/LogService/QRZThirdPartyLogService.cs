@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using CloudlogHelper.LogService.Attributes;
-using CloudlogHelper.Resources;
 using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
@@ -12,20 +11,18 @@ namespace CloudlogHelper.LogService;
 public class QRZThirdPartyLogService : ThirdPartyLogService
 {
     private const string QRZQsoUploadEndpoint = "https://logbook.qrz.com/api";
-    
+
     [UserInput("apikey", Description = "API Key of your logbook. Note you must have an" +
-                                        " active subscription of qrz to use this function.")]
+                                       " active subscription of qrz to use this function.")]
     public string ApiKey { get; set; }
-    
+
     public override async Task TestConnectionAsync(CancellationToken token)
     {
         var result = await QRZQsoUploadEndpoint
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostUrlEncodedAsync(new
             {
                 KEY = ApiKey,
-                ACTION = "STATUS",
+                ACTION = "STATUS"
             }, cancellationToken: token);
         var responseText = await result.GetStringAsync();
         var nameValueCollection = HttpUtility.ParseQueryString(responseText);
@@ -36,15 +33,13 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
         var result = await QRZQsoUploadEndpoint
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostUrlEncodedAsync(new
             {
                 KEY = ApiKey,
                 ACTION = "INSERT",
                 ADIF = adif
             }, cancellationToken: token);
-        
+
         var responseText = await result.GetStringAsync();
         var nameValueCollection = HttpUtility.ParseQueryString(responseText);
         if (nameValueCollection.Get("RESULT") == "OK") return;

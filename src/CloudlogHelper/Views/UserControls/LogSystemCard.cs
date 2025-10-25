@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -124,7 +123,7 @@ public class LogSystemCard : UserControl
                         };
                         break;
                     case FieldType.CheckBox:
-                        inputControl = new CheckBox()
+                        inputControl = new CheckBox
                         {
                             Classes = { "setting-control" },
                             DataContext = config.Fields[i],
@@ -136,7 +135,7 @@ public class LogSystemCard : UserControl
                         };
                         break;
                     case FieldType.ComboBox:
-                        inputControl = new ComboBox()
+                        inputControl = new ComboBox
                         {
                             Classes = { "setting-control" },
                             DataContext = config.Fields[i],
@@ -150,14 +149,14 @@ public class LogSystemCard : UserControl
                         break;
                     case FieldType.FilePicker:
                         var filePickerTextboxUserControlViewModel = new FilePickerTextboxUserControlViewModel
-                            {
-                                SelectedFilePath = (config.Fields[i].Value as string)!
-                            };
+                        {
+                            SelectedFilePath = (config.Fields[i].Value as string)!
+                        };
 
                         filePickerTextboxUserControlViewModel.WhenAnyValue(vm => vm.SelectedFilePath)
                             .BindTo(config.Fields[i], f => f.Value);
-                        
-                        inputControl = new FilePickerTextboxUserControl()
+
+                        inputControl = new FilePickerTextboxUserControl
                         {
                             Classes = { "setting-control" },
                             DataContext = filePickerTextboxUserControlViewModel
@@ -216,11 +215,11 @@ public class LogSystemCard : UserControl
                     {
                         // check required fields
                         if (logSystemField.IsRequired)
-                        {
-                            if (logSystemField.Value is null || (logSystemField.Value is string logVal && string.IsNullOrWhiteSpace(
-                                    logVal)))
-                                throw new ArgumentException($"{TranslationHelper.GetString("fillall")}({ logSystemField.PropertyName})");
-                        }
+                            if (logSystemField.Value is null || (logSystemField.Value is string logVal &&
+                                                                 string.IsNullOrWhiteSpace(
+                                                                     logVal)))
+                                throw new ArgumentException(
+                                    $"{TranslationHelper.GetString("fillall")}({logSystemField.PropertyName})");
 
                         var propertyInfo = config.RawType
                             .GetProperty(logSystemField.PropertyName);
@@ -230,7 +229,7 @@ public class LogSystemCard : UserControl
                                 .SetValue(instance, (string)logSystemField.Value! == "True");
                             continue;
                         }
-                         
+
                         propertyInfo!
                             .SetValue(instance, logSystemField.Value);
                     }

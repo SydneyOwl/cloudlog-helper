@@ -1,6 +1,5 @@
 ﻿using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
-using Xunit.Abstractions;
 
 namespace CloudlogHelper.Tests;
 

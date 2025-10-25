@@ -11,7 +11,7 @@ public enum ChangedPart
     ///     Sent when setting window is closed and Hamlib config changed.
     /// </summary>
     Hamlib,
-    
+
     /// <summary>
     ///     Sent when setting window is closed and FLRig config changed.
     /// </summary>

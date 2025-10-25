@@ -17,36 +17,27 @@ using ReactiveUI;
 
 namespace CloudlogHelper.Services;
 
-public class RigBackendManager:IRigBackendManager, IDisposable
+public class RigBackendManager : IRigBackendManager, IDisposable
 {
-    private ApplicationSettings _appSettings;
-    private IApplicationSettingsService _appSettingsService;
-    private Dictionary<RigBackendServiceEnum, IRigService> _services = new();
-    private IRigService _currentService;
-    private bool _initialized = false;
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     ///     Target address for rig info syncing.
     /// </summary>
     private readonly List<string> _syncRigInfoAddr = new();
-    
-    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
-    private CancellationToken _getNewCancellationProcessToken()
-    {
-        return new CancellationTokenSource(
-            TimeSpan.FromDays(DefaultConfigs.DefaultProcessTPStartStopTimeout)
-        ).Token;
-    }
+
+    private readonly ApplicationSettings _appSettings;
+    private readonly IApplicationSettingsService _appSettingsService;
+    private IRigService _currentService;
+    private bool _initialized;
+    private readonly Dictionary<RigBackendServiceEnum, IRigService> _services = new();
+
     public RigBackendManager(IEnumerable<IRigService> rigSources, IApplicationSettingsService appSettingsService)
     {
         _appSettings = appSettingsService.GetCurrentSettings();
         _appSettingsService = appSettingsService;
-        foreach (var rigService in rigSources)
-        { 
-            _services[rigService.GetServiceType()] = rigService;
-        }
-        
+        foreach (var rigService in rigSources) _services[rigService.GetServiceType()] = rigService;
+
         // bind settings change
         MessageBus.Current.Listen<SettingsChanged>().Subscribe(async void (x) =>
         {
@@ -62,15 +53,12 @@ public class RigBackendManager:IRigBackendManager, IDisposable
                 switch (x.Part)
                 {
                     case ChangedPart.Hamlib:
-                        if (_currentService.GetServiceType() != RigBackendServiceEnum.Hamlib)break;
-                        
+                        if (_currentService.GetServiceType() != RigBackendServiceEnum.Hamlib) break;
+
                         if (_appSettingsService.RestartHamlibNeeded())
                         {
                             await _currentService.StopService(_getNewCancellationProcessToken());
-                            if (_appSettings.HamlibSettings.UseExternalRigctld)
-                            {
-                                break;
-                            }
+                            if (_appSettings.HamlibSettings.UseExternalRigctld) break;
 
                             if (_appSettings.HamlibSettings.PollAllowed)
                             {
@@ -79,16 +67,18 @@ public class RigBackendManager:IRigBackendManager, IDisposable
                                 await _startRigctld();
                             }
                         }
+
                         break;
-                    
+
                     case ChangedPart.FLRig:
-                        if (_currentService.GetServiceType() != RigBackendServiceEnum.FLRig)break;
-                        
+                        if (_currentService.GetServiceType() != RigBackendServiceEnum.FLRig) break;
+
                         if (_appSettings.FLRigSettings.PollAllowed)
                         {
                             _syncRigInfoAddr.Clear();
                             _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
                         }
+
                         break;
                 }
             }
@@ -99,42 +89,38 @@ public class RigBackendManager:IRigBackendManager, IDisposable
         });
     }
 
-    private IRigService _getCurrentRigService()
+    public void Dispose()
     {
-        if (_appSettings.HamlibSettings.PollAllowed)return _services[RigBackendServiceEnum.Hamlib];
-        if (_appSettings.FLRigSettings.PollAllowed)return _services[RigBackendServiceEnum.FLRig];
-        return _services[RigBackendServiceEnum.Hamlib];    
+        _appSettings.Dispose();
     }
 
     public async Task InitializeAsync()
     {
-        if (_initialized)return;
+        if (_initialized) return;
         _initialized = true;
         // select default service on start...
         _currentService = _services[RigBackendServiceEnum.Hamlib];
         try
         {
             if (_appSettings.HamlibSettings.PollAllowed)
-            {           
+            {
                 _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
                 await _startRigctld();
                 return;
             }
-            
+
             if (_appSettings.FLRigSettings.PollAllowed)
-            {                
+            {
                 _syncRigInfoAddr.AddRange(_appSettings.FLRigSettings.SyncRigInfoAddress.Split(";"));
                 _currentService = _services[RigBackendServiceEnum.FLRig];
-                return;
             }
-
         }
         catch (Exception ex)
         {
             ClassLogger.Error(ex, "Error while initing rigserv");
         }
     }
-    
+
     public RigBackendServiceEnum GetServiceType()
     {
         return _currentService.GetServiceType();
@@ -155,12 +141,12 @@ public class RigBackendManager:IRigBackendManager, IDisposable
         await StopService();
         await StartService();
     }
-    
+
     public async Task StopService()
     {
         await _currentService.StopService(CancellationToken.None);
     }
-    
+
     public async Task StartService()
     {
         if (GetServiceType() == RigBackendServiceEnum.Hamlib)
@@ -168,6 +154,7 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             await _startRigctld();
             return;
         }
+
         await _currentService.StartService(_getNewCancellationProcessToken());
     }
 
@@ -187,8 +174,8 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             case RigBackendServiceEnum.Hamlib:
                 if (!appSettingsHamlibSettings.PollAllowed)
                     throw new InvalidPollException("Poll disabled.");
-                
-                if (appSettingsHamlibSettings.IsHamlibHasErrors())       
+
+                if (appSettingsHamlibSettings.IsHamlibHasErrors())
                     throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.confhamlibfirst));
 
                 if (!_currentService.IsServiceRunning() && !appSettingsHamlibSettings.UseExternalRigctld)
@@ -201,11 +188,11 @@ public class RigBackendManager:IRigBackendManager, IDisposable
                     port);
                 data.RigName = appSettingsHamlibSettings.SelectedRigInfo?.Model;
                 break;
-            case RigBackendServiceEnum.FLRig: 
+            case RigBackendServiceEnum.FLRig:
                 if (!appSettingsFLRigSettings.PollAllowed)
                     throw new InvalidPollException("Poll disabled.");
-                
-                if (appSettingsFLRigSettings.IsFLRigHasErrors())       
+
+                if (appSettingsFLRigSettings.IsFLRigHasErrors())
                     throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.confflrigfirst));
 
                 data = await _currentService.GetAllRigInfo(appSettingsFLRigSettings.ReportRFPower,
@@ -217,7 +204,7 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
+
         // finally we sync rig info to user-specified addresses.
         foreach (var se in _syncRigInfoAddr)
         {
@@ -225,7 +212,7 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             _ = _uploadRigInfoToUserSpecifiedAddressAsync(se, data,
                 CancellationToken.None);
         }
-        
+
         return data;
     }
 
@@ -241,18 +228,15 @@ public class RigBackendManager:IRigBackendManager, IDisposable
             RigBackendServiceEnum.FLRig => _appSettings.FLRigSettings.PollInterval,
             RigBackendServiceEnum.Hamlib => _appSettings.HamlibSettings.PollInterval
         };
-        
-        if (int.TryParse(interval, out var intervalInt))
-        {
-            return intervalInt;
-        }
+
+        if (int.TryParse(interval, out var intervalInt)) return intervalInt;
 
         return DefaultConfigs.RigDefaultPollingInterval;
     }
-    
+
     public bool GetPollingAllowed()
     {
-       return _currentService.GetServiceType() switch
+        return _currentService.GetServiceType() switch
         {
             RigBackendServiceEnum.FLRig => _appSettings.FLRigSettings.PollAllowed,
             RigBackendServiceEnum.Hamlib => _appSettings.HamlibSettings.PollAllowed
@@ -281,10 +265,8 @@ public class RigBackendManager:IRigBackendManager, IDisposable
                     draftSettings.HamlibSettings.ReportSplitInfo, CancellationToken.None, ip, port);
 
                 if (!_appSettings.HamlibSettings.PollAllowed)
-                {
                     // stop if polling is not enabled
                     await service.StopService(_getNewCancellationProcessToken());
-                }
             }
 
             if (backendServiceEnum == RigBackendServiceEnum.FLRig)
@@ -299,18 +281,33 @@ public class RigBackendManager:IRigBackendManager, IDisposable
         {
             if (!token.IsCancellationRequested) throw;
         }
-        
+    }
+
+    private CancellationToken _getNewCancellationProcessToken()
+    {
+        return new CancellationTokenSource(
+            TimeSpan.FromDays(DefaultConfigs.DefaultProcessTPStartStopTimeout)
+        ).Token;
+    }
+
+    private IRigService _getCurrentRigService()
+    {
+        if (_appSettings.HamlibSettings.PollAllowed) return _services[RigBackendServiceEnum.Hamlib];
+        if (_appSettings.FLRigSettings.PollAllowed) return _services[RigBackendServiceEnum.FLRig];
+        return _services[RigBackendServiceEnum.Hamlib];
     }
 
     private async Task _startRigctld(HamlibSettings? overrideSettings = null)
     {
-        var hamlibSettings = overrideSettings??_appSettings.HamlibSettings;
+        var hamlibSettings = overrideSettings ?? _appSettings.HamlibSettings;
         if (hamlibSettings.IsHamlibHasErrors())
         {
             await _currentService.StopService(_getNewCancellationProcessToken());
             throw new ArgumentException(TranslationHelper.GetString(LangKeys.confhamlibfirst));
         }
-        var defaultArgs = RigUtils.GenerateRigctldCmdArgs(hamlibSettings.SelectedRigInfo!.Id!, hamlibSettings.SelectedPort);
+
+        var defaultArgs =
+            RigUtils.GenerateRigctldCmdArgs(hamlibSettings.SelectedRigInfo!.Id!, hamlibSettings.SelectedPort);
 
         if (hamlibSettings.UseRigAdvanced)
         {
@@ -325,7 +322,7 @@ public class RigBackendManager:IRigBackendManager, IDisposable
 
         await _currentService.StartService(_getNewCancellationProcessToken(), defaultArgs);
     }
-    
+
     private (string, int) _getRigctldIpAndPort(HamlibSettings? overrideSettings = null)
     {
         var appSettingsHamlibSettings = overrideSettings ?? _appSettings.HamlibSettings;
@@ -333,7 +330,8 @@ public class RigBackendManager:IRigBackendManager, IDisposable
         var ip = DefaultConfigs.RigctldDefaultHost;
         var port = DefaultConfigs.RigctldDefaultPort;
 
-        if (appSettingsHamlibSettings.UseExternalRigctld) return IPAddrUtil.ParseAddress(appSettingsHamlibSettings.ExternalRigctldHostAddress);
+        if (appSettingsHamlibSettings.UseExternalRigctld)
+            return IPAddrUtil.ParseAddress(appSettingsHamlibSettings.ExternalRigctldHostAddress);
 
         if (appSettingsHamlibSettings.UseRigAdvanced &&
             !string.IsNullOrEmpty(appSettingsHamlibSettings.OverrideCommandlineArg))
@@ -352,33 +350,26 @@ public class RigBackendManager:IRigBackendManager, IDisposable
 
         return (ip, port);
     }
-    
-    private async Task _uploadRigInfoToUserSpecifiedAddressAsync(string url, 
+
+    private async Task _uploadRigInfoToUserSpecifiedAddressAsync(string url,
         RadioData data, CancellationToken token)
     {
         var payloadI = new RadioApiCallV2
         {
-            Radio = data.RigName??"Unknown",
+            Radio = data.RigName ?? "Unknown",
             Frequency = data.FrequencyTx,
             Mode = data.ModeTx,
             FrequencyRx = data.FrequencyRx,
             ModeRx = data.ModeRx,
             Power = data.Power
         };
-        
+
         var results = await url
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithHeader("Content-Type", "application/json")
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
             .ReceiveString();
 
         if (results != "OK")
             throw new Exception($"Result does not return as expected: expect \"OK\" but we got {results}");
-    }
-
-    public void Dispose()
-    {
-        _appSettings.Dispose();
     }
 }

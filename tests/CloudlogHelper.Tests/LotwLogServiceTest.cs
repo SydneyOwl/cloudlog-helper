@@ -1,6 +1,4 @@
-﻿using CloudlogHelper.LogService;
-
-namespace CloudlogHelper.Tests;
+﻿namespace CloudlogHelper.Tests;
 
 public class LotwLogServiceTest
 {

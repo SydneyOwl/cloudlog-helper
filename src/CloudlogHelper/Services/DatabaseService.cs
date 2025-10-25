@@ -20,6 +20,8 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// </summary>
     private readonly ILogger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    private Version _appVersion;
+
     /// <summary>
     ///     Connection to the sqlite database.
     /// </summary>
@@ -30,6 +32,8 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// </summary>
     private Dictionary<string, string> _countries = new();
 
+    private Version _dbVersion;
+
     /// <summary>
     ///     Whether this is disposed or not.
     /// </summary>
@@ -39,9 +43,6 @@ public class DatabaseService : IDatabaseService, IDisposable
     ///     Whether this is inited or not.
     /// </summary>
     private bool _inited;
-
-    private Version _appVersion;
-    private Version _dbVersion;
 
     /// <summary>
     ///     Indicates if current version is lower than target version.
@@ -136,7 +137,7 @@ public class DatabaseService : IDatabaseService, IDisposable
             db.CreateTable<CallsignDatabase>();
             db.CreateTable<CountryDatabase>();
             db.CreateTable<AdifModesDatabase>();
-            
+
             db.CreateTable<IgnoredQsoDatabase>();
             db.CreateTable<CollectedGridDatabase>();
 
@@ -245,31 +246,11 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
-    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
-    {
-        try
-        {
-            var res = await _conn!.Table<IgnoredQsoDatabase>()
-                .Where(x => x.De == ignoredQso.De)
-                .Where(x => x.Dx == ignoredQso.Dx)
-                .Where(x => x.FinalMode == ignoredQso.FinalMode)
-                .Where(x => x.RstSent == ignoredQso.RstSent)
-                .Where(x => x.RstRecv == ignoredQso.RstRecv)
-                .ToListAsync();
-            return res;
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Warn(e, "Failed to find ignored.");
-            return null;
-        }
-    }
-
     public async Task BatchAddOrUpdateCallsignGridAsync(List<CollectedGridDatabase> collectedGrid)
     {
         try
         {
-            if (collectedGrid?.Count == 0)return;
+            if (collectedGrid?.Count == 0) return;
             var now = DateTime.Now;
             var parameters = collectedGrid.SelectMany(item => new object[]
             {
@@ -278,8 +259,9 @@ public class DatabaseService : IDatabaseService, IDisposable
                 now
             }).ToArray();
 
-            var valuePlaceholders = string.Join(", ", Enumerable.Range(0, collectedGrid.Count).Select(_ => "(?, ?, ?)"));
-            
+            var valuePlaceholders =
+                string.Join(", ", Enumerable.Range(0, collectedGrid.Count).Select(_ => "(?, ?, ?)"));
+
             await _conn!.ExecuteAsync(
                 $@"INSERT INTO collected_grid (callsign, grid_square, updated_at)
                 VALUES {valuePlaceholders}
@@ -315,6 +297,26 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
+    {
+        try
+        {
+            var res = await _conn!.Table<IgnoredQsoDatabase>()
+                .Where(x => x.De == ignoredQso.De)
+                .Where(x => x.Dx == ignoredQso.Dx)
+                .Where(x => x.FinalMode == ignoredQso.FinalMode)
+                .Where(x => x.RstSent == ignoredQso.RstSent)
+                .Where(x => x.RstRecv == ignoredQso.RstRecv)
+                .ToListAsync();
+            return res;
+        }
+        catch (Exception e)
+        {
+            ClassLogger.Warn(e, "Failed to find ignored.");
+            return null;
+        }
     }
 
     /// <summary>

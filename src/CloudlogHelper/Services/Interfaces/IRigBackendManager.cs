@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
-using CloudlogHelper.Resources;
-using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Services.Interfaces;
 
@@ -18,7 +14,7 @@ public interface IRigBackendManager
     IRigService GetServiceByName(RigBackendServiceEnum rigBackend);
 
     bool IsServiceRunning();
-    
+
     Task RestartService();
     Task StopService();
     Task StartService();

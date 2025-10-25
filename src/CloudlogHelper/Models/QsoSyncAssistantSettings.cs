@@ -11,15 +11,17 @@ namespace CloudlogHelper.Models;
 
 public class QsoSyncAssistantSettings : ReactiveValidationObject
 {
-    public QsoSyncAssistantSettings()
-    {
-        
-    }
+    [Reactive] [JsonProperty] public bool ExecuteOnStart { get; set; }
+    [Reactive] [JsonProperty] public string? CloudlogUserName { get; set; }
+    [Reactive] [JsonProperty] public string? CloudlogPassword { get; set; }
+    [Reactive] [JsonProperty] public ObservableCollection<string>? LocalLogPath { get; set; }
+    [Reactive] [JsonProperty] public int CloudlogQSODayRange { get; set; } = 120;
+    [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 50;
 
     public void ApplyValidationRules()
     {
         this.ClearValidationRules();
-        
+
         this.ValidationRule(x => x.CloudlogUserName,
             SettingsValidation.CheckStringNotNull,
             TranslationHelper.GetString(LangKeys.notnull)
@@ -30,13 +32,6 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
             TranslationHelper.GetString(LangKeys.notnull)
         );
     }
-
-    [Reactive] [JsonProperty] public bool ExecuteOnStart { get; set; }
-    [Reactive] [JsonProperty] public string? CloudlogUserName { get; set; }
-    [Reactive] [JsonProperty] public string? CloudlogPassword { get; set; }
-    [Reactive] [JsonProperty] public ObservableCollection<string>? LocalLogPath { get; set; }
-    [Reactive] [JsonProperty] public int CloudlogQSODayRange { get; set; } = 120;
-    [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 50;
 
     public bool IsQsoSyncAssistantSettingsHasErrors()
     {

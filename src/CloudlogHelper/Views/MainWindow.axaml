@@ -24,51 +24,51 @@
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ShowGridLines="False">
             <Menu Grid.Column="0">
                 <MenuItem Header="{I18N {x:Static resources:LangKeys.settings}}">
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}"
-                                  Command="{Binding OpenSettingsWindow}">
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}"
+                              Command="{Binding OpenSettingsWindow}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="Settings" Width="32" Height="32" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{I18N {x:Static resources:LangKeys.themecolor}}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="ThemeLightDark" Width="32" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.light}}"
+                                  Command="{Binding SwitchLightTheme}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="Settings" Width="32" Height="32"/>
+                                <avalonia:MaterialIcon Kind="WbSunny" Width="32" Height="32" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.themecolor}}">
+                        <MenuItem Header="{I18N {x:Static resources:LangKeys.dark}}"
+                                  Command="{Binding SwitchDarkTheme}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="ThemeLightDark" Width="32" Height="32"/>
+                                <avalonia:MaterialIcon Kind="MoonAndStars" Width="32" Height="32" />
                             </MenuItem.Icon>
-                            <MenuItem Header="{I18N {x:Static resources:LangKeys.light}}"
-                                      Command="{Binding SwitchLightTheme}">
-                                <MenuItem.Icon>
-                                    <avalonia:MaterialIcon Kind="WbSunny" Width="32" Height="32"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{I18N {x:Static resources:LangKeys.dark}}"
-                                      Command="{Binding SwitchDarkTheme}">
-                                <MenuItem.Icon>
-                                    <avalonia:MaterialIcon Kind="MoonAndStars" Width="32" Height="32"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
                         </MenuItem>
                     </MenuItem>
+                </MenuItem>
                 <MenuItem Header="{I18N {x:Static resources:LangKeys.tools}}">
                     <MenuItem Header="{I18N {x:Static resources:LangKeys.qsoassistant}}"
                               Command="{Binding OpenQSOAssistantWindow}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="FileUploadOutline" Width="32" Height="32"/>
+                            <avalonia:MaterialIcon Kind="FileUploadOutline" Width="32" Height="32" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{I18N {x:Static resources:LangKeys.charts}}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="ChartBar" Width="32" Height="32"/>
+                            <avalonia:MaterialIcon Kind="ChartBar" Width="32" Height="32" />
                         </MenuItem.Icon>
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.signalpolarchart}}"
                                   Command="{Binding OpenSignalPolarChartWindow}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="ChartScatterPlot" Width="32" Height="32"/>
+                                <avalonia:MaterialIcon Kind="ChartScatterPlot" Width="32" Height="32" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{I18N {x:Static resources:LangKeys.stationstatisticgraph}}"
                                   Command="{Binding OpenStationStatisticChartWindow}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="WidgetHistogram" Width="32" Height="32"/>
+                                <avalonia:MaterialIcon Kind="WidgetHistogram" Width="32" Height="32" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
@@ -77,37 +77,37 @@
                     <MenuItem Header="{I18N {x:Static resources:LangKeys.about}}"
                               Command="{Binding OpenAboutWindow}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="InfoCircleOutline" Width="32" Height="32"/>
+                            <avalonia:MaterialIcon Kind="InfoCircleOutline" Width="32" Height="32" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
             </Menu>
             <ToggleButton Grid.Column="2" IsChecked="{Binding IsTopmost}" Margin="2">
-                <avalonia:MaterialIcon Kind="Pin" Width="20" Height="20"/>
+                <avalonia:MaterialIcon Kind="Pin" Width="20" Height="20" />
             </ToggleButton>
             <userControls1:StatusLightUserControl Grid.Column="1"
-                DataContext="{Binding StatusLightUserControlViewModel}"
-                ViewModel="{Binding}" Margin="10,0,10,0" />
+                                                  DataContext="{Binding StatusLightUserControlViewModel}"
+                                                  ViewModel="{Binding}" Margin="10,0,10,0" />
         </Grid>
 
         <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto" VerticalAlignment="Top">
             <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="LeftPanel" VerticalAlignment="Top">
                 <!-- A: UserBasicData -->
-                <userControls1:UserBasicDataGroupboxUserControl 
+                <userControls1:UserBasicDataGroupboxUserControl
                     IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UserBasicBoxEnabled,
                                                             RelativeSource={RelativeSource AncestorType=Grid}}"
                     ViewModel="{Binding}"
                     DataContext="{Binding UserBasicDataGroupboxUserControlVm}" />
-        
+
                 <!-- C: RIGData -->
-                <userControls1:RIGDataGroupboxUserControl 
+                <userControls1:RIGDataGroupboxUserControl
                     IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).RigDataBoxEnabled,
                                                             RelativeSource={RelativeSource AncestorType=Grid}}"
                     DataContext="{Binding RigDataGroupboxUserControlVm}"
                     ViewModel="{Binding}" />
             </StackPanel>
-    
-            <userControls1:UDPLogInfoGroupboxUserControl 
+
+            <userControls1:UDPLogInfoGroupboxUserControl
                 Grid.Row="0" Grid.Column="1"
                 Grid.RowSpan="2"
                 Height="{Binding #LeftPanel.Bounds.Height, Mode=OneWay}"

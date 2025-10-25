@@ -21,9 +21,9 @@ internal struct WindowData
 public class WindowManagerService : IWindowManagerService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    private readonly List<WindowData> _windows = new();
     private readonly IClassicDesktopStyleApplicationLifetime _desktop;
     private readonly IServiceProvider _provider;
+    private readonly List<WindowData> _windows = new();
 
     public WindowManagerService(IServiceProvider prov,
         IClassicDesktopStyleApplicationLifetime desk)
@@ -38,7 +38,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     }
 
     /// <summary>
-    /// Track a window and return uuid related to this window.
+    ///     Track a window and return uuid related to this window.
     /// </summary>
     /// <param name="window"></param>
     /// <returns></returns>
@@ -66,20 +66,6 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         }
     }
 
-    private bool TryGetWindow(Type wType, out Window? targetWindow)
-    {
-        AutoRemove();
-        foreach (var weakRef in _windows)
-            if (weakRef.Window.TryGetTarget(out var window) && window.GetType() == wType)
-            {
-                targetWindow = window;
-                return true;
-            }
-
-        targetWindow = null;
-        return false;
-    }
-
     public async Task<T?> CreateAndShowWindowByVm<T>(Type vmType, Window? toplevel = null, bool dialog = true)
     {
         var finalName = vmType.FullName!.Split(".").Last();
@@ -90,7 +76,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         viewPath += pFinalName;
 
         var winType = Type.GetType(viewPath);
-        if (winType == null) 
+        if (winType == null)
             throw new Exception($"Window not found for {viewPath}");
 
         if (TryGetWindow(winType, out var target))
@@ -107,10 +93,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
             newWindow.DataContext = _provider.GetRequiredService(vmType);
             Track(newWindow);
 
-            if (dialog)
-            {
-                return await newWindow.ShowDialog<T>(parentWindow);
-            }
+            if (dialog) return await newWindow.ShowDialog<T>(parentWindow);
             newWindow.Show();
         }
 
@@ -126,7 +109,38 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     {
         return _provider.GetRequiredService<T>();
     }
-    
+
+    public void CloseWindowBySeq(string seq)
+    {
+        GetWindowBySeq(seq)?.Close();
+    }
+
+    public async Task LaunchBrowser(string uri, Window? topLevel = null)
+    {
+        var tl = topLevel ?? _desktop.MainWindow;
+        await tl!.Launcher.LaunchUriAsync(new Uri(uri));
+    }
+
+    public async Task LaunchDir(string path, Window? topLevel = null)
+    {
+        var tl = topLevel ?? _desktop.MainWindow;
+        await tl!.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
+    }
+
+    private bool TryGetWindow(Type wType, out Window? targetWindow)
+    {
+        AutoRemove();
+        foreach (var weakRef in _windows)
+            if (weakRef.Window.TryGetTarget(out var window) && window.GetType() == wType)
+            {
+                targetWindow = window;
+                return true;
+            }
+
+        targetWindow = null;
+        return false;
+    }
+
     private bool TryGetWindowByVm(Type vmType, out Window? targetWindow)
     {
         AutoRemove();
@@ -146,28 +160,9 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         AutoRemove();
         foreach (var data in _windows)
             if (data.Seq == seq && data.Window.TryGetTarget(out var res))
-            {
                 return res;
-            }
 
         return null;
-    }
-
-    public void CloseWindowBySeq(string seq)
-    {
-        GetWindowBySeq(seq)?.Close();
-    }
-
-    public async Task LaunchBrowser(string uri, Window? topLevel = null)
-    {
-        var tl = topLevel ?? _desktop.MainWindow;
-        await tl!.Launcher.LaunchUriAsync(new Uri(uri));
-    }
-    
-    public async Task LaunchDir(string path, Window? topLevel = null)
-    {
-        var tl = topLevel ?? _desktop.MainWindow;
-        await tl!.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
     }
 
     private void AutoRemove()

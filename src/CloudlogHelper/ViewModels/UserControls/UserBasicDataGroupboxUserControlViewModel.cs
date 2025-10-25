@@ -24,9 +24,9 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly CloudlogSettings _settings;
-
     private readonly IInAppNotificationService _inAppNotification;
+
+    private readonly CloudlogSettings _settings;
 
     private ReactiveCommand<Unit, Unit> _pollCommand;
 
@@ -101,7 +101,9 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
         {
             _setStatusToUnknown();
             return;
-        };
+        }
+
+        ;
         ClassLogger.Debug("Refreshing userbasic data....");
         if (_settings.IsCloudlogHasErrors(true))
             throw new Exception(TranslationHelper.GetString(LangKeys.confcloudlogfirst));

@@ -1,10 +1,5 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:avalonia="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
-        xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
-        xmlns:charts="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:charts1="clr-namespace:CloudlogHelper.ViewModels.Charts"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         Width="850" Height="650"
@@ -13,158 +8,166 @@
         Title="信号极坐标图"
         WindowStartupLocation="CenterScreen"
         x:DataType="charts1:PolarChartWindowViewModel">
-    
+
     <Design.DataContext>
         <charts1:PolarChartWindowViewModel />
     </Design.DataContext>
-    
+
     <Window.Styles>
         <Style Selector="TextBlock.header">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
-        
+
         <Style Selector="Button">
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="0,0,5,0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="Margin" Value="0,0,5,0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
-        
+
         <Style Selector="ToggleButton">
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="0,0,5,0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="Margin" Value="0,0,5,0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
-        
+
         <Style Selector="ComboBox">
-            <Setter Property="Margin" Value="0,0,5,0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,0,5,0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="5" />
         </Style>
-        
+
         <Style Selector="CheckBox">
-            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Margin" Value="0,0,0,8" />
         </Style>
-        
+
         <Style Selector="Slider">
-            <Setter Property="Margin" Value="0,5,0,15"/>
+            <Setter Property="Margin" Value="0,5,0,15" />
         </Style>
-        
+
         <Style Selector="Separator">
-            <Setter Property="Margin" Value="0,15,0,15"/>
-            <Setter Property="Height" Value="1"/>
+            <Setter Property="Margin" Value="0,15,0,15" />
+            <Setter Property="Height" Value="1" />
         </Style>
-        
+
         <Style Selector="Border.card">
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="15" />
+            <Setter Property="Margin" Value="0,0,10,0" />
         </Style>
     </Window.Styles>
-    
+
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="300,*" Margin="10">
         <Border Grid.Row="1" Grid.Column="0" Classes="card"
                 Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
             <StackPanel Spacing="10">
                 <TextBlock Text="{I18N {x:Static resources:LangKeys.controlpanel}}" Classes="header"
-                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                
+                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+
                 <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="10">
-                    <ToggleButton Grid.Row="0" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.pause}}" 
+                    <ToggleButton Grid.Row="0" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.pause}}"
                                   HorizontalAlignment="Stretch" IsChecked="{Binding UpdatePaused}"
                                   Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
-                                  BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
-                    
-                    <Button Grid.Row="0" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.export}}" 
+                                  BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+
+                    <Button Grid.Row="0" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.export}}"
                             HorizontalAlignment="Stretch" Command="{Binding SaveChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
-                    
-                    <Button Grid.Row="1" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.refresh}}" 
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+
+                    <Button Grid.Row="1" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.refresh}}"
                             HorizontalAlignment="Stretch" Command="{Binding RefreshChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
-                    
-                    <Button Grid.Row="1" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.clear}}" 
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+
+                    <Button Grid.Row="1" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.clear}}"
                             HorizontalAlignment="Stretch" Command="{Binding ClearChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
                 </Grid>
-                
-                <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-                
-                <CheckBox Content="{I18N {x:Static resources:LangKeys.showdensitycolor}}" IsChecked="{Binding ShowDestColor}"
-                          Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                
-                <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}" IsChecked="{Binding FilterDupeCallsign}"
-                          Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                
+
+                <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.showdensitycolor}}"
+                          IsChecked="{Binding ShowDestColor}"
+                          Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}"
+                          IsChecked="{Binding FilterDupeCallsign}"
+                          Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.maxsamplecount}}" FontWeight="SemiBold" Margin="0,0,0,5"
-                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.maxsamplecount}}" FontWeight="SemiBold"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #qsoSlider.Value}" VerticalAlignment="Center"
                                    Width="40" TextAlignment="Right"
-                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                        <Slider Minimum="100" Maximum="5000" 
+                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        <Slider Minimum="100" Maximum="5000"
                                 Value="{Binding QSOSamples}"
-                                IsSnapToTickEnabled="True" TickFrequency="100" x:Name="qsoSlider" 
-                                Margin="10,0" Width="180"/>
+                                IsSnapToTickEnabled="True" TickFrequency="100" x:Name="qsoSlider"
+                                Margin="10,0" Width="180" />
                     </StackPanel>
                 </StackPanel>
-                
+
                 <StackPanel>
                     <TextBlock Text="{I18N {x:Static resources:LangKeys.kval}}" FontWeight="SemiBold" Margin="0,0,0,5"
-                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <TextBlock Text="{Binding #kSlider.Value}" 
+                        <TextBlock Text="{Binding #kSlider.Value}"
                                    VerticalAlignment="Center" Width="40" TextAlignment="Right"
-                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                        <Slider Minimum="1" Maximum="10" 
+                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        <Slider Minimum="1" Maximum="10"
                                 Value="{Binding KValue}"
-                                IsSnapToTickEnabled="True" TickFrequency="1" x:Name="kSlider" 
-                                Margin="10,0" Width="180"/>
+                                IsSnapToTickEnabled="True" TickFrequency="1" x:Name="kSlider"
+                                Margin="10,0" Width="180" />
                     </StackPanel>
                 </StackPanel>
-                
+
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.distweight}}" FontWeight="SemiBold" Margin="0,0,0,5"
-                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.distweight}}" FontWeight="SemiBold"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <TextBlock Text="{Binding #distSlider.Value,
-                                    StringFormat={}{0:F1}}" VerticalAlignment="Center" Width="40" TextAlignment="Right"
-                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                        <Slider Minimum="0" Maximum="1" 
+                        <TextBlock
+                            Text="{Binding #distSlider.Value,
+                                    StringFormat={}{0:F1}}"
+                            VerticalAlignment="Center" Width="40" TextAlignment="Right"
+                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        <Slider Minimum="0" Maximum="1"
                                 Value="{Binding DistWeightValue}"
-                                IsSnapToTickEnabled="True" TickFrequency="0.1" x:Name="distSlider" 
-                                Margin="10,0" Width="180"/>
+                                IsSnapToTickEnabled="True" TickFrequency="0.1" x:Name="distSlider"
+                                Margin="10,0" Width="180" />
                     </StackPanel>
                 </StackPanel>
-                
+
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.angweight}}" FontWeight="SemiBold" Margin="0,0,0,5"
-                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.angweight}}" FontWeight="SemiBold"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #angSlider.Value, 
-                        StringFormat={}{0:F1}}" VerticalAlignment="Center" Width="40" TextAlignment="Right"
-                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-                        <Slider Minimum="0" Maximum="1" 
+                        StringFormat={}{0:F1}}"
+                                   VerticalAlignment="Center" Width="40" TextAlignment="Right"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        <Slider Minimum="0" Maximum="1"
                                 Value="{Binding AngWeightValue}"
-                                IsSnapToTickEnabled="True" TickFrequency="0.1" x:Name="angSlider" 
-                                Margin="10,0" Width="180"/>
+                                IsSnapToTickEnabled="True" TickFrequency="0.1" x:Name="angSlider"
+                                Margin="10,0" Width="180" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
         </Border>
-        
+
         <Border Grid.Row="1" Grid.Column="1" Classes="card"
                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
             <Grid x:Name="ChartContainerGrid">
@@ -174,38 +177,39 @@
                            Foreground="{DynamicResource SystemControlForegroundAccentBrush}"
                            FontWeight="Medium" FontSize="15"
                            IsVisible="{Binding ShowErrorMsg}"
-                           Margin="5" TextWrapping="Wrap" TextAlignment="Center"/>
-                
+                           Margin="5" TextWrapping="Wrap" TextAlignment="Center" />
+
                 <ContentControl x:Name="plotControl" Content="{Binding PlotControl, Mode=OneTime}"
-                                IsVisible="{Binding !ShowErrorMsg}"/>
-                
-                <Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}" 
-                        CornerRadius="0,0,8,8" 
+                                IsVisible="{Binding !ShowErrorMsg}" />
+
+                <Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        CornerRadius="0,0,8,8"
                         VerticalAlignment="Bottom" HorizontalAlignment="Stretch"
                         Height="30" Padding="5,0">
                     <TextBlock Text="{Binding LastDataUpdatedAt}" VerticalAlignment="Center"
                                FontStyle="Italic" FontWeight="Medium" FontSize="10"
-                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
-                               Margin="5,0"/>
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="5,0" />
                 </Border>
-                
-                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" 
-                            Orientation="Horizontal" 
-                             Spacing="5">
-                    <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}" IsChecked="{Binding AutoSwitchEnabled}" 
-                              VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    
+
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Orientation="Horizontal"
+                            Spacing="5">
+                    <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}"
+                              IsChecked="{Binding AutoSwitchEnabled}"
+                              VerticalAlignment="Center" Margin="0,0,5,0" />
+
                     <ComboBox ItemsSource="{Binding Bands}"
                               SelectedValue="{Binding SelectedBand}"
-                              Width="80"/>
-                    
+                              Width="80" />
+
                     <ComboBox ItemsSource="{Binding Modes}"
                               SelectedValue="{Binding SelectedMode}"
-                              Width="80" IsVisible="False"/>
-                    
+                              Width="80" IsVisible="False" />
+
                     <ComboBox ItemsSource="{Binding Clients}"
                               SelectedValue="{Binding SelectedClient}"
-                              Width="100"/>
+                              Width="100" />
                 </StackPanel>
             </Grid>
         </Border>

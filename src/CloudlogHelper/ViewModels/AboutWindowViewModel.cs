@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
@@ -12,13 +11,13 @@ namespace CloudlogHelper.ViewModels;
 public class AboutWindowViewModel : ViewModelBase
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
-    private IWindowManagerService  _windowManagerService;
+
+    private readonly IWindowManagerService _windowManagerService;
 
     public AboutWindowViewModel()
     {
     }
-    
+
     public AboutWindowViewModel(IWindowManagerService windowManager)
     {
         _windowManagerService = windowManager;

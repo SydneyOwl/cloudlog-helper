@@ -93,9 +93,7 @@ public class UdpServerService : IUdpServerService, IDisposable
             .ReceiveString();
 
         if (receiveString != "OK")
-        {
             throw new Exception($"Result does not return as expected: expect \"OK\" but we got {receiveString}");
-        }
     }
 
     public async Task RestartUDPServerAsync(IPAddress ip,

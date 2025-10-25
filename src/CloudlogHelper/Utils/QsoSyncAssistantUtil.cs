@@ -38,11 +38,10 @@ public class QsoSyncAssistantUtil
         tmp.Add("user_name", username);
         tmp.Add("user_password", password);
         var loginRequest = baseurl
-            .AllowHttpStatus(303)
-            .WithAutoRedirect(false)
-            .AppendPathSegments(DefaultConfigs.CloudlogLoginEndpoint)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout));
+                .AllowHttpStatus(303)
+                .WithAutoRedirect(false)
+                .AppendPathSegments(DefaultConfigs.CloudlogLoginEndpoint)
+            ;
 
         var result = await loginRequest
             .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
@@ -61,7 +60,6 @@ public class QsoSyncAssistantUtil
 
         var response = await baseurl
             .AppendPathSegments(DefaultConfigs.ExportCustomAdifLogs)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
             .WithCookies(cookies)
             .PostMultipartAsync(mp => mp
@@ -139,7 +137,6 @@ public class QsoSyncAssistantUtil
 
         var recentQs = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogQSOAdvancedEndpoint)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
             .WithCookies(cookies)
             .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
@@ -154,8 +151,6 @@ public class QsoSyncAssistantUtil
     {
         var dashboard = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogDashboardEndpoint)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .WithCookies(cookies)
             .GetStringAsync(default, cancellationToken);
 
@@ -169,8 +164,6 @@ public class QsoSyncAssistantUtil
         if (string.IsNullOrEmpty(accountLink)) return string.Empty;
 
         var settingsPage = await accountLink
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .WithCookies(cookies)
             .GetStringAsync(default, cancellationToken);
 
@@ -249,8 +242,6 @@ public class QsoSyncAssistantUtil
     {
         var resp = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogAdifFileUploadEndpoint)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .WithCookies(cookies)
             .PostMultipartAsync(mp => mp
                     .AddString("station_profile", stationId)

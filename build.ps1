@@ -17,8 +17,8 @@ $content = Get-Content $versionInfoPath -Raw
 Copy-Item $versionInfoPath $versionInfoPathBak
 
 $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
-                    -replace '@INTERNAL_TIME@', $buildTime `
-                    -replace '@INTERNAL_VERSION@', $tagName
+                     -replace '@INTERNAL_TIME@', $buildTime `
+                     -replace '@INTERNAL_VERSION@', $tagName
 
 Set-Content $versionInfoPath -Value $content -NoNewline
 

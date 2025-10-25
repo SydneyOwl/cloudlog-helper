@@ -1,6 +1,5 @@
 ﻿using System.Reactive;
 using CloudlogHelper.Enums;
-using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -11,22 +10,19 @@ public class AskExitOrMinimizeWindowViewModel : ViewModelBase
 {
     public AskExitOrMinimizeWindowViewModel()
     {
-        
     }
-    
+
     public AskExitOrMinimizeWindowViewModel(IApplicationSettingsService ss)
     {
         ConfirmToTray = ReactiveCommand.Create(() =>
         {
             if (RememberChoice)
-            {
                 if (ss.TryGetDraftSettings(this, out var draft))
                 {
                     draft!.ShutdownMode =
                         MinimizeToTray ? ProgramShutdownMode.ToTray : ProgramShutdownMode.Shutdown;
                     ss.ApplySettings(this);
                 }
-            }
 
             return MinimizeToTray;
         });

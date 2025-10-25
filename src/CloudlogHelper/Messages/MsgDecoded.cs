@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CloudlogHelper.Models;
-using WsjtxUtilsPatch.WsjtxMessages.Messages;
+﻿using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
 namespace CloudlogHelper.Messages;
 

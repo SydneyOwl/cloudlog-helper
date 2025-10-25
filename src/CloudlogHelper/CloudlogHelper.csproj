@@ -19,7 +19,7 @@
 
     <ItemGroup>
         <PackageReference Include="Antelcat.I18N.Avalonia" Version="1.1.2"/>
-        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="AutoMapper" Version="13.0.1"/>
         <PackageReference Include="Avalonia" Version="11.3.1"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.3.1"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1"/>
@@ -33,10 +33,10 @@
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
         <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.10"/>
         <PackageReference Include="DeepCloner" Version="0.10.4"/>
-        <PackageReference Include="DesktopNotifications.Avalonia" Version="1.3.1" />
+        <PackageReference Include="DesktopNotifications.Avalonia" Version="1.3.1"/>
         <PackageReference Include="Flurl.Http" Version="4.0.2"/>
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1"/>
-        <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1"/>
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
         <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
@@ -44,15 +44,15 @@
         <PackageReference Include="NLog" Version="5.4.0"/>
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41"/>
         <PackageReference Include="ReactiveUI.Validation" Version="4.1.1"/>
-        <PackageReference Include="ScottPlot.Avalonia" Version="5.0.56" />
-        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.0" />
+        <PackageReference Include="ScottPlot.Avalonia" Version="5.0.56"/>
+        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.0"/>
         <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
         <PackageReference Include="System.IO.Ports" Version="8.0.0"/>
         <PackageReference Include="System.Management" Version="8.0.0"/>
         <PackageReference Include="WsjtxUtilsPatch.WsjtxMessages" Version="1.0.3"/>
         <PackageReference Include="WsjtxUtilsPatch.WsjtxUdpServer" Version="1.0.3"/>
-        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.1" />
-        <PackageReference Include="Xaml.Behaviors.Interactivity" Version="11.3.1" />
+        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.1"/>
+        <PackageReference Include="Xaml.Behaviors.Interactivity" Version="11.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -74,7 +74,7 @@
         <EmbeddedResource Remove="Hamlib\**"/>
         <None Remove="Hamlib\**"/>
         <None Remove="cloudlog-helper.zip"/>
-        <EmbeddedResource Include="Resources\NE2_50M_SR_W_proc_small.jpg" />
+        <EmbeddedResource Include="Resources\NE2_50M_SR_W_proc_small.jpg"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">

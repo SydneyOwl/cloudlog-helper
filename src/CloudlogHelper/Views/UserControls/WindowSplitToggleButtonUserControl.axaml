@@ -12,5 +12,5 @@
         <userControls:WindowSplitToggleButtonUserControlViewModel />
     </Design.DataContext>
     <ToggleButton IsChecked="{Binding IsSplit}"
-                  Content="{avalonia:MaterialIconExt Kind=DockWindow}"/>
+                  Content="{avalonia:MaterialIconExt Kind=DockWindow}" />
 </UserControl>

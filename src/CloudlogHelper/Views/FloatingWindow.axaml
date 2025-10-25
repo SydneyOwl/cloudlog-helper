@@ -18,20 +18,20 @@
         TransparencyLevelHint="AcrylicBlur"
         RequestedThemeVariant="Dark"
         Topmost="True">
-    
+
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="{I18N {x:Static resources:LangKeys.transparency}}">
-                <MenuItem Header="10%" Click="TransparencyMenuItem_Click"/>
-                <MenuItem Header="30%" Click="TransparencyMenuItem_Click"/>
-                <MenuItem Header="50%" Click="TransparencyMenuItem_Click"/>
-                <MenuItem Header="70%" Click="TransparencyMenuItem_Click"/>
-                <MenuItem Header="90%" Click="TransparencyMenuItem_Click"/>
-                <MenuItem Header="100%" Click="TransparencyMenuItem_Click"/>
+                <MenuItem Header="10%" Click="TransparencyMenuItem_Click" />
+                <MenuItem Header="30%" Click="TransparencyMenuItem_Click" />
+                <MenuItem Header="50%" Click="TransparencyMenuItem_Click" />
+                <MenuItem Header="70%" Click="TransparencyMenuItem_Click" />
+                <MenuItem Header="90%" Click="TransparencyMenuItem_Click" />
+                <MenuItem Header="100%" Click="TransparencyMenuItem_Click" />
             </MenuItem>
         </ContextMenu>
     </Window.ContextMenu>
-    
+
     <Border CornerRadius="10" Margin="10">
         <Grid RowDefinitions="Auto,*,Auto">
             <ExperimentalAcrylicBorder IsHitTestVisible="False">
@@ -43,7 +43,7 @@
                         MaterialOpacity="0.65" />
                 </ExperimentalAcrylicBorder.Material>
             </ExperimentalAcrylicBorder>
-            
+
             <ContentControl Content="{Binding TargetControl}" Grid.Row="1" />
 
             <Border Height="10" Background="Transparent"

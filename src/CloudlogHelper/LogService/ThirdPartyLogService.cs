@@ -28,12 +28,11 @@ public abstract class ThirdPartyLogService
     }
 
     /// <summary>
-    /// Preinit works. This will be called each time setting window opened!
-    /// DON'T DO TIME COSTING WORKS HERE!
+    ///     Preinit works. This will be called each time setting window opened!
+    ///     DON'T DO TIME COSTING WORKS HERE!
     /// </summary>
     /// <returns></returns>
     public virtual void PreInitSync()
     {
-        return;
     }
 }

@@ -21,7 +21,7 @@ public partial class PolarChartWindow : ReactiveWindow<PolarChartWindowViewModel
             ViewModel!.OpenSaveFilePickerInteraction.RegisterHandler(SaveFilePickerDialog).DisposeWith(disposable);
         });
     }
-    
+
     private async Task SaveFilePickerDialog(IInteractionContext<Unit, IStorageFile?> interaction)
     {
         var file = await GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(
@@ -37,14 +37,14 @@ public partial class PolarChartWindow : ReactiveWindow<PolarChartWindowViewModel
     {
         base.OnClosed(e);
         plotControl.Content = null;
-        if (ViewModel is null)return;
+        if (ViewModel is null) return;
         ViewModel.UpdatePaused = true;
     }
 
     protected override void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        if (ViewModel is null)return;
+        if (ViewModel is null) return;
         ViewModel.UpdatePaused = false;
     }
 }

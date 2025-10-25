@@ -24,14 +24,15 @@ public class StatusLightUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private IRigBackendManager _rigBackendManager;
-    private IUdpServerService _udpServerService;
-    private IApplicationSettingsService _applicationSettingsService;
+    private readonly IApplicationSettingsService _applicationSettingsService;
+
+    private bool _applingSettings;
     private IInAppNotificationService _inAppNotificationService;
 
     private bool _isRigctldUsingExternal;
 
-    private bool _applingSettings;
+    private readonly IRigBackendManager _rigBackendManager;
+    private readonly IUdpServerService _udpServerService;
 
     public StatusLightUserControlViewModel()
     {
@@ -54,10 +55,10 @@ public class StatusLightUserControlViewModel : ViewModelBase
         if (!InitSkipped)
         {
             Initialize();
-            
+
             StartStopUdpCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (_applingSettings)return;
+                if (_applingSettings) return;
                 _applingSettings = true;
                 try
                 {
@@ -67,6 +68,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                         draft!.UDPSettings.EnableUDPServer = !draft!.UDPSettings.EnableUDPServer;
                         _applicationSettingsService.ApplySettings(this);
                     }
+
                     await Task.Delay(500);
                 }
                 finally
@@ -76,7 +78,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
             });
             StartStopRigBackendCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (_applingSettings)return;
+                if (_applingSettings) return;
                 _applingSettings = true;
                 try
                 {
@@ -92,10 +94,10 @@ public class StatusLightUserControlViewModel : ViewModelBase
                                 draft!.FLRigSettings.PollAllowed = !draft.FLRigSettings.PollAllowed;
                                 break;
                         }
-                        
+
                         _applicationSettingsService.ApplySettings(this);
                     }
-                    
+
                     await Task.Delay(1500);
                 }
                 finally
@@ -120,7 +122,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
     [Reactive] public StatusLightEnum UdpServerRunningStatus { get; set; } = StatusLightEnum.Loading;
     [Reactive] public bool InitSkipped { get; set; }
     [Reactive] public string BackendService { get; set; }
-    
+
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigBackendCommand { get; set; }
 
@@ -144,13 +146,16 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
             Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)).Subscribe(_ =>
             {
-                if(_applingSettings)return;
-                
-                UdpServerRunningStatus = _udpServerService.IsUdpServerRunning() ? StatusLightEnum.Running : StatusLightEnum.Stopped;
-                
-                RigBackendRunningStatus = (_rigBackendManager.IsServiceRunning() 
-                                           || (_isRigctldUsingExternal && _rigBackendManager.GetServiceType() == RigBackendServiceEnum.Hamlib)) 
-                    ? StatusLightEnum.Running 
+                if (_applingSettings) return;
+
+                UdpServerRunningStatus = _udpServerService.IsUdpServerRunning()
+                    ? StatusLightEnum.Running
+                    : StatusLightEnum.Stopped;
+
+                RigBackendRunningStatus = _rigBackendManager.IsServiceRunning()
+                                          || (_isRigctldUsingExternal && _rigBackendManager.GetServiceType() ==
+                                              RigBackendServiceEnum.Hamlib)
+                    ? StatusLightEnum.Running
                     : StatusLightEnum.Stopped;
             }).DisposeWith(disposables);
         });

@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
-using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using Flurl.Http;
 
@@ -30,8 +29,6 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
     {
         var result = await ClublogTestEndpoint
             .AllowHttpStatus(200, 400, 500, 403)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostUrlEncodedAsync(new
             {
                 email = Email,
@@ -53,8 +50,6 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
     {
         var result = await ClublogQsoUploadEndpoint
             .AllowHttpStatus(200, 400, 500, 403)
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout))
             .PostUrlEncodedAsync(new
             {
                 email = Email,

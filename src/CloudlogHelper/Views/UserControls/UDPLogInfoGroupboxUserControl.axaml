@@ -43,7 +43,7 @@
                               IsChecked="{Binding ShowFailedOnly}" Margin="20,0,0,10" />
                     <userControls2:WindowSplitToggleButtonUserControl
                         DataContext="{Binding SplitUserControlViewModel}"
-                        Margin="20,0,0,10"  />
+                        Margin="20,0,0,10" />
                 </StackPanel>
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
@@ -57,10 +57,10 @@
                         <ListBox.Styles>
                             <Style Selector="ListBoxItem">
                                 <Setter Property="Padding" Value="6" />
-                                <Setter Property="VerticalAlignment" Value="Stretch" /> 
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
                             </Style>
                         </ListBox.Styles>
-                        
+
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True"
@@ -73,10 +73,10 @@
                                             <InvokeCommandAction
                                                 Command="{Binding ((userControls:UDPLogInfoGroupboxUserControlViewModel)DataContext).ShowQSODetailCommand,
                                                 RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                CommandParameter="{Binding}"/>
+                                                CommandParameter="{Binding}" />
                                         </EventTriggerBehavior>
                                     </Interaction.Behaviors>
-                                    
+
                                     <Grid ColumnDefinitions="Auto,*,Auto,Auto"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Center">
@@ -87,28 +87,28 @@
                                             <TextBlock Text="{Binding LocalizedCountryName}" FontSize="12"
                                                        FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" />
                                         </StackPanel>
-                                        <Grid Grid.Column="2" 
+                                        <Grid Grid.Column="2"
                                               Margin="0,0,24,0"
                                               ColumnDefinitions="Auto,Auto"
                                               RowDefinitions="Auto,Auto"
                                               VerticalAlignment="Top">
-                                            <TextBlock Text="Tx:" 
+                                            <TextBlock Text="Tx:"
                                                        Grid.Column="0" Grid.Row="0"
                                                        Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                                                        FontSize="13"
                                                        Margin="0,0,4,2" />
-                                            <TextBlock Text="{Binding ReportSent}" 
+                                            <TextBlock Text="{Binding ReportSent}"
                                                        Grid.Column="1" Grid.Row="0"
                                                        FontWeight="SemiBold"
                                                        FontSize="13"
                                                        Margin="0,0,16,2" />
-                        
-                                            <TextBlock Text="Rx:" 
+
+                                            <TextBlock Text="Rx:"
                                                        Grid.Column="0" Grid.Row="1"
                                                        Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                                                        FontSize="13"
                                                        Margin="0,2,4,0" />
-                                            <TextBlock Text="{Binding ReportReceived}" 
+                                            <TextBlock Text="{Binding ReportReceived}"
                                                        Grid.Column="1" Grid.Row="1"
                                                        FontWeight="SemiBold"
                                                        FontSize="13"
@@ -117,26 +117,30 @@
                                         <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                                                         Spacing="4">
-                                                <Border Background="{Binding TXFrequencyInMeters, 
-                                                Converter={StaticResource StringToColor}}" CornerRadius="4"
-                                                        Padding="6 3">
+                                                <Border
+                                                    Background="{Binding TXFrequencyInMeters, 
+                                                Converter={StaticResource StringToColor}}"
+                                                    CornerRadius="4"
+                                                    Padding="6 3">
                                                     <TextBlock Text="{Binding TXFrequencyInMeters}" FontSize="10"
                                                                FontWeight="SemiBold"
                                                                Foreground="White" />
                                                 </Border>
-                                                
-                                                <Border Background="{Binding Mode, 
-                                                Converter={StaticResource StringToColor}}" CornerRadius="4"
-                                                        Padding="6 3">
-                                                    <TextBlock Text="{Binding Mode}" 
+
+                                                <Border
+                                                    Background="{Binding Mode, 
+                                                Converter={StaticResource StringToColor}}"
+                                                    CornerRadius="4"
+                                                    Padding="6 3">
+                                                    <TextBlock Text="{Binding Mode}"
                                                                FontSize="10"
                                                                FontWeight="SemiBold"
                                                                Foreground="White" />
                                                 </Border>
-                                                
+
                                                 <Border Background="#4CAF50" CornerRadius="4"
                                                         Padding="6 3">
-                                                    <TextBlock Text="{Binding ClientId}" 
+                                                    <TextBlock Text="{Binding ClientId}"
                                                                MaxWidth="40"
                                                                TextTrimming="CharacterEllipsis"
                                                                ToolTip.Tip="{Binding ClientId}"
@@ -145,7 +149,8 @@
                                                                Foreground="White" />
                                                 </Border>
                                             </StackPanel>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                                        Spacing="5">
                                                 <TextBlock
                                                     Foreground="{Binding UploadStatus, Converter={StaticResource StatusToColor}}"
                                                     Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
@@ -158,7 +163,8 @@
                                                                        VerticalAlignment="Center"
                                                                        Width="20" Height="20" Margin="5,0,0,0">
                                                     <ToolTip.Tip>
-                                                        <TextBlock Text="{Binding FailReason, 
+                                                        <TextBlock
+                                                            Text="{Binding FailReason, 
                                                         Converter={StaticResource FailReasonToTooltip}}" />
                                                     </ToolTip.Tip>
                                                     <ToolTip.ShowDelay>
@@ -174,14 +180,16 @@
                     </ListBox>
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 147, 0, 0.7)" IsVisible="{Binding TxStatus}">
-                        <TextBlock Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center"
+                        <TextBlock Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                   TextAlignment="Center"
                                    Foreground="Azure" Text="{Binding MsgSending}" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 69, 0, 0.8)"
                                 IsVisible="{Binding TimeoutStatus}">
-                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   TextAlignment="Center"
                                    Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />
                     </StackPanel>
 
@@ -200,8 +208,8 @@
                     <Button Content="{I18N {x:Static resources:LangKeys.delsel}}"
                             Command="{Binding DeleteSelectedCommand}" />
                     <Button Content="{avalonia:MaterialIconExt Kind=PublishDisabled}"
-                        Background="Orange" 
-                        Command="{Binding IgnoreSelectedPermanentlyCommand}"/>
+                            Background="Orange"
+                            Command="{Binding IgnoreSelectedPermanentlyCommand}" />
                 </StackPanel>
             </Grid>
         </HeaderedContentControl>

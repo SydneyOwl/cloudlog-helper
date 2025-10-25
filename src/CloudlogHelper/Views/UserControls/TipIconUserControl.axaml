@@ -7,21 +7,21 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.UserControls.TipIconUserControl"
              x:DataType="userControls:TipIconUserControl">
-        <avalonia:MaterialIcon Kind="HelpCircleOutline"
-                               Background="Transparent"
-                               Foreground="CornflowerBlue"
-                               Width="20"
-                               Height="20"
-                               VerticalAlignment="Center"
-                               Cursor="Hand" >
-            <ToolTip.Tip>
-                <TextBlock Text="{Binding TooltipText}"
-                           FontSize="14"
-                           MaxWidth="300"
-                           TextWrapping="Wrap" />
-            </ToolTip.Tip>
-            <ToolTip.ShowDelay>
-                10
-            </ToolTip.ShowDelay>
-        </avalonia:MaterialIcon>
+    <avalonia:MaterialIcon Kind="HelpCircleOutline"
+                           Background="Transparent"
+                           Foreground="CornflowerBlue"
+                           Width="20"
+                           Height="20"
+                           VerticalAlignment="Center"
+                           Cursor="Hand">
+        <ToolTip.Tip>
+            <TextBlock Text="{Binding TooltipText}"
+                       FontSize="14"
+                       MaxWidth="300"
+                       TextWrapping="Wrap" />
+        </ToolTip.Tip>
+        <ToolTip.ShowDelay>
+            10
+        </ToolTip.ShowDelay>
+    </avalonia:MaterialIcon>
 </UserControl>

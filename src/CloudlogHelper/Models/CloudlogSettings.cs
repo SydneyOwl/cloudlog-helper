@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CloudlogHelper.Validation;
-using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -18,10 +17,23 @@ namespace CloudlogHelper.Models;
 [JsonObject(MemberSerialization.OptIn)]
 public class CloudlogSettings : ReactiveValidationObject
 {
-    public CloudlogSettings()
-    {
-        
-    }
+    [Reactive] [JsonProperty] public string CloudlogUrl { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public string CloudlogApiKey { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public StationInfo? CloudlogStationInfo { get; set; }
+
+    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; } = true;
+    [Reactive] [JsonProperty] public bool AutoPollStationStatus { get; set; } = true;
+
+    [Reactive]
+    [JsonProperty]
+    public ObservableCollection<StationInfo> AvailableCloudlogStationInfo { get; set; } = new();
+
+    public IObservable<bool> IsCloudlogValid => this.WhenAnyValue(
+        x => x.CloudlogUrl,
+        x => x.CloudlogApiKey,
+        x => x.CloudlogStationInfo,
+        (url, key, id) => !IsCloudlogHasErrors()
+    );
 
     public void ApplyValidationRules()
     {
@@ -69,24 +81,6 @@ public class CloudlogSettings : ReactiveValidationObject
         );
     }
 
-    [Reactive] [JsonProperty] public string CloudlogUrl { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public string CloudlogApiKey { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public StationInfo? CloudlogStationInfo { get; set; }
-
-    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; } = true;
-    [Reactive] [JsonProperty] public bool AutoPollStationStatus { get; set; } = true;
-
-    [Reactive]
-    [JsonProperty]
-    public ObservableCollection<StationInfo> AvailableCloudlogStationInfo { get; set; } = new();
-
-    public IObservable<bool> IsCloudlogValid => this.WhenAnyValue(
-        x => x.CloudlogUrl,
-        x => x.CloudlogApiKey,
-        x => x.CloudlogStationInfo,
-        (url, key, id) => !IsCloudlogHasErrors()
-    );
-    
 
     public bool IsCloudlogHasErrors(bool checkStationId = false)
     {
@@ -112,7 +106,8 @@ public class CloudlogSettings : ReactiveValidationObject
     {
         return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
                CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId &&
-               AutoQSOUploadEnabled == other.AutoQSOUploadEnabled && AutoPollStationStatus == other.AutoPollStationStatus;
+               AutoQSOUploadEnabled == other.AutoQSOUploadEnabled &&
+               AutoPollStationStatus == other.AutoPollStationStatus;
     }
 
     public override bool Equals(object? obj)
@@ -125,6 +120,7 @@ public class CloudlogSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled, AutoPollStationStatus);
+        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled,
+            AutoPollStationStatus);
     }
 }

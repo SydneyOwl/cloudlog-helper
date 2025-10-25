@@ -1,6 +1,5 @@
 ﻿using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
-using SQLite;
 
 namespace CloudlogHelper.Tests;
 
@@ -27,7 +26,7 @@ public class CallsignDataTests : IClassFixture<DatabaseFixture>
         Assert.Equal(dxcc, callsignDetailAsync.Dxcc);
         Assert.Equal(continent, callsignDetailAsync.Continent);
     }
-    
+
     [Theory]
     [InlineData("FT8", "")]
     [InlineData("FT4", "MFSK")]
@@ -42,11 +41,10 @@ public class CallsignDataTests : IClassFixture<DatabaseFixture>
     }
 }
 
-
 public class DatabaseFixture : IAsyncLifetime
 {
     public IDatabaseService DatabaseService { get; private set; }
-    
+
     public async Task InitializeAsync()
     {
         DatabaseService = new DatabaseService();

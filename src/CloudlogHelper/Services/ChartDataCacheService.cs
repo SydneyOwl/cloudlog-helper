@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using NLog;
-using ScottPlot.Collections;
 using ScottPlot.Statistics;
 
 namespace CloudlogHelper.Services;
 
 /// <summary>
-/// Simple cache service for charts...
+///     Simple cache service for charts...
 /// </summary>
 /// <typeparam name="ChartQSOPoint"></typeparam>
 public class ChartDataCacheService : IChartDataCacheService, IDisposable
-{ 
+{
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    private readonly Subject<ChartQSOPoint> _itemAddedSubject = new();
+    private readonly object _lock = new();
+    private readonly Dictionary<string, double[,]> _accumulatedGridStationCount = new();
+
+    private readonly Dictionary<string, Histogram> _accumulatedStationBearing = new();
+
     // <Band, <Dxcc, count>>
-    private Dictionary<string, Dictionary<string, double?>?> _accumulatedStationCount = new();
-    
+    private readonly Dictionary<string, Dictionary<string, double?>?> _accumulatedStationCount = new();
+
     // <Band, Histogram>
-    private Dictionary<string, Histogram> _accumulatedStationDistance = new();
-    private Dictionary<string, Histogram> _accumulatedStationBearing = new();
-    private Dictionary<string, double[,]> _accumulatedGridStationCount = new();
+    private readonly Dictionary<string, Histogram> _accumulatedStationDistance = new();
 
     private ChartQSOPoint[] _buffer = new ChartQSOPoint[DefaultConfigs.DefaultChartDataCacheNumber];
-    private int _nextIndex = 0;
-    private int _count = 0;
-    private readonly object _lock = new();
-    
-    private readonly Subject<ChartQSOPoint> _itemAddedSubject = new();
+    private int _count;
+    private int _nextIndex;
     private IObservable<ChartQSOPoint> ItemAdded => _itemAddedSubject.AsObservable();
 
     public IObservable<ChartQSOPoint> GetItemAddedObservable()
@@ -95,15 +94,15 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             {
                 ClassLogger.Error(e);
             }
-            
+
             _itemAddedSubject.OnNext(item);
         }
     }
 
     public void Clear()
     {
-       ClearPolarBuffer();
-       ClearAccuBuffer();
+        ClearPolarBuffer();
+        ClearAccuBuffer();
     }
 
     public void ClearPolarBuffer()
@@ -115,7 +114,7 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             _count = 0;
         }
     }
-    
+
     public void ClearAccuBuffer()
     {
         lock (_lock)
@@ -126,7 +125,7 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             _accumulatedGridStationCount.Clear();
         }
     }
-    
+
     public double[,]? GetGridStationCountByBand(string? band)
     {
         if (band is null) return null;
@@ -138,26 +137,27 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
         if (band is null) return null;
         return _accumulatedStationDistance.GetValueOrDefault(band);
     }
-    
+
     public Histogram? GetBearingHistogramByBand(string? band)
     {
         if (band is null) return null;
         return _accumulatedStationBearing.GetValueOrDefault(band);
     }
-    
+
     public Dictionary<string, double?>? GetStationCountByBand(string? band)
     {
         if (band is null) return null;
         return _accumulatedStationCount.GetValueOrDefault(band);
     }
 
-    public IEnumerable<ChartQSOPoint> TakeLatestN(int count, IEqualityComparer<ChartQSOPoint>? comparer = null, Func<ChartQSOPoint, bool>? filterCondition = null)
+    public IEnumerable<ChartQSOPoint> TakeLatestN(int count, IEqualityComparer<ChartQSOPoint>? comparer = null,
+        Func<ChartQSOPoint, bool>? filterCondition = null)
     {
         lock (_lock)
         {
             var result = new List<ChartQSOPoint>();
             var seen = new HashSet<ChartQSOPoint>(comparer);
-        
+
             var takeCount = Math.Min(count, _count);
             var itemsTaken = 0;
 
@@ -173,7 +173,7 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
                     continue;
 
                 if (comparer != null) seen.Add(item);
-                
+
                 result.Add(item);
                 itemsTaken++;
             }
@@ -182,5 +182,7 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
         }
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 }

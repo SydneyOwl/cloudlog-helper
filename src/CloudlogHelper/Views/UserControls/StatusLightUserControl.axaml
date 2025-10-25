@@ -12,21 +12,21 @@
         <converters:StatusToColorConverter x:Key="StatusToColor" />
         <converters:StatusToShadowConverter x:Key="StatusToShadow" />
     </UserControl.Resources>
-    
+
     <UserControl.Styles>
         <Style Selector="StackPanel.StatusContainer">
             <Setter Property="Orientation" Value="Horizontal" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Spacing" Value="15" />
         </Style>
-        
+
         <Style Selector="TextBlock.StatusLabel">
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
-        
+
         <Style Selector="TextBlock.AddressText">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -43,13 +43,13 @@
         <!-- UDP Server Status -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
                     Classes="StatusContainer">
-            
+
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="PointerPressed">
                     <InvokeCommandAction Command="{Binding StartStopUdpCommand}" />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
-            
+
             <StackPanel.Styles>
                 <Style Selector="StackPanel.StatusContainer">
                     <Setter Property="Opacity" Value="0.8" />
@@ -59,15 +59,15 @@
                     <Setter Property="ZIndex" Value="100" />
                 </Style>
             </StackPanel.Styles>
-    
+
             <StackPanel.Transitions>
                 <Transitions>
                     <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
                 </Transitions>
             </StackPanel.Transitions>
-            
+
             <StackPanel Background="Transparent" Cursor="Hand" ToolTip.Tip="Start/Stop"
-                        Orientation="Horizontal" Spacing="10" >
+                        Orientation="Horizontal" Spacing="10">
                 <Border Width="22" Height="22" CornerRadius="11"
                         Background="{Binding UdpServerRunningStatus, Converter={StaticResource StatusToColor}}"
                         BoxShadow="{Binding UdpServerRunningStatus, Converter={StaticResource StatusToShadow}}"
@@ -78,24 +78,24 @@
                         </Style>
                     </Border.Styles>
                 </Border>
-                
+
                 <StackPanel Orientation="Vertical" Spacing="2">
-                    <TextBlock Text="UDP SERVER" Classes="StatusLabel"/>
-                    <TextBlock Text="{Binding CurrentUDPServerAddress}" Classes="AddressText"/>
+                    <TextBlock Text="UDP SERVER" Classes="StatusLabel" />
+                    <TextBlock Text="{Binding CurrentUDPServerAddress}" Classes="AddressText" />
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        
+
         <!-- backend Status -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12"
                     Classes="StatusContainer">
-            
+
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="PointerPressed">
                     <!-- <InvokeCommandAction Command="{Binding StartStopRigBackendCommand}" /> -->
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
-            
+
             <StackPanel.Styles>
                 <Style Selector="StackPanel.StatusContainer">
                     <Setter Property="Opacity" Value="0.8" />
@@ -105,7 +105,7 @@
                     <Setter Property="ZIndex" Value="100" />
                 </Style>
             </StackPanel.Styles>
-    
+
             <StackPanel.Transitions>
                 <Transitions>
                     <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
@@ -113,7 +113,7 @@
             </StackPanel.Transitions>
             <StackPanel Background="Transparent"
                         Orientation="Horizontal" Spacing="10">
-                
+
                 <Border Width="22" Height="22" CornerRadius="11"
                         Background="{Binding RigBackendRunningStatus, Converter={StaticResource StatusToColor}}"
                         BoxShadow="{Binding RigBackendRunningStatus, Converter={StaticResource StatusToShadow}}"
@@ -124,10 +124,10 @@
                         </Style>
                     </Border.Styles>
                 </Border>
-                
+
                 <StackPanel Orientation="Vertical" Spacing="2">
-                    <TextBlock Text="{Binding BackendService}" Classes="StatusLabel"/>
-                    <TextBlock Text="{Binding CurrentRigBackendAddress}" Classes="AddressText"/>
+                    <TextBlock Text="{Binding BackendService}" Classes="StatusLabel" />
+                    <TextBlock Text="{Binding CurrentRigBackendAddress}" Classes="AddressText" />
                 </StackPanel>
             </StackPanel>
         </StackPanel>

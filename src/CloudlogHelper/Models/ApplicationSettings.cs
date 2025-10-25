@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
-using CloudlogHelper.Resources;
-using CloudlogHelper.Utils;
-using Force.DeepCloner;
 using Newtonsoft.Json;
-using NLog;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Models;
-
-
 
 /// <summary>
 ///     Application-wide settings
@@ -23,17 +13,13 @@ namespace CloudlogHelper.Models;
 [JsonObject(MemberSerialization.OptIn)]
 public class ApplicationSettings : ReactiveValidationObject
 {
-    public ApplicationSettings()
-    {
-    }
-
     /// <summary>
     ///     ProgramShutdownMode of this application.
     /// </summary>
     [Reactive]
     [JsonProperty]
     public ProgramShutdownMode ShutdownMode { get; set; } = ProgramShutdownMode.NotSpecified;
-    
+
     /// <summary>
     ///     Some basic settings.
     /// </summary>

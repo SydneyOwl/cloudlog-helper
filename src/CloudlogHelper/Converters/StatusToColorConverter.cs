@@ -14,7 +14,7 @@ public class StatusToColorConverter : IValueConverter
         return value switch
         {
             StatusLightEnum.Running => Brushes.LawnGreen,
-            StatusLightEnum.Stopped =>Brushes.Red,
+            StatusLightEnum.Stopped => Brushes.Red,
             StatusLightEnum.Loading => Brushes.Yellow,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };

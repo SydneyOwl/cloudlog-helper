@@ -3,7 +3,6 @@ using System.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Force.DeepCloner;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -15,10 +14,29 @@ namespace CloudlogHelper.Models;
 [JsonObject(MemberSerialization.OptIn)]
 public class FLRigSettings : ReactiveValidationObject
 {
-    public FLRigSettings()
-    {
-        
-    }
+    [Reactive]
+    [JsonProperty]
+    public string PollInterval { get; set; } = DefaultConfigs.RigDefaultPollingInterval.ToString();
+
+    [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
+
+    [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }
+
+    [Reactive] [JsonProperty] public bool ReportSplitInfo { get; set; }
+
+    [Reactive] [JsonProperty] public string FLRigHost { get; set; } = DefaultConfigs.FLRigDefaultHost;
+
+    [Reactive] [JsonProperty] public string FLRigPort { get; set; } = DefaultConfigs.FLRigDefaultPort;
+
+    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
+
+    public IObservable<bool> IsFLRigValid => this.WhenAnyValue(
+        x => x.PollInterval,
+        x => x.FLRigHost,
+        x => x.FLRigPort,
+        (a, b, c) =>
+            !IsFLRigHasErrors()
+    );
 
     public void ApplyValidationRules()
     {
@@ -36,30 +54,6 @@ public class FLRigSettings : ReactiveValidationObject
             TranslationHelper.GetString(LangKeys.pollintervalreq)
         );
     }
-
-    [Reactive]
-    [JsonProperty]
-    public string PollInterval { get; set; } = DefaultConfigs.RigDefaultPollingInterval.ToString();
-
-    [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
-
-    [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }
-
-    [Reactive] [JsonProperty] public bool ReportSplitInfo { get; set; }
-
-    [Reactive] [JsonProperty] public string FLRigHost { get; set; } = DefaultConfigs.FLRigDefaultHost;
-    
-    [Reactive] [JsonProperty] public string FLRigPort { get; set; } = DefaultConfigs.FLRigDefaultPort;
-
-    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
-
-    public IObservable<bool> IsFLRigValid => this.WhenAnyValue(
-        x => x.PollInterval,
-        x => x.FLRigHost,
-        x => x.FLRigPort,
-        (a, b, c) =>
-            !IsFLRigHasErrors()
-    );
 
 
     private bool IsPropertyHasErrors(string propertyName)
@@ -93,6 +87,7 @@ public class FLRigSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(PollInterval, PollAllowed, ReportRFPower, ReportSplitInfo, FLRigHost, FLRigPort, SyncRigInfoAddress);
+        return HashCode.Combine(PollInterval, PollAllowed, ReportRFPower, ReportSplitInfo, FLRigHost, FLRigPort,
+            SyncRigInfoAddress);
     }
 }

@@ -3,6 +3,7 @@
 public struct RadioData
 {
     public string? RigName { get; set; }
+
     /// <summary>
     ///     Is rig in split mode?
     /// </summary>

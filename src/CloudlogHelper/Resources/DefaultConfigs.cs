@@ -33,7 +33,7 @@ public class DefaultConfigs
     ///     Default timeout (in seconds) for HTTP(s) requests.
     /// </summary>
     public static readonly int DefaultRequestTimeout = 10;
-    
+
     /// <summary>
     ///     Default timeout (in seconds) for HTTP(s) forwarding requests.
     /// </summary>
@@ -63,7 +63,8 @@ public class DefaultConfigs
     ///     Default name for our application.
     /// </summary>
     public static string DefaultApplicationName = $"CloudlogHelper {VersionInfo.Version}";
-    public static string DefaultApplicationNameNoVersion = $"CloudlogHelper";
+
+    public static string DefaultApplicationNameNoVersion = "CloudlogHelper";
 
     /// <summary>
     ///     QSOSampleCountChoice
@@ -173,12 +174,12 @@ public class DefaultConfigs
     ///     Allowed time offset when comparing qso.
     /// </summary>
     public static readonly int AllowedTimeOffsetMinutes = 10;
-    
+
     /// <summary>
     ///     Default host address for flrig.
     /// </summary>
     public static readonly string FLRigDefaultHost = "127.0.0.1";
-    
+
     /// <summary>
     ///     Default host address for flrig.
     /// </summary>
@@ -267,7 +268,7 @@ public class DefaultConfigs
     public static readonly int UDPClientExpiryInSeconds = 60;
 
     public static readonly int UDPServerDefaultPort = 2237;
-    
+
     public static readonly int DefaultBatchProcessGridMessageInterval = 18;
     public static readonly int DefaultNotificationTimeout = 5;
     public static readonly int DefaulPolarKValue = 5;
@@ -275,14 +276,14 @@ public class DefaultConfigs
     public static readonly double DefaulPolarDistWeightValue = 0.5;
     public static readonly int DefaultPolarQSOSamples = 1000;
     public static readonly int DefaultHistogramQSOSamples = 9000;
-    
+
     /// <summary>
-    /// Default cache size for qso points.
+    ///     Default cache size for qso points.
     /// </summary>
     public static readonly int DefaultChartDataCacheNumber = 15000;
-    
+
     public static readonly int UpdateChartsThrottleTime = 3;
-    
+
     /// <summary>
     ///     Default timeout (in seconds) for start/stop.
     /// </summary>
@@ -321,6 +322,8 @@ public class DefaultConfigs
     public static int WorldHeatmapWidth = 360;
     public static int WorldHeatmapHeight = 180;
 
+    public static string DefaultTempFilePath = Path.Join(Path.GetTempPath(), "CloudlogHelperTmpFiles");
+
     /// <summary>
     ///     Default path to SQLite database file.
     /// </summary>
@@ -337,6 +340,4 @@ public class DefaultConfigs
     public static string ExecutableRigctldPath => Path.Join(
         HamlibFilePath,
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "rigctld.exe" : "rigctld");
-
-    public static string DefaultTempFilePath = Path.Join(Path.GetTempPath(), "CloudlogHelperTmpFiles");
 }

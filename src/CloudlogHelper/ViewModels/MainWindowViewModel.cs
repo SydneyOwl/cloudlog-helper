@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
@@ -27,8 +26,9 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IWindowManagerService _windowManager;
     private readonly IInAppNotificationService _inAppNotificationService;
+
+    private readonly IWindowManagerService _windowManager;
     private bool _isRigctldUsingExternal;
 
     public MainWindowViewModel()
@@ -68,8 +68,14 @@ public class MainWindowViewModel : ViewModelBase
             ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(PolarChartWindowViewModel), false));
         OpenStationStatisticChartWindow =
             ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(StationStatisticsChartWindowViewModel), false));
-        SwitchLightTheme = ReactiveCommand.Create(() => { Application.Current!.RequestedThemeVariant = ThemeVariant.Light; });
-        SwitchDarkTheme = ReactiveCommand.Create(() => { Application.Current!.RequestedThemeVariant = ThemeVariant.Dark; });
+        SwitchLightTheme = ReactiveCommand.Create(() =>
+        {
+            Application.Current!.RequestedThemeVariant = ThemeVariant.Light;
+        });
+        SwitchDarkTheme = ReactiveCommand.Create(() =>
+        {
+            Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+        });
 
         UserBasicDataGroupboxUserControlVm = userBasicDataGroupboxUserControlViewModel;
         RigDataGroupboxUserControlVm = rigdataGroupboxUserControlViewModel;
@@ -93,7 +99,7 @@ public class MainWindowViewModel : ViewModelBase
                                     DataContext = res.Sender
                                 };
                                 k.Height = double.NaN;
-                                var floatWin = new FloatingWindow()
+                                var floatWin = new FloatingWindow
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
@@ -107,11 +113,11 @@ public class MainWindowViewModel : ViewModelBase
                             }
                             case UserBasicDataGroupboxUserControlViewModel:
                             {
-                                var k = new UserBasicDataGroupboxUserControl()
+                                var k = new UserBasicDataGroupboxUserControl
                                 {
                                     DataContext = res.Sender
                                 };
-                                var floatWin = new FloatingWindow()
+                                var floatWin = new FloatingWindow
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };
@@ -123,11 +129,11 @@ public class MainWindowViewModel : ViewModelBase
                             }
                             case RIGDataGroupboxUserControlViewModel:
                             {
-                                var k = new RIGDataGroupboxUserControl()
+                                var k = new RIGDataGroupboxUserControl
                                 {
                                     DataContext = res.Sender
                                 };
-                                var floatWin = new FloatingWindow()
+                                var floatWin = new FloatingWindow
                                 {
                                     DataContext = new FloatingWindowViewModel(k)
                                 };

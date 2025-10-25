@@ -83,7 +83,7 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="0 0 0 4" />
         </Style>
-        
+
         <Style Selector="TabItem">
             <Setter Property="Padding" Value="12 8" />
             <Setter Property="FontSize" Value="14" />
@@ -109,31 +109,35 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <!-- <Border Classes="setting-card"> -->
-                            <StackPanel Spacing="10">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Language/语言" Classes="setting-label" />
-                                    <ComboBox Classes="setting-control"
-                                              SelectedIndex="{Binding DraftSettings.BasicSettings.LanguageType}">
-                                        <ComboBoxItem>English</ComboBoxItem>
-                                        <ComboBoxItem>简体中文</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.mygrid}}" Classes="setting-label" />
-                                    <TextBox HorizontalAlignment="Left" Text="{Binding DraftSettings.BasicSettings.MyMaidenheadGrid}" Classes="setting-control" Grid.Column="1" Watermark="e.g. OM89"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                                    <CheckBox HorizontalAlignment="Left" Height="20" Content="{I18N {x:Static resources:LangKeys.disablecharts}}"
-                                              IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="15">
-                                    <Button Content="{I18N {x:Static resources:LangKeys.openconfpath}}"
-                                            Command="{Binding OpenConfDir}"/>
-                                
-                                    <Button Content="{I18N {x:Static resources:LangKeys.opentempfolder}}"
-                                            Command="{Binding OpenTempDir}"/>
-                                </StackPanel>
+                        <StackPanel Spacing="10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Language/语言" Classes="setting-label" />
+                                <ComboBox Classes="setting-control"
+                                          SelectedIndex="{Binding DraftSettings.BasicSettings.LanguageType}">
+                                    <ComboBoxItem>English</ComboBoxItem>
+                                    <ComboBoxItem>简体中文</ComboBoxItem>
+                                </ComboBox>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{I18N {x:Static resources:LangKeys.mygrid}}" Classes="setting-label" />
+                                <TextBox HorizontalAlignment="Left"
+                                         Text="{Binding DraftSettings.BasicSettings.MyMaidenheadGrid}"
+                                         Classes="setting-control"
+                                         Watermark="e.g. OM89" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                <CheckBox HorizontalAlignment="Left" Height="20"
+                                          Content="{I18N {x:Static resources:LangKeys.disablecharts}}"
+                                          IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <Button Content="{I18N {x:Static resources:LangKeys.openconfpath}}"
+                                        Command="{Binding OpenConfDir}" />
+
+                                <Button Content="{I18N {x:Static resources:LangKeys.opentempfolder}}"
+                                        Command="{Binding OpenTempDir}" />
+                            </StackPanel>
+                        </StackPanel>
                         <!-- </Border> -->
                     </StackPanel>
                 </ScrollViewer>
@@ -145,7 +149,8 @@
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
-                                <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto,Auto" ShowGridLines="False"
+                                <Grid ColumnDefinitions="*,2*,*" RowDefinitions="Auto,Auto,Auto,Auto"
+                                      ShowGridLines="False"
                                       RowSpacing="10">
                                     <!-- URL -->
                                     <TextBlock Text="Cloudlog URL" Classes="setting-label" Grid.Row="0" Grid.Column="0" />
@@ -160,7 +165,8 @@
                                                                          DataContext="{Binding CloudlogTestButtonUserControl}" />
 
                                     <!-- API Key -->
-                                    <TextBlock Text="Cloudlog APIKey" Classes="setting-label" Grid.Row="1" Grid.Column="0" />
+                                    <TextBlock Text="Cloudlog APIKey" Classes="setting-label" Grid.Row="1"
+                                               Grid.Column="0" />
                                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Spacing="8">
                                         <TextBox Classes="setting-control"
                                                  Text="{Binding DraftSettings.CloudlogSettings.CloudlogApiKey}" />
@@ -169,7 +175,8 @@
                                     </StackPanel>
 
                                     <!-- Station ID -->
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.stationid}}" Classes="setting-label"
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.stationid}}"
+                                               Classes="setting-label"
                                                Grid.Row="2" Grid.Column="0"
                                                IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
                                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Spacing="8"
@@ -181,7 +188,8 @@
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text="{Binding StationId}" />
-                                                        <TextBlock Text="{Binding StationProfileName, StringFormat=' ({0})'}" />
+                                                        <TextBlock
+                                                            Text="{Binding StationProfileName, StringFormat=' ({0})'}" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
@@ -189,12 +197,13 @@
                                         <userControls1:TipIconUserControl
                                             TooltipText="{I18N {x:Static resources:LangKeys.cloudlogstationid}}" />
                                     </StackPanel>
-                                    
-                                    <StackPanel Orientation="Horizontal"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20">
+
+                                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0"
+                                                Grid.ColumnSpan="2" Spacing="20">
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.autoqsoupload}}"
-                                                  IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}"/>
+                                                  IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}" />
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.autopollstatus}}"
-                                                  IsChecked="{Binding DraftSettings.CloudlogSettings.AutoPollStationStatus}"/>
+                                                  IsChecked="{Binding DraftSettings.CloudlogSettings.AutoPollStationStatus}" />
                                     </StackPanel>
                                 </Grid>
 
@@ -227,21 +236,25 @@
                                 <TextBlock Text="HamLib" Classes="section-title" />
 
                                 <Grid IsEnabled="{Binding HamlibInitPassed}" ColumnDefinitions="*,2*,*"
-                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False" RowSpacing="10">
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
+                                      RowSpacing="10">
                                     <!-- Polling -->
                                     <CheckBox Content="{I18N {x:Static resources:LangKeys.autoupdateriginfo}}"
                                               Grid.Column="0" Grid.ColumnSpan="2"
                                               IsChecked="{Binding DraftSettings.HamlibSettings.PollAllowed}" />
 
                                     <!-- Poll Interval -->
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="setting-label"
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.pollinterval}}"
+                                               Classes="setting-label"
                                                Grid.Row="1" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"
+                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1"
+                                             HorizontalAlignment="Left"
                                              MinWidth="20" Width="80"
                                              Text="{Binding DraftSettings.HamlibSettings.PollInterval}" />
 
                                     <!-- Rig Model -->
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.rigmodel}}" Classes="setting-label"
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.rigmodel}}"
+                                               Classes="setting-label"
                                                Grid.Row="2" Grid.Column="0" />
                                     <ComboBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
                                               DisplayMemberBinding="{Binding Model}"
@@ -249,7 +262,8 @@
                                               ItemsSource="{Binding SupportedModels}" />
 
                                     <!-- Device Port -->
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.deviceport}}" Classes="setting-label"
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.deviceport}}"
+                                               Classes="setting-label"
                                                Grid.Row="3" Grid.Column="0"
                                                IsEnabled="{Binding !#externalRigctld.IsChecked}" />
                                     <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Spacing="8"
@@ -263,7 +277,8 @@
                                     </StackPanel>
 
                                     <!-- Report Options -->
-                                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"
+                                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                                Orientation="Horizontal"
                                                 Spacing="24">
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.reportsplit}}"
                                                   IsChecked="{Binding DraftSettings.HamlibSettings.ReportSplitInfo}" />
@@ -272,7 +287,8 @@
                                     </StackPanel>
 
                                     <!-- Advanced Settings -->
-                                    <Expander Header="{I18N {x:Static resources:LangKeys.advancedsettings}}" Grid.Row="5"
+                                    <Expander Header="{I18N {x:Static resources:LangKeys.advancedsettings}}"
+                                              Grid.Row="5"
                                               Grid.Column="0" Grid.ColumnSpan="3">
                                         <StackPanel Spacing="12" Margin="0 12 0 0">
                                             <Grid ColumnDefinitions="Auto,*" Margin="0 0 0 0">
@@ -291,8 +307,9 @@
                                                         IsEnabled="{Binding #advancedRig.IsChecked}">
                                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto"
                                                       ShowGridLines="False" RowSpacing="10" ColumnSpacing="10">
-                                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.rigctldcmdarg}}"
-                                                               Classes="setting-label" />
+                                                    <TextBlock
+                                                        Text="{I18N {x:Static resources:LangKeys.rigctldcmdarg}}"
+                                                        Classes="setting-label" />
                                                     <TextBox Classes="setting-control" Grid.Row="0" Grid.Column="1"
                                                              Text="{Binding DraftSettings.HamlibSettings.OverrideCommandlineArg}" />
 
@@ -313,72 +330,82 @@
 
                                             <Grid ColumnDefinitions="Auto,*" Margin="24 0 0 0"
                                                   IsEnabled="{Binding #externalRigctld.IsChecked}">
-                                                <TextBlock Text="{I18N {x:Static resources:LangKeys.externalrigctldhost}}"
-                                                           Classes="setting-label" />
+                                                <TextBlock
+                                                    Text="{I18N {x:Static resources:LangKeys.externalrigctldhost}}"
+                                                    Classes="setting-label" />
                                                 <TextBox Classes="setting-control" Grid.Column="1"
                                                          Text="{Binding DraftSettings.HamlibSettings.ExternalRigctldHostAddress}" />
                                             </Grid>
-                                            <TextBlock Text="{Binding HamlibVersion}" Margin="0 5 0 0" FontStyle="Italic" />
+                                            <TextBlock Text="{Binding HamlibVersion}" Margin="0 5 0 0"
+                                                       FontStyle="Italic" />
                                         </StackPanel>
                                     </Expander>
 
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding HamlibTestButtonUserControl}" />
                                 </Grid>
-                                <TextBlock Text="{I18N {x:Static resources:LangKeys.testandapply}}" Margin="0 12 0 0" FontStyle="Normal" FontSize="10" FontWeight="Black"/>
+                                <TextBlock Text="{I18N {x:Static resources:LangKeys.testandapply}}" Margin="0 12 0 0"
+                                           FontStyle="Normal" FontSize="10" FontWeight="Black" />
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- FLRig Settings -->
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
                                 <TextBlock Text="FLRig" Classes="section-title" />
 
                                 <Grid IsEnabled="{Binding HamlibInitPassed}" ColumnDefinitions="*,2*,*"
-                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False" RowSpacing="10">
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
+                                      RowSpacing="10">
                                     <!-- Polling -->
                                     <CheckBox Content="{I18N {x:Static resources:LangKeys.autoupdateriginfo}}"
                                               Grid.Column="0" Grid.ColumnSpan="2"
                                               IsChecked="{Binding DraftSettings.FLRigSettings.PollAllowed}" />
 
                                     <!-- Poll Interval -->
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="setting-label"
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.pollinterval}}"
+                                               Classes="setting-label"
                                                Grid.Row="1" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"
+                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1"
+                                             HorizontalAlignment="Left"
                                              MinWidth="20" Width="80"
                                              Text="{Binding DraftSettings.FLRigSettings.PollInterval}" />
-                                    
+
                                     <!-- flrig ip-->
                                     <TextBlock Text="FLRig IP" Classes="setting-label"
                                                Grid.Row="2" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
+                                    <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
+                                             HorizontalAlignment="Left"
                                              MinWidth="20" Width="120"
                                              Text="{Binding DraftSettings.FLRigSettings.FLRigHost}" />
-                                    
+
                                     <!-- flrig port-->
                                     <TextBlock Text="FLRig Port" Classes="setting-label"
                                                Grid.Row="3" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
+                                    <TextBox Classes="setting-control" Grid.Row="3" Grid.Column="1"
+                                             HorizontalAlignment="Left"
                                              MinWidth="20" Width="120"
                                              Text="{Binding DraftSettings.FLRigSettings.FLRigPort}" />
 
                                     <!-- Report Options -->
-                                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"
+                                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                                Orientation="Horizontal"
                                                 Spacing="24">
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.reportsplit}}"
                                                   IsChecked="{Binding DraftSettings.FLRigSettings.ReportSplitInfo}" />
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.reportpwr}}"
                                                   IsChecked="{Binding DraftSettings.FLRigSettings.ReportRFPower}" />
                                     </StackPanel>
-                                    
-                                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*" Margin="0 0 0 0">
+
+                                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*"
+                                          Margin="0 0 0 0">
                                         <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
                                                    Classes="setting-label" />
                                         <TextBox Classes="setting-control" Grid.Column="1"
                                                  Text="{Binding DraftSettings.FLRigSettings.SyncRigInfoAddress}"
                                                  Watermark="{I18N {x:Static resources:LangKeys.spiltby}}" />
                                     </Grid>
-                                    
+
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding FLRigTestButtonUserControl}" />
                                 </Grid>
@@ -394,7 +421,8 @@
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
-                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                                <Grid ColumnDefinitions="Auto,*"
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                                     <!-- Enable UDP -->
                                     <CheckBox Content="{I18N {x:Static resources:LangKeys.enableudpserver}}"
                                               Grid.Column="0" Grid.ColumnSpan="2"
@@ -418,28 +446,34 @@
                                              Text="{Binding DraftSettings.UDPSettings.RetryCount}" />
 
                                     <!-- UDP Forwarding -->
-                                    <CheckBox Grid.Row="5" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.forwardmsg}}"
+                                    <CheckBox Grid.Row="5" Grid.Column="0"
+                                              Content="{I18N {x:Static resources:LangKeys.forwardmsg}}"
                                               Margin="0,10,0,0" x:Name="forwardudp"
                                               IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessage}" />
-                                    <TextBox Grid.Row="5" Grid.Column="1"  Classes="setting-control" Margin="0,10,0,0" 
-                                                         Text="{Binding DraftSettings.UDPSettings.ForwardAddress}"
-                                                         IsEnabled="{Binding #forwardudp.IsChecked}"/>
-                                    
+                                    <TextBox Grid.Row="5" Grid.Column="1" Classes="setting-control" Margin="0,10,0,0"
+                                             Text="{Binding DraftSettings.UDPSettings.ForwardAddress}"
+                                             IsEnabled="{Binding #forwardudp.IsChecked}" />
+
                                     <!-- TDP Forwarding -->
-                                    <CheckBox Grid.Row="6" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.forward2tcp}}"
+                                    <CheckBox Grid.Row="6" Grid.Column="0"
+                                              Content="{I18N {x:Static resources:LangKeys.forward2tcp}}"
                                               Margin="0,10,0,0" x:Name="forwardtcp"
                                               IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessageToHttp}" />
-                                    <TextBox Grid.Row="6" Grid.Column="1"  Classes="setting-control" Margin="0,10,0,0" 
+                                    <TextBox Grid.Row="6" Grid.Column="1" Classes="setting-control" Margin="0,10,0,0"
                                              Text="{Binding DraftSettings.UDPSettings.ForwardHttpAddress}"
-                                             IsEnabled="{Binding #forwardtcp.IsChecked}"/>
-                                    
+                                             IsEnabled="{Binding #forwardtcp.IsChecked}" />
+
                                     <!-- Notifications -->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2" Margin="0,10,0,0">
-                                        <TextBlock Text="{I18N {x:Static resources:LangKeys.pushnotificationon}}" VerticalAlignment="Center"/>
-                                        <CheckBox Margin="30,0,0,0" IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOMade}"
-                                                  Content="{I18N {x:Static resources:LangKeys.qsofinished}}"/>
-                                        <CheckBox Margin="30,0,0,0"  IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOUploaded}"
-                                                  Content="{I18N {x:Static resources:LangKeys.qsouploaded}}"/>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="7"
+                                                Grid.ColumnSpan="2" Margin="0,10,0,0">
+                                        <TextBlock Text="{I18N {x:Static resources:LangKeys.pushnotificationon}}"
+                                                   VerticalAlignment="Center" />
+                                        <CheckBox Margin="30,0,0,0"
+                                                  IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOMade}"
+                                                  Content="{I18N {x:Static resources:LangKeys.qsofinished}}" />
+                                        <CheckBox Margin="30,0,0,0"
+                                                  IsChecked="{Binding DraftSettings.UDPSettings.PushNotificationOnQSOUploaded}"
+                                                  Content="{I18N {x:Static resources:LangKeys.qsouploaded}}" />
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>

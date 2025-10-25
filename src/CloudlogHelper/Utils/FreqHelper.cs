@@ -22,7 +22,7 @@ public static class FreqHelper
         if (addMHz) mhz = $"{mhz}MHz";
         return mhz;
     }
-    
+
     public static string GetFrequencyStr(ulong freq, bool addMHz = true)
     {
         var mhzValue = freq / 1_000_000.0;
@@ -57,11 +57,11 @@ public static class FreqHelper
                || freq is >= 432301600 and <= 432301800 //70cm
                || freq is >= 1296501400 and <= 1296501600; //23cm
     }
-    
+
     public static ulong GetRandomFreqFromMeter(string meterBand)
     {
         var random = new Random();
-    
+
         return meterBand.ToLower() switch
         {
             "2200m" => (ulong)random.Next(135700, 137800 + 1),
@@ -116,8 +116,7 @@ public static class FreqHelper
             _ => CalculationMeterFromFreq(freq)
         };
     }
-    
-    
+
 
     /// <summary>
     ///     Convert frequency to corresponding wavelength.
