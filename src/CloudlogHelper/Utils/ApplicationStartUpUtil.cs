@@ -29,13 +29,13 @@ public class ApplicationStartUpUtil
 
     public static string GetConfigDir()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (OperatingSystem.IsWindows())
         {
             var winPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             return Path.Combine(winPath, "CloudlogHelper");
         }
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        if (OperatingSystem.IsLinux())
         {
             var linuxPath = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ??
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
@@ -43,7 +43,7 @@ public class ApplicationStartUpUtil
             return Path.Combine(linuxPath, "CloudlogHelper");
         }
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             var macPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),

@@ -360,7 +360,7 @@ public class App : Application
 
         Directory.CreateDirectory(DefaultConfigs.HamlibFilePath);
         var hamlibRelease = DefaultConfigs.DefaultWindowsHamlibFiles;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) hamlibRelease = DefaultConfigs.DefaultLinuxHamlibFiles;
+        if (OperatingSystem.IsLinux()) hamlibRelease = DefaultConfigs.DefaultLinuxHamlibFiles;
         foreach (var defaultHamlibFile in hamlibRelease)
         {
             var tPath = Path.Join(DefaultConfigs.HamlibFilePath, defaultHamlibFile);
@@ -394,7 +394,7 @@ public class App : Application
             }
 
             // make it executable on linux
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
             {
                 var fileInfo = new UnixFileInfo(tPath);
                 fileInfo.FileAccessPermissions |=

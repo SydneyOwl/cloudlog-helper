@@ -87,7 +87,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         {
             var stationDataPath = string.Empty;
             var combine = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 combine = Path.Combine(Environment.GetEnvironmentVariable("APPDATA") ?? string.Empty,
                     "TrustedQSL",
@@ -130,7 +130,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         // find default tqsl path
         if (string.IsNullOrWhiteSpace(LotwFilePath))
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 var combine = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)") ?? string.Empty,
                     "TrustedQSL",
@@ -138,7 +138,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
                 if (File.Exists(combine)) LotwFilePath = combine;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
             {
                 if (File.Exists("/usr/bin/tqsl")) LotwFilePath = "/usr/bin/tqsl";
                 if (File.Exists("/usr/local/bin/tqsl")) LotwFilePath = "/usr/local/bin/tqsl";

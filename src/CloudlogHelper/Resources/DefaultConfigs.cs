@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Resources;
@@ -339,5 +339,5 @@ public class DefaultConfigs
     /// </summary>
     public static string ExecutableRigctldPath => Path.Join(
         HamlibFilePath,
-        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "rigctld.exe" : "rigctld");
+        OperatingSystem.IsWindows() ? "rigctld.exe" : "rigctld");
 }

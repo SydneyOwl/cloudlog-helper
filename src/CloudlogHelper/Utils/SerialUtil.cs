@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -73,9 +74,9 @@ public class SerialUtil
     /// <returns></returns>
     public static string PreSelectSerialByName()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return WinSelectSerialByName();
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return LinuxSelectSerialByName();
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return MacOsSelectSerialByName();
+        if (OperatingSystem.IsWindows()) return WinSelectSerialByName();
+        if (OperatingSystem.IsLinux()) return LinuxSelectSerialByName();
+        if (OperatingSystem.IsMacOS()) return MacOsSelectSerialByName();
         return "";
     }
 
@@ -86,7 +87,7 @@ public class SerialUtil
     private static List<ManagementBaseObject> WinGetSerialDevices()
     {
         List<ManagementBaseObject> list = new();
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return new List<ManagementBaseObject>();
+        if (!OperatingSystem.IsWindows()) return new List<ManagementBaseObject>();
         using (var searcher = new ManagementObjectSearcher
                    ("select * from Win32_PnPEntity where Name like '%(COM%'"))
         {

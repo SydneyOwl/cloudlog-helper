@@ -56,7 +56,7 @@ public static class ServiceCollectionExtensions
     {
         try
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+            if (OperatingSystem.IsWindows() &&
                 Environment.OSVersion.Version >= new Version(10, 0))
             {
                 // only enabled on win10 or later
@@ -66,7 +66,7 @@ public static class ServiceCollectionExtensions
                 await windowsNotificationManager.Initialize();
                 services.AddSingleton<INotificationManager>(windowsNotificationManager);
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (OperatingSystem.IsLinux())
             {
                 ClassLogger.Info("Using dbus native notification.");
                 var context = FreeDesktopApplicationContext.FromCurrentProcess();
