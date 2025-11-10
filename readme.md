@@ -8,7 +8,7 @@
 
 <img src="./md_assets/logo.png" align="right" alt="" width="150" height="150">
 
-Cloudlog Helper is a lightweight, cross-platform, portable helper application that automatically syncs real-time rig data (via FLRig/Hamlib) and QSO information to multiple logging platforms.
+Cloudlog Helper is a lightweight, cross-platform, portable helper application that automatically syncs real-time rig data (via FLRig/Hamlib) and QSO information to multiple logging platforms. While Cloudlog Helper is specifically tailored for Cloudlog and Wavelog, it's also a capable stand-alone logging companion that functions perfectly!
 
 + Automatically syncs radio and QSO data across multiple platforms.
 + Supports both Hamlib and FLRig for radio control, seamlessly working with JTDX, WSJT-X, and most mainstream transceivers.
