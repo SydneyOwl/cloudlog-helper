@@ -1,32 +1,37 @@
-<div align="center">
-<img src="./md_assets/logo.png" alt="cloudlog_helper_logo" width="25%" />
-
 # Cloudlog Helper [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SydneyOwl/cloudlog-helper)
 
-![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=for-the-badge)
-![avalonia](https://img.shields.io/badge/AvaloniaUI-11.2.6-0d6efd?style=for-the-badge)
-![license](https://img.shields.io/badge/license-Unlicense-3451b2?style=for-the-badge&logo=none)<br />
-![windows](https://img.shields.io/badge/Windows-7_SP1+-green?style=for-the-badge)
-![linux](https://img.shields.io/badge/Debian-9+-green?style=for-the-badge&logo=linux)<br />
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=for-the-badge)
-![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=for-the-badge)
+![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=flat)
+![avalonia](https://img.shields.io/badge/AvaloniaUI-11.2.6-0d6efd?style=flat)
+![license](https://img.shields.io/badge/license-Unlicense-3451b2?style=flat&logo=none)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=flat)
+![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=flat)
 
-[**🌍阅读中文版本**](./readme_cn.md)
+<img src="./md_assets/logo.png" align="right" alt="" width="150" height="150">
 
-A lightweight, cross-platform, portable helper application for `Cloudlog`/`Wavelog`
-that automatically syncs real-time rig data (via FLRig/Hamlib) and QSO information to multiple logging platforms.
-Supports most mainstream radios, and works seamlessly with software like `JTDX`/`WSJT-X`!
+Cloudlog Helper is a lightweight, cross-platform, portable helper application that automatically syncs real-time rig data (via FLRig/Hamlib) and QSO information to multiple logging platforms.
 
-If you’re looking for a simple way to automate logging — whether due to limited system resources 
-or a preference for streamlined tools — `Cloudlog Helper` offers an efficient and portable solution!
++ Automatically syncs radio and QSO data across multiple platforms.
++ Supports both Hamlib and FLRig for radio control, seamlessly working with JTDX, WSJT-X, and most mainstream transceivers.
++ Includes a rich set of charts and utilities - polar signal map, distance distribution map, global heatmap, QSO comparison assistant, etc.,
++ Portable and installation-free — ready to run right out of the box.
++ Native support for Windows and Linux, with macOS currently in development.
++ Easily integrates with new logging systems and custom backends, with support for pushing radio and decoded QSO data to user-defined APIs.
++ Optimized for resource-constrained environments — runs reliably on low-end hardware with minimal system overhead.
 
-  <img src="./md_assets/image-20251003205204844.png" alt="image-20251003205204844" style="zoom:67%;" />
+<p align="center">
+
+  <img src="./md_assets/image-20251003205204844.png" alt="MainImg" width="700">
+  <br />
+  <img src="./md_assets/image-20251003211358747.png" alt="MainImg" width="700">
+  <br />
+  <img src="./md_assets/image-20251003211217422.png" alt="MainImg" width="700">
+
+</p>
 
 (Some call signs have been anonymized)
 
 **⚠️ This is an UNOFFICIAL community project. It is NOT endorsed by, directly affiliated with, maintained, or sponsored by the Cloudlog/Wavelog development teams.**
 
-</div>
 
 ## 💻 Supported Platforms
 
@@ -245,6 +250,8 @@ Here are the specific steps (using Windows 7 as an example):
 
 ## 🛠️ Compilation
 
+**Refer to CI File in this repo (`.github/workflows/build.yml`) for more!**
+
 Please ensure your build environment has `.NET 6.0` (or higher) and `gcc` installed. The following steps are for Linux x64 environments.
 
 First, clone this repository:
@@ -364,7 +371,9 @@ CPU and memory usage after 1 hour of operation are shown below. The CPU spikes c
 
 ## 📝 License
 
-`Cloudlog Helper` is free and unencumbered software released into the public domain. Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software, either in source code form or as a compiled binary, for any purpose, commercial or non-commercial.
+`Cloudlog Helper` is free and unencumbered software released into the public domain.
+Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software,
+either in source code form or as a compiled binary, for any purpose, commercial or non-commercial.
 
 For complete license information, please see the [Unlicense](./LICENSE) file in the repository.
 
