@@ -2,13 +2,14 @@
 
 ![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=flat)
 ![avalonia](https://img.shields.io/badge/AvaloniaUI-11.2.6-0d6efd?style=flat)
-![license](https://img.shields.io/badge/license-Unlicense-3451b2?style=flat&logo=none)
+![license](https://img.shields.io/badge/license-The_Unlicense-3451b2?style=flat&logo=none)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=flat)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=flat)
 
 <img src="./md_assets/logo.png" align="right" alt="" width="150" height="150">
 
-Cloudlog Helper is a lightweight, cross-platform, portable helper application that automatically syncs real-time rig data (via FLRig/Hamlib) and QSO information to multiple logging platforms. While Cloudlog Helper is specifically tailored for Cloudlog and Wavelog, it's also a capable stand-alone logging companion that functions perfectly!
+Cloudlog Helper is a lightweight, cross-platform, portable application that automatically syncs real-time rig data and QSO information to multiple logging platforms. 
+While providing first-class support for Cloudlog and Wavelog, it also functions as a powerful, stand-alone logging tool in its own right!
 
 + Automatically syncs radio and QSO data across multiple platforms.
 + Supports both Hamlib and FLRig for radio control, seamlessly working with JTDX, WSJT-X, and most mainstream transceivers.
