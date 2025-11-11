@@ -207,14 +207,14 @@ public class RigctldService : IRigService, IDisposable
             ClassLogger.Trace($"we got: {raw}");
             var freqStr = raw.Split("\n")[0];
             if (!long.TryParse(freqStr, out var freq))
-                throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
+                throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
             testbk.FrequencyRx = freq;
             testbk.FrequencyTx = freq;
 
             raw = await ExecuteCommand(ip, port, "m");
             var mode = raw.Split("\n")[0];
             if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-                throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
+                throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode) + mode);
             testbk.ModeRx = mode;
             testbk.ModeTx = mode;
 
@@ -244,7 +244,7 @@ public class RigctldService : IRigService, IDisposable
                             var txfreqStr = raw.Split("\n")[0];
                             if (!long.TryParse(txfreqStr, out var freqtx))
                                 throw new RigCommException(
-                                    TranslationHelper.GetString(LangKeys.unsupportedrigfreq + freqStr));
+                                    TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
                             testbk.FrequencyTx = freqtx;
 
                             // fetch spilt tx mode 
@@ -252,7 +252,7 @@ public class RigctldService : IRigService, IDisposable
                             var modetx = raw.Split("\n")[0];
                             if (!DefaultConfigs.AvailableRigModes.Contains(modetx))
                                 throw new RigCommException(
-                                    TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
+                                    TranslationHelper.GetString(LangKeys.unsupportedrigmode) + mode);
                             testbk.ModeTx = modetx;
                         }
                     }

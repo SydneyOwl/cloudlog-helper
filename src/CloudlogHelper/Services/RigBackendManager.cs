@@ -286,7 +286,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     private CancellationToken _getNewCancellationProcessToken()
     {
         return new CancellationTokenSource(
-            TimeSpan.FromDays(DefaultConfigs.DefaultProcessTPStartStopTimeout)
+            TimeSpan.FromSeconds(DefaultConfigs.DefaultProcessTPStartStopTimeout)
         ).Token;
     }
 
