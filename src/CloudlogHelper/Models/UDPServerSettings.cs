@@ -43,7 +43,7 @@ public class UDPServerSettings : ReactiveValidationObject
     [JsonProperty]
     public bool PushNotificationOnQSOMade { get; set; }
 
-    public void ApplyValidationRules()
+    public void ReinitRules()
     {
         this.ClearValidationRules();
         this.ValidationRule(

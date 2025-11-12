@@ -18,7 +18,7 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
     [Reactive] [JsonProperty] public int CloudlogQSODayRange { get; set; } = 120;
     [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 50;
 
-    public void ApplyValidationRules()
+    public void ReinitRules()
     {
         this.ClearValidationRules();
 

@@ -35,7 +35,7 @@ public class CloudlogSettings : ReactiveValidationObject
         (url, key, id) => !IsCloudlogHasErrors()
     );
 
-    public void ApplyValidationRules()
+    public void ReinitRules()
     {
         this.ClearValidationRules();
         var cloudlogRulesUrl =

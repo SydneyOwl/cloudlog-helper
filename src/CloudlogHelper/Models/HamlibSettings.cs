@@ -1,5 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
@@ -43,6 +46,10 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
 
+    private bool _isConfChanged;
+
+    private CompositeDisposable _disposable = new();
+
     public IObservable<bool> IsHamlibValid => this.WhenAnyValue(
         x => x.SelectedRigInfo,
         x => x.SelectedPort,
@@ -55,8 +62,18 @@ public class HamlibSettings : ReactiveValidationObject
             !IsHamlibHasErrors()
     );
 
-    public void ApplyValidationRules()
+    public bool IsConfOnceChanged()
     {
+        return _isConfChanged;
+    }
+
+    public void ReinitRules()
+    {
+        _disposable.Dispose();
+        _disposable = new CompositeDisposable();
+
+        _isConfChanged = false;
+        
         this.ClearValidationRules();
         this.ValidationRule(x => x.SelectedRigInfo,
             st => st?.Id is not null,
@@ -74,6 +91,32 @@ public class HamlibSettings : ReactiveValidationObject
             SettingsValidation.CheckInt,
             TranslationHelper.GetString(LangKeys.pollintervalreq)
         );
+        
+        // skip 4: refer to CloudlogHelper.ViewModels.SettingsWindowViewModel._initializeHamlibAsync
+        this.WhenAnyValue(     
+            x => x.SelectedRigInfo,
+            x => x.SelectedPort,
+            x => x.PollInterval,
+            x => x.PollAllowed,
+            x => x.ReportRFPower,
+            x => x.ReportSplitInfo
+        ).Skip(4).Subscribe(tmp =>
+        {
+            _isConfChanged = true;
+        }).DisposeWith(_disposable);
+        
+        this.WhenAnyValue(    
+            x => x.UseRigAdvanced,
+            x => x.DisablePTT,
+            x => x.AllowExternalControl,
+            x => x.OverrideCommandlineArg,
+            x => x.UseExternalRigctld,
+            x => x.ExternalRigctldHostAddress,
+            x => x.SyncRigInfoAddress
+        ).Skip(1).Subscribe(_ =>
+        {
+            _isConfChanged = true;
+        }).DisposeWith(_disposable);;
     }
 
 

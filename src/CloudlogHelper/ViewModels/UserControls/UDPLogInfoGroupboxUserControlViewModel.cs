@@ -280,9 +280,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     if (x.Part == ChangedPart.UDPServer)
                     {
-                        ClassLogger.Debug("Setting changed; updating udp");
+                        ClassLogger.Info("Setting changed; updating udp");
                         WaitFirstConn = _udpSettings.EnableUDPServer;
-                        if (ss.RestartUDPNeeded()) TryStartUdpService().DisposeWith(disposables);
+                        TryStartUdpService().DisposeWith(disposables);
                     }
                 })
                 .DisposeWith(disposables);

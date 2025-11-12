@@ -344,8 +344,8 @@
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding HamlibTestButtonUserControl}" />
                                 </Grid>
-                                <TextBlock Text="{I18N {x:Static resources:LangKeys.testandapply}}" Margin="0 12 0 0"
-                                           FontStyle="Normal" FontSize="10" FontWeight="Black" />
+                                <!-- <TextBlock Text="{I18N {x:Static resources:LangKeys.testandapply}}" Margin="0 12 0 0" -->
+                                <!--            FontStyle="Normal" FontSize="10" FontWeight="Black" /> -->
                             </StackPanel>
                         </Border>
 

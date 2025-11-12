@@ -308,8 +308,10 @@ public class SettingsWindowViewModel : ViewModelBase
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.FLRig, DraftSettings, _source.Token);
     }
 
+    // not stable; ignore for now...
     private async Task _refreshPort()
     {
+        return;
         Ports = SerialPort.GetPortNames().ToList();
         var tmp = DraftSettings.HamlibSettings.SelectedPort;
         if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;

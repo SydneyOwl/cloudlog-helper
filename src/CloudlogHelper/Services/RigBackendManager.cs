@@ -55,8 +55,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                     case ChangedPart.Hamlib:
                         if (_currentService.GetServiceType() != RigBackendServiceEnum.Hamlib) break;
 
-                        if (_appSettingsService.RestartHamlibNeeded())
-                        {
+                        // if (_appSettingsService.RestartHamlibNeeded())
+                        // {
                             await _currentService.StopService(_getNewCancellationProcessToken());
                             if (_appSettings.HamlibSettings.UseExternalRigctld) break;
 
@@ -66,7 +66,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                                 _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
                                 await _startRigctld();
                             }
-                        }
+                        // }
 
                         break;
 

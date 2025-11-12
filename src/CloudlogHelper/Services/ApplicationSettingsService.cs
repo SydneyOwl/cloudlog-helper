@@ -37,47 +37,18 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
 
     private readonly object _draftLock = new();
+    
     private object? _currentLockThreadOwner;
 
     private ApplicationSettings? _currentSettings;
 
     private ApplicationSettings? _draftSettings;
+    
     private bool _isDraftLocked;
 
     private IMapper _mapper;
 
     private ApplicationSettings? _oldSettings;
-
-
-    public bool RestartHamlibNeeded()
-    {
-        var a = _currentSettings!.HamlibSettings;
-        var b = _oldSettings!.HamlibSettings;
-        if (a.SelectedRigInfo is null) return true;
-        return !a.SelectedRigInfo.Equals(b.SelectedRigInfo) || a.SelectedPort != b.SelectedPort ||
-               a.PollAllowed != b.PollAllowed ||
-               a.UseRigAdvanced != b.UseRigAdvanced || a.DisablePTT != b.DisablePTT ||
-               a.AllowExternalControl != b.AllowExternalControl ||
-               a.OverrideCommandlineArg != b.OverrideCommandlineArg ||
-               a.UseExternalRigctld != b.UseExternalRigctld ||
-               a.ExternalRigctldHostAddress != b.ExternalRigctldHostAddress;
-    }
-
-    public bool RestartFLRigNeeded()
-    {
-        var a = _currentSettings!.FLRigSettings;
-        var b = _oldSettings!.FLRigSettings;
-        return a.PollAllowed != b.PollAllowed;
-    }
-
-    public bool RestartUDPNeeded()
-    {
-        var a = _currentSettings!.UDPSettings;
-        var b = _oldSettings!.UDPSettings;
-        return a.EnableUDPServer != b.EnableUDPServer || a.EnableConnectionFromOutside !=
-                                                      b.EnableConnectionFromOutside
-                                                      || a.UDPPort != b.UDPPort;
-    }
 
     public void ApplySettings(object owner, List<LogSystemConfig>? rawConfigs = null)
     {
@@ -108,14 +79,14 @@ public class ApplicationSettingsService : IApplicationSettingsService
             {
                 ClassLogger.Trace("hamlib settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.Hamlib }); // maybe user clickedTest
+                    { Part = ChangedPart.Hamlib });
             }
 
             if (IsFlrigConfChanged())
             {
                 ClassLogger.Trace("flrig settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.FLRig }); // maybe user clickedTest
+                    { Part = ChangedPart.FLRig });
             }
 
             if (IsUDPConfChanged())
@@ -137,10 +108,25 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
             if (!ReferenceEquals(_currentLockThreadOwner, owner))
                 throw new SynchronizationLockException("Draft setting is locked by another instance!");
+            
+            // make sure rig settings is not dirty
+            if (IsHamlibConfChanged())
+            {
+                ClassLogger.Info("=>hamlib settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.Hamlib });
+            }
+
+            if (IsFlrigConfChanged())
+            {
+                ClassLogger.Info("=>flrig settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.FLRig });
+            }
+            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
 
             _isDraftLocked = false;
             _draftSettings = _currentSettings!.DeepClone();
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
         }
     }
 
@@ -164,11 +150,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
             _currentLockThreadOwner = owner;
         }
 
-        _draftSettings!.CloudlogSettings.ApplyValidationRules();
-        _draftSettings!.HamlibSettings.ApplyValidationRules();
-        _draftSettings!.FLRigSettings.ApplyValidationRules();
-        _draftSettings!.UDPSettings.ApplyValidationRules();
-        _draftSettings!.QsoSyncAssistantSettings.ApplyValidationRules();
+        _draftSettings!.CloudlogSettings.ReinitRules();
+        _draftSettings!.HamlibSettings.ReinitRules();
+        _draftSettings!.FLRigSettings.ReinitRules();
+        _draftSettings!.UDPSettings.ReinitRules();
+        _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
         draftSettings = _draftSettings;
         return true;
     }
@@ -255,9 +241,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     public bool IsHamlibConfChanged()
     {
         if (_oldSettings is null) return false;
-        var oldI = _oldSettings.HamlibSettings;
-        var newI = _currentSettings!.HamlibSettings;
-        return !oldI.Equals(newI);
+        return _draftSettings!.HamlibSettings.IsConfOnceChanged();
     }
 
     /// <summary>
@@ -267,9 +251,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     public bool IsFlrigConfChanged()
     {
         if (_oldSettings is null) return false;
-        var oldI = _oldSettings.FLRigSettings;
-        var newI = _currentSettings!.FLRigSettings;
-        return !oldI.Equals(newI);
+        return _draftSettings!.FLRigSettings.IsConfOnceChanged();
     }
 
     /// <summary>
