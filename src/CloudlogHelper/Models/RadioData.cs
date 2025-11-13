@@ -33,4 +33,10 @@ public struct RadioData
     ///     Optional transmit power in Watts.
     /// </summary>
     public float? Power { get; set; }
+
+    public override string ToString()
+    {
+        return
+            $"{nameof(RigName)}: {RigName}, {nameof(IsSplit)}: {IsSplit}, {nameof(FrequencyTx)}: {FrequencyTx}, {nameof(ModeTx)}: {ModeTx}, {nameof(FrequencyRx)}: {FrequencyRx}, {nameof(ModeRx)}: {ModeRx}, {nameof(Power)}: {Power}";
+    }
 }

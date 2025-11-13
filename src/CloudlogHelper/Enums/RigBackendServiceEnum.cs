@@ -3,5 +3,6 @@
 public enum RigBackendServiceEnum
 {
     Hamlib,
-    FLRig
+    FLRig,
+    OnmiRig
 }

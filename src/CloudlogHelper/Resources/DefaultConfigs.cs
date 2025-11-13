@@ -184,6 +184,9 @@ public class DefaultConfigs
     ///     Default host address for flrig.
     /// </summary>
     public static readonly string FLRigDefaultPort = "12345";
+    
+    
+    public static readonly string OmniRigEngineProgId = "OmniRig.OmniRigX";
 
     /// <summary>
     ///     Default host address for Rigctld.

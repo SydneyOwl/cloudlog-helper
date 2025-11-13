@@ -251,7 +251,9 @@ public class ApplicationSettingsService : IApplicationSettingsService
     public bool IsFlrigConfChanged()
     {
         if (_oldSettings is null) return false;
-        return _draftSettings!.FLRigSettings.IsConfOnceChanged();
+        var oldI = _oldSettings.FLRigSettings;
+        var newI = _currentSettings!.FLRigSettings;
+        return !oldI.Equals(newI);
     }
 
     /// <summary>

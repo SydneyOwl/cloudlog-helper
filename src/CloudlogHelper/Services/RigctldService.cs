@@ -73,7 +73,7 @@ public class RigctldService : IRigService, IDisposable
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-
+    
     /// <summary>
     ///     Checks if any rigctld client is currently running, including _onetimeRigctldClient and _backgroundProcess.
     /// </summary>

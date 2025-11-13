@@ -11,6 +11,10 @@
         <MacOSAppIcon>Assets/icon.icns</MacOSAppIcon>
         <LinuxAppIcon>Assets/icon.png</LinuxAppIcon>
     </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DefineConstants>TRACE;OMNIRIG_HINT</DefineConstants>
+    </PropertyGroup>
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>

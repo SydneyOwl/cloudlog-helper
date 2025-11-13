@@ -30,7 +30,6 @@ public class FLRigSettings : ReactiveValidationObject
 
     [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
 
-    private bool _isConfChanged;
     public IObservable<bool> IsFLRigValid => this.WhenAnyValue(
         x => x.PollInterval,
         x => x.FLRigHost,
@@ -38,30 +37,10 @@ public class FLRigSettings : ReactiveValidationObject
         (a, b, c) =>
             !IsFLRigHasErrors()
     );
-
-    public FLRigSettings()
-    {
-        this.WhenAnyValue(     
-            x => x.PollAllowed,
-            x => x.ReportRFPower,
-            x => x.ReportSplitInfo,
-            x => x.FLRigHost,
-            x => x.FLRigPort,
-            x => x.SyncRigInfoAddress
-        ).Subscribe(_ =>
-        {
-            _isConfChanged = true;
-        });
-    }
     
-    public bool IsConfOnceChanged()
-    {
-        return _isConfChanged;
-    }
-
+    
     public void ReinitRules()
     {
-        _isConfChanged = false;
         this.ClearValidationRules();
         this.ValidationRule(x => x.FLRigPort,
             SettingsValidation.CheckHttpPort,
