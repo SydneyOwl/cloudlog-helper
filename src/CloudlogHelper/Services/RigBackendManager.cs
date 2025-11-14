@@ -139,6 +139,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             {
                 _syncRigInfoAddr.AddRange(_appSettings.OmniRigSettings.SyncRigInfoAddress.Split(";"));
                 _currentService = _services[RigBackendServiceEnum.OmniRig];
+                await _currentService.StartService(_getNewCancellationProcessToken(),_appSettings.OmniRigSettings.SelectedRig);
             }
         }
         catch (Exception ex)

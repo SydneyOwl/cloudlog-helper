@@ -18,7 +18,7 @@ Resources/VersionInfo.cs
 rm -rf bin/Release/net6.0/win-x64/publish/* bin/*.zip
 # build windows x64
 dotnet restore -r win-x64
-dotnet publish -c Release -r win-x64 -f net6.0-windows10.0.17763.0 -p:UseAppHost=true -p:PublishSingleFile=true --self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=false -p:IncludeNativeLibrariesForSelfExtract=true
+dotnet publish -c Release -r win-x64 -f net6.0-windows10.0.17763.0 -p:UseAppHost=true -p:PublishSingleFile=true --self-contained true -p:PublishReadyToRun=false -p:PublishTrimmed=false -p:IncludeNativeLibrariesForSelfExtract=true
 zip -rj bin/CloudlogHelper-v${tagName}-windows-x64.zip bin/Release/net6.0/win-x64/publish/CloudlogHelper.exe
 
 
