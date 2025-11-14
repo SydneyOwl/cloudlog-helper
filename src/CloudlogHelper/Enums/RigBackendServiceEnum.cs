@@ -4,5 +4,5 @@ public enum RigBackendServiceEnum
 {
     Hamlib,
     FLRig,
-    OnmiRig
+    OmniRig
 }

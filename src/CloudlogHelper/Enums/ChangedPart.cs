@@ -16,6 +16,11 @@ public enum ChangedPart
     ///     Sent when setting window is closed and FLRig config changed.
     /// </summary>
     FLRig,
+    
+    /// <summary>
+    /// Sent when setting window is closed and OmniRig config changed.
+    /// </summary>
+    OmniRig,
 
     /// <summary>
     ///     Sent when setting window is closed and UDP config changed.

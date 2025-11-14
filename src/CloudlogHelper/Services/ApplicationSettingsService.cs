@@ -88,6 +88,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.FLRig });
             }
+            
+            if (IsOmniRigConfChanged())
+            {
+                ClassLogger.Trace("omnirig settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.OmniRig });
+            }
 
             if (IsUDPConfChanged())
             {
@@ -115,6 +122,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 ClassLogger.Info("=>hamlib settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.Hamlib });
+            }
+            
+            if (IsOmniRigConfChanged())
+            {
+                ClassLogger.Trace("omnirig settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.OmniRig });
             }
 
             if (IsFlrigConfChanged())
@@ -153,6 +167,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings!.CloudlogSettings.ReinitRules();
         _draftSettings!.HamlibSettings.ReinitRules();
         _draftSettings!.FLRigSettings.ReinitRules();
+        _draftSettings!.OmniRigSettings.ReinitRules();
         _draftSettings!.UDPSettings.ReinitRules();
         _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
         draftSettings = _draftSettings;
@@ -242,6 +257,16 @@ public class ApplicationSettingsService : IApplicationSettingsService
     {
         if (_oldSettings is null) return false;
         return _draftSettings!.HamlibSettings.IsConfOnceChanged();
+    }
+    
+    /// <summary>
+    ///     Check if omnirig configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsOmniRigConfChanged()
+    {
+        if (_oldSettings is null) return false;
+        return _draftSettings!.OmniRigSettings.IsConfOnceChanged();
     }
 
     /// <summary>

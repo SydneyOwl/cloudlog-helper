@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDatabaseService, DatabaseService>();
         services.AddSingleton<IRigService, RigctldService>();
         services.AddSingleton<IRigService, FLRigService>();
+        services.AddSingleton<IRigService, OmniRigService>();
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
@@ -90,6 +91,7 @@ public static class ServiceCollectionExtensions
         {
             cfg.CreateMap<HamlibSettings, HamlibSettings>();
             cfg.CreateMap<FLRigSettings, FLRigSettings>();
+            cfg.CreateMap<OmniRigSettings, OmniRigSettings>();
             cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();

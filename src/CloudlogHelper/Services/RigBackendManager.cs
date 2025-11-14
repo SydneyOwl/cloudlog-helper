@@ -37,7 +37,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         _appSettings = appSettingsService.GetCurrentSettings();
         _appSettingsService = appSettingsService;
         foreach (var rigService in rigSources) _services[rigService.GetServiceType()] = rigService;
-
+        
         // bind settings change
         MessageBus.Current.Listen<SettingsChanged>().Subscribe(async void (x) =>
         {
@@ -46,12 +46,22 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                 var currentRigService = _getCurrentRigService();
                 if (currentRigService.GetServiceType() != _currentService?.GetServiceType())
                 {
-                    await _currentService?.StopService(_getNewCancellationProcessToken())!;
                     _currentService = currentRigService;
+                    await _currentService?.StopService(_getNewCancellationProcessToken())!;
                 }
 
                 switch (x.Part)
                 {
+                    case ChangedPart.NothingJustClosed:
+                        // close all services, if not available.
+                        if (!_appSettings.HamlibSettings.PollAllowed)
+                            await _services[RigBackendServiceEnum.Hamlib].StopService(_getNewCancellationProcessToken());
+                        if (!_appSettings.FLRigSettings.PollAllowed)
+                            await _services[RigBackendServiceEnum.FLRig].StopService(_getNewCancellationProcessToken());
+                        if (!_appSettings.OmniRigSettings.PollAllowed)
+                            await _services[RigBackendServiceEnum.OmniRig].StopService(_getNewCancellationProcessToken());
+                        break;
+                    
                     case ChangedPart.Hamlib:
                         if (_currentService.GetServiceType() != RigBackendServiceEnum.Hamlib) break;
 
@@ -79,6 +89,16 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                             _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
                         }
 
+                        break;
+                    case ChangedPart.OmniRig:
+                        if (_currentService.GetServiceType() != RigBackendServiceEnum.OmniRig) break;
+                        // await _currentService.StopService(_getNewCancellationProcessToken());
+                        if (_appSettings.OmniRigSettings.PollAllowed)
+                        {
+                            _syncRigInfoAddr.Clear();
+                            _syncRigInfoAddr.AddRange(_appSettings.OmniRigSettings.SyncRigInfoAddress.Split(";"));
+                            await _currentService.StartService(_getNewCancellationProcessToken(),_appSettings.OmniRigSettings.SelectedRig);
+                        }
                         break;
                 }
             }
@@ -113,6 +133,12 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             {
                 _syncRigInfoAddr.AddRange(_appSettings.FLRigSettings.SyncRigInfoAddress.Split(";"));
                 _currentService = _services[RigBackendServiceEnum.FLRig];
+            }
+            
+            if (_appSettings.OmniRigSettings.PollAllowed)
+            {
+                _syncRigInfoAddr.AddRange(_appSettings.OmniRigSettings.SyncRigInfoAddress.Split(";"));
+                _currentService = _services[RigBackendServiceEnum.OmniRig];
             }
         }
         catch (Exception ex)
@@ -167,6 +193,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     {
         var appSettingsHamlibSettings = _appSettings.HamlibSettings;
         var appSettingsFLRigSettings = _appSettings.FLRigSettings;
+        var appSettingsOmniSettings = _appSettings.OmniRigSettings;
 
         RadioData data;
         switch (_currentService.GetServiceType())
@@ -201,6 +228,18 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                     appSettingsFLRigSettings.FLRigHost,
                     appSettingsFLRigSettings.FLRigPort);
                 break;
+            
+            case RigBackendServiceEnum.OmniRig:
+                if (!appSettingsOmniSettings.PollAllowed)
+                    throw new InvalidPollException("Poll disabled.");
+
+                if (appSettingsOmniSettings.IsOmniRigHasErrors())
+                    throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.confomnifirst));
+
+                data = await _currentService.GetAllRigInfo(appSettingsFLRigSettings.ReportRFPower,
+                    appSettingsFLRigSettings.ReportSplitInfo,
+                    CancellationToken.None);
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -226,7 +265,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         var interval = _currentService.GetServiceType() switch
         {
             RigBackendServiceEnum.FLRig => _appSettings.FLRigSettings.PollInterval,
-            RigBackendServiceEnum.Hamlib => _appSettings.HamlibSettings.PollInterval
+            RigBackendServiceEnum.Hamlib => _appSettings.HamlibSettings.PollInterval,
+            RigBackendServiceEnum.OmniRig =>  _appSettings.OmniRigSettings.PollInterval
         };
 
         if (int.TryParse(interval, out var intervalInt)) return intervalInt;
@@ -239,7 +279,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         return _currentService.GetServiceType() switch
         {
             RigBackendServiceEnum.FLRig => _appSettings.FLRigSettings.PollAllowed,
-            RigBackendServiceEnum.Hamlib => _appSettings.HamlibSettings.PollAllowed
+            RigBackendServiceEnum.Hamlib => _appSettings.HamlibSettings.PollAllowed,
+            RigBackendServiceEnum.OmniRig => _appSettings.OmniRigSettings.PollAllowed
         };
     }
 
@@ -271,10 +312,15 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
             if (backendServiceEnum == RigBackendServiceEnum.FLRig)
             {
-                ClassLogger.Debug("FLRig ver" + await service.GetServiceVersion(draftSettings.FLRigSettings.FLRigHost,
-                    draftSettings.FLRigSettings.FLRigPort));
                 await service.GetAllRigInfo(false, false, CancellationToken.None,
                     draftSettings.FLRigSettings.FLRigHost, draftSettings.FLRigSettings.FLRigPort);
+            }
+            
+            if (backendServiceEnum == RigBackendServiceEnum.OmniRig)
+            {
+                // await service.StopService(_getNewCancellationProcessToken());
+                await service.StartService(_getNewCancellationProcessToken(),draftSettings.OmniRigSettings.SelectedRig);
+                await service.GetAllRigInfo(false, false, CancellationToken.None);
             }
         }
         catch
@@ -294,6 +340,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     {
         if (_appSettings.HamlibSettings.PollAllowed) return _services[RigBackendServiceEnum.Hamlib];
         if (_appSettings.FLRigSettings.PollAllowed) return _services[RigBackendServiceEnum.FLRig];
+        if (_appSettings.OmniRigSettings.PollAllowed) return _services[RigBackendServiceEnum.OmniRig];
         return _services[RigBackendServiceEnum.Hamlib];
     }
 

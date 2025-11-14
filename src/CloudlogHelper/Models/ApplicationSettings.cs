@@ -51,6 +51,12 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public FLRigSettings FLRigSettings { get; set; } = new();
+    
+    /// <summary>
+    ///     OmniRig settings.
+    /// </summary>
+    [JsonProperty]
+    public OmniRigSettings OmniRigSettings { get; set; } = new();
 
     /// <summary>
     ///     UDP Settings.

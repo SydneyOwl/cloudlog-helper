@@ -716,4 +716,13 @@
     <data name="tqslpassword" xml:space="preserve">
         <value>TQSL密码</value>
     </data>
+    <data name="targetrig" xml:space="preserve">
+        <value>目标电台</value>
+    </data>
+    <data name="omniinitfailed" xml:space="preserve">
+        <value>请检查OmniRig是否已正确安装，另外OmniRIg目前仅在Windows平台上支持。</value>
+    </data>
+    <data name="confomnifirst" xml:space="preserve">
+        <value>请检查OmniRig配置！</value>
+    </data>
 </root>

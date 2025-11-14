@@ -124,7 +124,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
 
-                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig) _resetStatus();
+                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig or ChangedPart.OmniRig) _resetStatus();
 
                     if (x.Part == ChangedPart.NothingJustClosed)
                     {
@@ -167,8 +167,8 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                         {
                             // avoid following errors
                             _rigConnFailedTimes = int.MinValue;
-                            _resetStatus();
                             _disposeAllTimers();
+                            _resetStatus();
                             // popup!
                             var choice = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(
                                 new List<ButtonDefinition>
@@ -241,7 +241,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task _refreshRigInfo()
     {
-        ClassLogger.Trace("Refreshing hamlib data....");
+        ClassLogger.Trace("Refreshing rig data....");
 
         if (_rigConnFailedTimes < 0)
         {
@@ -332,7 +332,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             })
             .Repeat()
             .TakeUntil(_cancel)
-            .Finally(() => ClassLogger.Trace("Canceling radio timer..."))
+            .Finally(() =>
+            {
+                _resetStatus();
+                ClassLogger.Trace("Canceling radio timer...");
+            })
             .Subscribe();
     }
 

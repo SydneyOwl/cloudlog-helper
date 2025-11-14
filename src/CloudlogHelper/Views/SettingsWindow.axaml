@@ -233,9 +233,28 @@
                         <!-- HamLib Settings -->
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
-                                <TextBlock Text="HamLib" Classes="section-title" />
+                                <StackPanel>
+                                    <TextBlock Text="HamLib" Classes="section-title" />
+                                </StackPanel>
+                                
+                                <Border BorderBrush="Transparent"  IsVisible="{Binding !HamlibInited}"  CornerRadius="5" Background="DarkOrange" Padding="10">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                                        <avalonia:MaterialIcon Kind="Warning" Width="20" Height="20"
+                                                               VerticalAlignment="Center"
+                                                               HorizontalAlignment="Center"
+                                                               Margin="0,0,8,0" />
+                                        <TextBlock 
+                                            VerticalAlignment="Center"
+                                            FontWeight="Heavy"
+                                            TextAlignment="Center"
+                                            FontSize="14"
+                                            Width="360"
+                                            TextWrapping="Wrap"
+                                            Text="{I18N {x:Static resources:LangKeys.inithamlibfailed}}" />
+                                    </StackPanel>
+                                </Border>
 
-                                <Grid IsEnabled="{Binding HamlibInitPassed}" ColumnDefinitions="*,2*,*"
+                                <Grid IsEnabled="{Binding HamlibInited}" ColumnDefinitions="*,2*,*"
                                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
                                       RowSpacing="10">
                                     <!-- Polling -->
@@ -354,7 +373,7 @@
                             <StackPanel Spacing="12">
                                 <TextBlock Text="FLRig" Classes="section-title" />
 
-                                <Grid IsEnabled="{Binding HamlibInitPassed}" ColumnDefinitions="*,2*,*"
+                                <Grid ColumnDefinitions="*,2*,*"
                                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
                                       RowSpacing="10">
                                     <!-- Polling -->
@@ -408,6 +427,69 @@
 
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding FLRigTestButtonUserControl}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- OmniRig Settings -->
+                        <Border Classes="setting-card">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="OmniRig" Classes="section-title" />
+                                
+                                <Border BorderBrush="Transparent" CornerRadius="5" IsVisible="{Binding !OmniRigInited}" Background="DarkOrange" Padding="10">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                                        <avalonia:MaterialIcon Kind="Warning" Width="20" Height="20"
+                                                               VerticalAlignment="Center"
+                                                               HorizontalAlignment="Center"
+                                                               Margin="0,0,8,0" />
+                                        <TextBlock 
+                                            TextAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Heavy"
+                                            FontSize="14"
+                                            Width="360"
+                                            TextWrapping="Wrap"
+                                            Text="{I18N {x:Static resources:LangKeys.omniinitfailed}}"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+
+                                <Grid ColumnDefinitions="*,2*,*"  IsVisible="{Binding 
+                                OmniRigInited}"
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
+                                      RowSpacing="10">
+                                    <!-- Polling -->
+                                    <CheckBox Content="{I18N {x:Static resources:LangKeys.autoupdateriginfo}}"
+                                              Grid.Column="0" Grid.ColumnSpan="2"
+                                              IsChecked="{Binding DraftSettings.OmniRigSettings.PollAllowed}" />
+
+                                    <!-- Poll Interval -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.pollinterval}}"
+                                               Classes="setting-label"
+                                               Grid.Row="1" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1"
+                                             HorizontalAlignment="Left"
+                                             MinWidth="20" Width="80"
+                                             Text="{Binding DraftSettings.OmniRigSettings.PollInterval}" />
+
+                                    <!-- Rig Model -->
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.targetrig}}"
+                                               Classes="setting-label"
+                                               Grid.Row="2" Grid.Column="0" />
+                                    <ComboBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
+                                              SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}"
+                                              ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}" />
+                                    
+                                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*"
+                                          Margin="0 0 0 0">
+                                        <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
+                                                   Classes="setting-label" />
+                                        <TextBox Classes="setting-control" Grid.Column="1"
+                                                 Text="{Binding DraftSettings.OmniRigSettings.SyncRigInfoAddress}"
+                                                 Watermark="{I18N {x:Static resources:LangKeys.spiltby}}" />
+                                    </Grid>
+
+                                    <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
+                                                                         DataContext="{Binding OmniRigTestButtonUserControl}" />
                                 </Grid>
                             </StackPanel>
                         </Border>

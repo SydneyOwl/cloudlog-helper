@@ -104,14 +104,14 @@ public class RigctldService : IRigService, IDisposable
     /// <returns>Tuple containing success status and output/error message.</returns>
     public async Task StartService(CancellationToken token, params object[] args)
     {
+        
+        ClassLogger.Info($"Starting hamlib...");
         if (_backgroundProcess is not null && !_backgroundProcess.HasExited)
         {
             ClassLogger.Trace("Rigctld service is already running. Ignored.");
             return;
         }
-
-        ClassLogger.Info($"Starting hamlib({string.Join(" ", args)})...");
-
+        
         TerminateBackgroundProcess();
         ClassLogger.Debug("tRigctld offline....Trying to restart Rigctld background process...");
         var readyTcs = new TaskCompletionSource<(bool, string)>();

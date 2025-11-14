@@ -13,7 +13,6 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Threading;
 using CloudlogHelper.Enums;
-using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
@@ -52,7 +51,7 @@ public class SettingsWindowViewModel : ViewModelBase
         OpenConfDir = ReactiveCommand.Create(() => { });
         OpenTempDir = ReactiveCommand.Create(() => { });
         SaveAndApplyConf = ReactiveCommand.Create(() => { });
-        HamlibInitPassed = true;
+        HamlibInited = true;
         // InitializeLogSystems();
     }
 
@@ -81,6 +80,9 @@ public class SettingsWindowViewModel : ViewModelBase
 
         var flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
         FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
+        
+        var omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
+        OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
 
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
 
@@ -98,15 +100,17 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             // ensure rig service is not dupe
             this.WhenAnyValue(x => x.DraftSettings.FLRigSettings.PollAllowed,
-                    x => x.DraftSettings.HamlibSettings.PollAllowed)
+                    x => x.DraftSettings.HamlibSettings.PollAllowed,
+                    x => x.DraftSettings.OmniRigSettings.PollAllowed)
+                .Select(values => new[] { values.Item1, values.Item2, values.Item3 })
                 .Subscribe(e =>
                 {
-                    var (flEnabled, hamEnabled) = e;
-                    if (flEnabled && hamEnabled)
+                    if (e.Count(x => x) > 1)
                     {
                         Notification?.SendWarningNotificationSync(
                             TranslationHelper.GetString(LangKeys.duperigservdetected));
                         DraftSettings.FLRigSettings.PollAllowed = false;
+                        DraftSettings.OmniRigSettings.PollAllowed = false;
                     }
                 }).DisposeWith(disposables);
 
@@ -117,6 +121,8 @@ public class SettingsWindowViewModel : ViewModelBase
                 })
                 .DisposeWith(disposables);
             hamlibCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
+                .DisposeWith(disposables);
+            omniCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
             flrigCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
@@ -136,6 +142,7 @@ public class SettingsWindowViewModel : ViewModelBase
         });
 
         _ = _initializeHamlibAsync();
+        _ = _initializeOmniRigAsync();
         MessageBus.Current.SendMessage(new SettingsChanged
         {
             Part = ChangedPart.NothingJustOpened
@@ -152,6 +159,12 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
+
+    #region FLRig
+
+    public TestButtonUserControlViewModel FLRigTestButtonUserControl { get; }
+
+    #endregion
 
     private void InitializeLogSystems()
     {
@@ -212,8 +225,24 @@ public class SettingsWindowViewModel : ViewModelBase
                 DisplayName = classAttr.ServiceName,
                 Fields = fields,
                 RawType = draftSettingsLogService.GetType(),
-                UploadEnabled = ((ThirdPartyLogService)draftSettingsLogService).AutoQSOUploadEnabled
+                UploadEnabled = draftSettingsLogService.AutoQSOUploadEnabled
             });
+        }
+    }
+
+    private async Task _initializeOmniRigAsync()
+    {
+        try
+        {
+            if (_initSkipped) return;
+            var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
+            if (omniRigType is null) throw new Exception("OmniRig COM not found!");
+        }
+        catch (Exception e)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => { OmniRigInited = false; });
+            ClassLogger.Error(e);
+            await Notification.SendErrorNotificationAsync(e.Message);
         }
     }
 
@@ -237,10 +266,10 @@ public class SettingsWindowViewModel : ViewModelBase
             DraftSettings.HamlibSettings.SelectedRigInfo = null;
             if (selection is not null && SupportedModels.Contains(selection))
                 DraftSettings.HamlibSettings.SelectedRigInfo = selection;
-            await Dispatcher.UIThread.InvokeAsync(() => { HamlibInitPassed = true; });
         }
         catch (Exception e)
         {
+            await Dispatcher.UIThread.InvokeAsync(() => { HamlibInited = false; });
             ClassLogger.Error(e);
             await Notification.SendErrorNotificationAsync(e.Message);
         }
@@ -302,6 +331,11 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.Hamlib, DraftSettings, _source.Token);
     }
+    
+    private async Task _testOmniRig()
+    {
+        await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.OmniRig, DraftSettings, _source.Token);
+    }
 
     private async Task _testFLRig()
     {
@@ -359,16 +393,23 @@ public class SettingsWindowViewModel : ViewModelBase
 
     #region HamLib
 
-    [Reactive] public bool HamlibInitPassed { get; set; }
+    [Reactive] public bool HamlibInited { get; set; } = true;
     public ReactiveCommand<Unit, Unit> RefreshPort { get; }
 
     public TestButtonUserControlViewModel HamlibTestButtonUserControl { get; }
-    public TestButtonUserControlViewModel FLRigTestButtonUserControl { get; }
 
     [Reactive] public List<string> Ports { get; set; }
     [Reactive] public string HamlibVersion { get; set; } = "Unknown hamlib version";
 
     [Reactive] public List<RigInfo> SupportedModels { get; set; } = new();
+
+    #endregion
+
+    #region OmniRig
+
+    [Reactive] public bool OmniRigInited { get; set; } = true;
+
+    public TestButtonUserControlViewModel OmniRigTestButtonUserControl { get; }
 
     #endregion
 }

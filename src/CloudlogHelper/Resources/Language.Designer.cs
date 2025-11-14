@@ -366,6 +366,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please check OmniRig Settings!.
+        /// </summary>
+        public static string confomnifirst {
+            get {
+                return ResourceManager.GetString("confomnifirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Control Panel.
         /// </summary>
         public static string controlpanel {
@@ -1027,6 +1036,15 @@ namespace CloudlogHelper.Resources {
         public static string notnull {
             get {
                 return ResourceManager.GetString("notnull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please check OmniRig is installed correctly. And please note that OmniRig is only supported on Windows. .
+        /// </summary>
+        public static string omniinitfailed {
+            get {
+                return ResourceManager.GetString("omniinitfailed", resourceCulture);
             }
         }
         
@@ -1704,6 +1722,15 @@ namespace CloudlogHelper.Resources {
         public static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target RIG.
+        /// </summary>
+        public static string targetrig {
+            get {
+                return ResourceManager.GetString("targetrig", resourceCulture);
             }
         }
         

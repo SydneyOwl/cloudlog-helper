@@ -30,11 +30,13 @@ public class FLRigService : IRigService, IDisposable
 
     public Task StartService(CancellationToken token, params object[] args)
     {
+        ClassLogger.Info("Starting FLRig.");
         return Task.CompletedTask;
     }
 
     public Task StopService(CancellationToken token)
     {
+        ClassLogger.Info("Stopping FLRig.");
         return Task.CompletedTask;
     }
 

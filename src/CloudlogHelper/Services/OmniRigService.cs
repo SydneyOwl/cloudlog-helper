@@ -19,46 +19,67 @@ public class OmniRigService : IRigService, IDisposable
 
     private int _version = 0x00;
     
+    private static readonly Mutex _mutex = new Mutex();
+    
     public RigBackendServiceEnum GetServiceType()
     {
-        return RigBackendServiceEnum.OnmiRig;
+        return RigBackendServiceEnum.OmniRig;
     }
 
-    public Task StartService(CancellationToken token, params object[] args)
+    public async Task StartService(CancellationToken token, params object[] args)
     {
-        if (_omniRigEngine is not null)
+        try
         {
-            ClassLogger.Trace("OmniRig service is already running. Ignored.");
-            return Task.CompletedTask;
-        }
-        var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
-        if (omniRigType is null) throw new Exception("OmniRig COM not found!");
-        
-        _omniRigEngine = Activator.CreateInstance(omniRigType);
-        if (_omniRigEngine is null) throw new Exception("Failed to create OmniRig instance!");
+            _mutex.WaitOne();
+            ClassLogger.Info("Starting OmniRig");
+            if (_omniRigEngine is null)
+            {
+                var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
+                if (omniRigType is null) throw new Exception("OmniRig COM not found!");
 
+                await Task.Run(() =>
+                {
+                    _omniRigEngine = Activator.CreateInstance(omniRigType);
+                    if (_omniRigEngine is null) throw new Exception("Failed to create OmniRig instance!");
+                }, token);
 
-        _version = _omniRigEngine.InterfaceVersion;
+                _version = _omniRigEngine.InterfaceVersion;
         
-        if (_version < 0x101 && _version > 0x299)
-        {
-            _omniRigEngine = null;
-            throw new Exception("OmniRig is not installed or has unsupported version.");
+                if (_version < 0x101 && _version > 0x299)
+                {
+                    _omniRigEngine = null;
+                    throw new Exception("OmniRig is not installed or has unsupported version.");
+                }
+            }
+        
+            ReleaseComObject(ref _omniRig);
+
+            _omniRig = (string)args[0] switch
+            {
+                "Rig 1" => _omniRigEngine.Rig1,
+                "Rig 2" => _omniRigEngine.Rig2,
+                _ => throw new ArgumentOutOfRangeException("RigNo","Rig no should be 1 and 2")
+            };
         }
-        
-        _omniRig = (int)args[0] switch
+        finally
         {
-            1 => _omniRigEngine.Rig1,
-            2 => _omniRigEngine.Rig2,
-            _ => throw new ArgumentOutOfRangeException("RigNo","Rig no should be 1 and 2")
-        };
-        return Task.CompletedTask;
+            _mutex.ReleaseMutex();
+        }
+       
     }
 
-    public Task StopService(CancellationToken token)
+    public async Task StopService(CancellationToken token)
     {
-        ReleaseUnmanagedResources();
-        return Task.CompletedTask;
+        try
+        {
+            _mutex.WaitOne();
+            ClassLogger.Info("Stopping OmniRig");
+            await Task.Run(ReleaseUnmanagedResources, token); 
+        }
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
     }
 
     public bool IsServiceRunning()

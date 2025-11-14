@@ -366,6 +366,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 请检查OmniRig配置！.
+        /// </summary>
+        public static string confomnifirst {
+            get {
+                return ResourceManager.GetString("confomnifirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 控制面板.
         /// </summary>
         public static string controlpanel {
@@ -1028,6 +1037,15 @@ namespace CloudlogHelper.Resources {
         public static string notnull {
             get {
                 return ResourceManager.GetString("notnull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请检查OmniRig是否已正确安装，另外OmniRIg目前仅在Windows平台上支持。.
+        /// </summary>
+        public static string omniinitfailed {
+            get {
+                return ResourceManager.GetString("omniinitfailed", resourceCulture);
             }
         }
         
@@ -1705,6 +1723,15 @@ namespace CloudlogHelper.Resources {
         public static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 目标电台.
+        /// </summary>
+        public static string targetrig {
+            get {
+                return ResourceManager.GetString("targetrig", resourceCulture);
             }
         }
         

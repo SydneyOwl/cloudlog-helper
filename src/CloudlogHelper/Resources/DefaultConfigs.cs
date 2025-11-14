@@ -187,6 +187,8 @@ public class DefaultConfigs
     
     
     public static readonly string OmniRigEngineProgId = "OmniRig.OmniRigX";
+    
+    public static List<string> OmniRigAvailableRig = new() {"Rig 1", "Rig 2"};
 
     /// <summary>
     ///     Default host address for Rigctld.

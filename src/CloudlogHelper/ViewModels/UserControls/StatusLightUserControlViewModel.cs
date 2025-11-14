@@ -93,6 +93,9 @@ public class StatusLightUserControlViewModel : ViewModelBase
                             case RigBackendServiceEnum.FLRig:
                                 draft!.FLRigSettings.PollAllowed = !draft.FLRigSettings.PollAllowed;
                                 break;
+                            case RigBackendServiceEnum.OmniRig:
+                                draft!.OmniRigSettings.PollAllowed = !draft.OmniRigSettings.PollAllowed;
+                                break;
                         }
 
                         _applicationSettingsService.ApplySettings(this);
@@ -134,8 +137,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
             {
                 switch (res.Part)
                 {
-                    case ChangedPart.Hamlib:
-                    case ChangedPart.FLRig:
+                    case ChangedPart.NothingJustClosed:
                         _updateRigListeningAddress();
                         break;
                     case ChangedPart.UDPServer:
@@ -166,7 +168,11 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     private void _updateRigListeningAddress()
     {
-        if (_rigBackendManager.GetServiceType() == RigBackendServiceEnum.Hamlib)
+
+        var tp = _rigBackendManager.GetServiceType();
+        // Console.WriteLine($"========Current: {_rigBackendManager.GetServiceType()}");
+
+        if (tp == RigBackendServiceEnum.Hamlib)
         {
             BackendService = "Hamlib";
             var hamlibSettings = _applicationSettingsService.GetCurrentSettings().HamlibSettings;
@@ -231,11 +237,18 @@ public class StatusLightUserControlViewModel : ViewModelBase
             }
         }
 
-        if (_rigBackendManager.GetServiceType() == RigBackendServiceEnum.FLRig)
+        if (tp == RigBackendServiceEnum.FLRig)
         {
             BackendService = "FLRig";
             var flrigSettings = _applicationSettingsService.GetCurrentSettings().FLRigSettings;
             CurrentRigBackendAddress = $"({flrigSettings.FLRigHost}:{flrigSettings.FLRigPort})";
+        }
+        
+        if (tp == RigBackendServiceEnum.OmniRig)
+        {
+            BackendService = "OmniRig";
+            var omniRigSettings = _applicationSettingsService.GetCurrentSettings().OmniRigSettings;
+            CurrentRigBackendAddress = $"({omniRigSettings.SelectedRig})";
         }
     }
 

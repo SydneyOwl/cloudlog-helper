@@ -716,4 +716,13 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="tqslpassword" xml:space="preserve">
         <value>TQSL Password</value>
     </data>
+    <data name="targetrig" xml:space="preserve">
+        <value>Target RIG</value>
+    </data>
+    <data name="omniinitfailed" xml:space="preserve">
+        <value>Please check OmniRig is installed correctly. And please note that OmniRig is only supported on Windows. </value>
+    </data>
+    <data name="confomnifirst" xml:space="preserve">
+        <value>Please check OmniRig Settings!</value>
+    </data>
 </root>
