@@ -180,6 +180,12 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             await _startRigctld();
             return;
         }
+        
+        if (GetServiceType() == RigBackendServiceEnum.OmniRig)
+        {
+            await _currentService.StartService(_getNewCancellationProcessToken(), _appSettings.OmniRigSettings.SelectedRig);
+            return;
+        }
 
         await _currentService.StartService(_getNewCancellationProcessToken());
     }

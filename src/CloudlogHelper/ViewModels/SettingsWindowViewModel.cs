@@ -235,6 +235,7 @@ public class SettingsWindowViewModel : ViewModelBase
         try
         {
             if (_initSkipped) return;
+            if (!OperatingSystem.IsWindows())throw new Exception("OmniRig is only supported on Windows.");
             var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
             if (omniRigType is null) throw new Exception("OmniRig COM not found!");
         }

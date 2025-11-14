@@ -25,7 +25,7 @@ public class OmniRigService : IRigService, IDisposable
     {
         return RigBackendServiceEnum.OmniRig;
     }
-
+    
     public async Task StartService(CancellationToken token, params object[] args)
     {
         try
@@ -44,21 +44,21 @@ public class OmniRigService : IRigService, IDisposable
                 }, token);
 
                 _version = _omniRigEngine.InterfaceVersion;
-        
+
                 if (_version < 0x101 && _version > 0x299)
                 {
                     _omniRigEngine = null;
                     throw new Exception("OmniRig is not installed or has unsupported version.");
                 }
             }
-        
+
             ReleaseComObject(ref _omniRig);
 
             _omniRig = (string)args[0] switch
             {
                 "Rig 1" => _omniRigEngine.Rig1,
                 "Rig 2" => _omniRigEngine.Rig2,
-                _ => throw new ArgumentOutOfRangeException("RigNo","Rig no should be 1 and 2")
+                _ => throw new ArgumentOutOfRangeException("RigNo", "Rig no should be 1 and 2")
             };
         }
         finally
@@ -136,8 +136,8 @@ public class OmniRigService : IRigService, IDisposable
             IsSplit = false,
             FrequencyTx = freq,
             ModeTx = modeStr,
-            FrequencyRx = 0,
-            ModeRx = null,
+            FrequencyRx = freq,
+            ModeRx = modeStr,
             Power = null
         });
     }

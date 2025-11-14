@@ -76,7 +76,7 @@ function Build-And-Package
         -p:PublishSingleFile=true `
         --self-contained true `
         -p:PublishReadyToRun=true `
-        -p:PublishTrimmed=true `
+        -p:PublishTrimmed=false `
         -p:IncludeNativeLibrariesForSelfExtract=true `
         -p:UseAppHost=true
 

@@ -76,38 +76,9 @@ public class StatusLightUserControlViewModel : ViewModelBase
                     _applingSettings = false;
                 }
             });
-            StartStopRigBackendCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (_applingSettings) return;
-                _applingSettings = true;
-                try
-                {
-                    RigBackendRunningStatus = StatusLightEnum.Loading;
-                    if (_applicationSettingsService.TryGetDraftSettings(this, out var draft))
-                    {
-                        switch (_rigBackendManager.GetServiceType())
-                        {
-                            case RigBackendServiceEnum.Hamlib:
-                                draft!.HamlibSettings.PollAllowed = !draft.HamlibSettings.PollAllowed;
-                                break;
-                            case RigBackendServiceEnum.FLRig:
-                                draft!.FLRigSettings.PollAllowed = !draft.FLRigSettings.PollAllowed;
-                                break;
-                            case RigBackendServiceEnum.OmniRig:
-                                draft!.OmniRigSettings.PollAllowed = !draft.OmniRigSettings.PollAllowed;
-                                break;
-                        }
-
-                        _applicationSettingsService.ApplySettings(this);
-                    }
-
-                    await Task.Delay(1500);
-                }
-                finally
-                {
-                    _applingSettings = false;
-                }
-            });
+            
+            // 
+            StartStopRigBackendCommand = ReactiveCommand.CreateFromTask( () => Task.CompletedTask);
 
             StartStopUdpCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
             StartStopRigBackendCommand.ThrownExceptions.Subscribe(ex => { nw.SendErrorNotificationSync(ex.Message); });
