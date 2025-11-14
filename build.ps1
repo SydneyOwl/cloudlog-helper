@@ -75,11 +75,12 @@ function Build-And-Package
         -f $frameworkName `
         -p:PublishSingleFile=true `
         --self-contained true `
-        -p:PublishReadyToRun=true `
+        -p:PublishReadyToRun=false `
         -p:PublishTrimmed=false `
+        -p:TrimUnusedDependencies=true `
         -p:IncludeNativeLibrariesForSelfExtract=true `
         -p:UseAppHost=true
-
+    
     $publishPath = "bin/Release/$frameworkName/$runtime/publish/$exeName"
     $zipName = if ($tagName)
     {
