@@ -97,6 +97,14 @@
         <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-x64\*"/>
     </ItemGroup>
 
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-armhf\*"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-arm64\*"/>
+    </ItemGroup>
+
     <ItemGroup>
         <AvaloniaXaml Remove="Hamlib\**"/>
     </ItemGroup>

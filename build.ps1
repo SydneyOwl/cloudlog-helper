@@ -52,10 +52,22 @@ Copy-Item -Path "./tmp/hamlib-w64-$latestHamlibVersion/bin/rigctld.exe" -Destina
 Get-ChildItem -Path "./Resources/Dependencies/hamlib/win-x64"
 
 $downloadUrl = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip"
-Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/Hamlib-linux-x64-$latestHamlibLinuxVersion.zip"
-Expand-Archive -Path "./tmp/Hamlib-linux-x64-$latestHamlibLinuxVersion.zip" -DestinationPath "./tmp/hamlib-linux-x64"
-Copy-Item -Path "./tmp/hamlib-linux-x64/bin/rigctld" -Destination "./Resources/Dependencies/hamlib/linux-x64"
+Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip"
+Expand-Archive -Path "./tmp/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip" -DestinationPath "./tmp/Hamlib-linux-amd64-$latestHamlibLinuxVersion"
+Copy-Item -Path "./tmp/Hamlib-linux-amd64-$latestHamlibLinuxVersion/bin/rigctld" -Destination "./Resources/Dependencies/hamlib/linux-x64"
 Get-ChildItem -Path "./Resources/Dependencies/hamlib/linux-x64"
+
+$downloadUrl = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-armhf-$latestHamlibLinuxVersion.zip"
+Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/Hamlib-linux-armhf-$latestHamlibLinuxVersion.zip"
+Expand-Archive -Path "./tmp/Hamlib-linux-armhf-$latestHamlibLinuxVersion.zip" -DestinationPath "./tmp/Hamlib-linux-armhf-$latestHamlibLinuxVersion"
+Copy-Item -Path "./tmp/Hamlib-linux-armhf-$latestHamlibLinuxVersion/bin/rigctld" -Destination "./Resources/Dependencies/hamlib/linux-armhf"
+Get-ChildItem -Path "./Resources/Dependencies/hamlib/linux-armhf"
+
+$downloadUrl = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-arm64-$latestHamlibLinuxVersion.zip"
+Invoke-WebRequest -Uri $downloadUrl -OutFile "./tmp/Hamlib-linux-arm64-$latestHamlibLinuxVersion.zip"
+Expand-Archive -Path "./tmp/Hamlib-linux-arm64-$latestHamlibLinuxVersion.zip" -DestinationPath "./tmp/Hamlib-linux-arm64-$latestHamlibLinuxVersion"
+Copy-Item -Path "./tmp/Hamlib-linux-arm64-$latestHamlibLinuxVersion/bin/rigctld" -Destination "./Resources/Dependencies/hamlib/linux-arm64"
+Get-ChildItem -Path "./Resources/Dependencies/hamlib/linux-arm64"
 
 ########################
 
@@ -97,6 +109,8 @@ function Build-And-Package
 Build-And-Package -runtime "win-x64" -archName "windows-x64" -frameworkName "net6.0-windows10.0.17763.0"
 Build-And-Package -runtime "win-x86" -archName "windows-x86" -frameworkName "net6.0-windows10.0.17763.0"
 Build-And-Package -runtime "linux-x64" -archName "linux-x64" -exeName "CloudlogHelper" -frameworkName "net6.0"
+Build-And-Package -runtime "linux-arm" -archName "linux-arm" -exeName "CloudlogHelper" -frameworkName "net6.0"
+Build-And-Package -runtime "linux-arm64" -archName "linux-arm64" -exeName "CloudlogHelper" -frameworkName "net6.0"
 
 Remove-Item $versionInfoPath
 Move-Item $versionInfoPathBak $versionInfoPath
