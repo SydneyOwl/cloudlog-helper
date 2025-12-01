@@ -39,7 +39,7 @@ jobs:
           }else{
             $tagName = $tagName -replace '^[vV]', ''
           }
-          ./build.ps1 -tagName "$tagName"
+          ./ci.ps1 -Version "$tagName"
 
       - name: Release it
         uses: softprops/action-gh-release@v2

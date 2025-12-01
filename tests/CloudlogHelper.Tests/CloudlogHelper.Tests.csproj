@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>net6.0-windows10.0.17763.0;net6.0</TargetFrameworks>
+    <PropertyGroup> 
+        <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net6.0-windows10.0.17763.0;net6.0</TargetFrameworks>
+        <TargetFramework Condition="'$(OS)' != 'Windows_NT'">net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 

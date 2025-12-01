@@ -251,9 +251,33 @@ Here are the specific steps (using Windows 7 as an example):
 
 ## 🛠️ Compilation
 
-**Refer to CI File in this repo (`.github/workflows/build.yml`) for more!**
+### 🛠️ Compile on windows
+You can directly use the script intended for CI to perform compilation. 
+This script will compile for all target platforms supported by this software (win-x86, win-x64, linux-x64, linux-arm, linux-arm64).
 
-Please ensure your build environment has `.NET 6.0` (or higher) and `gcc` installed. The following steps are for Linux x64 environments.
+By default, this script will compile for all target platforms supported by this software (win-x86, win-x64, linux-x64, linux-arm, linux-arm64).
+You can specify command-line parameters to compile only the platforms you need.
+
+```powershell
+powershell .\ci.ps1 -Platforms linux-x64,linux-arm64
+```
+
+After compilation, you can find the compiled software in `src/CloudlogHelper/bin`.
+
+### 🛠️ Compile on linux
+
+> [!NOTE]
+>
+> Linux does not support cross-compilation to Windows-specific frameworks (net6.0-windows10.0.17763.0). 
+> The script will use the fallback framework (net6.0) for compilation. The compiled artifacts will not support system native notifications and OmniRig.
+
+Please ensure your build environment has following tools installed:
++ .net6
++ git
++ dotnet
++ curl
++ unzip
++ jq
 
 First, clone this repository:
 
@@ -261,46 +285,26 @@ First, clone this repository:
 git clone --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
 ```
 
-### 🔨 Compiling Hamlib
-
-You can skip this step entirely if you do not need to read and upload radio information. The software can function without Hamlib.
-
-We essentially only need `rigctld`, a radio control daemon from the `Hamlib` toolkit that allows remote control of radio devices via TCP:
+Then run `build.sh` at the root of this repo.
 
 ```shell
-# Clone hamlib
-git clone --depth=1 https://github.com/hamlib/hamlib.git
-
-# Install dependencies
-sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev autoconf automake libtool
-
-cd cloudlog-helper/hamlib
-./bootstrap
-
-# Minimize compiled binary size, referencing wsjt-x's CMakeLists
-./configure --prefix=<INSTALL_DIR> --disable-shared --enable-static --without-cxx-binding \
-CFLAGS="-g -O2 -fPIC -fdata-sections -ffunction-sections" \
-LDFLAGS="-Wl,--gc-sections"
-
-make -j$(nproc) all
-make install-strip DESTDIR=""
+bash ./build.sh
 ```
 
-After compilation, you should find the `rigctld` binary in `./<INSTALL_DIR>/bin`. Please place it in `Resources/Dependencies/hamlib/linux-64/`; `rigctld` will be embedded into the compiled software later.
-You can also download pre-built `rigctld` binaries for various architectures directly from [hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild).
-
-### 🔨 Compiling the Main Software
-
-Execute the following commands:
+By default, this script will compile for all target platforms supported by this software (win-x86, win-x64, linux-x64, linux-arm, linux-arm64). 
+You can specify command-line parameters to compile only the platforms you need.
 
 ```shell
-cd cloudlog-helper
-dotnet publish -c Release -r linux-x64 -f net6.0 -p:PublishSingleFile=true \
---self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true \
--p:UseAppHost=true
+./build.sh --help
+Usage: ./build.sh [options]
+Options:
+  -t, --tag <version>       Application build version number, default is dev-build
+  -p, --platforms <list>    Target platforms (comma-separated, e.g., win-x64,linux-x64)
+                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64
+  -h, --help                Show this help message
 ```
 
-After compilation, you can find the compiled software in `bin/Release/net6.0/linux-x64/publish/`.
+After compilation, you can find the compiled software in `src/CloudlogHelper/bin`.
 
 ## ✨ Miscellaneous
 

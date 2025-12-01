@@ -81,13 +81,10 @@ public class DatabaseService : IDatabaseService, IDisposable
                     ApplicationVersionDatabase.NewDefaultAppVersion();
         _dbVersion = new Version(dbVer.CurrentVersion!);
 
-        // NEVER USE `Assembly.GetEntryAssembly()?.GetName().Version`: SEEMS LIKE IT'LL CHANGE AFTER AVALONIA FULLY INITIALIZED!
         var appVer = VersionInfo.Version;
-        var formalRelease = true;
-        // for xxx-rc1
+        
         if (appVer.Contains('-'))
         {
-            formalRelease = false;
             appVer = appVer.Split("-").FirstOrDefault();
         }
 

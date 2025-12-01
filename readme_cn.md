@@ -249,56 +249,6 @@
 |------|-------------------------------------|
 | Ctrl | 在启动页面消失前快速按下3次Ctrl，程序将删除所有设置并重新初始化。 |
 
-## 🛠️ 编译
-
-请首先确保编译环境已具备`.net 6.0`(或以上) 以及`gcc`。以下步骤仅适用于Linux x64环境。
-
-首先，克隆本仓库：
-
-```shell
-git clone --depth=1 https://github.com/SydneyOwl/cloudlog-helper.git
-```
-
-### 🔨 编译Hamlib
-
-如果您完全不需要读取和上传电台信息，可以直接忽略这一步，软件可以在没有hamlib的情况下工作。
-
-事实上我们只需要`rigctld`，它是`Hamlib`工具集中的一个无线电控制守护进程，允许通过TCP长连接远程控制无线电设备:
-
-```shell
-# Clone hamlib
-git clone --depth=1 https://github.com/hamlib/hamlib.git
-
-# 依赖安装
-sudo apt install build-essential gcc g++ cmake make libusb-dev libudev-dev autoconf automake libtool
-
-cd cloudlog-helper/hamlib
-./bootstrap
-
-# 减小编译产物体积， 参考了wsjt-x的cmakelist
-./configure --prefix=<INSTALL_DIR> --disable-shared --enable-static --without-cxx-binding \
-CFLAGS="-g -O2 -fPIC -fdata-sections -ffunction-sections" \
-LDFLAGS="-Wl,--gc-sections"
-
-make -j$(nproc) all
-make install-strip DESTDIR=""
-```
-
-编译完成后，您应该可以在`./<INSTALL_DIR>/bin`处找到编译产物`rigctld`。请将它放到Resources/Dependencies/hamlib/linux-64中，后续rigctld将嵌入到编译的软件中。您也可以从[hamlib-crossbuild](https://github.com/SydneyOwl/hamlib-crossbuild)直接下载对应架构的rigctld。
-
-### 🔨 编译软件本体
-
-请执行以下命令:
-
-```shell
-cd cloudlog-helper
-dotnet publish -c Release -r linux-x64 -f net6.0 -p:PublishSingleFile=true \
---self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true \
--p:UseAppHost=true
-```
-
-编译完成后，您应该可以在`bin/Release/net6.0/linux-64`找到编译的软件.
-
 ## ✨ 其他
 
 ### ⬆️ 升级Cloudlog Helper

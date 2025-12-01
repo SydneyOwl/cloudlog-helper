@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>net6.0-windows10.0.17763.0;net6.0</TargetFrameworks>
+    <PropertyGroup> 
+        <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net6.0-windows10.0.17763.0;net6.0</TargetFrameworks>
+        <TargetFramework Condition="'$(OS)' != 'Windows_NT'">net6.0</TargetFramework>
         <OutputType>WinExe</OutputType>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -121,6 +122,10 @@
         <AdditionalFiles Include="Views\UserControls\TipIconUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\UDPLogInfoGroupboxUserControl.axaml"/>
         <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Dependencies\" />
     </ItemGroup>
 
 </Project>
