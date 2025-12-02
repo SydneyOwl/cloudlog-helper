@@ -145,6 +145,7 @@ function Build-And-Package {
     
     # if cygwin installed
     if (Get-Command chmod -ErrorAction SilentlyContinue) {
+        Write-Host "Cygwin env found here!"
         chmod +x $publishPath
     }
 

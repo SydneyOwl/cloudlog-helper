@@ -24,15 +24,17 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       
-#      - name: Execute test
-#        shell: pwsh
-#        run: |
-#          dotnet test 
-#        if: startsWith(github.ref, 'refs/tags/')
+      - name: Execute test
+        shell: pwsh
+        run: |
+          dotnet test
+
+      - name: Setup Cygwin environment
+        uses: egor-tensin/setup-cygwin@v4
 
       - name: Build application
-        uses: egor-tensin/setup-cygwin@v4
         shell: pwsh
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           $tagName = "${{ github.ref_name }}"
           if ([string]::IsNullOrEmpty($tagName)) {
