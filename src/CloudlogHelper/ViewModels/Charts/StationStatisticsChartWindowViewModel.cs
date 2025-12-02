@@ -269,7 +269,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         plot4!.Axes.Rules.Add(maximumSpan);
 
-        var resourceStream = ApplicationStartUpUtil.GetResourceStream(DefaultConfigs.DefaultWorldMapFile);
+        var resourceStream = ApplicationStartUpUtil.GetSingleResourceStream(DefaultConfigs.DefaultWorldMapFile);
         if (resourceStream is null)
         {
             ClassLogger.Error("Resource stream of map is null");

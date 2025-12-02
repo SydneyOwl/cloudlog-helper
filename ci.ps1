@@ -142,6 +142,11 @@ function Build-And-Package {
         -p:IncludeNativeLibrariesForSelfExtract=true
 
     $publishPath = "bin/Release/$frameworkName/$runtime/publish/$exeName"
+    
+    # if cygwin installed
+    if (Get-Command chmod -ErrorAction SilentlyContinue) {
+        chmod +x $publishPath
+    }
 
     $zipName = if ($Version) {
         "bin/CloudlogHelper-v$Version-$archName.zip"

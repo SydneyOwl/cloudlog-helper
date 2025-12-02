@@ -56,11 +56,36 @@ public class ApplicationStartUpUtil
         throw new PlatformNotSupportedException("Unsupported OS");
     }
 
-    public static Stream? GetResourceStream(string name)
+    public static Stream?[] GetResourceStream(string name)
+    {
+        if (name.StartsWith(".") || name.StartsWith("*.")) return GetResourcesWithExtension(name);
+
+        return new[] { GetSingleResourceStream(name) };
+    }
+
+    public static Stream? GetSingleResourceStream(string name)
     {
         var assemblyNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
         var path = assemblyNames.FirstOrDefault(x => x.Contains(name), null);
-        if (string.IsNullOrEmpty(path)) throw new FileNotFoundException("Resource not found: " + name);
-        return Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+        return string.IsNullOrEmpty(path) ? 
+            throw new FileNotFoundException("Resource not found: " + name) : 
+            Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+    }
+
+    private static Stream?[] GetResourcesWithExtension(string extension)
+    {
+        if (string.IsNullOrEmpty(extension))
+            throw new ArgumentException("Extension cannot be null or empty", nameof(extension));
+
+        var normalizedExtension = extension.StartsWith(".") ? extension : "." + extension;
+    
+        var assembly = Assembly.GetExecutingAssembly();
+        var allResources = assembly.GetManifestResourceNames();
+    
+        var target = allResources
+            .Where(resourceName => resourceName.EndsWith(normalizedExtension, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        
+        return target.Select(resourceName => assembly.GetManifestResourceStream(resourceName)).ToArray();
     }
 }

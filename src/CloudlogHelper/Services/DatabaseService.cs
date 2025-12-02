@@ -436,7 +436,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// <returns></returns>
     private string ReadEmbeddedFileAsString(string name)
     {
-        var stream = ApplicationStartUpUtil.GetResourceStream(name);
+        var stream = ApplicationStartUpUtil.GetSingleResourceStream(name);
         if (stream == null)
         {
             ClassLogger.Warn("Embeeded file is null: {msg}", name);

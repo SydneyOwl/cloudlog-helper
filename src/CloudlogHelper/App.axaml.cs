@@ -374,18 +374,22 @@ public class App : Application
 
             try
             {
-                var resourceFileStream = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
-                if (resourceFileStream is null)
+                var resourceFileStreams = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
+                
+                foreach (var resourceFileStream in resourceFileStreams)
                 {
-                    ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
-                    continue;
-                }
+                    if (resourceFileStream is null)
+                    {
+                        ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
+                        continue;
+                    }
 
-                using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
-                resourceFileStream.Seek(0, SeekOrigin.Begin);
-                resourceFileStream.CopyTo(fileStream);
-                fileStream.Flush();
-                fileStream.Close();
+                    using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
+                    resourceFileStream.Seek(0, SeekOrigin.Begin);
+                    resourceFileStream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
             }
             catch (Exception ex)
             {
