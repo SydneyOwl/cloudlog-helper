@@ -13,6 +13,7 @@ public class OmniRigTests
         _testOutputHelper = testOutputHelper;
     }
 
+#if WINDOWS
     [Fact(Skip = "CI")]
     public async Task GetOmniRigVersion_ReturnCorrectVersion()
     {
@@ -50,5 +51,6 @@ public class OmniRigTests
         
         await omniRigService.StopService(CancellationToken.None);
     }
+#endif
 
 }

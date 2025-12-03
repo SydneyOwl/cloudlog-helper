@@ -171,7 +171,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
     public async Task StopService()
     {
-        await _currentService.StopService(CancellationToken.None);
+        await _currentService.StopService(_getNewCancellationProcessToken());
     }
 
     public async Task StartService()

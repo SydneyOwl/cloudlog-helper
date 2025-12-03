@@ -198,7 +198,7 @@ public class App : Application
         mainWindow.Show();
         mainWindow.Focus();
         desktop.MainWindow = mainWindow;
-        desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+        desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
 
         _exitCommand = ReactiveCommand.Create(() =>
         {
@@ -374,22 +374,19 @@ public class App : Application
 
             try
             {
-                var resourceFileStreams = ApplicationStartUpUtil.GetResourceStream(defaultHamlibFile);
+                var resourceFileStream = ApplicationStartUpUtil.GetSingleResourceStream(defaultHamlibFile);
                 
-                foreach (var resourceFileStream in resourceFileStreams)
+                if (resourceFileStream is null)
                 {
-                    if (resourceFileStream is null)
-                    {
-                        ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
-                        continue;
-                    }
-
-                    using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
-                    resourceFileStream.Seek(0, SeekOrigin.Begin);
-                    resourceFileStream.CopyTo(fileStream);
-                    fileStream.Flush();
-                    fileStream.Close();
+                    ClassLogger.Warn($"Stream is empty: {defaultHamlibFile}, Skipping...");
+                    continue;
                 }
+
+                using var fileStream = new FileStream(tPath, FileMode.Create, FileAccess.Write);
+                resourceFileStream.Seek(0, SeekOrigin.Begin);
+                resourceFileStream.CopyTo(fileStream);
+                fileStream.Flush();
+                fileStream.Close();
             }
             catch (Exception ex)
             {

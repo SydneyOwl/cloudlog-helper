@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup> 
         <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net6.0-windows10.0.17763.0;net6.0</TargetFrameworks>
-        <TargetFramework Condition="'$(OS)' != 'Windows_NT'">net6.0</TargetFramework>
+        <TargetFramework Condition="'$(OS)' != 'Windows_NT'">net8.0</TargetFramework>
         <OutputType>WinExe</OutputType>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -11,6 +11,12 @@
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <MacOSAppIcon>Assets/icon.icns</MacOSAppIcon>
         <LinuxAppIcon>Assets/icon.png</LinuxAppIcon>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PublishAot>true</PublishAot>
+        <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+        <TrimMode>partial</TrimMode>
     </PropertyGroup>
     
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -43,7 +49,7 @@
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1"/>
         <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1"/>
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
         <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="NLog" Version="5.4.0"/>

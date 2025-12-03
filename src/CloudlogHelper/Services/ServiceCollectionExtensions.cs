@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
@@ -9,7 +8,10 @@ using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
 using DesktopNotifications;
 using DesktopNotifications.FreeDesktop;
+#if WINDOWS
+using System.Runtime.InteropServices;
 using DesktopNotifications.Windows;
+#endif
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 
@@ -28,7 +30,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDatabaseService, DatabaseService>();
         services.AddSingleton<IRigService, RigctldService>();
         services.AddSingleton<IRigService, FLRigService>();
+#if WINDOWS
         services.AddSingleton<IRigService, OmniRigService>();
+#endif
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
@@ -60,12 +64,14 @@ public static class ServiceCollectionExtensions
             if (OperatingSystem.IsWindows() &&
                 Environment.OSVersion.Version >= new Version(10, 0))
             {
+#if WINDOWS
                 // only enabled on win10 or later
                 ClassLogger.Info("Using windows native notification.");
                 var context = WindowsApplicationContext.FromCurrentProcess();
                 var windowsNotificationManager = new WindowsNotificationManager(context);
                 await windowsNotificationManager.Initialize();
                 services.AddSingleton<INotificationManager>(windowsNotificationManager);
+#endif
             }
             else if (OperatingSystem.IsLinux())
             {

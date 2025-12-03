@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if WINDOWS
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -74,7 +75,7 @@ public class OmniRigService : IRigService, IDisposable
         {
             _mutex.WaitOne();
             ClassLogger.Info("Stopping OmniRig");
-            await Task.Run(ReleaseUnmanagedResources, token); 
+            await Task.Run(ReleaseUnmanagedResources, token);
         }
         finally
         {
@@ -227,3 +228,5 @@ public class OmniRigService : IRigService, IDisposable
 
     #endregion
 }
+
+#endif
