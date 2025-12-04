@@ -140,6 +140,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         };
 
         for (var i = 0; i < 10; i++) FilteredQsos.Add(testQso);
+
+        // TxStatus = true;
+        // MsgSending = "Hello sending...";
+
+        // TimeoutStatus = true;
+
+        // WaitFirstConn = true;
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(IDatabaseService dbService,

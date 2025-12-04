@@ -180,23 +180,45 @@
                     </ListBox>
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 147, 0, 0.7)" IsVisible="{Binding TxStatus}">
-                        <TextBlock Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                   TextAlignment="Center"
-                                   Foreground="Azure" Text="{Binding MsgSending}" />
+                        <StackPanel.Styles>
+                            <Style Selector="StackPanel">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:1.2" IterationCount="Infinite" PlaybackDirection="Alternate">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Opacity" Value="0.5" />
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Opacity" Value="1.0" />
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </StackPanel.Styles>
+    
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" 
+                                    Spacing="10" Margin="15,0,0,0">
+                            <avalonia:MaterialIcon Kind="Bullhorn" Margin="0,3,0,0"/>
+                            <TextBlock Foreground="Azure" Margin="0,3,0,0" Text="{Binding MsgSending}" />
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 69, 0, 0.8)"
                                 IsVisible="{Binding TimeoutStatus}">
-                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   TextAlignment="Center"
-                                   Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                            <avalonia:MaterialIcon Kind="Warning" Foreground="Yellow" Margin="0,3,0,0"/>
+                            <TextBlock TextAlignment="Center"
+                                       Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.udptimeout}}" />
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(100, 149, 237, 0.8)" IsVisible="{Binding WaitFirstConn}">
-                        <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.waitconn}}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                            <avalonia:MaterialIcon Kind="Sleep" Foreground="White" Margin="0,3,0,0"/>
+                            <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.waitconn}}" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
                 <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10"
