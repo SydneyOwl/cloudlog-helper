@@ -1,7 +1,20 @@
 ﻿#!/bin/bash
 set -e 
-TAG_NAME="0.2.3-devbuild"
+TAG_NAME="armdev"
 TARGET_PLATFORM="linux-arm64"
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -t|--tag)
+            TAG_NAME="${2}(ARM AOT Build)"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
 
 # Get Git commit hash
 COMMIT_HASH=$(git rev-parse --short HEAD)

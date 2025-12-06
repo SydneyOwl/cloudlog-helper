@@ -243,6 +243,7 @@ build_and_package() {
     fi
     
     if [ -f "$publish_path" ]; then
+        chmod +x "$publish_path"
         zip -j "$zip_name" "$publish_path"
         echo "Created: $zip_name"
     else

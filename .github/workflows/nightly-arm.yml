@@ -26,9 +26,12 @@ jobs:
 
       - name: Build application
         shell: bash
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
+          TAG_NAME="${{ github.ref_name }}"
+          CLEAN_TAG="${TAG_NAME#v}"
           chmod +x linux-arm-nightly-build.sh
-          ./linux-arm-nightly-build.sh
+          ./linux-arm-nightly-build.sh -t "$CLEAN_TAG"
 
       - name: Release it
         uses: softprops/action-gh-release@v2
