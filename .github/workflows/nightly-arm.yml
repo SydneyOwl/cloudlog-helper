@@ -1,0 +1,38 @@
+﻿name: Cloudlog Helper Cross Build
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  push:
+    branches: [ "master" ]
+    tags: [ "*" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build application
+        shell: bash
+        run: |
+          chmod +x linux-arm-nightly-build.sh
+          ./linux-arm-nightly-build.sh
+
+      - name: Release it
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            src/CloudlogHelper/bin/*.zip
