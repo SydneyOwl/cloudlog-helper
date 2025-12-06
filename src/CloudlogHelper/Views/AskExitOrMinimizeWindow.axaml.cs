@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
+using Avalonia.Threading;
 using CloudlogHelper.ViewModels;
 using ReactiveUI;
 
@@ -15,7 +17,7 @@ public partial class AskExitOrMinimizeWindow : ReactiveWindow<AskExitOrMinimizeW
         this.WhenActivated(disposables =>
         {
             ViewModel.ConfirmToTray
-                .Subscribe(result => Close(result))
+                .Subscribe( result => Dispatcher.UIThread.InvokeAsync(() => Close(result)))
                 .DisposeWith(disposables);
         });
     }

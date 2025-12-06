@@ -195,10 +195,10 @@ public class App : Application
         if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
 
         var mainWindow = _servProvider.GetRequiredService<MainWindow>();
-        mainWindow.Show();
-        mainWindow.Focus();
         desktop.MainWindow = mainWindow;
         desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        mainWindow.Show();
+        mainWindow.Focus();
 
         _exitCommand = ReactiveCommand.Create(() =>
         {

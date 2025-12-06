@@ -197,7 +197,7 @@
     
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" 
                                     Spacing="10" Margin="15,0,0,0">
-                            <avalonia:MaterialIcon Kind="Bullhorn" Margin="0,3,0,0"/>
+                            <avalonia:MaterialIcon Foreground="Azure" Kind="Bullhorn" Margin="0,3,0,0"/>
                             <TextBlock Foreground="Azure" Margin="0,3,0,0" Text="{Binding MsgSending}" />
                         </StackPanel>
                     </StackPanel>
