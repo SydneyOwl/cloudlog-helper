@@ -37,7 +37,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
     private readonly IApplicationSettingsService _applicationSettingsService;
-    private readonly IClipboardService _clipboardService;
     private readonly IDatabaseService _databaseService;
     private readonly IDecodedDataProcessorService _decodedDataProcessorService;
     private readonly Subject<Unit> _heartbeatSubject = new();
@@ -52,7 +51,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private uint _successfulQsosCount;
 
     private readonly Queue<DateTime> _qsoTimestamps = new();
-    private IDisposable? _rateCalculationSubscription;
 
     public UDPLogInfoGroupboxUserControlViewModel()
     {
@@ -129,7 +127,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IDecodedDataProcessorService decodedDataProcessorService)
     {
         _applicationSettingsService = ss;
-        _clipboardService = clipboardService;
+        var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
         _nativeNotificationManager = nativeNotificationManager;
         _qsoUploadService = qu;
@@ -156,7 +154,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 content);
                 
             if (msgResult == "Copy info")
-                await _clipboardService.SetTextAsync(content);
+                await clipboardService1.SetTextAsync(content);
                 
             return Unit.Default;
         });
@@ -219,7 +217,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private void SetupQsoRateCalculation(CompositeDisposable disposables)
     {
-        _rateCalculationSubscription = Observable.Interval(TimeSpan.FromSeconds(5))
+        Observable.Interval(TimeSpan.FromSeconds(5))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
@@ -236,7 +234,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 QsAvgMin = $"{rate:F2} QSOs/min";
             }).DisposeWith(disposables);
             
-        _rateCalculationSubscription.DisposeWith(disposables);
 
         _allQsos.Connect()
             .WhenPropertyChanged(p => p.UploadStatus)

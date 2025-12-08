@@ -6,7 +6,7 @@ TARGET_PLATFORM="linux-arm64"
 while [[ $# -gt 0 ]]; do
     case $1 in
         -t|--tag)
-            TAG_NAME="${2}(ARM AOT Build)"
+            TAG_NAME="${2}-ARM-AOT-Build)"
             shift 2
             ;;
         *)
