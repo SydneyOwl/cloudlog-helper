@@ -725,4 +725,13 @@
     <data name="confomnifirst" xml:space="preserve">
         <value>请检查OmniRig配置！</value>
     </data>
+    <data name="totaldec" xml:space="preserve">
+        <value>总解码数：</value>
+    </data>
+    <data name="totalrec" xml:space="preserve">
+        <value>已记录数：</value>
+    </data>
+    <data name="totaluploaded" xml:space="preserve">
+        <value>已上传数：</value>
+    </data>
 </root>

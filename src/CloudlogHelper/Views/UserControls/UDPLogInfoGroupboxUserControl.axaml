@@ -21,29 +21,42 @@
         <converters:StringToColorConverter x:Key="StringToColor" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="5">
-        <HeaderedContentControl Header="UDP Logs">
+        <HeaderedContentControl Header="QSO Logs">
             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,*,Auto"
                   ShowGridLines="False" Margin="5"
-                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.totaldivqso}}" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0,0,15" Text="{Binding QsosCountData}" />
-
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{I18N {x:Static resources:LangKeys.qsorate}}"
-                           Margin="0,0,0,10" />
-                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,15">
-                    <TextBlock Text="{Binding QsAvgMin}" VerticalAlignment="Center" />
-                    <userControls2:TipIconUserControl
-                        TooltipText="{I18N {x:Static resources:LangKeys.within5min}}" VerticalAlignment="Center" />
+                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RowSpacing="10">
+                <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,10,0">
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.totaldec}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding AllDecodedCount}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                 </StackPanel>
-
+    
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,10,0">
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.qsorate}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding QsAvgMin}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+                        <userControls2:TipIconUserControl
+                            TooltipText="{I18N {x:Static resources:LangKeys.within5min}}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel> 
+    
+                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="10,0,0,0">
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.totalrec}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding RecordedQsosCount}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+                </StackPanel>
+    
+                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="10,0,0,0">
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.totaluploaded}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding UploadedQsosCount}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+                </StackPanel>
+                
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <Button Content="{I18N {x:Static resources:LangKeys.selall}}" Command="{Binding SelectAllCommand}"
-                            Margin="5,0,5,10" />
+                            Margin="5,0,5,0" />
                     <CheckBox Content="{I18N {x:Static resources:LangKeys.showfailonly}}"
-                              IsChecked="{Binding ShowFailedOnly}" Margin="20,0,0,10" />
+                              IsChecked="{Binding ShowFailedOnly}" Margin="20,0,0,0" />
                     <userControls2:WindowSplitToggleButtonUserControl
                         DataContext="{Binding SplitUserControlViewModel}"
-                        Margin="20,0,0,10" />
+                        Margin="20,0,0,0" />
                 </StackPanel>
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">

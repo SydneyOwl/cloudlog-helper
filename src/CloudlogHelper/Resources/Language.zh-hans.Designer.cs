@@ -1835,11 +1835,38 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 总解码数：.
+        /// </summary>
+        public static string totaldec {
+            get {
+                return ResourceManager.GetString("totaldec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 总解码数 / QSO数：.
         /// </summary>
         public static string totaldivqso {
             get {
                 return ResourceManager.GetString("totaldivqso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 已记录数：.
+        /// </summary>
+        public static string totalrec {
+            get {
+                return ResourceManager.GetString("totalrec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 已上传数：.
+        /// </summary>
+        public static string totaluploaded {
+            get {
+                return ResourceManager.GetString("totaluploaded", resourceCulture);
             }
         }
         

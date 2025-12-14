@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -46,11 +48,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IQSOUploadService _qsoUploadService;
     private readonly IUdpServerService _udpServerService;
     private readonly UDPServerSettings _udpSettings;
-    
-    private uint _allDecodedCount;
-    private uint _successfulQsosCount;
 
-    private readonly Queue<DateTime> _qsoTimestamps = new();
+    private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
     public UDPLogInfoGroupboxUserControlViewModel()
     {
@@ -177,6 +176,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     if (!_udpSettings.EnableUDPServer || WaitFirstConn) return;
                     TimeoutStatus = true;
+                    TxStatus = false;
                 })
                 .DisposeWith(compositeDisposable);
 
@@ -210,28 +210,33 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public bool WaitFirstConn { get; set; }
     [Reactive] public bool TxStatus { get; set; }
     [Reactive] public string MsgSending { get; set; } = string.Empty;
-    [Reactive] public string? QsAvgMin { get; set; } = "0 QSOs/min";
-    [Reactive] public string QsosCountData { get; set; } = "0/0"; // total/successful
+    [Reactive] public string? QsAvgMin { get; set; } = "0 Q's/m";
+    
+    // seems like it's not necessary,,,
+    [Reactive] public long AllDecodedCount { get; set; }
+    [Reactive] public long RecordedQsosCount { get; set; }
+    [Reactive] public long UploadedQsosCount { get; set; }
     [Reactive] public bool SelectAll { get; set; }
     [Reactive] public bool ShowFailedOnly { get; set; }
 
     private void SetupQsoRateCalculation(CompositeDisposable disposables)
     {
-        Observable.Interval(TimeSpan.FromSeconds(5))
+        Observable.Interval(TimeSpan.FromSeconds(10))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
                 var cutoffTime = DateTime.UtcNow.AddMinutes(-5);
-                while (_qsoTimestamps.Count > 0 && _qsoTimestamps.Peek() < cutoffTime)
+                while (_qsoTimestamps.TryPeek(out var timestamp) 
+                       && timestamp < cutoffTime)
                 {
-                    _qsoTimestamps.Dequeue();
+                    _qsoTimestamps.TryDequeue(out var _);
                 }
 
                 var rate = _qsoTimestamps.Count > 0 
                     ? _qsoTimestamps.Count / 5.0
                     : 0;
                     
-                QsAvgMin = $"{rate:F2} QSOs/min";
+                QsAvgMin = $"{rate:F2} Q's/m";
             }).DisposeWith(disposables);
             
 
@@ -240,14 +245,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .Where(x => x.Value == UploadStatus.Success)
             .Subscribe(x =>
             {
-                _qsoTimestamps.Enqueue(DateTime.UtcNow);
-                if (_qsoTimestamps.Count > 1000)
-                {
-                    _qsoTimestamps.Dequeue();
-                }
-                
-                _successfulQsosCount = (uint)_allQsos.Items.Count(q => q.UploadStatus == UploadStatus.Success);
-                UpdateQsosCountData();
+                UploadedQsosCount += 1;
             })
             .DisposeWith(disposables);
     }
@@ -332,11 +330,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         });
     }
 
-    private void UpdateQsosCountData()
-    {
-        QsosCountData = $"{_allDecodedCount}/{_successfulQsosCount}";
-    }
-
     private void _deleteSelectedQsos()
     {
         var itemsToRemove = _allQsos.Items
@@ -352,8 +345,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 innerList.Remove(item);
             }
         });
-        
-        UpdateQsosCountData();
     }
 
     private IDisposable TryStartUdpService()
@@ -435,8 +426,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             await _databaseService.MarkQsoIgnored(IgnoredQsoDatabase.Parse(item));
             _allQsos.Remove(item);
         }
-        
-        UpdateQsosCountData();
     }
 
     private async Task _createAdifFromCheckedQSO()
@@ -492,11 +481,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             switch (message.MessageType)
             {
                 case MessageType.QSOLogged:
+                    AllDecodedCount += 1;
                     await HandleQsoLogged((QsoLogged)message);
                     break;
                     
                 case MessageType.Decode:
-                    _allDecodedCount += 1;
+                    AllDecodedCount += 1;
                     _decodedDataProcessorService.ProcessDecoded((Decode)message);
                     break;
                     
@@ -505,7 +495,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     break;
             }
 
-            UpdateQsosCountData();
             _heartbeatSubject.OnNext(Unit.Default);
             TimeoutStatus = false;
             WaitFirstConn = false;
@@ -518,8 +507,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task HandleQsoLogged(QsoLogged message)
     {
-        _allDecodedCount += 1;
-        _successfulQsosCount += 1;
+        RecordedQsosCount += 1;
+        _qsoTimestamps.Enqueue(DateTime.UtcNow);
 
         var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall);
         var rcd = RecordedCallsignDetail.GenerateCallsignDetail(

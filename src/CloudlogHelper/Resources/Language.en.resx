@@ -725,4 +725,13 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="confomnifirst" xml:space="preserve">
         <value>Please check OmniRig Settings!</value>
     </data>
+    <data name="totaldec" xml:space="preserve">
+        <value>Decoded:</value>
+    </data>
+    <data name="totalrec" xml:space="preserve">
+        <value>Recorded:</value>
+    </data>
+    <data name="totaluploaded" xml:space="preserve">
+        <value>Uploaded:</value>
+    </data>
 </root>
