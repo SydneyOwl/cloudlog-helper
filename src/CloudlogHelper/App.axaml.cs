@@ -195,8 +195,9 @@ public class App : Application
         if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
 
         var mainWindow = _servProvider.GetRequiredService<MainWindow>();
+        mainWindow.Closed +=  (_, _) => desktop.Shutdown();
         desktop.MainWindow = mainWindow;
-        desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         mainWindow.Show();
         mainWindow.Focus();
 
