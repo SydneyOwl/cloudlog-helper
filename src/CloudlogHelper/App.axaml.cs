@@ -263,6 +263,11 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        TaskScheduler.UnobservedTaskException += (sender, e) =>
+        {
+            ClassLogger.Error($"Unobserved Task Exception occurred! Ignoring it sliently: {e.Exception.Message} - {e.Exception.StackTrace}");   
+        };
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 

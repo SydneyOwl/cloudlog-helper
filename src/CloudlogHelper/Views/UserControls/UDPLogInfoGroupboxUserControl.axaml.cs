@@ -23,6 +23,7 @@ public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogI
             Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                     h => ViewModel!.FilteredQsos.CollectionChanged += h,
                     h => ViewModel!.FilteredQsos.CollectionChanged -= h)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(args =>
                 {
                     if (args.EventArgs.NewStartingIndex >= 0) // Safety check

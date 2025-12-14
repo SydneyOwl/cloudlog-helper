@@ -84,7 +84,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 if (!_uploadQueue.TryDequeue(out var rcd)) continue;
                 var adif = rcd.RawData?.ToString() ?? rcd.GenerateAdif();
                 if (string.IsNullOrEmpty(adif)) continue;
-                ClassLogger.Trace($"Try Logging: {adif}");
+                ClassLogger.Debug($"Try Logging: {adif}");
                 if (!_logServices.Any(x => x.AutoQSOUploadEnabled)
                     && !_extraCloudlogSettings.AutoQSOUploadEnabled
                     && !rcd.ForcedUpload)

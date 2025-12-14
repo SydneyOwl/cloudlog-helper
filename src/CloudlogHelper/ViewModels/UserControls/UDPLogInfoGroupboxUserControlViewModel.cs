@@ -253,6 +253,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private void SetupFilteringAndSorting(CompositeDisposable disposables)
     {
         var filterObservable = this.WhenAnyValue(x => x.ShowFailedOnly)
+            .Throttle(TimeSpan.FromMilliseconds(200))
             .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail =>
                 !showFailed || detail.UploadStatus != UploadStatus.Success));
 
@@ -356,7 +357,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         }
 
         return Observable.FromAsync(_restartUdp)
-            .Subscribe();
+            .Subscribe(
+                _ => { }, // onNext
+                ex => _inAppNotification.SendErrorNotificationAsync("Cannot start udp server: " + ex.Message)
+                );
     }
 
     private async Task _restartUdp()
@@ -501,6 +505,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         }
         catch (Exception e)
         {
+            await _inAppNotification.SendErrorNotificationAsync("Failed to process QSO: " + e.Message);
             ClassLogger.Error(e, "Failed to process WSJT-X message");
         }
     }
