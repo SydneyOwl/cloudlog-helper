@@ -267,6 +267,60 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cloudlog Helper能够连接CLH-Server，自动上报解码的数据模式信息和电台信息到服务器。当您使用特定的安卓app连接到服务器时，服务器将会推送信息到您的手机上。.
+        /// </summary>
+        public static string clhhintinfo {
+            get {
+                return ResourceManager.GetString("clhhintinfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器IP.
+        /// </summary>
+        public static string clhserip {
+            get {
+                return ResourceManager.GetString("clhserip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器密钥.
+        /// </summary>
+        public static string clhserkey {
+            get {
+                return ResourceManager.GetString("clhserkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器端口.
+        /// </summary>
+        public static string clhserport {
+            get {
+                return ResourceManager.GetString("clhserport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器.
+        /// </summary>
+        public static string clhserver {
+            get {
+                return ResourceManager.GetString("clhserver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 使用TLS.
+        /// </summary>
+        public static string clhusetls {
+            get {
+                return ResourceManager.GetString("clhusetls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 关闭窗口.
         /// </summary>
         public static string close {

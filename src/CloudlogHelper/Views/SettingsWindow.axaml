@@ -563,6 +563,51 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+            
+           
+            <!-- CLH Server Tab -->
+            <TabItem Header="{I18N {x:Static resources:LangKeys.clhserver}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="8" Margin="0 8 0 0">
+                        <Border Classes="setting-card">
+                            <StackPanel Spacing="12">
+                                <Grid ColumnDefinitions="*,2*,*"
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserip}}" Classes="setting-label"
+                                               Grid.Row="0" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="0" Grid.Column="1" />
+                                    
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserport}}" Classes="setting-label"
+                                               Grid.Row="1" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1" />
+                                    
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserkey}}" Classes="setting-label"
+                                               Grid.Row="2" Grid.Column="0" />
+                                    <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1" />
+                                    
+                                    <CheckBox Classes="setting-control" Content="{I18N {x:Static resources:LangKeys.clhusetls}}" Grid.Row="4" Grid.Column="0" />
+                                    
+                                    <userControls1:TestButtonUserControl Grid.Row="1" Grid.RowSpan="2" Grid.Column="2"
+                                                                         DataContext="{Binding CloudlogTestButtonUserControl}" />
+                                    
+                                    <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Classes="setting-card" Background="{DynamicResource WarningBackground}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8">
+                                            <avalonia:MaterialIcon Kind="InfoBox" Width="20" Height="20"
+                                                                   VerticalAlignment="Center"
+                                                                   HorizontalAlignment="Center"
+                                                                   Margin="0,0,8,0" />
+                                            <TextBlock Text="{I18N {x:Static resources:LangKeys.clhhintinfo}}" Width="450"
+                                                       Classes="setting-label"
+                                                       VerticalAlignment="Center" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
         </TabControl>
 
         <!-- Footer Buttons -->
