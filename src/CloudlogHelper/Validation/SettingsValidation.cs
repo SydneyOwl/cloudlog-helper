@@ -57,6 +57,10 @@ public static class SettingsValidation
         if (!int.TryParse(st, out var res)) return false;
         return !string.IsNullOrEmpty(st) && res is >= 1 and <= 65535;
     }
+    public static bool CheckHttpPort(int st)
+    {
+        return st is >= 1 and <= 65535;
+    }
 
     public static bool CheckHttpIp(string? st)
     {

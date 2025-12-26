@@ -84,6 +84,8 @@ public class SettingsWindowViewModel : ViewModelBase
         var omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
         OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
 
+        CLHServerTestButtonUserControl = new TestButtonUserControlViewModel(ReactiveCommand.Create(() => { }));
+
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
 
         var cloudCmd =
@@ -160,12 +162,6 @@ public class SettingsWindowViewModel : ViewModelBase
     public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
 
-    #region FLRig
-
-    public TestButtonUserControlViewModel FLRigTestButtonUserControl { get; }
-
-    #endregion
-
     private void InitializeLogSystems()
     {
         try
@@ -235,7 +231,12 @@ public class SettingsWindowViewModel : ViewModelBase
         try
         {
             if (_initSkipped) return;
-            if (!OperatingSystem.IsWindows())throw new Exception("OmniRig is only supported on Windows.");
+            if (!OperatingSystem.IsWindows())
+            {
+                OmniRigInited = false;
+                return;
+                // throw new Exception("OmniRig is only supported on Windows.");
+            }
             var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
             if (omniRigType is null) throw new Exception("OmniRig COM not found!");
         }
@@ -412,5 +413,17 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public TestButtonUserControlViewModel OmniRigTestButtonUserControl { get; }
 
+    #endregion
+
+    #region FLRig
+
+    public TestButtonUserControlViewModel FLRigTestButtonUserControl { get; }
+
+    #endregion
+
+    #region CLHServer
+    
+    public TestButtonUserControlViewModel CLHServerTestButtonUserControl { get; }
+    
     #endregion
 }

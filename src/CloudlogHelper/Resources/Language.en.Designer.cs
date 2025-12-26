@@ -626,6 +626,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable CLH Server.
+        /// </summary>
+        public static string enableclhserver {
+            get {
+                return ResourceManager.GetString("enableclhserver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable connection from outside.
         /// </summary>
         public static string enableoutsideconn {

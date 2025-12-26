@@ -19,6 +19,9 @@ using ReactiveUI;
 
 namespace CloudlogHelper.Services;
 
+/// <summary>
+///     I'll definitely refactor it someday - but not now! 
+/// </summary>
 public class ApplicationSettingsService : IApplicationSettingsService
 {
     /// <summary>
@@ -102,6 +105,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.UDPServer });
             }
+            
+            if (IsCLHServerConfChanged())
+            {
+                ClassLogger.Trace("clh server settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.CLHServer });
+            }
 
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
         }
@@ -169,6 +179,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings!.FLRigSettings.ReinitRules();
         _draftSettings!.OmniRigSettings.ReinitRules();
         _draftSettings!.UDPSettings.ReinitRules();
+        _draftSettings!.CLHServerSettings.ReinitRules();
         _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
         draftSettings = _draftSettings;
         return true;
@@ -290,6 +301,18 @@ public class ApplicationSettingsService : IApplicationSettingsService
         if (_oldSettings is null) return false;
         var oldI = _oldSettings.UDPSettings;
         var newI = _currentSettings!.UDPSettings;
+        return !oldI.Equals(newI);
+    }
+    
+    /// <summary>
+    ///     Check if clh server configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsCLHServerConfChanged()
+    {
+        if (_oldSettings is null) return false;
+        var oldI = _oldSettings.CLHServerSettings;
+        var newI = _currentSettings!.CLHServerSettings;
         return !oldI.Equals(newI);
     }
 
