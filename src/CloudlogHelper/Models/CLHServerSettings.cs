@@ -21,7 +21,7 @@ public class CLHServerSettings: ReactiveValidationObject
     [Reactive] [JsonProperty] public string ServerIp { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public int ServerPort { get; set; } = 7410;
     [Reactive] [JsonProperty] public string ServerKey { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public bool UseTLS { get; set; }
+    [Reactive] [JsonProperty] public bool UseTLS { get; set; } = true;
 
     
     public IObservable<bool> IsCLHServerValid => this.WhenAnyValue(
@@ -58,5 +58,23 @@ public class CLHServerSettings: ReactiveValidationObject
     private bool IsPropertyHasErrors(string propertyName)
     {
         return GetErrors(propertyName).Cast<string>().Any();
+    }
+
+    protected bool Equals(CLHServerSettings other)
+    {
+        return IsEnabled == other.IsEnabled && ServerIp == other.ServerIp && ServerPort == other.ServerPort && ServerKey == other.ServerKey && UseTLS == other.UseTLS;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((CLHServerSettings)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(IsEnabled, ServerIp, ServerPort, ServerKey, UseTLS);
     }
 }
