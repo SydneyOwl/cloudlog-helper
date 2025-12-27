@@ -189,7 +189,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
         _draftSettings = new ApplicationSettings();
-        _draftSettings.InstanceName = $"CLH-{CLHServerUtil.GenerateRandomString(10)}";
+        _draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
         _currentSettings = _draftSettings.DeepClone();
@@ -225,6 +225,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 applicationSettingsService._draftSettings.BasicSettings.LanguageType =
                     TranslationHelper.DetectDefaultLanguage();
 
+            // instance
+            if (string.IsNullOrEmpty(applicationSettingsService._draftSettings.InstanceName))
+            {
+                applicationSettingsService._draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
+            }
+
             var tps = applicationSettingsService._draftSettings
                 .LogServices.Select(x => x.GetType()).ToArray();
             foreach (var service in logServices)
@@ -244,6 +250,10 @@ public class ApplicationSettingsService : IApplicationSettingsService
         {
             ClassLogger.Warn(e1, "Failed to read settings; use default settings instead.");
             applicationSettingsService.InitEmptySettings(logServices);
+        }
+        finally
+        {
+            _writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
         }
 
         return applicationSettingsService;
@@ -320,7 +330,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     /// <summary>
     ///     write settings to default position.
     /// </summary>
-    private void _writeCurrentSettingsToFile(ApplicationSettings settings)
+    private static void _writeCurrentSettingsToFile(ApplicationSettings settings)
     {
         try
         {

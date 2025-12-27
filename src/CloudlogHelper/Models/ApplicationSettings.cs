@@ -14,7 +14,7 @@ namespace CloudlogHelper.Models;
 public class ApplicationSettings : ReactiveValidationObject
 {
     /// <summary>
-    /// Instance name of Cloudlog Helper. This name will be generated on application start.
+    /// Instance name of Cloudlog Helper. This name will be generated on application first start.
     /// </summary>
     [Reactive]
     [JsonProperty]

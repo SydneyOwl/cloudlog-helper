@@ -31,7 +31,7 @@ public class CLHServerUtil
         RegisterMessage(Convert.ToByte('e'), typeof(RigData));
     }
 
-    public static string GenerateRandomString(int length)
+    public static string GenerateRandomInstanceName(int length)
     {
         var random = new Random();
         var result = new StringBuilder(length);
@@ -42,7 +42,7 @@ public class CLHServerUtil
             result.Append(AllowedChars[index]);
         }
 
-        return result.ToString();
+        return $"CLH-{result}";
     }
     
     private static void RegisterMessage(byte typeByte, Type rawMsg)
