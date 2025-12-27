@@ -773,4 +773,10 @@
     <data name="enableclhserver" xml:space="preserve">
         <value>启用CLH服务器</value>
     </data>
+    <data name="instancenamehint" xml:space="preserve">
+        <value>此字段为软件注册到clh-server时使用的名称。此名称应当是唯一的。</value>
+    </data>
+    <data name="instancename" xml:space="preserve">
+        <value>实例名称</value>
+    </data>
 </root>

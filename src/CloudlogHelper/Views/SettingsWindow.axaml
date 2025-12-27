@@ -108,7 +108,14 @@
             <TabItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="8" Margin="0 8 0 0">
-                        <!-- <Border Classes="setting-card"> -->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{I18N {x:Static resources:LangKeys.instancename}}" Classes="setting-label" />
+                            <TextBox HorizontalAlignment="Left"
+                                     Text="{Binding DraftSettings.InstanceName}"
+                                     Classes="setting-control"/>
+                            <userControls1:TipIconUserControl 
+                                Margin="10,0,0,0" TooltipText="{I18N {x:Static resources:LangKeys.instancenamehint}}"/>
+                        </StackPanel>
                         <StackPanel Spacing="10">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Language/语言" Classes="setting-label" />

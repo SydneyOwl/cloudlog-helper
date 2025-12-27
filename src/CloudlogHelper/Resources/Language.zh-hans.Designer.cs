@@ -915,6 +915,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 实例名称.
+        /// </summary>
+        public static string instancename {
+            get {
+                return ResourceManager.GetString("instancename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 此字段为软件注册到clh-server时使用的名称。此名称应当是唯一的。.
+        /// </summary>
+        public static string instancenamehint {
+            get {
+                return ResourceManager.GetString("instancenamehint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 您使用的后端服务似乎是{replace01}而不是Cloudlog，因此软件部分功能可能不受支持。.
         /// </summary>
         public static string instanceuncompitable {

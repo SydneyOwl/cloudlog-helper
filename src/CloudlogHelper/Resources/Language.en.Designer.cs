@@ -914,6 +914,24 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Instance Name.
+        /// </summary>
+        public static string instancename {
+            get {
+                return ResourceManager.GetString("instancename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This field refers to the name used when the software is registered to the clh-server. This name should be unique..
+        /// </summary>
+        public static string instancenamehint {
+            get {
+                return ResourceManager.GetString("instancenamehint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Seems like you&apos;re using {replace01} instead of Cloudlog as the backend service. Some features may not be fully supported..
         /// </summary>
         public static string instanceuncompitable {

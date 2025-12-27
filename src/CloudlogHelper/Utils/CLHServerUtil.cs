@@ -9,9 +9,10 @@ using Google.Protobuf;
 
 namespace CloudlogHelper.Utils;
 
-public delegate IMessage MessageFactory();
 public class CLHServerUtil
 {
+    private const string AllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    
     private static uint _maxMsgLength = 10240; 
     private static Dictionary<byte, Type> _byteTypeMap = new();
     private static Dictionary<Type, byte> _typeByteMap = new();
@@ -28,6 +29,20 @@ public class CLHServerUtil
         RegisterMessage(Convert.ToByte('c'), typeof(WsjtxMessage));
         RegisterMessage(Convert.ToByte('d'), typeof(WsjtxMessagePacked));
         RegisterMessage(Convert.ToByte('e'), typeof(RigData));
+    }
+
+    public static string GenerateRandomString(int length)
+    {
+        var random = new Random();
+        var result = new StringBuilder(length);
+
+        for (var i = 0; i < length; i++)
+        {
+            var index = random.Next(AllowedChars.Length);
+            result.Append(AllowedChars[index]);
+        }
+
+        return result.ToString();
     }
     
     private static void RegisterMessage(byte typeByte, Type rawMsg)
@@ -65,12 +80,12 @@ public class CLHServerUtil
     
     public static IMessage UnPack(byte typeByte, byte[] buffer)
     {
-        return CLHServerUtil.UnpackInternal(typeByte, buffer, null);
+        return UnpackInternal(typeByte, buffer, null);
     }
 
     public static void UnPackInto(byte[] buffer, IMessage msg)
     {
-        CLHServerUtil.UnpackInternal((byte)0, buffer, msg);
+        UnpackInternal((byte)0, buffer, msg);
     }
     
     
