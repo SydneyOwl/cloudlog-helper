@@ -7,11 +7,14 @@ using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.CLHProto;
+using CloudlogHelper.Enums;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Google.Protobuf;
 using NLog;
+using ReactiveUI;
 
 public class CLHServerService : ICLHServerService, IDisposable
 {
@@ -23,7 +26,9 @@ public class CLHServerService : ICLHServerService, IDisposable
     private CancellationTokenSource? _connectionCts;
     private readonly object _lock = new object();
     private readonly SemaphoreSlim _sendLock = new(1, 1);
+    private readonly SemaphoreSlim _reconnectSemaphore = new(1, 1);
     private bool _disposed = false;
+    private bool _isLocked;
     private event Action<IMessage> _onReceiveCallback;
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
@@ -35,6 +40,17 @@ public class CLHServerService : ICLHServerService, IDisposable
     public CLHServerService(IApplicationSettingsService? appSettingsService)
     {
         _appSettingsService = appSettingsService ?? throw new ArgumentNullException(nameof(appSettingsService));
+
+        MessageBus.Current.Listen<SettingsChanged>().Subscribe((changed =>
+        {
+            if (changed.Part != ChangedPart.CLHServer)return;
+            _ = ReconnectAsync();
+        }));
+        
+        if (_appSettingsService.GetCurrentSettings().CLHServerSettings.IsEnabled)
+        {
+            _ = ReconnectAsync();
+        }
     }
     
 
@@ -45,16 +61,32 @@ public class CLHServerService : ICLHServerService, IDisposable
     public async Task ReconnectAsync()
     {
         if (_disposed) throw new ObjectDisposedException(nameof(CLHServerService));
-
-        // Disconnect any existing connection first
-        await DisconnectAsync();
-
-        // Start background connection loop (with retries)
-        _ = Task.Run(ConnectionLoop).ContinueWith(t =>
+        
+        if (!await _reconnectSemaphore.WaitAsync(0))  // 非阻塞尝试
         {
-            if (t.IsFaulted)
-                ClassLogger.Error(t.Exception, "ConnectionLoop crashed unexpectedly");
-        }, TaskScheduler.Default);;
+            ClassLogger.Debug("Reconnect already in progress");
+            return;
+        }
+
+        try
+        {
+            // Disconnect any existing connection first
+            await DisconnectAsync();
+
+            // Start background connection loop (with retries)
+            _ = Task.Run(ConnectionLoop).ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                    ClassLogger.Error(t.Exception, "ConnectionLoop crashed unexpectedly");
+            }, TaskScheduler.Default);
+            ;
+        }
+        finally
+        {
+            await Task.Delay(2000);
+            _reconnectSemaphore.Release();
+        }
+        
     }
 
     private async Task ConnectionLoop()
@@ -159,7 +191,7 @@ public class CLHServerService : ICLHServerService, IDisposable
             }
             catch (Exception ex) when (!_disposed)
             {
-                ClassLogger.Error("Error occurred while recving ", ex);
+                ClassLogger.Error(ex, "Error occurred! ", ex);
 
                 ConnectionChanged?.Invoke(false);
 
