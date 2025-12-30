@@ -24,7 +24,7 @@ public class CLHServerUtilTests
     }
     
     [Fact]
-    public void TestMessagePacking_ReturnsCorrectResult()
+    public async Task TestMessagePacking_ReturnsCorrectResult()
     {
         var message = new HandshakeRequest
         {
@@ -39,7 +39,7 @@ public class CLHServerUtilTests
         var res = CLHServerUtil.Pack(message);
         _testOutputHelper.WriteLine(res.Length.ToString());
 
-        var iMessage = CLHServerUtil.ReadMsg(new MemoryStream(res));
+        var iMessage = await CLHServerUtil.ReadMsgAsync(new MemoryStream(res));
         _testOutputHelper.WriteLine(iMessage.ToString());
     }
 }

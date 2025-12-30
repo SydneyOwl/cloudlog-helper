@@ -737,7 +737,7 @@
     <data name="clhserver" xml:space="preserve">
         <value>CLH服务器</value>
     </data>
-    <data name="clhserip" xml:space="preserve">
+    <data name="clhseraddr" xml:space="preserve">
         <value>CLH服务器IP</value>
     </data>
     <data name="clhserport" xml:space="preserve">
@@ -755,7 +755,7 @@
     <data name="clhserver" xml:space="preserve">
         <value>CLH服务器</value>
     </data>
-    <data name="clhserip" xml:space="preserve">
+    <data name="clhseraddr" xml:space="preserve">
         <value>CLH服务器IP</value>
     </data>
     <data name="clhserport" xml:space="preserve">

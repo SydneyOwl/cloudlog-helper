@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using CloudlogHelper.CLHProto;
 using Google.Protobuf;
 
@@ -108,6 +110,49 @@ public class CLHServerUtil
         return result;
     }
     
+    private static async Task<(byte typeByte, byte[] buffer)> ReadMsgInternalAsync(
+        Stream s, 
+        CancellationToken cancellationToken = default)
+    {
+        var byteBuffer = new byte[1];
+        var bytesRead = await s.ReadAsync(byteBuffer, 0, 1, cancellationToken);
+        if (bytesRead == 0) throw new EndOfStreamException();
+        
+        var typeByte = byteBuffer[0];
+        if (!_byteTypeMap.ContainsKey(typeByte)) 
+            throw new Exception($"Unknown type {typeByte}");
+
+        // 读取长度（4字节）
+        var lenBuf = new byte[4];
+        bytesRead = 0;
+        while (bytesRead < 4)
+        {
+            var n = await s.ReadAsync(lenBuf, bytesRead, 4 - bytesRead, cancellationToken);
+            if (n <= 0) throw new EndOfStreamException();
+            bytesRead += n;
+        }
+        
+        var length = BinaryPrimitives.ReadUInt32BigEndian(lenBuf);
+        if (length > _maxMsgLength) 
+            throw new Exception($"Message size exceed! Max: {_maxMsgLength}, Actual: {length}");
+
+        // 读取消息内容
+        var buffer = new byte[length];
+        var offset = 0;
+        while (offset < buffer.Length)
+        {
+            var n = await s.ReadAsync(buffer, offset, buffer.Length - offset, cancellationToken);
+            if (n <= 0) throw new EndOfStreamException();
+            offset += n;
+        }
+
+        if ((uint)offset != length) 
+            throw new Exception("Invalid message format");
+
+        return (typeByte, buffer);
+    }
+
+    // 同步版本（保留向后兼容）
     private static (byte typeByte, byte[] buffer) ReadMsgInternal(Stream s)
     {
         var b = s.ReadByte();
@@ -126,8 +171,6 @@ public class CLHServerUtil
         var length = BinaryPrimitives.ReadUInt32BigEndian(lenBuf);
         if (length > _maxMsgLength) throw new Exception("Message size exceed!");
 
-        if (length < 0) throw new Exception("Impossible"); // never true for uint, kept for parity
-
         var buffer = new byte[length];
         var offset = 0;
         while (offset < buffer.Length)
@@ -142,10 +185,31 @@ public class CLHServerUtil
         return (typeByte, buffer);
     }
     
-    public static IMessage ReadMsg(Stream s)
+    public static async Task<IMessage> ReadMsgAsync(
+        Stream s, 
+        CancellationToken cancellationToken = default)
     {
-        var (typeByte, buffer) = ReadMsgInternal(s);
+        var (typeByte, buffer) = await ReadMsgInternalAsync(s, cancellationToken);
         return UnPack(typeByte, buffer);
+    }
+
+    public static async Task ReadMsgIntoAsync(
+        Stream s, 
+        IMessage msg, 
+        CancellationToken cancellationToken = default)
+    {
+        var (_, buffer) = await ReadMsgInternalAsync(s, cancellationToken);
+        UnPackInto(buffer, msg);
+    }
+
+    public static async Task WriteMsgAsync(
+        Stream s, 
+        IMessage msg, 
+        CancellationToken cancellationToken = default)
+    {
+        var buffer = Pack(msg);
+        await s.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
+        await s.FlushAsync(cancellationToken);
     }
 
     public static void ReadMsgInto(Stream s, IMessage msg)
@@ -153,13 +217,6 @@ public class CLHServerUtil
         var (_, buffer) = ReadMsgInternal(s);
         UnPackInto(buffer, msg);
     }
-
-    public static void WriteMsg(Stream s, IMessage msg)
-    {
-        var buffer = Pack(msg);
-        s.Write(buffer, 0, buffer.Length);
-    }
-    
     
     /// <summary>
     /// CalcAuthKey is used for check whether key sent by client when login is correct or not.

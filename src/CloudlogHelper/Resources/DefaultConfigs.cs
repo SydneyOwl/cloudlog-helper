@@ -289,6 +289,11 @@ public class DefaultConfigs
 
     public static readonly int UpdateChartsThrottleTime = 3;
 
+    public static readonly int CLHTCPConnRetryDelayMs = 3000;
+
+    public static readonly int CLHHeartbeatTimeoutS = 16;
+    public static readonly int CLHHeartbeatIntervalMS = 5000;
+
     /// <summary>
     ///     Default timeout (in seconds) for start/stop.
     /// </summary>

@@ -584,10 +584,10 @@
                                               IsChecked="{Binding DraftSettings.CLHServerSettings.IsEnabled}"
                                               Content="{I18N {x:Static resources:LangKeys.enableclhserver}}"/> 
 
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserip}}" Classes="setting-label"
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhseraddr}}" Classes="setting-label"
                                                Grid.Row="1" Grid.Column="0" />
                                     <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1" 
-                                             Text="{Binding DraftSettings.CLHServerSettings.ServerIp}"/>
+                                             Text="{Binding DraftSettings.CLHServerSettings.ServerHost}"/>
                                     
                                     <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserport}}" Classes="setting-label"
                                                Grid.Row="2" Grid.Column="0" />

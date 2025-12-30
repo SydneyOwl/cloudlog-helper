@@ -53,6 +53,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     private ApplicationSettings? _oldSettings;
 
+    public void InjectMockSettings(ApplicationSettings settings)
+    {
+        _currentSettings = settings;
+        _draftSettings = settings;
+    }
+
     public void ApplySettings(object owner, List<LogSystemConfig>? rawConfigs = null)
     {
         lock (_draftLock)

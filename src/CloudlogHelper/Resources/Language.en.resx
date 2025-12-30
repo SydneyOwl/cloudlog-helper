@@ -737,7 +737,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="clhserver" xml:space="preserve">
         <value>CLH Server</value>
     </data>
-    <data name="clhserip" xml:space="preserve">
+    <data name="clhseraddr" xml:space="preserve">
         <value>CLH Server IP</value>
     </data>
     <data name="clhserport" xml:space="preserve">
@@ -755,7 +755,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="clhserver" xml:space="preserve">
         <value>CLH Server</value>
     </data>
-    <data name="clhserip" xml:space="preserve">
+    <data name="clhseraddr" xml:space="preserve">
         <value>CLH Server IP</value>
     </data>
     <data name="clhserport" xml:space="preserve">

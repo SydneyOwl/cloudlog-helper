@@ -278,9 +278,9 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to CLH服务器IP.
         /// </summary>
-        public static string clhserip {
+        public static string clhseraddr {
             get {
-                return ResourceManager.GetString("clhserip", resourceCulture);
+                return ResourceManager.GetString("clhseraddr", resourceCulture);
             }
         }
         

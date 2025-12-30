@@ -18,14 +18,14 @@ namespace CloudlogHelper.Models;
 public class CLHServerSettings: ReactiveValidationObject
 {
     [Reactive] [JsonProperty] public bool IsEnabled { get; set; }
-    [Reactive] [JsonProperty] public string ServerIp { get; set; } = string.Empty;
+    [Reactive] [JsonProperty] public string ServerHost { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public int ServerPort { get; set; } = 7410;
     [Reactive] [JsonProperty] public string ServerKey { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public bool UseTLS { get; set; } = true;
 
     
     public IObservable<bool> IsCLHServerValid => this.WhenAnyValue(
-        x => x.ServerIp,
+        x => x.ServerHost,
         x => x.ServerPort,
         (url, key) => !IsCLHServerHasErrors()
     );
@@ -35,7 +35,7 @@ public class CLHServerSettings: ReactiveValidationObject
         this.ClearValidationRules();
 
         // This makes sure only one err is displayed each time
-        this.ValidationRule(x => x.ServerIp,
+        this.ValidationRule(x => x.ServerHost,
             SettingsValidation.CheckHttpIp,
             TranslationHelper.GetString(LangKeys.invalidaddr)
         );
@@ -50,7 +50,7 @@ public class CLHServerSettings: ReactiveValidationObject
 
     public bool IsCLHServerHasErrors()
     {
-        return !SettingsValidation.CheckHttpIp(ServerIp) ||
+        return !SettingsValidation.CheckHttpIp(ServerHost) ||
                !SettingsValidation.CheckHttpPort(ServerPort);
     }
 
@@ -62,7 +62,7 @@ public class CLHServerSettings: ReactiveValidationObject
 
     protected bool Equals(CLHServerSettings other)
     {
-        return IsEnabled == other.IsEnabled && ServerIp == other.ServerIp && ServerPort == other.ServerPort && ServerKey == other.ServerKey && UseTLS == other.UseTLS;
+        return IsEnabled == other.IsEnabled && ServerHost == other.ServerHost && ServerPort == other.ServerPort && ServerKey == other.ServerKey && UseTLS == other.UseTLS;
     }
 
     public override bool Equals(object? obj)
@@ -75,6 +75,6 @@ public class CLHServerSettings: ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(IsEnabled, ServerIp, ServerPort, ServerKey, UseTLS);
+        return HashCode.Combine(IsEnabled, ServerHost, ServerPort, ServerKey, UseTLS);
     }
 }

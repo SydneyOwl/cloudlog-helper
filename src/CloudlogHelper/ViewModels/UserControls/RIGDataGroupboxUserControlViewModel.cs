@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using CloudlogHelper.CLHProto;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.LogService;
@@ -42,6 +43,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IRigBackendManager _rigBackendManager;
     private readonly List<ThirdPartyLogService> _tpService;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly ICLHServerService _clhServerService;
 
 
     /// <summary>
@@ -74,6 +76,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IInAppNotificationService ws,
         IWindowManagerService wm,
         IMessageBoxManagerService mm,
+        ICLHServerService clh,
         IApplicationSettingsService ss)
     {
         _cloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
@@ -81,6 +84,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _windowManagerService = wm;
         _rigBackendManager = rs;
         _inAppNotification = ws;
+        _clhServerService = clh;
         _tpService = ss.GetCurrentSettings().LogServices;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         _ = rs.InitializeAsync();
@@ -262,6 +266,19 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IsSplit = allInfo.IsSplit;
 
         _rigConnFailedTimes = 0;
+        
+        // report to clh server
+        await _clhServerService.SendDataNoException(new RigData
+        {
+            Provider = _rigBackendManager.GetServiceType().ToString(),
+            RigName = allInfo.RigName,
+            Frequency = (ulong)allInfo.FrequencyTx,
+            Mode = allInfo.ModeTx,
+            FrequencyRx = (ulong)allInfo.FrequencyRx,
+            ModeRx = allInfo.ModeRx,
+            Split = allInfo.IsSplit,
+            Power = (uint)(allInfo.Power ?? 0),
+        });
 
         foreach (var thirdPartyLogService in _tpService.ToArray())
             try
