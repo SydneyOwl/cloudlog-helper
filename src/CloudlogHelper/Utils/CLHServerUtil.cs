@@ -29,7 +29,7 @@ public class CLHServerUtil
         RegisterMessage(Convert.ToByte('a'), typeof(HandshakeRequest));
         RegisterMessage(Convert.ToByte('b'), typeof(HandshakeResponse));
         RegisterMessage(Convert.ToByte('c'), typeof(WsjtxMessage));
-        RegisterMessage(Convert.ToByte('d'), typeof(WsjtxMessagePacked));
+        RegisterMessage(Convert.ToByte('d'), typeof(PackedMessage));
         RegisterMessage(Convert.ToByte('e'), typeof(RigData));
     }
 
