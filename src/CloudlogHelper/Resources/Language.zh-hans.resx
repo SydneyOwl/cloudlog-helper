@@ -752,24 +752,6 @@
     <data name="clhhintinfo" xml:space="preserve">
         <value>Cloudlog Helper能够连接CLH-Server，自动上报解码的数据模式信息和电台信息到服务器。当您使用特定的安卓app连接到服务器时，服务器将会推送信息到您的手机上。</value>
     </data>
-    <data name="clhserver" xml:space="preserve">
-        <value>CLH服务器</value>
-    </data>
-    <data name="clhseraddr" xml:space="preserve">
-        <value>CLH服务器IP</value>
-    </data>
-    <data name="clhserport" xml:space="preserve">
-        <value>CLH服务器端口</value>
-    </data>
-    <data name="clhserkey" xml:space="preserve">
-        <value>CLH服务器密钥</value>
-    </data>
-    <data name="clhusetls" xml:space="preserve">
-        <value>使用TLS</value>
-    </data>
-    <data name="clhhintinfo" xml:space="preserve">
-        <value>Cloudlog Helper能够连接CLH-Server，自动上报解码的数据模式信息和电台信息到服务器。当您使用特定的安卓app连接到服务器时，服务器将会推送信息到您的手机上。</value>
-    </data>
     <data name="enableclhserver" xml:space="preserve">
         <value>启用CLH服务器</value>
     </data>
