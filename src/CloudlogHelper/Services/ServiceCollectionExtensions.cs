@@ -102,6 +102,7 @@ public static class ServiceCollectionExtensions
             cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
+            cfg.CreateMap<CLHServerSettings, CLHServerSettings>();
             cfg.CreateMap<BasicSettings, BasicSettings>();
             cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
         });

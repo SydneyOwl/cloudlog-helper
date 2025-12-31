@@ -17,7 +17,7 @@ namespace CloudlogHelper.Models;
 [JsonObject(MemberSerialization.OptIn)]
 public class CLHServerSettings: ReactiveValidationObject
 {
-    [Reactive] [JsonProperty] public bool IsEnabled { get; set; }
+    [Reactive] [JsonProperty] public bool CLHServerEnabled { get; set; }
     [Reactive] [JsonProperty] public string ServerHost { get; set; } = string.Empty;
     [Reactive] [JsonProperty] public int ServerPort { get; set; } = 7410;
     [Reactive] [JsonProperty] public string ServerKey { get; set; } = string.Empty;
@@ -36,7 +36,7 @@ public class CLHServerSettings: ReactiveValidationObject
 
         // This makes sure only one err is displayed each time
         this.ValidationRule(x => x.ServerHost,
-            SettingsValidation.CheckHttpIp,
+            SettingsValidation.CheckHost,
             TranslationHelper.GetString(LangKeys.invalidaddr)
         );
 
@@ -50,7 +50,7 @@ public class CLHServerSettings: ReactiveValidationObject
 
     public bool IsCLHServerHasErrors()
     {
-        return !SettingsValidation.CheckHttpIp(ServerHost) ||
+        return !SettingsValidation.CheckHost(ServerHost) ||
                !SettingsValidation.CheckHttpPort(ServerPort);
     }
 
@@ -62,7 +62,7 @@ public class CLHServerSettings: ReactiveValidationObject
 
     protected bool Equals(CLHServerSettings other)
     {
-        return IsEnabled == other.IsEnabled && ServerHost == other.ServerHost && ServerPort == other.ServerPort && ServerKey == other.ServerKey && UseTLS == other.UseTLS;
+        return CLHServerEnabled == other.CLHServerEnabled && ServerHost == other.ServerHost && ServerPort == other.ServerPort && ServerKey == other.ServerKey && UseTLS == other.UseTLS;
     }
 
     public override bool Equals(object? obj)
@@ -75,6 +75,6 @@ public class CLHServerSettings: ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(IsEnabled, ServerHost, ServerPort, ServerKey, UseTLS);
+        return HashCode.Combine(CLHServerEnabled, ServerHost, ServerPort, ServerKey, UseTLS);
     }
 }

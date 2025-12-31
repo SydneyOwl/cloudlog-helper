@@ -114,7 +114,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             
             if (IsCLHServerConfChanged())
             {
-                ClassLogger.Trace("clh server settings changed");
+                ClassLogger.Warn("><<<<<<<<<<<<<<<<<<<<<<clh server settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.CLHServer });
             }

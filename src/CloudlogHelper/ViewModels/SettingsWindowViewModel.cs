@@ -42,6 +42,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly IApplicationSettingsService _settingsService;
     private readonly CancellationTokenSource _source;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly ICLHServerService _clhServerService;
 
     public SettingsWindowViewModel()
     {
@@ -60,12 +61,14 @@ public class SettingsWindowViewModel : ViewModelBase
         IWindowManagerService windowManager,
         IApplicationSettingsService ss,
         IRigBackendManager rs,
+        ICLHServerService cs,
         INotificationManager nm)
     {
         _windowManagerService = windowManager;
         _settingsService = ss;
         _rigBackendManager = rs;
         _nativeNotificationManager = nm;
+        _clhServerService = cs;
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
@@ -80,11 +83,12 @@ public class SettingsWindowViewModel : ViewModelBase
 
         var flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
         FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
-        
+
         var omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
         OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
-
-        CLHServerTestButtonUserControl = new TestButtonUserControlViewModel(ReactiveCommand.Create(() => { }));
+        
+        var clhCmd = ReactiveCommand.CreateFromTask(_testClhServer, DraftSettings.CLHServerSettings.IsCLHServerValid);
+        CLHServerTestButtonUserControl = new TestButtonUserControlViewModel(clhCmd);
 
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
 
@@ -130,6 +134,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
             cloudCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
+            clhCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message));
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
             {
@@ -237,8 +242,14 @@ public class SettingsWindowViewModel : ViewModelBase
                 return;
                 // throw new Exception("OmniRig is only supported on Windows.");
             }
+
             var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
-            if (omniRigType is null) throw new Exception("OmniRig COM not found!");
+            if (omniRigType is null)
+            {
+                OmniRigInited = false;
+                return;
+                // throw new Exception("OmniRig COM not found!");
+            }
         }
         catch (Exception e)
         {
@@ -333,7 +344,7 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.Hamlib, DraftSettings, _source.Token);
     }
-    
+
     private async Task _testOmniRig()
     {
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.OmniRig, DraftSettings, _source.Token);
@@ -344,15 +355,19 @@ public class SettingsWindowViewModel : ViewModelBase
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.FLRig, DraftSettings, _source.Token);
     }
 
-    // not stable; ignore for now...
+    private async Task _testClhServer()
+    {
+        await _clhServerService.TestConnectionAsync(DraftSettings, true);
+    }
+
     private async Task _refreshPort()
     {
-        return;
+        // return;
         Ports = SerialPort.GetPortNames().ToList();
         var tmp = DraftSettings.HamlibSettings.SelectedPort;
         if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
-        if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.SelectedPort))
-            DraftSettings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
+        // if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.SelectedPort))
+        //     DraftSettings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
         // reset port name
         DraftSettings.HamlibSettings.SelectedPort = "";
         DraftSettings.HamlibSettings.SelectedPort = tmp;

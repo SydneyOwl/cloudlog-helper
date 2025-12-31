@@ -581,7 +581,7 @@
                                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                                     
                                     <CheckBox Grid.Row="0" Grid.Column="0"
-                                              IsChecked="{Binding DraftSettings.CLHServerSettings.IsEnabled}"
+                                              IsChecked="{Binding DraftSettings.CLHServerSettings.CLHServerEnabled}"
                                               Content="{I18N {x:Static resources:LangKeys.enableclhserver}}"/> 
 
                                     <TextBlock Text="{I18N {x:Static resources:LangKeys.clhseraddr}}" Classes="setting-label"

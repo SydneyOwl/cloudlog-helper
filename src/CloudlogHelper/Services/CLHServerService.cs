@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.CLHProto;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
+using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
@@ -22,8 +23,13 @@ public class CLHServerService : ICLHServerService, IDisposable
     
     private TcpClient? _tcpClient;
     private Stream? _networkStream;
+    
     private Task? _receiveTask;
-    private CancellationTokenSource? _connectionCts;
+    private Task? _heartbeatTask;
+    private Task? _connectionLoopTask;
+    
+    private CancellationTokenSource? _connectionSubtaskCts;
+    private CancellationTokenSource? _connectionLoopCts;
     private readonly object _lock = new object();
     private readonly SemaphoreSlim _sendLock = new(1, 1);
     private readonly SemaphoreSlim _reconnectSemaphore = new(1, 1);
@@ -41,14 +47,16 @@ public class CLHServerService : ICLHServerService, IDisposable
     {
         _appSettingsService = appSettingsService ?? throw new ArgumentNullException(nameof(appSettingsService));
 
-        MessageBus.Current.Listen<SettingsChanged>().Subscribe((changed =>
+        MessageBus.Current.Listen<SettingsChanged>().Subscribe((async void (changed) =>
         {
             if (changed.Part != ChangedPart.CLHServer)return;
-            _ = ReconnectAsync();
+            ClassLogger.Debug($"=======> Calling reconn from MessageBus.");
+            await ReconnectAsync();
         }));
         
-        if (_appSettingsService.GetCurrentSettings().CLHServerSettings.IsEnabled)
+        if (_appSettingsService.GetCurrentSettings().CLHServerSettings.CLHServerEnabled)
         {
+            ClassLogger.Debug($"Calling reconn from appstart.");
             _ = ReconnectAsync();
         }
     }
@@ -64,7 +72,7 @@ public class CLHServerService : ICLHServerService, IDisposable
         
         if (!await _reconnectSemaphore.WaitAsync(0))  // 非阻塞尝试
         {
-            ClassLogger.Debug("Reconnect already in progress");
+            ClassLogger.Warn("Reconnect already in progress");
             return;
         }
 
@@ -73,98 +81,47 @@ public class CLHServerService : ICLHServerService, IDisposable
             // Disconnect any existing connection first
             await DisconnectAsync();
 
-            // Start background connection loop (with retries)
-            _ = Task.Run(ConnectionLoop).ContinueWith(t =>
+            if (!_appSettingsService.GetCurrentSettings().CLHServerSettings.CLHServerEnabled)
             {
-                if (t.IsFaulted)
-                    ClassLogger.Error(t.Exception, "ConnectionLoop crashed unexpectedly");
-            }, TaskScheduler.Default);
-            ;
+                // ClassLogger.Warn("Okay! Now we dont connect to clhserver!!!");
+                return;
+            }
+
+            _connectionLoopCts = new CancellationTokenSource();
+
+            // Start background connection loop (with retries)
+            _connectionLoopTask = Task.Run(()=>ConnectionLoop(_connectionLoopCts.Token));
         }
         finally
         {
             await Task.Delay(2000);
             _reconnectSemaphore.Release();
         }
-        
     }
 
-    private async Task ConnectionLoop()
+    private async Task ConnectionLoop(CancellationToken mainToken)
     {
-        while (!_disposed)
+        while (!_disposed && !mainToken.IsCancellationRequested)
         {
-            var currentSettings = _appSettingsService.GetCurrentSettings();
-
             try
             {
+                var currentSettings = _appSettingsService.GetCurrentSettings();
                 var cts = new CancellationTokenSource();
                 var connectCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token);
                 lock (_lock)
                 {
-                    if (_disposed) break;
-                    _connectionCts = cts;
+                    if (_disposed) throw new ObjectDisposedException("Service already disposed");
+                    _connectionSubtaskCts = cts;
                 }
-
-                // Connect TCP
-                var tcpClient = new TcpClient();
+                
                 connectCts.CancelAfter(TimeSpan.FromSeconds(5));
-
-                await tcpClient.ConnectAsync(currentSettings.CLHServerSettings.ServerHost,
-                    currentSettings.CLHServerSettings.ServerPort, connectCts.Token);
-
-                Stream stream = tcpClient.GetStream();
-
-                // Upgrade to TLS if needed
-                if (currentSettings.CLHServerSettings.UseTLS)
-                {
-                    // fixme: we do not check server certs for now
-                    var sslStream = new SslStream(stream, leaveInnerStreamOpen: false,
-                        userCertificateValidationCallback: (sender, cert, chain, errs) => true);
-
-                    await sslStream.AuthenticateAsClientAsync(
-                        currentSettings.CLHServerSettings.ServerHost,
-                        clientCertificates: null,
-                        enabledSslProtocols: SslProtocols.Tls12,
-                        checkCertificateRevocation: false);
-
-                    stream = sslStream;
-                }
-
-                // Commit resources only after successful connect
-                lock (_lock)
-                {
-                    if (_disposed || cts.IsCancellationRequested)
-                    {
-                        tcpClient.Dispose();
-                        stream.Dispose();
-                        return;
-                    }
-
-                    _tcpClient = tcpClient;
-                    _networkStream = stream;
-                }
-
-                var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-                // now we do login operation here
-                await CLHServerUtil.WriteMsgAsync(_networkStream, new HandshakeRequest
-                {
-                    Os = RuntimeInformation.OSDescription,
-                    Ver = VersionInfo.Version,
-                    ClientType = "sender",
-                    AuthKey = CLHServerUtil.CalcAuthKey(currentSettings.CLHServerSettings.ServerKey, now),
-                    Timestamp = now,
-                    RunId = currentSettings.InstanceName
-                }, connectCts.Token);
-
-                var handshakeResp = await CLHServerUtil.ReadMsgAsync(_networkStream, connectCts.Token);
-                var con = (HandshakeResponse)handshakeResp;
-                if (!(con).Accept)
-                {
-                    throw new Exception("Failed to do login: " + con.Error);
-                }
-
-                ClassLogger.Debug("Login successfully.");
+                
+                await _connectAndLogin(currentSettings.CLHServerSettings.ServerHost,
+                    currentSettings.CLHServerSettings.ServerPort,
+                    currentSettings.CLHServerSettings.UseTLS, 
+                    currentSettings.CLHServerSettings.ServerKey,
+                    currentSettings.InstanceName,
+                    cts.Token, connectCts.Token);
                 
                 _onReceiveCallback += _heartbeatAckHandler;
 
@@ -172,38 +129,96 @@ public class CLHServerService : ICLHServerService, IDisposable
                 _receiveTask = Task.Run(() => ReceiveLoop(cts.Token), cts.Token);
 
                 // hb
-                _ = Task.Run(() => SendHeartbeat(cts.Token), cts.Token);
+                _heartbeatTask = Task.Run(() => SendHeartbeat(cts.Token), cts.Token);
 
                 // check hb
-                _ = Task.Run(() => ScanHeartbeatTimeout(cts.Token), cts.Token);
+                // _ = Task.Run(() => ScanHeartbeatTimeout(cts.Token), cts.Token);
 
                 ConnectionChanged?.Invoke(true);
 
                 // Wait until disconnect or cancellation
                 await _receiveTask;
-
-                // if it was canceled manually - we just break
-                if (cts.IsCancellationRequested)
-                {
-                    ClassLogger.Trace("Connection loop exited.");
-                    break;
-                }
             }
             catch (Exception ex) when (!_disposed)
             {
                 ClassLogger.Error(ex, "Error occurred! ", ex);
-
-                ConnectionChanged?.Invoke(false);
-
-                // Clean up any leftovers
-                CleanupConnectionResources();
             }
             finally
             {
+                ConnectionChanged?.Invoke(false);
+                // Clean up any leftovers
+                CleanupConnectionResources();
                 // Delay before retry — but respect dispose during wait
                 await Task.Delay(DefaultConfigs.CLHTCPConnRetryDelayMs, CancellationToken.None);
             }
         }
+    }
+
+    private async Task _connectAndLogin(string host, int port, bool tls, 
+        string key, string instanceName,
+        CancellationToken globalCtx, CancellationToken connectCts, bool useTestMode = false)
+    {
+        // Connect TCP
+        var tcpClient = new TcpClient();
+
+        await tcpClient.ConnectAsync(host, port, connectCts);
+
+        Stream stream = tcpClient.GetStream();
+
+        // Upgrade to TLS if needed
+        if (tls)
+        {
+            // fixme: we do not check server certs for now
+            var sslStream = new SslStream(stream, leaveInnerStreamOpen: false,
+                userCertificateValidationCallback: (sender, cert, chain, errs) => true);
+
+            await sslStream.AuthenticateAsClientAsync(
+                host,
+                clientCertificates: null,
+                enabledSslProtocols: SslProtocols.Tls12,
+                checkCertificateRevocation: false);
+
+            stream = sslStream;
+        }
+
+        // Commit resources only after successful connect
+        lock (_lock)
+        {
+            if (_disposed || globalCtx.IsCancellationRequested)
+            {
+                tcpClient.Dispose();
+                stream.Dispose();
+                return;
+            }
+
+            if (!useTestMode)
+            {
+                _tcpClient = tcpClient;
+                _networkStream = stream;
+            }
+        }
+
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        // now we do login operation here
+        await CLHServerUtil.WriteMsgAsync(stream, new HandshakeRequest
+        {
+            Os = RuntimeInformation.OSDescription,
+            Ver = VersionInfo.Version,
+            ClientType = useTestMode ? "connTest" : "sender",
+            AuthKey = CLHServerUtil.CalcAuthKey(key, now),
+            Timestamp = now,
+            RunId = $"{instanceName}{(useTestMode ? "(test)" : "")}"
+        }, connectCts);
+
+        var handshakeResp = await CLHServerUtil.ReadMsgAsync(stream, connectCts);
+        var con = (HandshakeResponse)handshakeResp;
+        if (!(con).Accept)
+        {
+            throw new Exception("Failed to do login: " + con.Error);
+        }
+
+        ClassLogger.Debug("Login successfully.");
     }
 
     private async Task SendHeartbeat(CancellationToken token)
@@ -212,12 +227,6 @@ public class CLHServerService : ICLHServerService, IDisposable
         {
             try
             {
-                if (token.IsCancellationRequested)
-                {
-                    ClassLogger.Trace("SendHeartbeat loop exited.");
-                    return;
-                }
-
                 var tm = DateTimeOffset.Now.ToUnixTimeSeconds();
             
                 await SendData(new Ping
@@ -237,31 +246,33 @@ public class CLHServerService : ICLHServerService, IDisposable
         ClassLogger.Trace("Send ping loop exited.");
     }
 
-    private async Task ScanHeartbeatTimeout(CancellationToken token)
-    {
-        while (!token.IsCancellationRequested)
-        {
-            try
-            {
-                if (DateTimeOffset.Now.ToUnixTimeSeconds() - _lastHeartbeatAckTimestamp >
-                    DefaultConfigs.CLHHeartbeatTimeoutS)
-                {
-                    ClassLogger.Warn("Heartbeart Timeout! Reconnecting");
-                    await ReconnectAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                ClassLogger.Error("Unable to scan heartbeat: " + ex.Message);
-            }
-            finally
-            {
-                await Task.Delay(2000, CancellationToken.None);
-            }
-        }
-        
-        ClassLogger.Trace("ScanHeartbeatTimeout loop exited.");
-    }
+    // private async Task ScanHeartbeatTimeout(CancellationToken token)
+    // {
+    //     while (!token.IsCancellationRequested)
+    //     {
+    //         try
+    //         {
+    //             if (DateTimeOffset.Now.ToUnixTimeSeconds() - _lastHeartbeatAckTimestamp >
+    //                 DefaultConfigs.CLHHeartbeatTimeoutS)
+    //             {
+    //                 ClassLogger.Warn("Heartbeart Timeout! ");
+    //                 
+    //                 ClassLogger.Info($"=======> Calling reconn from hb scan.");
+    //                 await ReconnectAsync();
+    //             }
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             ClassLogger.Error("Unable to scan heartbeat: " + ex.Message);
+    //         }
+    //         finally
+    //         {
+    //             await Task.Delay(2000, CancellationToken.None);
+    //         }
+    //     }
+    //    
+    //     ClassLogger.Trace("ScanHeartbeatTimeout loop exited.");
+    // }
 
     private void _heartbeatAckHandler(IMessage message)
     {
@@ -338,24 +349,44 @@ public class CLHServerService : ICLHServerService, IDisposable
     {
         if (_disposed) return;
 
-        CancellationTokenSource? ctsToCancel = null;
-        lock (_lock)
-        {
-            ctsToCancel = _connectionCts;
-            _connectionCts = null;
-        }
-
-        ctsToCancel?.Cancel();
+        // CancellationTokenSource? ctsToCancel = null;
+        // lock (_lock)
+        // {
+        //     ctsToCancel = _connectionCts;
+        //     _connectionCts = null;
+        // }
+        
+        _connectionSubtaskCts?.Cancel();
+        _connectionLoopCts?.Cancel();
 
         // Wait briefly for receive loop to exit
-        if (_receiveTask != null)
+    
+        try
         {
-            try { await _receiveTask.WaitAsync(TimeSpan.FromSeconds(2)); }
-            catch { /* ignore */ }
+            if (_receiveTask != null) await _receiveTask.WaitAsync(CancellationToken.None);
+            ClassLogger.Info("Now recv exited.");
+            if (_heartbeatTask != null) await _heartbeatTask.WaitAsync(CancellationToken.None);
+            ClassLogger.Info("Now hbtask exited.");
+            if (_connectionLoopTask != null) await _connectionLoopTask.WaitAsync(CancellationToken.None);
+            ClassLogger.Info("Now loop. exited.");
         }
+        catch { /* ignore */ }
 
         CleanupConnectionResources();
         ConnectionChanged?.Invoke(false);
+    }
+
+    public async Task TestConnectionAsync(ApplicationSettings draftSetting, bool useTestMode = false)
+    {
+        var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromSeconds(10));
+        await _connectAndLogin(draftSetting.CLHServerSettings.ServerHost,
+            draftSetting.CLHServerSettings.ServerPort,
+            draftSetting.CLHServerSettings.UseTLS,
+            draftSetting.CLHServerSettings.ServerKey,
+            draftSetting.InstanceName,
+            cts.Token, cts.Token,
+            useTestMode);
     }
 
     private void CleanupConnectionResources()
@@ -372,8 +403,9 @@ public class CLHServerService : ICLHServerService, IDisposable
             _tcpClient?.Dispose();
             _tcpClient = null;
 
-            _connectionCts?.Dispose();
-            _connectionCts = null;
+            _connectionSubtaskCts?.Cancel();
+            _connectionSubtaskCts?.Dispose();
+            _connectionSubtaskCts = null;
         }
     }
 
@@ -386,8 +418,9 @@ public class CLHServerService : ICLHServerService, IDisposable
         _disposed = true;
 
         // Stop all activity
-        _connectionCts?.Cancel();
         CleanupConnectionResources();
+        _connectionLoopCts?.Cancel();
+        _connectionLoopCts?.Dispose();
 
         GC.SuppressFinalize(this);
     }

@@ -25,7 +25,7 @@ public class CLHServerServiceTests
             InstanceName = "test",
             CLHServerSettings = new CLHServerSettings
             {
-                IsEnabled = true,
+                CLHServerEnabled = true,
                 ServerHost = "127.0.0.1",
                 ServerPort = 7410,
                 ServerKey = "djasuchy174h7fd3gh",
@@ -47,6 +47,7 @@ public class CLHServerServiceTests
         LogManager.GetCurrentClassLogger().Info("Hello, World!");
         
         var a = new CLHServerService(_appSettingsService);
+        
         await a.ReconnectAsync();
         
         // await a.DisconnectAsync();

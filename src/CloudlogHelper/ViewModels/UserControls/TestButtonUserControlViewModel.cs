@@ -2,6 +2,7 @@
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -9,6 +10,7 @@ namespace CloudlogHelper.ViewModels.UserControls;
 
 public class TestButtonUserControlViewModel : ViewModelBase
 {
+    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private ObservableAsPropertyHelper<bool> _checkExecuting;
 
     public TestButtonUserControlViewModel(ReactiveCommand<Unit, Unit> cmd)
@@ -30,6 +32,7 @@ public class TestButtonUserControlViewModel : ViewModelBase
 
             TestCommand?
                 .ThrownExceptions
+                .Do(err => ClassLogger.Error(err, "Ex when test:"))
                 .Subscribe(async void (ex) => { CheckPassed = false; })
                 .DisposeWith(disposables);
 

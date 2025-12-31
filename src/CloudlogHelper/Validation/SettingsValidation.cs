@@ -66,4 +66,19 @@ public static class SettingsValidation
     {
         return IPAddress.TryParse(st, out _);
     }
+    
+    public static bool CheckHost(string? st)
+    {
+        if (string.IsNullOrWhiteSpace(st))
+        {
+            return false;
+        }
+
+        return Uri.CheckHostName(st) switch
+        {
+            UriHostNameType.Unknown => false,
+            UriHostNameType.Basic or UriHostNameType.Dns or UriHostNameType.IPv4 or UriHostNameType.IPv6 => true,
+            _ => false
+        };
+    }
 }
