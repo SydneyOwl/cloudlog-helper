@@ -9,12 +9,6 @@
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
-        <PublishAot>true</PublishAot>
-        <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
-        <TrimMode>partial</TrimMode>
-    </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.0"/>
         <PackageReference Include="Google.Protobuf" Version="3.33.2" />

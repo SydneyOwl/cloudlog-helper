@@ -1,13 +1,26 @@
 ﻿#!/bin/bash
 set -e 
-TAG_NAME="armdev"
-TARGET_PLATFORM="linux-arm64"
+TAG_NAME=""
+TARGET_PLATFORMS=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         -t|--tag)
-            TAG_NAME="${2}-ARM-AOT-Build)"
+            TAG_NAME="$2"
             shift 2
+            ;;
+        -p|--platforms)
+            TARGET_PLATFORMS="$2"
+            shift 2
+            ;;
+        -h|--help)
+            echo "Usage: $0 [options]"
+            echo "Options:"
+            echo "  -t, --tag <version>       Application build version number, default is dev-build"
+            echo "  -p, --platforms <list>    Target platforms (comma-separated, e.g., linux-arm, linux-arm64)"
+            echo "                            You can choose from linux-arm,linux-arm64"
+            echo "  -h, --help                Show this help message"
+            exit 0
             ;;
         *)
             echo "Unknown option: $1"
@@ -29,7 +42,19 @@ echo "  Commit Hash: $COMMIT_HASH"
 echo "  Build Time: $BUILD_TIME"
 echo ""
 
-sudo apt install git curl unzip jq -y
+# Check required commands
+check_command() {
+    if ! command -v "$1" &> /dev/null; then
+        echo "Error: Command '$1' not found, please install first"
+        exit 1
+    fi
+}
+
+check_command git
+check_command dotnet
+check_command curl
+check_command unzip
+check_command jq
 
 # Navigate to project directory
 cd src/CloudlogHelper || { echo "Error: Directory src/CloudlogHelper not found"; exit 1; }
@@ -96,28 +121,45 @@ prepare_hamlib() {
     local dst_dir="$4"
     
     mkdir -p "$dst_dir"
-    
     cp "$src_dir/rigctld" "$dst_dir" 2>/dev/null || true
     
     echo "Prepared $platform dependencies:"
     ls -la "$dst_dir"
 }
 
-download_and_extract \
-    "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
-    "./tmp/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
-    "./tmp/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION"
+if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-arm"* ]]; then
+    download_and_extract \
+        "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-linux-armhf-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-linux-armhf-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-linux-armhf-$LATEST_HAMLIB_LINUX_VERSION"
+    
+    prepare_hamlib "linux-armhf" "$LATEST_HAMLIB_LINUX_VERSION" \
+        "./tmp/Hamlib-linux-armhf-$LATEST_HAMLIB_LINUX_VERSION/bin" \
+        "./Resources/Dependencies/hamlib/linux-armhf"
+fi
 
-prepare_hamlib "linux-arm64" "$LATEST_HAMLIB_LINUX_VERSION" \
-    "./tmp/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION/bin" \
-    "./Resources/Dependencies/hamlib/linux-arm64" \
-    "false"
+if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-arm64"* ]]; then
+    download_and_extract \
+        "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION"
+    
+    prepare_hamlib "linux-arm64" "$LATEST_HAMLIB_LINUX_VERSION" \
+        "./tmp/Hamlib-linux-arm64-$LATEST_HAMLIB_LINUX_VERSION/bin" \
+        "./Resources/Dependencies/hamlib/linux-arm64"
+fi
 
 build_and_package() {
     local runtime="$1"
     local arch_name="$2"
     local framework_name="$3"
     local exe_name="${4:-CloudlogHelper.exe}"
+    
+    # Check if platform is in target list
+    if [ -n "$TARGET_PLATFORMS" ] && [[ ! "$TARGET_PLATFORMS" == *"$runtime"* ]]; then
+        echo "Skipping $runtime ($arch_name), not in target platforms list"
+        return 0
+    fi
     
     echo "Building for $runtime ($arch_name)..."
     
@@ -136,6 +178,7 @@ build_and_package() {
     fi
     
     if [ -f "$publish_path" ]; then
+        chmod +x "$publish_path"
         zip -j "$zip_name" "$publish_path"
         echo "Created: $zip_name"
     else
@@ -146,7 +189,25 @@ build_and_package() {
 echo ""
 echo "Starting builds..."
 
-build_and_package "linux-arm64" "linux-arm64" "net8.0" "CloudlogHelper"
+if [ -z "$TARGET_PLATFORMS" ]; then
+    build_and_package "linux-arm" "linux-arm" "net10.0" "CloudlogHelper"
+    build_and_package "linux-arm64" "linux-arm64" "net10.0" "CloudlogHelper"
+else
+    IFS=',' read -ra PLATFORMS <<< "$TARGET_PLATFORMS"
+    for platform in "${PLATFORMS[@]}"; do
+        case "$platform" in
+            "linux-arm")
+                build_and_package "linux-arm" "linux-arm" "net10.0" "CloudlogHelper"
+                ;;
+            "linux-arm64")
+                build_and_package "linux-arm64" "linux-arm64" "net10.0" "CloudlogHelper"
+                ;;
+            *)
+                echo "Warning: Unknown platform '$platform', skipping"
+                ;;
+        esac
+    done
+fi
 
 rm -f "$VERSION_INFO_PATH"
 mv "$VERSION_INFO_BAK" "$VERSION_INFO_PATH"
