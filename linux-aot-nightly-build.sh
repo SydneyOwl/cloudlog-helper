@@ -50,11 +50,26 @@ check_command() {
     fi
 }
 
-check_command git
-check_command dotnet
-check_command curl
-check_command unzip
-check_command jq
+sudo apt update
+sudo apt install git  dotnet  curl unzip jq -y
+
+# armhf cross-compile
+
+sudo dpkg --add-architecture armhf
+sudo apt-get update
+
+sudo apt-get install -y \
+    gcc-arm-linux-gnueabihf \
+    g++-arm-linux-gnueabihf \
+    binutils-arm-linux-gnueabihf \
+    libc6-dev-armhf-cross \
+    libc6:armhf \
+    libstdc++6:armhf
+
+sudo apt-get install -y \
+    libgcc-s1:armhf \
+    libstdc++6:armhf \
+    libc6-dev:armhf
 
 # Navigate to project directory
 cd src/CloudlogHelper || { echo "Error: Directory src/CloudlogHelper not found"; exit 1; }

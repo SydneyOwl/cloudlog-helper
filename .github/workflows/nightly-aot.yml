@@ -27,7 +27,6 @@ jobs:
 
       - name: Build application
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/')
         run: |
           TAG_NAME="${{ github.ref_name }}"
           CLEAN_TAG="${TAG_NAME#v}"

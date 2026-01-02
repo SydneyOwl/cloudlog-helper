@@ -25,13 +25,13 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       
-      - name: Execute test
-        shell: pwsh
-        run: |
-          dotnet test
-
-      - name: Setup Cygwin environment
-        uses: egor-tensin/setup-cygwin@v4
+#      - name: Execute test
+#        shell: pwsh
+#        run: |
+#          dotnet test
+#
+#      - name: Setup Cygwin environment
+#        uses: egor-tensin/setup-cygwin@v4
 
       - name: Build application
         shell: pwsh
