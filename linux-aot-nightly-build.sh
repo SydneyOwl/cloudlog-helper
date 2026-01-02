@@ -51,7 +51,7 @@ check_command() {
 }
 
 sudo apt update
-sudo apt install git  dotnet  curl unzip jq -y
+sudo apt install git curl unzip jq -y
 
 # armhf cross-compile
 
