@@ -57,9 +57,28 @@ public static class SettingsValidation
         if (!int.TryParse(st, out var res)) return false;
         return !string.IsNullOrEmpty(st) && res is >= 1 and <= 65535;
     }
+    public static bool CheckHttpPort(int st)
+    {
+        return st is >= 1 and <= 65535;
+    }
 
     public static bool CheckHttpIp(string? st)
     {
         return IPAddress.TryParse(st, out _);
+    }
+    
+    public static bool CheckHost(string? st)
+    {
+        if (string.IsNullOrWhiteSpace(st))
+        {
+            return false;
+        }
+
+        return Uri.CheckHostName(st) switch
+        {
+            UriHostNameType.Unknown => false,
+            UriHostNameType.Basic or UriHostNameType.Dns or UriHostNameType.IPv4 or UriHostNameType.IPv6 => true,
+            _ => false
+        };
     }
 }

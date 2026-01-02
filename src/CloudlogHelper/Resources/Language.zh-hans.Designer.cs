@@ -267,6 +267,60 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cloudlog Helper能够连接CLH-Server，自动上报解码的数据模式信息和电台信息到服务器。当您使用特定的安卓app连接到服务器时，服务器将会推送信息到您的手机上。.
+        /// </summary>
+        public static string clhhintinfo {
+            get {
+                return ResourceManager.GetString("clhhintinfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器IP.
+        /// </summary>
+        public static string clhseraddr {
+            get {
+                return ResourceManager.GetString("clhseraddr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器密钥.
+        /// </summary>
+        public static string clhserkey {
+            get {
+                return ResourceManager.GetString("clhserkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器端口.
+        /// </summary>
+        public static string clhserport {
+            get {
+                return ResourceManager.GetString("clhserport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH服务器.
+        /// </summary>
+        public static string clhserver {
+            get {
+                return ResourceManager.GetString("clhserver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 使用TLS.
+        /// </summary>
+        public static string clhusetls {
+            get {
+                return ResourceManager.GetString("clhusetls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 关闭窗口.
         /// </summary>
         public static string close {
@@ -572,6 +626,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 启用CLH服务器.
+        /// </summary>
+        public static string enableclhserver {
+            get {
+                return ResourceManager.GetString("enableclhserver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 允许外部连接.
         /// </summary>
         public static string enableoutsideconn {
@@ -848,6 +911,24 @@ namespace CloudlogHelper.Resources {
         public static string inithamlibfailed {
             get {
                 return ResourceManager.GetString("inithamlibfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 实例名称.
+        /// </summary>
+        public static string instancename {
+            get {
+                return ResourceManager.GetString("instancename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 此字段为软件注册到clh-server时使用的名称。此名称应当是唯一的。.
+        /// </summary>
+        public static string instancenamehint {
+            get {
+                return ResourceManager.GetString("instancenamehint", resourceCulture);
             }
         }
         

@@ -31,6 +31,7 @@ using ReactiveUI.Fody.Helpers;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using Notification = DesktopNotifications.Notification;
+using SpecialOperationMode = CloudlogHelper.CLHProto.SpecialOperationMode;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
@@ -47,7 +48,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly INotificationManager _nativeNotificationManager;
     private readonly IQSOUploadService _qsoUploadService;
     private readonly IUdpServerService _udpServerService;
-    private readonly UDPServerSettings _udpSettings;
+    private readonly ICLHServerService _clhServerService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
@@ -123,21 +124,23 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IApplicationSettingsService ss,
         IQSOUploadService qu,
         INotificationManager nativeNotificationManager,
-        IDecodedDataProcessorService decodedDataProcessorService)
+        IDecodedDataProcessorService decodedDataProcessorService,
+        ICLHServerService clhServerService)
     {
         _applicationSettingsService = ss;
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
         _nativeNotificationManager = nativeNotificationManager;
         _qsoUploadService = qu;
-        _udpSettings = ss.GetCurrentSettings().UDPSettings;
         _udpServerService = udpServerService;
         _databaseService = dbService;
         _messageBoxManagerService = messageBoxManagerService;
         _inAppNotification = inAppNotification;
 
+        _clhServerService = clhServerService;
+
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
-        WaitFirstConn = _udpSettings.EnableUDPServer;
+        WaitFirstConn = _udpServerService.IsUdpServerEnabled();
 
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {
@@ -174,7 +177,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ =>
                 {
-                    if (!_udpSettings.EnableUDPServer || WaitFirstConn) return;
+                    if (!_udpServerService.IsUdpServerEnabled() || WaitFirstConn) return;
                     TimeoutStatus = true;
                     TxStatus = false;
                 })
@@ -193,7 +196,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             SetupErrorHandling(compositeDisposable);
             SetupMessageBusListeners(compositeDisposable);
 
-            TryStartUdpService().DisposeWith(compositeDisposable);
+            _ = _udpServerService.InitializeAsync(_wsjtxMsgHandler, _wsjtxMsgLogger);
         });
     }
 
@@ -293,9 +296,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .Throttle(TimeSpan.FromMilliseconds(100)) // 防抖
             .Subscribe(_ =>
             {
-                ClassLogger.Info("UDP settings changed; updating service");
-                WaitFirstConn = _udpSettings.EnableUDPServer;
-                TryStartUdpService().DisposeWith(disposables);
+                WaitFirstConn = _udpServerService.IsUdpServerEnabled();
             })
             .DisposeWith(disposables);
 
@@ -347,41 +348,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             }
         });
     }
-
-    private IDisposable TryStartUdpService()
-    {
-        if (!_udpSettings.EnableUDPServer)
-        {
-            _ = _udpServerService.TerminateUDPServerAsync();
-            return Disposable.Empty;
-        }
-
-        return Observable.FromAsync(_restartUdp)
-            .Subscribe(
-                _ => { }, // onNext
-                ex => _inAppNotification.SendErrorNotificationAsync("Cannot start udp server: " + ex.Message)
-                );
-    }
-
-    private async Task _restartUdp()
-    {
-        ClassLogger.Debug("Starting UDP service...");
-        
-        if (_udpSettings.IsUDPConfigHasErrors())
-        {
-            _ = _udpServerService.TerminateUDPServerAsync();
-            WaitFirstConn = false;
-            throw new Exception(TranslationHelper.GetString(LangKeys.invalidudpconf));
-        }
-
-        _ = _udpServerService.RestartUDPServerAsync(
-            _udpSettings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
-            int.Parse(_udpSettings.UDPPort),
-            _wsjtxMsgHandler,
-            _wsjtxMsgForwarder,
-            _wsjtxMsgLogger
-        );
-    }
+    
 
     private async Task _uploadCheckedQSO()
     {
@@ -454,30 +421,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         await writer.WriteAsync(adif.ToString());
     }
 
-    private async void _wsjtxMsgForwarder(Memory<byte> message)
-    {
-        try
-        {
-            if (_udpSettings.ForwardMessage)
-            {
-                await _udpServerService.ForwardUDPMessageAsync(
-                    message, 
-                    IPEndPoint.Parse(_udpSettings.ForwardAddress));
-            }
-
-            if (_udpSettings.ForwardMessageToHttp)
-            {
-                await _udpServerService.ForwardTCPMessageAsync(
-                    message, 
-                    _udpSettings.ForwardHttpAddress);
-            }
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Error(e, "Failed to forward WSJT-X message");
-        }
-    }
-
     private async void _wsjtxMsgHandler(WsjtxMessage message)
     {
         try
@@ -491,11 +434,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     
                 case MessageType.Decode:
                     AllDecodedCount += 1;
-                    _decodedDataProcessorService.ProcessDecoded((Decode)message);
+                    await HandleDecode((Decode)message);
                     break;
                     
                 case MessageType.Status:
                     await HandleStatusMessage((Status)message);
+                    break;
+                
+                case MessageType.WSPRDecode:
+                    AllDecodedCount += 1;
+                    await HandleWSPRDecode((WSPRDecode)message);
                     break;
             }
 
@@ -526,7 +474,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _allQsos.Add(rcd);
         _qsoUploadService.EnqueueQSOForUpload(rcd);
 
-        if (_udpSettings.PushNotificationOnQSOMade)
+        if (_udpServerService.IsNotifyOnQsoMade())
         {
             _ = _nativeNotificationManager.ShowNotification(new Notification
             {
@@ -534,6 +482,41 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 Body = rcd.FormatToReadableContent(true)
             });
         }
+    }
+
+
+    private async Task HandleDecode(Decode message)
+    {
+        await _clhServerService.SendDataNoException(new CLHProto.Decode
+        {
+            New = message.New,
+            Time = message.Time,
+            Snr = message.Snr,
+            OffsetTimeSeconds = message.OffsetTimeSeconds,
+            OffsetFrequencyHz = message.OffsetFrequencyHz,
+            Mode = message.Mode,
+            Message = message.Message,
+            LowConfidence = message.LowConfidence,
+            OffAir = message.OffAir,
+        });
+        _decodedDataProcessorService.ProcessDecoded(message);
+    }
+    
+    private async Task HandleWSPRDecode(WSPRDecode message)
+    {
+        await _clhServerService.SendDataNoException(new CLHProto.WSPRDecode
+        {
+            New = message.New,
+            Time = message.Time,
+            Snr = message.Snr,
+            DeltaTimeSeconds = message.DeltaTimeSeconds,
+            FrequencyHz = message.FrequencyHz,
+            FrequencyDriftHz = message.FrequencyDriftHz,
+            Callsign = message.Callsign,
+            Grid = message.Grid,
+            Power = (uint)message.Power,
+            OffAir = message.OffAir
+        });
     }
 
     private async Task HandleStatusMessage(Status status)
@@ -550,6 +533,44 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         MessageBus.Current.SendMessage(new ClientStatusChanged
         {
             CurrStatus = status
+        });
+
+        var som = status.SpecialOperationMode switch
+        {
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.NONE => SpecialOperationMode.None,
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.NAVHF => SpecialOperationMode.Navhf,
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.EUVHF => SpecialOperationMode.Euvhf,
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.FIELDDAY => SpecialOperationMode.Fieldday,
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.RTTYRU => SpecialOperationMode.Rttyru,
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.FOX => SpecialOperationMode.Fox,
+            WsjtxUtilsPatch.WsjtxMessages.Messages.SpecialOperationMode.HOUND => SpecialOperationMode.Hound,
+            _ => SpecialOperationMode.None
+        };
+
+
+        await _clhServerService.SendDataNoException(new CLHProto.Status
+        {
+            DialFrequencyHz = status.DialFrequencyInHz,
+            Mode = status.Mode,
+            DxCall = status.DXCall,
+            Report = status.Report,
+            TxMode = status.TXMode,
+            TxEnabled = status.TXEnabled,
+            Transmitting = status.Transmitting,
+            Decoding = status.Decoding,
+            RxOffsetFrequencyHz = status.RXOffsetFrequencyHz,
+            TxOffsetFrequencyHz = status.TXOffsetFrequencyHz,
+            DeCall = status.DECall,
+            DeGrid = status.DEGrid,
+            DxGrid = status.DXGrid,
+            TxWatchdog = status.TXWatchdog,
+            SubMode = status.SubMode,
+            FastMode = status.FastMode,
+            SpecialOperationMode = som,
+            FrequencyTolerance = status.FrequencyTolerance,
+            TrPeriod = status.TRPeriod,
+            ConfigurationName = status.ConfigurationName,
+            TxMessage = status.TXMessage,
         });
         
         ClassLogger.Trace(

@@ -734,4 +734,31 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="totaluploaded" xml:space="preserve">
         <value>Uploaded:</value>
     </data>
+    <data name="clhserver" xml:space="preserve">
+        <value>CLH Server</value>
+    </data>
+    <data name="clhseraddr" xml:space="preserve">
+        <value>CLH Server IP</value>
+    </data>
+    <data name="clhserport" xml:space="preserve">
+        <value>CLH Server Port</value>
+    </data>
+    <data name="clhserkey" xml:space="preserve">
+        <value>CLH Server key</value>
+    </data>
+    <data name="clhusetls" xml:space="preserve">
+        <value>Use TLS</value>
+    </data>
+    <data name="clhhintinfo" xml:space="preserve">
+        <value>Cloudlog Helper can connect to CLH-Server and automatically report decoded data mode information and radio information to the server. When you connect to the server using a specific Android app, the server will push information to your phone.</value>
+    </data>
+    <data name="enableclhserver" xml:space="preserve">
+        <value>Enable CLH Server</value>
+    </data>
+    <data name="instancenamehint" xml:space="preserve">
+        <value>This field refers to the name used when the software is registered to the clh-server. This name should be unique.</value>
+    </data>
+    <data name="instancename" xml:space="preserve">
+        <value>Instance Name</value>
+    </data>
 </root>

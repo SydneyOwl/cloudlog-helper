@@ -26,6 +26,11 @@ public enum ChangedPart
     ///     Sent when setting window is closed and UDP config changed.
     /// </summary>
     UDPServer,
+    
+    /// <summary>
+    ///     Sent when setting window is closed and CLH Server config changed.
+    /// </summary>
+    CLHServer,
 
     /// <summary>
     ///     Sent when setting window is opened.

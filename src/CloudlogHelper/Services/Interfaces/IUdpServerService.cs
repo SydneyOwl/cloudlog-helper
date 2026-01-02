@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using CloudlogHelper.Enums;
 using Microsoft.Extensions.Logging;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
@@ -8,15 +9,13 @@ namespace CloudlogHelper.Services.Interfaces;
 
 public interface IUdpServerService
 {
+    bool IsUdpServerEnabled();
+    
     bool IsUdpServerRunning();
+    bool IsNotifyOnQsoMade();
+    bool IsNotifyOnQsoUploaded();
 
-    Task ForwardUDPMessageAsync(Memory<byte> message, IPEndPoint endPoint);
-    Task ForwardTCPMessageAsync(Memory<byte> message, string server);
+    int QSOUploadRetryCount();
 
-    Task RestartUDPServerAsync(IPAddress ip, int port,
-        Action<WsjtxMessage> handler,
-        Action<Memory<byte>> rawhandler,
-        Action<LogLevel, string>? udpLogger = null);
-
-    Task TerminateUDPServerAsync();
+    Task InitializeAsync(Action<WsjtxMessage> handler, Action<LogLevel, string> logger);
 }

@@ -1,0 +1,3 @@
+[submodule "src/CloudlogHelper/clh-proto"]
+	path = src/CloudlogHelper/clh-proto
+	url = https://github.com/SydneyOwl/clh-proto.git

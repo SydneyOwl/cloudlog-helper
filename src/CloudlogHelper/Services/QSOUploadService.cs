@@ -38,7 +38,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     /// <summary>
     ///     Settings for UDPServer.
     /// </summary>
-    private readonly UDPServerSettings _udpSettings;
+    private readonly IUdpServerService _udpService;
 
     /// <summary>
     ///     To be uploaded QSOs queue.
@@ -46,11 +46,12 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     private readonly ConcurrentQueue<RecordedCallsignDetail> _uploadQueue = new();
 
     public QSOUploadService(IApplicationSettingsService ss,
+        IUdpServerService udpService,
         INotificationManager nativeNotificationManager)
     {
         _logServices = ss.GetCurrentSettings().LogServices;
         _extraCloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
-        _udpSettings = ss.GetCurrentSettings().UDPSettings;
+        _udpService = udpService;
         _nativeNativeNotificationManager = nativeNotificationManager;
         Task.Run(UploadQSOFromQueue);
     }
@@ -58,7 +59,6 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     public void Dispose()
     {
         _extraCloudlogSettings.Dispose();
-        _udpSettings.Dispose();
         _nativeNativeNotificationManager.Dispose();
     }
 
@@ -96,8 +96,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 }
 
                 // do possible retry...
-                if (!int.TryParse(_udpSettings.RetryCount, out var retTime)) retTime = 1;
-                for (var i = 0; i < retTime; i++)
+                for (var i = 0; i < _udpService.QSOUploadRetryCount(); i++)
                 {
                     rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
                     rcd.FailReason = null;
@@ -157,7 +156,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                         rcd.UploadStatus = UploadStatus.Fail;
                         rcd.FailReason = failOutput.ToString();
 
-                        if (_udpSettings.PushNotificationOnQSOUploaded)
+                        if (_udpService.IsNotifyOnQsoUploaded())
                         {
                             if (rcd.UploadStatus == UploadStatus.Success)
                                 _ = _nativeNativeNotificationManager.ShowNotification(new Notification

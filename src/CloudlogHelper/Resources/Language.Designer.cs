@@ -267,6 +267,60 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cloudlog Helper can connect to CLH-Server and automatically report decoded data mode information and radio information to the server. When you connect to the server using a specific Android app, the server will push information to your phone..
+        /// </summary>
+        public static string clhhintinfo {
+            get {
+                return ResourceManager.GetString("clhhintinfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server IP.
+        /// </summary>
+        public static string clhseraddr {
+            get {
+                return ResourceManager.GetString("clhseraddr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server key.
+        /// </summary>
+        public static string clhserkey {
+            get {
+                return ResourceManager.GetString("clhserkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server Port.
+        /// </summary>
+        public static string clhserport {
+            get {
+                return ResourceManager.GetString("clhserport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server.
+        /// </summary>
+        public static string clhserver {
+            get {
+                return ResourceManager.GetString("clhserver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use TLS.
+        /// </summary>
+        public static string clhusetls {
+            get {
+                return ResourceManager.GetString("clhusetls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string close {
@@ -572,6 +626,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable CLH Server.
+        /// </summary>
+        public static string enableclhserver {
+            get {
+                return ResourceManager.GetString("enableclhserver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable connection from outside.
         /// </summary>
         public static string enableoutsideconn {
@@ -847,6 +910,24 @@ namespace CloudlogHelper.Resources {
         public static string inithamlibfailed {
             get {
                 return ResourceManager.GetString("inithamlibfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instance Name.
+        /// </summary>
+        public static string instancename {
+            get {
+                return ResourceManager.GetString("instancename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This field refers to the name used when the software is registered to the clh-server. This name should be unique..
+        /// </summary>
+        public static string instancenamehint {
+            get {
+                return ResourceManager.GetString("instancenamehint", resourceCulture);
             }
         }
         

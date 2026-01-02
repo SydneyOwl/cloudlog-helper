@@ -14,6 +14,13 @@ namespace CloudlogHelper.Models;
 public class ApplicationSettings : ReactiveValidationObject
 {
     /// <summary>
+    /// Instance name of Cloudlog Helper. This name will be generated on application first start.
+    /// </summary>
+    [Reactive]
+    [JsonProperty]
+    public string InstanceName { get; set; } = string.Empty;
+    
+    /// <summary>
     ///     ProgramShutdownMode of this application.
     /// </summary>
     [Reactive]
@@ -63,6 +70,12 @@ public class ApplicationSettings : ReactiveValidationObject
     /// </summary>
     [JsonProperty]
     public UDPServerSettings UDPSettings { get; set; } = new();
+    
+    /// <summary>
+    ///     CLH Server Settings.
+    /// </summary>
+    [JsonProperty]
+    public CLHServerSettings CLHServerSettings { get; set; } = new();
 
     /// <summary>
     ///     QSA Settings

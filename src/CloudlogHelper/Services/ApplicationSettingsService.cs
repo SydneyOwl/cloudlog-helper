@@ -19,6 +19,9 @@ using ReactiveUI;
 
 namespace CloudlogHelper.Services;
 
+/// <summary>
+///     I'll definitely refactor it someday - but not now! 
+/// </summary>
 public class ApplicationSettingsService : IApplicationSettingsService
 {
     /// <summary>
@@ -49,6 +52,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
     private IMapper _mapper;
 
     private ApplicationSettings? _oldSettings;
+
+    public void InjectMockSettings(ApplicationSettings settings)
+    {
+        _currentSettings = settings;
+        _draftSettings = settings;
+    }
 
     public void ApplySettings(object owner, List<LogSystemConfig>? rawConfigs = null)
     {
@@ -101,6 +110,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 ClassLogger.Trace("udp settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.UDPServer });
+            }
+            
+            if (IsCLHServerConfChanged())
+            {
+                ClassLogger.Warn("><<<<<<<<<<<<<<<<<<<<<<clh server settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged
+                    { Part = ChangedPart.CLHServer });
             }
 
             MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
@@ -169,6 +185,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings!.FLRigSettings.ReinitRules();
         _draftSettings!.OmniRigSettings.ReinitRules();
         _draftSettings!.UDPSettings.ReinitRules();
+        _draftSettings!.CLHServerSettings.ReinitRules();
         _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
         draftSettings = _draftSettings;
         return true;
@@ -178,6 +195,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
         _draftSettings = new ApplicationSettings();
+        _draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
         _currentSettings = _draftSettings.DeepClone();
@@ -213,6 +231,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 applicationSettingsService._draftSettings.BasicSettings.LanguageType =
                     TranslationHelper.DetectDefaultLanguage();
 
+            // instance
+            if (string.IsNullOrEmpty(applicationSettingsService._draftSettings.InstanceName))
+            {
+                applicationSettingsService._draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
+            }
+
             var tps = applicationSettingsService._draftSettings
                 .LogServices.Select(x => x.GetType()).ToArray();
             foreach (var service in logServices)
@@ -232,6 +256,10 @@ public class ApplicationSettingsService : IApplicationSettingsService
         {
             ClassLogger.Warn(e1, "Failed to read settings; use default settings instead.");
             applicationSettingsService.InitEmptySettings(logServices);
+        }
+        finally
+        {
+            _writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
         }
 
         return applicationSettingsService;
@@ -292,11 +320,23 @@ public class ApplicationSettingsService : IApplicationSettingsService
         var newI = _currentSettings!.UDPSettings;
         return !oldI.Equals(newI);
     }
+    
+    /// <summary>
+    ///     Check if clh server configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsCLHServerConfChanged()
+    {
+        if (_oldSettings is null) return false;
+        var oldI = _oldSettings.CLHServerSettings;
+        var newI = _currentSettings!.CLHServerSettings;
+        return !oldI.Equals(newI);
+    }
 
     /// <summary>
     ///     write settings to default position.
     /// </summary>
-    private void _writeCurrentSettingsToFile(ApplicationSettings settings)
+    private static void _writeCurrentSettingsToFile(ApplicationSettings settings)
     {
         try
         {
