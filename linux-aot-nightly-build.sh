@@ -187,9 +187,9 @@ build_and_package() {
     
     local zip_name
     if [ -n "$TAG_NAME" ]; then
-        zip_name="bin/CloudlogHelper-v$TAG_NAME-$arch_name.zip"
+        zip_name="bin/CloudlogHelper-v$TAG_NAME-AOT-$arch_name.zip"
     else
-        zip_name="bin/CloudlogHelper-$arch_name.zip"
+        zip_name="bin/CloudlogHelper-AOT-$arch_name.zip"
     fi
     
     if [ -f "$publish_path" ]; then
