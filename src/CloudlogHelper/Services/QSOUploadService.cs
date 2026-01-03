@@ -15,7 +15,7 @@ using DesktopNotifications;
 using NLog;
 
 namespace CloudlogHelper.Services;
-public class QSOUploadService : IQSOUploadService, IAsyncDisposable
+public class QSOUploadService : IQSOUploadService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     
@@ -71,6 +71,46 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
         }
     }
 
+    public void StopSync()
+    {
+        _processingLock.Wait();
+        try
+        {
+            if (!_isStarted)
+            {
+                return;
+            }
+
+            ClassLogger.Info("Stopping QSO upload service...");
+            _uploadQueue.CompleteAdding();
+            _serviceCts.Cancel();
+            
+            // 等待处理任务完成
+            if (_processingTask is { IsCompleted: false })
+            {
+                try
+                {
+                    _processingTask.GetAwaiter().GetResult();
+                }
+                catch (OperationCanceledException)
+                {
+                    //ignored
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Error during service shutdown");
+                }
+            }
+
+            _isStarted = false;
+            ClassLogger.Info("QSO upload service stopped successfully.");
+        }
+        finally
+        {
+            _processingLock.Release();
+        }
+    }
+
     public async Task StopAsync()
     {
         await _processingLock.WaitAsync();
@@ -82,14 +122,8 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
             }
 
             ClassLogger.Info("Stopping QSO upload service...");
-            
-            // 停止接收新项目
             _uploadQueue.CompleteAdding();
-            
-            // 取消正在进行的处理
             _serviceCts.Cancel();
-            
-            // 等待处理任务完成
             if (_processingTask != null && !_processingTask.IsCompleted)
             {
                 try
@@ -98,7 +132,7 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
                 }
                 catch (OperationCanceledException)
                 {
-                    // 预期中的取消
+                    
                 }
                 catch (Exception ex)
                 {
@@ -478,7 +512,7 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public void Dispose()
     {
         if (_isDisposed)
         {
@@ -487,7 +521,7 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
 
         try
         {
-            await StopAsync();
+            StopSync();
             _uploadQueue.Dispose();
             _serviceCts.Dispose();
             _processingLock.Dispose();
@@ -498,7 +532,6 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
             GC.SuppressFinalize(this);
         }
     }
-
     #region Helper Classes
 
     private class UploadItem
@@ -513,11 +546,6 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
         }
     }
 
-    private class UploadResult
-    {
-        public bool Success { get; set; }
-    }
-
     private class ServiceUploadResult
     {
         public string ServiceName { get; set; }
@@ -526,4 +554,5 @@ public class QSOUploadService : IQSOUploadService, IAsyncDisposable
     }
 
     #endregion
+
 }
