@@ -27,7 +27,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     private readonly List<string> _syncRigInfoAddr = new();
 
     private readonly ApplicationSettings _appSettings;
-    private readonly IApplicationSettingsService _appSettingsService;
     private IRigService _currentService;
     private bool _initialized;
     private readonly Dictionary<RigBackendServiceEnum, IRigService> _services = new();
@@ -35,7 +34,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     public RigBackendManager(IEnumerable<IRigService> rigSources, IApplicationSettingsService appSettingsService)
     {
         _appSettings = appSettingsService.GetCurrentSettings();
-        _appSettingsService = appSettingsService;
         foreach (var rigService in rigSources) _services[rigService.GetServiceType()] = rigService;
         
         // bind settings change
@@ -276,7 +274,11 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             RigBackendServiceEnum.OmniRig =>  _appSettings.OmniRigSettings.PollInterval
         };
 
-        if (int.TryParse(interval, out var intervalInt)) return intervalInt;
+        if (int.TryParse(interval, out var intervalInt))
+        {
+            if (intervalInt > 1) return intervalInt;
+            return 1;
+        }
 
         return DefaultConfigs.RigDefaultPollingInterval;
     }

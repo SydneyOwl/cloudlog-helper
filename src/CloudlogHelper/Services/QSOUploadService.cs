@@ -15,180 +15,515 @@ using DesktopNotifications;
 using NLog;
 
 namespace CloudlogHelper.Services;
-
-public class QSOUploadService : IQSOUploadService, IDisposable
+public class QSOUploadService : IQSOUploadService, IAsyncDisposable
 {
-    /// <summary>
-    ///     Logger for the class.
-    /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-
-    /// <summary>
-    ///     Settings for cloudlog.
-    /// </summary>
-    private readonly CloudlogSettings _extraCloudlogSettings;
-
-    /// <summary>
-    ///     Settings for log services.
-    /// </summary>
+    
+    private readonly CloudlogSettings _cloudlogSettings;
     private readonly List<ThirdPartyLogService> _logServices;
-
-    private readonly INotificationManager _nativeNativeNotificationManager;
-
-    /// <summary>
-    ///     Settings for UDPServer.
-    /// </summary>
+    private readonly INotificationManager _notificationManager;
     private readonly IUdpServerService _udpService;
+    
+    private readonly BlockingCollection<UploadItem> _uploadQueue = new();
+    private readonly ConcurrentDictionary<string, DateTime> _processedItems = new();
+    private readonly TimeSpan _duplicateCheckWindow = TimeSpan.FromMinutes(5);
+    
+    private readonly CancellationTokenSource _serviceCts = new();
+    private Task _processingTask;
+    private readonly SemaphoreSlim _processingLock = new(1, 1);
+    private bool _isStarted;
+    private bool _isDisposed;
 
-    /// <summary>
-    ///     To be uploaded QSOs queue.
-    /// </summary>
-    private readonly ConcurrentQueue<RecordedCallsignDetail> _uploadQueue = new();
-
-    public QSOUploadService(IApplicationSettingsService ss,
+    public QSOUploadService(
+        IApplicationSettingsService settingsService,
         IUdpServerService udpService,
-        INotificationManager nativeNotificationManager)
+        INotificationManager notificationManager)
     {
-        _logServices = ss.GetCurrentSettings().LogServices;
-        _extraCloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
+        if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
+        if (udpService == null) throw new ArgumentNullException(nameof(udpService));
+        if (notificationManager == null) throw new ArgumentNullException(nameof(notificationManager));
+
+        var settings = settingsService.GetCurrentSettings();
+        _logServices = settings.LogServices;
+        _cloudlogSettings = settings.CloudlogSettings ?? throw new InvalidOperationException("Cloudlog settings not configured");
         _udpService = udpService;
-        _nativeNativeNotificationManager = nativeNotificationManager;
-        Task.Run(UploadQSOFromQueue);
+        _notificationManager = notificationManager;
     }
 
-    public void Dispose()
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        _extraCloudlogSettings.Dispose();
-        _nativeNativeNotificationManager.Dispose();
-    }
-
-    public void EnqueueQSOForUpload(RecordedCallsignDetail rcd)
-    {
-        if (rcd.IsUploadable())
+        await _processingLock.WaitAsync(cancellationToken);
+        try
         {
-            if (_uploadQueue.Contains(rcd)) return;
-            rcd.UploadStatus = UploadStatus.Pending;
-            _uploadQueue.Enqueue(rcd);
-            ClassLogger.Trace($"Enqueued QSO: {rcd}");
+            if (_isStarted)
+            {
+                return;
+            }
+
+            ClassLogger.Info("Starting QSO upload service...");
+            _processingTask = Task.Run(() => ProcessUploadQueueAsync(_serviceCts.Token), cancellationToken);
+            _isStarted = true;
+            ClassLogger.Info("QSO upload service started successfully.");
+        }
+        finally
+        {
+            _processingLock.Release();
+        }
+    }
+
+    public async Task StopAsync()
+    {
+        await _processingLock.WaitAsync();
+        try
+        {
+            if (!_isStarted)
+            {
+                return;
+            }
+
+            ClassLogger.Info("Stopping QSO upload service...");
+            
+            // 停止接收新项目
+            _uploadQueue.CompleteAdding();
+            
+            // 取消正在进行的处理
+            _serviceCts.Cancel();
+            
+            // 等待处理任务完成
+            if (_processingTask != null && !_processingTask.IsCompleted)
+            {
+                try
+                {
+                    await _processingTask;
+                }
+                catch (OperationCanceledException)
+                {
+                    // 预期中的取消
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Error during service shutdown");
+                }
+            }
+
+            _isStarted = false;
+            ClassLogger.Info("QSO upload service stopped successfully.");
+        }
+        finally
+        {
+            _processingLock.Release();
+        }
+    }
+
+    public  Task EnqueueQSOForUploadAsync(RecordedCallsignDetail rcd, CancellationToken cancellationToken = default)
+    {
+        if (rcd == null) throw new ArgumentNullException(nameof(rcd));
+        
+        if (!rcd.IsUploadable())
+        {
+            ClassLogger.Trace($"Ignoring non-uploadable QSO: {rcd}");
+            return Task.CompletedTask;
+        }
+
+        var itemKey = GenerateItemKey(rcd);
+        if (IsRecentlyProcessed(itemKey))
+        {
+            ClassLogger.Trace($"Skipping recently processed QSO: {rcd}");
+            return Task.CompletedTask;
+        }
+
+        rcd.UploadStatus = UploadStatus.Pending;
+        var uploadItem = new UploadItem(rcd, itemKey);
+
+        try
+        {
+            _uploadQueue.Add(uploadItem, cancellationToken);
+            MarkAsProcessed(itemKey);
+            ClassLogger.Trace($"Enqueued QSO for upload: {rcd}");
+        }
+        catch (InvalidOperationException ex) when (_uploadQueue.IsAddingCompleted)
+        {
+            ClassLogger.Warn($"Failed to enqueue QSO - service is stopping: {rcd}");
+            throw new InvalidOperationException("Upload service is stopping", ex);
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, $"Failed to enqueue QSO: {rcd}");
+            throw;
+        }
+        return  Task.CompletedTask;
+    }
+
+    public Task<int> GetPendingCountAsync()
+    {
+        return Task.FromResult(_uploadQueue.Count);
+    }
+
+    private async Task ProcessUploadQueueAsync(CancellationToken cancellationToken)
+    {
+        ClassLogger.Info("Started processing upload queue.");
+        
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken, 
+            _serviceCts.Token);
+        
+        var linkedToken = linkedCts.Token;
+
+        try
+        {
+            foreach (var uploadItem in _uploadQueue.GetConsumingEnumerable(linkedToken))
+            {
+                if (linkedToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                await ProcessUploadItemAsync(uploadItem, linkedToken);
+                
+                CleanupProcessedItems();
+                await Task.Delay(1000, CancellationToken.None);
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            ClassLogger.Info("Upload queue processing was cancelled.");
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Fatal error in upload queue processing");
+            throw;
+        }
+        finally
+        {
+            ClassLogger.Info("Stopped processing upload queue.");
+        }
+    }
+
+    private async Task ProcessUploadItemAsync(UploadItem uploadItem, CancellationToken cancellationToken)
+    {
+        var rcd = uploadItem.RecordedCallsignDetail;
+        ClassLogger.Debug($"Processing QSO: {rcd}");
+
+        try
+        {
+            var adif = GetAdifData(rcd);
+            if (string.IsNullOrWhiteSpace(adif))
+            {
+                rcd.UploadStatus = UploadStatus.Fail;
+                rcd.FailReason = TranslationHelper.GetString(LangKeys.invalidadif);
+                ClassLogger.Warn($"Invalid ADIF data for QSO: {rcd}");
+                return;
+            }
+
+            if (!ShouldUpload(rcd))
+            {
+                rcd.UploadStatus = UploadStatus.Ignored;
+                rcd.FailReason = TranslationHelper.GetString(LangKeys.qsouploaddisabled);
+                ClassLogger.Debug($"Auto upload not enabled, ignoring: {rcd}");
+                return;
+            }
+
+            var result = await UploadWithRetryAsync(rcd, adif, cancellationToken);
+
+            if (_udpService.IsNotifyOnQsoUploaded())
+            {
+                await SendUploadNotificationAsync(rcd, result);
+            }
+
+            ClassLogger.Info($"QSO processing completed: {rcd}, Status: {rcd.UploadStatus}");
+        }
+        catch (Exception ex)
+        {
+            // this in theory should never happen?
+            rcd.UploadStatus = UploadStatus.Fail;
+            rcd.FailReason = ex.Message;
+            if (_udpService.IsNotifyOnQsoUploaded())
+            {
+                await SendUploadNotificationAsync(rcd, false);
+            }
+            ClassLogger.Error(ex, $"Error processing QSO: {rcd}");
+        }
+    }
+
+    private string? GetAdifData(RecordedCallsignDetail rcd)
+    {
+        return rcd.RawData?.ToString()?.Trim() ?? rcd.GenerateAdif()?.Trim();
+    }
+
+    private bool ShouldUpload(RecordedCallsignDetail rcd)
+    {
+        return (_cloudlogSettings.AutoQSOUploadEnabled || 
+                _logServices.Any(x => x.AutoQSOUploadEnabled) || 
+                rcd.ForcedUpload);
+    }
+
+    private async Task<bool> UploadWithRetryAsync(
+        RecordedCallsignDetail rcd, 
+        string adif, 
+        CancellationToken cancellationToken)
+    {
+        var maxRetries = _udpService.QSOUploadRetryCount();
+        var result = false;
+        Exception? lastException = null;
+
+        for (var attempt = 0; attempt <= maxRetries; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            rcd.UploadStatus = attempt == 0 ? UploadStatus.Uploading : UploadStatus.Retrying;
+            rcd.FailReason = null;
+
+            ClassLogger.Debug($"Upload attempt {attempt + 1}/{maxRetries + 1} for QSO: {rcd}");
+
+            try
+            {
+                var uploadTasks = new List<Task<ServiceUploadResult>>();
+                
+                if (_cloudlogSettings.AutoQSOUploadEnabled && 
+                    !rcd.UploadedServices.GetValueOrDefault("CloudlogService", false))
+                {
+                    uploadTasks.Add(UploadToCloudlogAsync(rcd, adif, cancellationToken));
+                }
+
+                foreach (var service in _logServices.Where(s => s.AutoQSOUploadEnabled))
+                {
+                    var serviceName = service.GetType().Name;
+                    if (!rcd.UploadedServices.GetValueOrDefault(serviceName, false))
+                    {
+                        uploadTasks.Add(UploadToThirdPartyServiceAsync(service, serviceName, rcd, adif, cancellationToken));
+                    }
+                }
+
+                if (uploadTasks.Any())
+                {
+                    var results = await Task.WhenAll(uploadTasks);
+                    result = results.All(r => r.Success);
+                    
+                    foreach (var serviceResult in results)
+                    {
+                        rcd.UploadedServices[serviceResult.ServiceName] = serviceResult.Success;
+                    }
+                }
+                else
+                {
+                    result = true;
+                }
+
+                if (result)
+                {
+                    rcd.UploadStatus = UploadStatus.Success;
+                    ClassLogger.Info($"QSO uploaded successfully: {rcd}");
+                    break;
+                }
+                else
+                {
+                    rcd.UploadStatus = UploadStatus.Fail;
+                    rcd.FailReason = string.Join(Environment.NewLine, 
+                        rcd.UploadedServices.Where(kv => !kv.Value)
+                            .Select(kv => $"{kv.Key}: Upload failed"));
+                    
+                    if (attempt < maxRetries)
+                    {
+                        await Task.Delay(CalculateRetryDelay(attempt), cancellationToken);
+                    }
+                }
+            }
+            catch (Exception ex) when (attempt < maxRetries)
+            {
+                lastException = ex;
+                ClassLogger.Warn(ex, $"Upload attempt {attempt + 1} failed for QSO: {rcd}");
+                await Task.Delay(CalculateRetryDelay(attempt), cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                lastException = ex;
+                rcd.UploadStatus = UploadStatus.Fail;
+                rcd.FailReason = ex.Message;
+                throw;
+            }
+        }
+
+        if (!result && lastException != null)
+        {
+            throw new AggregateException("All upload attempts failed", lastException);
+        }
+
+        return result;
+    }
+
+    private async Task<ServiceUploadResult> UploadToCloudlogAsync(
+        RecordedCallsignDetail rcd, 
+        string adif, 
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await CloudlogUtil.UploadAdifLogAsync(
+                _cloudlogSettings.CloudlogUrl,
+                _cloudlogSettings.CloudlogApiKey,
+                _cloudlogSettings.CloudlogStationInfo?.StationId!,
+                adif,
+                cancellationToken);
+
+            var success = result.Status == "created";
+            ClassLogger.Debug($"Cloudlog upload {(success ? "succeeded" : "failed")}: {rcd}");
+            
+            return new ServiceUploadResult
+            {
+                ServiceName = "CloudlogService",
+                Success = success,
+                ErrorMessage = success ? null : result.Reason
+            };
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, $"Cloudlog upload failed: {rcd}");
+            return new ServiceUploadResult
+            {
+                ServiceName = "CloudlogService",
+                Success = false,
+                ErrorMessage = ex.Message
+            };
+        }
+    }
+
+    private async Task<ServiceUploadResult> UploadToThirdPartyServiceAsync(
+        ThirdPartyLogService service,
+        string serviceName,
+        RecordedCallsignDetail rcd,
+        string adif,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await service.UploadQSOAsync(adif, cancellationToken);
+            ClassLogger.Info($"QSO uploaded to {serviceName}: {rcd}");
+            
+            return new ServiceUploadResult
+            {
+                ServiceName = serviceName,
+                Success = true
+            };
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, $"QSO upload to {serviceName} failed: {rcd}");
+            return new ServiceUploadResult
+            {
+                ServiceName = serviceName,
+                Success = false,
+                ErrorMessage = ex.Message
+            };
+        }
+    }
+
+    private async Task SendUploadNotificationAsync(RecordedCallsignDetail rcd, bool success)
+    {
+        try
+        {
+            var notification = new Notification
+            {
+                Title = success 
+                    ? $"{TranslationHelper.GetString(LangKeys.uploadedaqso)} - {rcd.DXCall}"
+                    : $"{TranslationHelper.GetString(LangKeys.failedqso)} - {rcd.DXCall}",
+                Body = success 
+                    ? rcd.FormatToReadableContent(true)
+                    : rcd.FailReason ?? TranslationHelper.GetString(LangKeys.uploadfailedaqso)
+            };
+
+            await _notificationManager.ShowNotification(notification);
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to send upload notification");
+        }
+    }
+
+    // just pow for now
+    private TimeSpan CalculateRetryDelay(int attempt)
+    {
+        var baseDelay = TimeSpan.FromSeconds(1);
+        var maxDelay = TimeSpan.FromSeconds(30);
+        var delay = TimeSpan.FromTicks(baseDelay.Ticks * (long)Math.Pow(2, attempt));
+        
+        return delay > maxDelay ? maxDelay : delay;
+    }
+
+    private string GenerateItemKey(RecordedCallsignDetail rcd)
+    {
+        return $"{rcd.DXCall}_{rcd.Mode}_{rcd.DateTimeOn:yyyyMMddHHmmss}";
+    }
+
+    private bool IsRecentlyProcessed(string itemKey)
+    {
+        return _processedItems.TryGetValue(itemKey, out var timestamp) && 
+               (DateTime.UtcNow - timestamp) < _duplicateCheckWindow;
+    }
+
+    private void MarkAsProcessed(string itemKey)
+    {
+        _processedItems[itemKey] = DateTime.UtcNow;
+    }
+
+    private void CleanupProcessedItems()
+    {
+        var cutoff = DateTime.UtcNow - _duplicateCheckWindow;
+        var oldKeys = _processedItems.Where(kv => kv.Value < cutoff)
+            .Select(kv => kv.Key)
+            .ToList();
+
+        foreach (var key in oldKeys)
+        {
+            _processedItems.TryRemove(key, out _);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_isDisposed)
+        {
             return;
         }
 
-        ClassLogger.Trace($"ignoring enqueue QSO: {rcd}");
+        try
+        {
+            await StopAsync();
+            _uploadQueue.Dispose();
+            _serviceCts.Dispose();
+            _processingLock.Dispose();
+        }
+        finally
+        {
+            _isDisposed = true;
+            GC.SuppressFinalize(this);
+        }
     }
 
-    private async Task UploadQSOFromQueue()
+    #region Helper Classes
+
+    private class UploadItem
     {
-        while (true)
-            try
-            {
-                if (!_uploadQueue.TryDequeue(out var rcd)) continue;
-                var adif = rcd.RawData?.ToString() ?? rcd.GenerateAdif();
-                if (string.IsNullOrEmpty(adif)) continue;
-                ClassLogger.Debug($"Try Logging: {adif}");
-                if (!_logServices.Any(x => x.AutoQSOUploadEnabled)
-                    && !_extraCloudlogSettings.AutoQSOUploadEnabled
-                    && !rcd.ForcedUpload)
-                {
-                    rcd.UploadStatus = UploadStatus.Ignored;
-                    rcd.FailReason = TranslationHelper.GetString(LangKeys.qsouploaddisabled);
-                    ClassLogger.Debug($"Auto upload not enabled. ignored: {adif}.");
-                    continue;
-                }
+        public RecordedCallsignDetail RecordedCallsignDetail { get; }
+        public string ItemKey { get; }
 
-                // do possible retry...
-                for (var i = 0; i < _udpService.QSOUploadRetryCount(); i++)
-                {
-                    rcd.UploadStatus = i > 0 ? UploadStatus.Retrying : UploadStatus.Uploading;
-                    rcd.FailReason = null;
-                    var failOutput = new StringBuilder();
-
-                    try
-                    {
-                        if (!_extraCloudlogSettings.AutoQSOUploadEnabled)
-                            rcd.UploadedServices["CloudlogService"] = true;
-                        if (!rcd.UploadedServices.GetValueOrDefault("CloudlogService", false))
-                        {
-                            var cloudlogResult = await CloudlogUtil.UploadAdifLogAsync(
-                                _extraCloudlogSettings.CloudlogUrl,
-                                _extraCloudlogSettings.CloudlogApiKey,
-                                _extraCloudlogSettings.CloudlogStationInfo?.StationId!,
-                                adif,
-                                CancellationToken.None);
-                            if (cloudlogResult.Status != "created")
-                            {
-                                ClassLogger.Debug("A qso for cloudlog failed to upload.");
-                                rcd.UploadedServices["CloudlogService"] = false;
-                                failOutput.AppendLine("Cloudlog: " + cloudlogResult.Reason.Trim());
-                            }
-                            else
-                            {
-                                ClassLogger.Debug("Qso for cloudlog uploaded successfully.");
-                                rcd.UploadedServices["CloudlogService"] = true;
-                            }
-                        }
-
-                        foreach (var thirdPartyLogService in _logServices)
-                        {
-                            var serName = thirdPartyLogService.GetType().Name;
-                            if (!thirdPartyLogService.AutoQSOUploadEnabled) rcd.UploadedServices[serName] = true;
-                            if (!rcd.UploadedServices.GetValueOrDefault(serName, false))
-                                try
-                                {
-                                    await thirdPartyLogService.UploadQSOAsync(adif, CancellationToken.None);
-                                    rcd.UploadedServices[serName] = true;
-                                    ClassLogger.Info($"Qso for {serName} uploaded successfully.");
-                                }
-                                catch (Exception ex)
-                                {
-                                    rcd.UploadedServices[serName] = false;
-                                    ClassLogger.Error(ex, $"Qso for {serName} uploaded failed.");
-                                    failOutput.AppendLine(serName + ex.Message);
-                                }
-                        }
-
-                        if (rcd.UploadedServices.Values.All(x => x))
-                        {
-                            rcd.UploadStatus = UploadStatus.Success;
-                            rcd.FailReason = string.Empty;
-                            break;
-                        }
-
-                        rcd.UploadStatus = UploadStatus.Fail;
-                        rcd.FailReason = failOutput.ToString();
-
-                        if (_udpService.IsNotifyOnQsoUploaded())
-                        {
-                            if (rcd.UploadStatus == UploadStatus.Success)
-                                _ = _nativeNativeNotificationManager.ShowNotification(new Notification
-                                {
-                                    Title = TranslationHelper.GetString(LangKeys.uploadedaqso) + rcd.DXCall,
-                                    Body = rcd.FormatToReadableContent(true)
-                                });
-                            else
-                                _ = _nativeNativeNotificationManager.ShowNotification(new Notification
-                                {
-                                    Title = TranslationHelper.GetString(LangKeys.uploadfailedaqso),
-                                    Body = rcd.FailReason
-                                });
-                        }
-
-                        await Task.Delay(1000);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Debug(ex, "Qso uploaded failed.");
-                        rcd.UploadStatus = UploadStatus.Fail;
-                        rcd.FailReason = ex.Message;
-                    }
-                }
-            }
-            catch (Exception st)
-            {
-                ClassLogger.Error(st, "Error occurred while uploading qso data. This is ignored.");
-            }
-            finally
-            {
-                await Task.Delay(500);
-            }
+        public UploadItem(RecordedCallsignDetail rcd, string itemKey)
+        {
+            RecordedCallsignDetail = rcd ?? throw new ArgumentNullException(nameof(rcd));
+            ItemKey = itemKey ?? throw new ArgumentNullException(nameof(itemKey));
+        }
     }
+
+    private class UploadResult
+    {
+        public bool Success { get; set; }
+    }
+
+    private class ServiceUploadResult
+    {
+        public string ServiceName { get; set; }
+        public bool Success { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+
+    #endregion
 }

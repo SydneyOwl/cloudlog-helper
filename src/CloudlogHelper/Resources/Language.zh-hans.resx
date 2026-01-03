@@ -761,4 +761,7 @@
     <data name="instancename" xml:space="preserve">
         <value>实例名称</value>
     </data>
+    <data name="invalidadif" xml:space="preserve">
+        <value>无效的ADIF！</value>
+    </data>
 </root>

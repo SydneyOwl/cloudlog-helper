@@ -950,6 +950,15 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid ADIF!.
+        /// </summary>
+        public static string invalidadif {
+            get {
+                return ResourceManager.GetString("invalidadif", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This apikey is invalid!.
         /// </summary>
         public static string invalidapikey {

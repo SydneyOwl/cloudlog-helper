@@ -37,24 +37,16 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly CloudlogSettings _cloudlogSettings;
 
     private readonly IInAppNotificationService _inAppNotification;
-
     private readonly IMessageBoxManagerService _messageBoxManagerService;
-
     private readonly IRigBackendManager _rigBackendManager;
     private readonly List<ThirdPartyLogService> _tpService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ICLHServerService _clhServerService;
 
-
     /// <summary>
     ///     observable sequence. Whether to cancel the timer or not.
     /// </summary>
-    private Subject<Unit> _cancel;
-
-    /// <summary>
-    ///     whether to call _restartRigctldStrict or not.
-    /// </summary>
-    private bool _holdRigUpdate;
+    private readonly Subject<Unit> _cancelSubject = new();
 
     /// <summary>
     ///     Command for polling data(mode and frequency)
@@ -64,7 +56,27 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     /// <summary>
     ///     Accumulative rig connection failed times.
     /// </summary>
-    private int _rigConnFailedTimes;
+    private volatile int _rigConnFailedTimes;
+
+    /// <summary>
+    ///     Lock for rig connection failed times to ensure thread safety
+    /// </summary>
+    private readonly object _rigConnFailedTimesLock = new();
+
+    /// <summary>
+    ///     whether to call _restartRigctldStrict or not.
+    /// </summary>
+    private bool _holdRigUpdate;
+
+    /// <summary>
+    ///     Composite disposable for managing timer disposables
+    /// </summary>
+    private readonly CompositeDisposable _timerDisposables = new();
+
+    /// <summary>
+    ///     Semaphore to prevent re-entrant polling
+    /// </summary>
+    private readonly SemaphoreSlim _pollLock = new(1, 1);
 
     public RIGDataGroupboxUserControlViewModel()
     {
@@ -87,6 +99,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _clhServerService = clh;
         _tpService = ss.GetCurrentSettings().LogServices;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
+        
         _ = rs.InitializeAsync();
         if (!InitSkipped) Initialize();
     }
@@ -114,25 +127,31 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
 
-
     private void Initialize()
     {
         // check if conf is available, then start rigctld
-        _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfo);
+        _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfoSafe);
 
         this.WhenActivated(disposables =>
         {
-            _cancel = new Subject<Unit>().DisposeWith(disposables);
+            _cancelSubject.DisposeWith(disposables);
+
+            // Handle settings changes with throttling to avoid excessive restarts
             MessageBus.Current.Listen<SettingsChanged>()
-                .SelectMany(async x =>
+                .Throttle(TimeSpan.FromMilliseconds(500))
+                .Select( x =>
                 {
                     if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
 
-                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig or ChangedPart.OmniRig) _resetStatus();
+                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig or ChangedPart.OmniRig) 
+                        _resetStatus();
 
                     if (x.Part == ChangedPart.NothingJustClosed)
                     {
-                        _rigConnFailedTimes = 0;
+                        lock (_rigConnFailedTimesLock)
+                        {
+                            _rigConnFailedTimes = 0;
+                        }
                         _holdRigUpdate = false;
                     }
 
@@ -145,76 +164,308 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                         .Select(_ => Unit.Default)
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
+                    
                     _createNewTimer().DisposeWith(disposables);
                 })
                 .DisposeWith(disposables);
 
-
-            _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
-                {
-                    if (err is InvalidPollException)
-                    {
-                        _rigConnFailedTimes = 0;
-                        return;
-                    }
-
-                    if (err is InvalidConfigurationException)
-                    {
-                        _rigConnFailedTimes = 0;
-                        return;
-                    }
-
-                    try
-                    {
-                        await _defaultExceptionHandler(err);
-                        if (_rigConnFailedTimes++ >= DefaultConfigs.MaxRigctldErrorCount)
-                        {
-                            // avoid following errors
-                            _rigConnFailedTimes = int.MinValue;
-                            _disposeAllTimers();
-                            _resetStatus();
-                            // popup!
-                            var choice = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(
-                                new List<ButtonDefinition>
-                                {
-                                    new() { Name = "Retry", IsDefault = true },
-                                    new() { Name = "Open Settings" },
-                                    new() { Name = "Cancel" }
-                                }, Icon.Warning, "Warning", TranslationHelper.GetString(LangKeys.failrigcomm));
-                            switch (choice)
-                            {
-                                case "Retry":
-                                    _rigConnFailedTimes = 0;
-                                    await _rigBackendManager.RestartService();
-                                    Observable.Return(Unit.Default)
-                                        .InvokeCommand(_pollCommand)
-                                        .DisposeWith(disposables);
-                                    _createNewTimer().DisposeWith(disposables);
-                                    break;
-                                case "Open Settings":
-                                    await _windowManagerService.CreateAndShowWindowByVm(
-                                        typeof(SettingsWindowViewModel));
-                                    break;
-                                case "Cancel":
-                                    break;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        // nested exception..
-                        ClassLogger.Error(e);
-                    }
-                })
+            // Handle polling command exceptions
+            _pollCommand.ThrownExceptions
+                .Subscribe(async void (ex) => await HandlePollExceptionAsync(ex)) // this is safe - it never fails
                 .DisposeWith(disposables);
 
+            // Start the polling timer
             _createNewTimer().DisposeWith(disposables);
 
+            // Initial poll after delay
             Observable.Return(Unit.Default)
-                .Delay(TimeSpan.FromMilliseconds(1000))
+                .Delay(TimeSpan.FromSeconds(1))
                 .InvokeCommand(_pollCommand)
                 .DisposeWith(disposables);
         });
+    }
+
+    private async Task _refreshRigInfoSafe()
+    {
+        if (!await _pollLock.WaitAsync(0))
+        {
+            ClassLogger.Trace("Polling already in progress, skipping...");
+            return;
+        }
+
+        try
+        {
+            await _refreshRigInfo();
+        }
+        finally
+        {
+            _pollLock.Release();
+        }
+    }
+
+    private async Task _refreshRigInfo()
+    {
+        ClassLogger.Trace("Refreshing rig data....");
+
+        // Check if we should skip polling
+        lock (_rigConnFailedTimesLock)
+        {
+            if (_rigConnFailedTimes < 0)
+            {
+                ClassLogger.Trace("Waiting for user choice. Skipping poll.");
+                return;
+            }
+        }
+
+        try
+        {
+            var allInfo = await _rigBackendManager.GetAllRigInfo();
+            ClassLogger.Debug(allInfo.ToString());
+            
+            UpdateDisplayInfo(allInfo);
+            
+            lock (_rigConnFailedTimesLock)
+            {
+                _rigConnFailedTimes = 0;
+            }
+            
+            await ReportToServicesAsync(allInfo);
+        }
+        catch (Exception ex) when (ex is InvalidPollException or InvalidConfigurationException)
+        {
+            // These are expected exceptions, just reset the counter
+            lock (_rigConnFailedTimesLock)
+            {
+                _rigConnFailedTimes = 0;
+            }
+            throw;
+        }
+        catch (Exception ex)
+        {
+            lock (_rigConnFailedTimesLock)
+            {
+                _rigConnFailedTimes++;
+            }
+            throw;
+        }
+    }
+
+    private void UpdateDisplayInfo(RadioData allInfo)
+    {
+        CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);
+        CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
+        CurrentRxMode = allInfo.ModeRx;
+
+        CurrentTxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyTx, false);
+        CurrentTxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyTx);
+        CurrentTxMode = allInfo.ModeTx;
+
+        IsSplit = allInfo.IsSplit;
+    }
+
+    private async Task ReportToServicesAsync(RadioData allInfo)
+    {
+        // Report to CLH server
+        await ReportToClhServerAsync(allInfo);
+
+        // Report to third-party services
+        await ReportToThirdPartyServicesAsync(allInfo);
+
+        // Report to Cloudlog
+        await ReportToCloudlogAsync(allInfo);
+    }
+
+    private async Task ReportToClhServerAsync(RadioData allInfo)
+    {
+        try
+        {
+            var rigData = new RigData
+            {
+                Provider = _rigBackendManager.GetServiceType().ToString(),
+                RigName = allInfo.RigName,
+                Frequency = SafeConvertToUlong(allInfo.FrequencyTx),
+                Mode = allInfo.ModeTx,
+                FrequencyRx = SafeConvertToUlong(allInfo.FrequencyRx),
+                ModeRx = allInfo.ModeRx,
+                Split = allInfo.IsSplit,
+                Power = SafeConvertToUint(allInfo.Power ?? 0),
+            };
+
+            await _clhServerService.SendDataNoException(rigData);
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Warn(ex, "Failed to report to CLH server");
+        }
+    }
+
+    private async Task ReportToThirdPartyServicesAsync(RadioData allInfo)
+    {
+        var uploadTasks = new List<Task>();
+        
+        foreach (var service in _tpService.ToArray())
+        {
+            uploadTasks.Add(Task.Run(async () =>
+            {
+                try
+                {
+                    await service.UploadRigInfoAsync(allInfo, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Warn(ex, "Failed to upload rig info to third-party service");
+                    await _inAppNotification.SendWarningNotificationAsync(ex.Message);
+                }
+            }));
+        }
+
+        if (uploadTasks.Count > 0)
+        {
+            await Task.WhenAll(uploadTasks);
+        }
+    }
+
+    private async Task ReportToCloudlogAsync(RadioData allInfo)
+    {
+        if (_cloudlogSettings.IsCloudlogHasErrors())
+        {
+            UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+            ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
+            return;
+        }
+
+        try
+        {
+            var result = await CloudlogUtil.UploadRigInfoAsync(
+                _cloudlogSettings.CloudlogUrl,
+                _cloudlogSettings.CloudlogApiKey,
+                allInfo,
+                CancellationToken.None);
+
+            UploadStatus = result.Status == "success" 
+                ? TranslationHelper.GetString(LangKeys.success)
+                : TranslationHelper.GetString(LangKeys.failed);
+
+            if (result.Status != "success")
+            {
+                throw new Exception($"Cloudlog upload failed: {result.Reason}");
+            }
+        }
+        catch (Exception ex)
+        {
+            UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+            ClassLogger.Warn(ex, "Failed to upload rig info to Cloudlog");
+            await _inAppNotification.SendWarningNotificationAsync(ex.Message);
+        }
+    }
+
+    private static ulong SafeConvertToUlong(double value)
+    {
+        if (value <= 0) return 0;
+        if (value > ulong.MaxValue) return ulong.MaxValue;
+        return (ulong)value;
+    }
+
+    private static uint SafeConvertToUint(double value)
+    {
+        if (value <= 0) return 0;
+        if (value > uint.MaxValue) return uint.MaxValue;
+        return (uint)value;
+    }
+
+    private async Task HandlePollExceptionAsync(Exception exception)
+    {
+        if (exception is InvalidPollException or InvalidConfigurationException)
+        {
+            return;
+        }
+
+        try
+        {
+            await UpdateErrorDisplayAsync();
+
+            int currentFailCount;
+            lock (_rigConnFailedTimesLock)
+            {
+                currentFailCount = _rigConnFailedTimes;
+            }
+
+            if (currentFailCount >= DefaultConfigs.MaxRigctldErrorCount)
+            {
+                // Reset to prevent further errors while showing dialog
+                lock (_rigConnFailedTimesLock)
+                {
+                    if (_rigConnFailedTimes >= DefaultConfigs.MaxRigctldErrorCount)
+                    {
+                        _rigConnFailedTimes = int.MinValue;
+                    }
+                }
+
+                await ShowErrorDialogAndHandleChoiceAsync();
+            }
+            else
+            {
+                await _inAppNotification.SendErrorNotificationAsync(exception.Message);
+                ClassLogger.Error(exception);
+            }
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Unhandled exception in poll error handler");
+        }
+    }
+
+    private async Task UpdateErrorDisplayAsync()
+    {
+        UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+        CurrentRxFrequency = "ERROR";
+        CurrentRxFrequencyInMeters = string.Empty;
+        IsSplit = false;
+        CurrentRxMode = string.Empty;
+        CurrentTxFrequency = "ERROR";
+        CurrentTxFrequencyInMeters = string.Empty;
+        CurrentTxMode = string.Empty;
+        
+        await Task.CompletedTask;
+    }
+
+    private async Task ShowErrorDialogAndHandleChoiceAsync()
+    {
+        _disposeAllTimers();
+        _resetStatus();
+
+        var choice = await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(
+            new List<ButtonDefinition>
+            {
+                new() { Name = "Retry", IsDefault = true },
+                new() { Name = "Open Settings" },
+                new() { Name = "Cancel" }
+            }, 
+            Icon.Warning, 
+            "Warning", 
+            TranslationHelper.GetString(LangKeys.failrigcomm));
+
+        switch (choice)
+        {
+            case "Retry":
+                lock (_rigConnFailedTimesLock)
+                {
+                    _rigConnFailedTimes = 0;
+                }
+                await _rigBackendManager.RestartService();
+                Observable.Return(Unit.Default)
+                    .InvokeCommand(_pollCommand);
+                _createNewTimer();
+                break;
+                
+            case "Open Settings":
+                await _windowManagerService.CreateAndShowWindowByVm(typeof(SettingsWindowViewModel));
+                break;
+                
+            case "Cancel":
+                // Do nothing
+                break;
+        }
     }
 
     private void _resetStatus()
@@ -232,133 +483,73 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         NextUploadTime = TranslationHelper.GetString(LangKeys.unknown);
     }
 
-    private async Task _defaultExceptionHandler(Exception exception)
-    {
-        UploadStatus = TranslationHelper.GetString(LangKeys.failed);
-        CurrentRxFrequency = "ERROR";
-        CurrentRxFrequencyInMeters = string.Empty;
-        IsSplit = false;
-        CurrentRxMode = string.Empty;
-        await _inAppNotification.SendErrorNotificationAsync(exception.Message);
-        ClassLogger.Error(exception);
-    }
-
-    private async Task _refreshRigInfo()
-    {
-        ClassLogger.Trace("Refreshing rig data....");
-
-        if (_rigConnFailedTimes < 0)
-        {
-            ClassLogger.Trace("Waiting for user choice. ignored poll sir.");
-            return;
-        }
-
-        var allInfo = await _rigBackendManager.GetAllRigInfo();
-        ClassLogger.Debug(allInfo.ToString());
-        CurrentRxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyRx, false);
-        CurrentRxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyRx);
-        CurrentRxMode = allInfo.ModeRx;
-
-        CurrentTxFrequency = FreqHelper.GetFrequencyStr(allInfo.FrequencyTx, false);
-        CurrentTxFrequencyInMeters = FreqHelper.GetMeterFromFreq(allInfo.FrequencyTx);
-        CurrentTxMode = allInfo.ModeTx;
-
-        IsSplit = allInfo.IsSplit;
-
-        _rigConnFailedTimes = 0;
-        
-        // report to clh server
-        await _clhServerService.SendDataNoException(new RigData
-        {
-            Provider = _rigBackendManager.GetServiceType().ToString(),
-            RigName = allInfo.RigName,
-            Frequency = (ulong)allInfo.FrequencyTx,
-            Mode = allInfo.ModeTx,
-            FrequencyRx = (ulong)allInfo.FrequencyRx,
-            ModeRx = allInfo.ModeRx,
-            Split = allInfo.IsSplit,
-            Power = (uint)(allInfo.Power ?? 0),
-        });
-
-        foreach (var thirdPartyLogService in _tpService.ToArray())
-            try
-            {
-                await thirdPartyLogService.UploadRigInfoAsync(allInfo, CancellationToken.None);
-            }
-            catch (Exception ex)
-            {
-                UploadStatus = TranslationHelper.GetString(LangKeys.failed);
-                ClassLogger.Warn(ex, "Failed to upload rig info");
-                await _inAppNotification.SendWarningNotificationAsync(ex.Message);
-            }
-
-        // freq read from hamlib is already in hz!
-        if (!_cloudlogSettings.IsCloudlogHasErrors())
-        {
-            try
-            {
-                var result = await CloudlogUtil.UploadRigInfoAsync(_cloudlogSettings.CloudlogUrl,
-                    _cloudlogSettings.CloudlogApiKey, allInfo, CancellationToken.None);
-                if (result.Status == "success")
-                    UploadStatus = TranslationHelper.GetString(LangKeys.success);
-                else
-                    throw new Exception(result.Reason);
-            }
-            catch (Exception ex)
-            {
-                UploadStatus = TranslationHelper.GetString(LangKeys.failed);
-                ClassLogger.Warn(ex, "Failed to upload rig info");
-                await _inAppNotification.SendWarningNotificationAsync(ex.Message);
-            }
-        }
-        else
-        {
-            UploadStatus = TranslationHelper.GetString(LangKeys.failed);
-            ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
-        }
-    }
-
     private IDisposable _createNewTimer()
     {
-        // check which configuration should we use?
         ClassLogger.Trace("Creating new rig timer...");
-        _cancel.OnNext(Unit.Default);
+        
+        // Cancel any existing timer
+        _timerDisposables.Clear();
+        _cancelSubject.OnNext(Unit.Default);
 
-        return Observable.Defer(() =>
+        var timerDisposable = Observable.Defer(() =>
             {
-                return Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-                    .Select(x => _rigBackendManager.GetPollingInterval() - (int)x - 1)
-                    .TakeWhile(sec => sec >= 0)
-                    .Do(sec =>
+                return Observable.Interval(TimeSpan.FromSeconds(1))
+                    .Scan(new { Count = 0, ShouldPoll = false }, (state, _) =>
                     {
-                        if (!_rigBackendManager.GetPollingAllowed() || _rigConnFailedTimes < 0) return;
-                        if (sec == 0)
+                        var interval = _rigBackendManager.GetPollingInterval();
+                        var count = (state.Count + 1) % interval;
+                        var shouldPoll = count == 0;
+                        
+                        return new { Count = count, ShouldPoll = shouldPoll };
+                    })
+                    .Where(x => !_holdRigUpdate && _rigBackendManager.GetPollingAllowed())
+                    .Do(state =>
+                    {
+                        if (!_rigBackendManager.GetPollingAllowed())
                         {
-                            NextUploadTime = TranslationHelper.GetString(LangKeys.gettinginfo);
+                            NextUploadTime = TranslationHelper.GetString(LangKeys.polldisabled);
                             return;
                         }
 
-                        NextUploadTime = sec.ToString();
+                        var interval = _rigBackendManager.GetPollingInterval();
+                        var remaining = interval - state.Count - 1;
+                        
+                        NextUploadTime = remaining <= 0 
+                            ? TranslationHelper.GetString(LangKeys.gettinginfo)
+                            : remaining.ToString();
                     })
-                    .SelectMany(sec =>
-                        sec == 0
-                            ? _pollCommand.Execute().OnErrorResumeNext(Observable.Empty<Unit>())
-                            : Observable.Return(Unit.Default)
-                    )
-                    .Finally(() => ClassLogger.Trace("Reboot radio timer.."));
+                    .Where(state => state.ShouldPoll)
+                    .SelectMany(_ => _pollCommand.Execute().Catch(Observable.Empty<Unit>()))
+                    .Finally(() => ClassLogger.Trace("Timer completed"));
             })
-            .Repeat()
-            .TakeUntil(_cancel)
+            .TakeUntil(_cancelSubject)
             .Finally(() =>
             {
                 _resetStatus();
                 ClassLogger.Trace("Canceling radio timer...");
             })
-            .Subscribe();
+            .Subscribe(
+                onNext: _ => { /* Timer tick handled above */ },
+                onError: ex => ClassLogger.Error(ex, "Error in rig polling timer"),
+                onCompleted: () => ClassLogger.Trace("Rig polling timer completed")
+            );
+
+        _timerDisposables.Add(timerDisposable);
+        return timerDisposable;
     }
 
     private void _disposeAllTimers()
     {
-        _cancel.OnNext(Unit.Default);
+        _timerDisposables.Clear();
+        _cancelSubject.OnNext(Unit.Default);
     }
+
+    // public void Dispose()
+    // {
+    //     _cloudlogSettings.Dispose();
+    //     _cancelSubject.Dispose();
+    //     _pollCommand.Dispose();
+    //     _timerDisposables.Dispose();
+    //     _pollLock.Dispose();
+    // }
 }

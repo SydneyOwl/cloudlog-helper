@@ -142,6 +142,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _udpServerService.IsUdpServerEnabled();
 
+        _ = _qsoUploadService.StartAsync();
+
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {
             var content = callDet.FormatToReadableContent();
@@ -301,7 +303,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
 
         MessageBus.Current.Listen<QsoUploadRequested>()
-            .Subscribe(x =>
+            .Subscribe(async x =>
             {
                 _allQsos.Edit(innerList =>
                 {
@@ -310,7 +312,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 
                 foreach (var rcd in x.QsoData)
                 {
-                    _qsoUploadService.EnqueueQSOForUpload(rcd);
+                    try
+                    {
+                        await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
+                    }
+                    catch (Exception ex)
+                    {
+                        ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
+                    }
                 }
             })
             .DisposeWith(disposables);
@@ -359,7 +368,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         foreach (var item in itemsToUpload)
         {
             item.ForcedUpload = true;
-            _qsoUploadService.EnqueueQSOForUpload(item);
+            try
+            {
+                await _qsoUploadService.EnqueueQSOForUploadAsync(item);
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
+            }
         }
     }
 
@@ -472,7 +488,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
 
         _allQsos.Add(rcd);
-        _qsoUploadService.EnqueueQSOForUpload(rcd);
+        try
+        {
+            await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
+        }
 
         if (_udpServerService.IsNotifyOnQsoMade())
         {
