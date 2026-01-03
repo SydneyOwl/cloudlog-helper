@@ -320,10 +320,11 @@ public class CLHServerService : ICLHServerService, IDisposable
     /// Sends message over the current connection.
     /// </summary>
     public async Task SendData(IMessage data)
-    {
+    {           
+        if (!_appSettingsService.GetCurrentSettings().CLHServerSettings.CLHServerEnabled) return;
         if (_disposed) throw new ObjectDisposedException(nameof(CLHServerService));
         if (data == null) throw new ArgumentNullException(nameof(data));
-        if (_networkStream is null || !_networkStream.CanWrite)
+        if (_networkStream is null)
         {
             ClassLogger.Trace("Skip writing to stream due to unavailable connection");
             return;

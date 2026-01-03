@@ -510,6 +510,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task HandleDecode(Decode message)
     {
+        _decodedDataProcessorService.ProcessDecoded(message);
         await _clhServerService.SendDataNoException(new CLHProto.Decode
         {
             New = message.New,
@@ -522,7 +523,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             LowConfidence = message.LowConfidence,
             OffAir = message.OffAir,
         });
-        _decodedDataProcessorService.ProcessDecoded(message);
     }
     
     private async Task HandleWSPRDecode(WSPRDecode message)
