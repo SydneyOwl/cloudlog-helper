@@ -49,11 +49,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly Subject<Unit> _cancelSubject = new();
 
     /// <summary>
-    ///     Command for polling data(mode and frequency)
-    /// </summary>
-    private ReactiveCommand<Unit, Unit> _pollCommand;
-
-    /// <summary>
     ///     Accumulative rig connection failed times.
     /// </summary>
     private volatile int _rigConnFailedTimes;
@@ -62,11 +57,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     ///     Lock for rig connection failed times to ensure thread safety
     /// </summary>
     private readonly object _rigConnFailedTimesLock = new();
-
-    /// <summary>
-    ///     whether to call _restartRigctldStrict or not.
-    /// </summary>
-    private bool _holdRigUpdate;
 
     /// <summary>
     ///     Composite disposable for managing timer disposables
@@ -129,59 +119,29 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private void Initialize()
     {
-        // check if conf is available, then start rigctld
-        _pollCommand = ReactiveCommand.CreateFromTask(_refreshRigInfoSafe);
-
         this.WhenActivated(disposables =>
         {
             _cancelSubject.DisposeWith(disposables);
 
             // Handle settings changes with throttling to avoid excessive restarts
             MessageBus.Current.Listen<SettingsChanged>()
-                .Throttle(TimeSpan.FromMilliseconds(500))
-                .Select( x =>
+                // .Throttle(TimeSpan.FromMilliseconds(500))
+                .Subscribe( x =>
                 {
-                    if (x.Part == ChangedPart.NothingJustOpened) _holdRigUpdate = true;
-
-                    if (x.Part is ChangedPart.Hamlib or ChangedPart.FLRig or ChangedPart.OmniRig) 
-                        _resetStatus();
-
                     if (x.Part == ChangedPart.NothingJustClosed)
                     {
+                        _createNewTimer().DisposeWith(disposables);
+                        
                         lock (_rigConnFailedTimesLock)
                         {
                             _rigConnFailedTimes = 0;
                         }
-                        _holdRigUpdate = false;
                     }
-
-                    return Unit.Default;
                 })
-                .Subscribe(_ =>
-                {
-                    // poll immediately after settings changed.
-                    Observable.Timer(TimeSpan.FromSeconds(2))
-                        .Select(_ => Unit.Default)
-                        .InvokeCommand(_pollCommand)
-                        .DisposeWith(disposables);
-                    
-                    _createNewTimer().DisposeWith(disposables);
-                })
-                .DisposeWith(disposables);
-
-            // Handle polling command exceptions
-            _pollCommand.ThrownExceptions
-                .Subscribe(async void (ex) => await HandlePollExceptionAsync(ex)) // this is safe - it never fails
                 .DisposeWith(disposables);
 
             // Start the polling timer
             _createNewTimer().DisposeWith(disposables);
-
-            // Initial poll after delay
-            Observable.Return(Unit.Default)
-                .Delay(TimeSpan.FromSeconds(1))
-                .InvokeCommand(_pollCommand)
-                .DisposeWith(disposables);
         });
     }
 
@@ -453,8 +413,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                     _rigConnFailedTimes = 0;
                 }
                 await _rigBackendManager.RestartService();
-                Observable.Return(Unit.Default)
-                    .InvokeCommand(_pollCommand);
                 _createNewTimer();
                 break;
                 
@@ -482,45 +440,99 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         UploadStatus = TranslationHelper.GetString(LangKeys.unknown);
         NextUploadTime = TranslationHelper.GetString(LangKeys.unknown);
     }
-
+    
     private IDisposable _createNewTimer()
     {
         ClassLogger.Trace("Creating new rig timer...");
         
-        // Cancel any existing timer
-        _timerDisposables.Clear();
-        _cancelSubject.OnNext(Unit.Default);
+        _disposeAllTimers();
 
         var timerDisposable = Observable.Defer(() =>
             {
-                return Observable.Interval(TimeSpan.FromSeconds(1))
-                    .Scan(new { Count = 0, ShouldPoll = false }, (state, _) =>
+                return Observable.Create<Unit>(observer =>
+                {
+                    var innerCancellation = new CancellationTokenSource();
+                    var innerCancellationToken = innerCancellation.Token;
+                    
+                    async Task RunTimerAsync()
                     {
-                        var interval = _rigBackendManager.GetPollingInterval();
-                        var count = (state.Count + 1) % interval;
-                        var shouldPoll = count == 0;
-                        
-                        return new { Count = count, ShouldPoll = shouldPoll };
-                    })
-                    .Where(x => !_holdRigUpdate && _rigBackendManager.GetPollingAllowed())
-                    .Do(state =>
-                    {
-                        if (!_rigBackendManager.GetPollingAllowed())
+                        if (_rigBackendManager.GetPollingAllowed())
                         {
-                            NextUploadTime = TranslationHelper.GetString(LangKeys.polldisabled);
-                            return;
+                            try
+                            {
+                                NextUploadTime = TranslationHelper.GetString(LangKeys.gettinginfo);
+                                await _refreshRigInfoSafe();
+                            }
+                            catch (Exception ex)
+                            {
+                                await HandlePollExceptionAsync(ex);
+                            }
                         }
 
-                        var interval = _rigBackendManager.GetPollingInterval();
-                        var remaining = interval - state.Count - 1;
+                        while (!innerCancellationToken.IsCancellationRequested)
+                        {
+                            try
+                            {
+                                if (!_rigBackendManager.GetPollingAllowed())
+                                {
+                                    _resetStatus();
+                                    // NextUploadTime = TranslationHelper.GetString(LangKeys.polldisabled);
+                                    await Task.Delay(1000, innerCancellationToken);
+                                    continue;
+                                }
+
+                                var interval = _rigBackendManager.GetPollingInterval();
+                                
+                                for (var remaining = interval - 1; remaining >= 0; remaining--)
+                                {
+                                    if (innerCancellationToken.IsCancellationRequested) break;
+                                    
+                                    NextUploadTime = remaining > 0 
+                                        ? remaining.ToString()
+                                        : TranslationHelper.GetString(LangKeys.gettinginfo);
+                                    
+                                    if (remaining == 0)
+                                    {
+                                        try
+                                        {
+                                            await _refreshRigInfoSafe();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            // handler by global handler
+                                            await HandlePollExceptionAsync(ex);
+                                        }
+                                        
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        await Task.Delay(1000, innerCancellationToken);
+                                    }
+                                }
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                ClassLogger.Error(ex, "Error in timer loop");
+                                await Task.Delay(5000, innerCancellationToken);
+                            }
+                        }
                         
-                        NextUploadTime = remaining <= 0 
-                            ? TranslationHelper.GetString(LangKeys.gettinginfo)
-                            : remaining.ToString();
-                    })
-                    .Where(state => state.ShouldPoll)
-                    .SelectMany(_ => _pollCommand.Execute().Catch(Observable.Empty<Unit>()))
-                    .Finally(() => ClassLogger.Trace("Timer completed"));
+                        observer.OnCompleted();
+                    }
+
+                    var timerTask = RunTimerAsync();
+                    
+                    return Disposable.Create(() =>
+                    {
+                        innerCancellation.Cancel();
+                        timerTask.ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
+                    });
+                });
             })
             .TakeUntil(_cancelSubject)
             .Finally(() =>
@@ -529,7 +541,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 ClassLogger.Trace("Canceling radio timer...");
             })
             .Subscribe(
-                onNext: _ => { /* Timer tick handled above */ },
+                onNext: _ => { /* Timer tick handled in the observable */ },
                 onError: ex => ClassLogger.Error(ex, "Error in rig polling timer"),
                 onCompleted: () => ClassLogger.Trace("Rig polling timer completed")
             );
