@@ -7,6 +7,7 @@
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         mc:Ignorable="d"
         d:DesignWidth="800" d:DesignHeight="700"
         x:DataType="viewModels:SettingsWindowViewModel"
@@ -95,10 +96,15 @@
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16" IsEnabled="{Binding FullyInitialized}">
         <!-- Header -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="0 0 0 16">
-            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" />
+            <avaloniaProgressRing:ProgressRing
+                Width="20"
+                Height="20"
+                IsVisible="{Binding !FullyInitialized}"
+                Foreground="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" IsVisible="{Binding FullyInitialized}"/>
             <TextBlock Text="{I18N {x:Static resources:LangKeys.settings}}" FontSize="24" FontWeight="Bold" />
         </StackPanel>
 

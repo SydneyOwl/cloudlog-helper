@@ -19,7 +19,7 @@ public interface IRigBackendManager
     Task StopService();
     Task StartService();
 
-    Task<List<RigInfo>> GetSupportedRigModels();
+    Task<RigInfo[]> GetSupportedRigModels();
 
     Task<RadioData> GetAllRigInfo();
 

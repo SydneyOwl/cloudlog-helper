@@ -54,11 +54,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private volatile int _rigConnFailedTimes;
 
     /// <summary>
-    ///     Lock for rig connection failed times to ensure thread safety
-    /// </summary>
-    private readonly object _rigConnFailedTimesLock = new();
-
-    /// <summary>
     ///     Composite disposable for managing timer disposables
     /// </summary>
     private readonly CompositeDisposable _timerDisposables = new();
@@ -107,11 +102,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public string? CurrentTxFrequencyInMeters { get; set; } = string.Empty;
     [Reactive] public string? CurrentTxMode { get; set; } = string.Empty;
 
-    /// <summary>
-    ///     Whether rig refresh button is cooling down or not.
-    /// </summary>
-    [Reactive]
-    public bool IsCoolingDown { get; set; }
 
     [Reactive] public bool IsSplit { get; set; }
     [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
@@ -132,10 +122,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                     {
                         _createNewTimer().DisposeWith(disposables);
                         
-                        lock (_rigConnFailedTimesLock)
-                        {
-                            _rigConnFailedTimes = 0;
-                        }
+                        Interlocked.Exchange(ref  _rigConnFailedTimes, 0);
                     }
                 })
                 .DisposeWith(disposables);
@@ -168,13 +155,10 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         ClassLogger.Trace("Refreshing rig data....");
 
         // Check if we should skip polling
-        lock (_rigConnFailedTimesLock)
+        if (_rigConnFailedTimes < 0)
         {
-            if (_rigConnFailedTimes < 0)
-            {
-                ClassLogger.Trace("Waiting for user choice. Skipping poll.");
-                return;
-            }
+            ClassLogger.Trace("Waiting for user choice. Skipping poll.");
+            return;
         }
 
         try
@@ -183,29 +167,21 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             ClassLogger.Debug(allInfo.ToString());
             
             UpdateDisplayInfo(allInfo);
-            
-            lock (_rigConnFailedTimesLock)
-            {
-                _rigConnFailedTimes = 0;
-            }
+
+            Interlocked.Exchange(ref _rigConnFailedTimes, 0);
             
             await ReportToServicesAsync(allInfo);
         }
         catch (Exception ex) when (ex is InvalidPollException or InvalidConfigurationException)
         {
-            // These are expected exceptions, just reset the counter
-            lock (_rigConnFailedTimesLock)
-            {
-                _rigConnFailedTimes = 0;
-            }
+            // expected exceptions - reset the counter!
+            Interlocked.Exchange(ref _rigConnFailedTimes, 0);
             throw;
         }
         catch (Exception ex)
         {
-            lock (_rigConnFailedTimesLock)
-            {
-                _rigConnFailedTimes++;
-            }
+            ClassLogger.Error(ex, "An error occurred while fetching rig data.");
+            Interlocked.Increment(ref _rigConnFailedTimes);
             throw;
         }
     }
@@ -335,7 +311,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task HandlePollExceptionAsync(Exception exception)
     {
-        if (exception is InvalidPollException or InvalidConfigurationException)
+        if (exception is InvalidPollException) // or InvalidConfigurationException)
         {
             return;
         }
@@ -344,24 +320,17 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         {
             await UpdateErrorDisplayAsync();
 
-            int currentFailCount;
-            lock (_rigConnFailedTimesLock)
-            {
-                currentFailCount = _rigConnFailedTimes;
-            }
+            var currentFailCount = _rigConnFailedTimes;
 
             if (currentFailCount >= DefaultConfigs.MaxRigctldErrorCount)
             {
-                // Reset to prevent further errors while showing dialog
-                lock (_rigConnFailedTimesLock)
-                {
-                    if (_rigConnFailedTimes >= DefaultConfigs.MaxRigctldErrorCount)
-                    {
-                        _rigConnFailedTimes = int.MinValue;
-                    }
-                }
+                // I don't like locks - they're everywhere!
+                var original = Interlocked.CompareExchange(ref _rigConnFailedTimes, int.MinValue, currentFailCount);
 
-                await ShowErrorDialogAndHandleChoiceAsync();
+                if (original == currentFailCount)
+                {
+                    await ShowErrorDialogAndHandleChoiceAsync();
+                }
             }
             else
             {
@@ -408,10 +377,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         switch (choice)
         {
             case "Retry":
-                lock (_rigConnFailedTimesLock)
-                {
-                    _rigConnFailedTimes = 0;
-                }
+                Interlocked.Exchange(ref _rigConnFailedTimes, 0);
                 await _rigBackendManager.RestartService();
                 _createNewTimer();
                 break;

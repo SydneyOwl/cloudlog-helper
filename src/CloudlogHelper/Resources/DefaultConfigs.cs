@@ -7,47 +7,47 @@ namespace CloudlogHelper.Resources;
 
 public class DefaultConfigs
 {
-    public static readonly string MutexId = "{A5E98F80-B924-4CFF-A370-C992FDCC833D}";
+    public const string MutexId = "{A5E98F80-B924-4CFF-A370-C992FDCC833D}";
 
     /// <summary>
     ///     Repo address.
     /// </summary>
-    public static readonly string RepoAddress = "https://github.com/SydneyOwl/cloudlog-helper";
+    public const string RepoAddress = "https://github.com/SydneyOwl/cloudlog-helper";
 
     /// <summary>
     ///     Embedded resource filename for the country code mapping (English to Chinese).
     /// </summary>
-    public static readonly string EmbeddedCountryEn2cnFilename = "country_en2cn.dat";
+    public const string EmbeddedCountryEn2cnFilename = "country_en2cn.dat";
 
     /// <summary>
     ///     Embedded resource filename for the CTY (Country) data file.
     /// </summary>
-    public static readonly string EmbeddedCtyFilename = "cty.dat";
+    public const string EmbeddedCtyFilename = "cty.dat";
 
     /// <summary>
     ///     Embedded resource filename for the adif_modes data file. This file comes from sql of cloudlog.
     /// </summary>
-    public static readonly string EmbeddedeAdifModeFilename = "adif_modes.dat";
+    public const string EmbeddedeAdifModeFilename = "adif_modes.dat";
 
     /// <summary>
     ///     Default timeout (in seconds) for HTTP(s) requests.
     /// </summary>
-    public static readonly int DefaultRequestTimeout = 10;
+    public const int DefaultRequestTimeout = 10;
 
     /// <summary>
     ///     Default timeout (in seconds) for HTTP(s) forwarding requests.
     /// </summary>
-    public static readonly int DefaultForwardingRequestTimeout = 3;
+    public const int DefaultForwardingRequestTimeout = 3;
 
     /// <summary>
     ///     Default timeout (in seconds) for QSODownload HTTP(s) requests.
     /// </summary>
-    public static readonly int QSODownloadRequestTimeout = 30;
+    public const int QSODownloadRequestTimeout = 30;
 
     /// <summary>
     ///     Timeout (in seconds) for polling Cloudlog API (CloudlogKeyStationStatisticsAPIEndpoint).
     /// </summary>
-    public static readonly int CloudlogInfoPollRequestTimeout = 30;
+    public const int CloudlogInfoPollRequestTimeout = 30;
 
     /// <summary>
     ///     Duration (in minutes) for which QSO data is collected to calculate average QSO metrics.
@@ -115,48 +115,48 @@ public class DefaultConfigs
     /// <summary>
     ///     API endpoint for testing authentication keys in Cloudlog.
     /// </summary>
-    public static readonly string CloudlogTestAPIEndpoint = "/index.php/api/auth/";
+    public const string CloudlogTestAPIEndpoint = "/index.php/api/auth/";
 
     /// <summary>
     ///     API endpoint for retrieving station information from Cloudlog.
     /// </summary>
-    public static readonly string CloudlogStationInfoAPIEndpoint = "/index.php/api/station_info/";
+    public const string CloudlogStationInfoAPIEndpoint = "/index.php/api/station_info/";
 
     /// <summary>
     ///     API endpoint for retrieving station statistics from Cloudlog.
     /// </summary>
-    public static readonly string CloudlogStationStatisticsAPIEndpoint = "/index.php/api/statistics/";
+    public const string CloudlogStationStatisticsAPIEndpoint = "/index.php/api/statistics/";
 
     /// <summary>
     ///     API endpoint for standard radio API calls(version 2) in Cloudlog.
     /// </summary>
-    public static readonly string CloudlogRadioAPICallV2Endpoint = "/index.php/api/radio/";
+    public const string CloudlogRadioAPICallV2Endpoint = "/index.php/api/radio/";
 
     /// <summary>
     ///     Api endpoint for clublog
     /// </summary>
-    public static readonly string ClublogQsoUploadEndpoint = "https://clublog.org/realtime.php";
+    public const string ClublogQsoUploadEndpoint = "https://clublog.org/realtime.php";
 
     /// <summary>
     ///     Test Api endpoint for clublog
     /// </summary>
-    public static readonly string ClublogTestEndpoint = "https://clublog.org/getadif.php";
+    public const string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
     /// <summary>
     ///     QSO Upload api endpoint for hamcq
     /// </summary>
-    public static readonly string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
+    public const string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
     /// <summary>
     ///     QSO test api endpoint for eqsl
     /// </summary>
-    public static readonly string EqslTestEndpoint =
+    public const string EqslTestEndpoint =
         "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
 
     /// <summary>
     ///     QSO Upload api endpoint for eqsl
     /// </summary>
-    public static readonly string EqslQsoUploadEndpoint =
+    public const string EqslQsoUploadEndpoint =
         "https://www.eQSL.cc/qslcard/importADIF.cfm";
 
     /// <summary>
@@ -168,47 +168,47 @@ public class DefaultConfigs
     /// <summary>
     ///     Allowed freq offset when comparing qso.
     /// </summary>
-    public static readonly float AllowedFreqOffsetMHz = 0.1f;
+    public const float AllowedFreqOffsetMHz = 0.1f;
 
     /// <summary>
     ///     Allowed time offset when comparing qso.
     /// </summary>
-    public static readonly int AllowedTimeOffsetMinutes = 10;
+    public const int AllowedTimeOffsetMinutes = 10;
 
     /// <summary>
     ///     Default host address for flrig.
     /// </summary>
-    public static readonly string FLRigDefaultHost = "127.0.0.1";
+    public const string FLRigDefaultHost = "127.0.0.1";
 
     /// <summary>
     ///     Default host address for flrig.
     /// </summary>
-    public static readonly string FLRigDefaultPort = "12345";
+    public const string FLRigDefaultPort = "12345";
     
     
-    public static readonly string OmniRigEngineProgId = "OmniRig.OmniRigX";
+    public const string OmniRigEngineProgId = "OmniRig.OmniRigX";
     
     public static List<string> OmniRigAvailableRig = new() {"Rig 1", "Rig 2"};
 
     /// <summary>
     ///     Default host address for Rigctld.
     /// </summary>
-    public static readonly string RigctldDefaultHost = "127.0.0.1";
+    public const string RigctldDefaultHost = "127.0.0.1";
 
     /// <summary>
     ///     Default host address for Outside Rigctld.
     /// </summary>
-    public static readonly string RigctldExternalHost = "127.0.0.1:4534";
+    public const string RigctldExternalHost = "127.0.0.1:4534";
 
     /// <summary>
     ///     Default port number for Rigctld.
     /// </summary>
-    public static readonly int RigctldDefaultPort = 4534;
+    public const int RigctldDefaultPort = 4534;
 
     /// <summary>
     ///     Default poll interval for Rigctld.
     /// </summary>
-    public static readonly int RigDefaultPollingInterval = 15;
+    public const int RigDefaultPollingInterval = 15;
 
     /// <summary>
     ///     The maximum number of output lines to retain from rigctld.
@@ -218,23 +218,23 @@ public class DefaultConfigs
     ///     - Set to 0 to disable logging rigctld output.
     ///     - Set to -1 to continuously rediect stdout and stderr of rigctld to console.
     /// </remarks>
-    public static readonly int MaxRigctldOutputLineCount = 0;
+    public const int MaxRigctldOutputLineCount = 0;
 
     /// <summary>
     ///     Default port number of proxy server.
     /// </summary>
-    public static readonly string DebugServerDefaultBindingAddress = "127.0.0.1:7584";
+    public const string DebugServerDefaultBindingAddress = "127.0.0.1:7584";
 
     /// <summary>
     ///     Socket timeout (in milliseconds) for Rigctld communication.
     /// </summary>
-    public static readonly int RigctldSocketTimeout = 2500;
+    public const int RigctldSocketTimeout = 2500;
 
     /// <summary>
     ///     The default expiration time for the cached return values of the rigctld In seconds.
     ///     This is calculated dynamically when jtdx sending requests.
     /// </summary>
-    // public static readonly int RigctldCacheExpirationTime = 8;
+    // public const int RigctldCacheExpirationTime = 8;
 
     /// <summary>
     ///     Default arguments passed to Rigctld when starting the process.
@@ -242,7 +242,7 @@ public class DefaultConfigs
     ///     but this software only reads frequency and mode information. Additionally, on Linux, my radio defaults
     ///     to accidentally triggering TX due to RTS/DTR signals, so I’ve disabled them in the default configuration.
     /// </summary>
-    // public static readonly string RigctldDefaultArgs =
+    // public const string RigctldDefaultArgs =
     //     $@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" -T {RigctldDefaultHost} -t {RigctldDefaultPort} -vvvvv";
 
     /// <summary>
@@ -270,34 +270,34 @@ public class DefaultConfigs
     /// <summary>
     ///     Expiry time (in seconds) for UDP client connections.
     /// </summary>
-    public static readonly int UDPClientExpiryInSeconds = 60;
+    public const int UDPClientExpiryInSeconds = 60;
 
-    public static readonly int UDPServerDefaultPort = 2237;
+    public const int UDPServerDefaultPort = 2237;
 
-    public static readonly int DefaultBatchProcessGridMessageInterval = 18;
-    public static readonly int DefaultNotificationTimeout = 5;
-    public static readonly int DefaulPolarKValue = 5;
-    public static readonly double DefaulPolarAngWeightValue = 0.5;
-    public static readonly double DefaulPolarDistWeightValue = 0.5;
-    public static readonly int DefaultPolarQSOSamples = 1000;
-    public static readonly int DefaultHistogramQSOSamples = 9000;
+    public const int DefaultBatchProcessGridMessageInterval = 18;
+    public const int DefaultNotificationTimeout = 5;
+    public const int DefaulPolarKValue = 5;
+    public const double DefaulPolarAngWeightValue = 0.5;
+    public const double DefaulPolarDistWeightValue = 0.5;
+    public const int DefaultPolarQSOSamples = 1000;
+    public const int DefaultHistogramQSOSamples = 9000;
 
     /// <summary>
     ///     Default cache size for qso points.
     /// </summary>
-    public static readonly int DefaultChartDataCacheNumber = 15000;
+    public const int DefaultChartDataCacheNumber = 15000;
 
-    public static readonly int UpdateChartsThrottleTime = 3;
+    public const int UpdateChartsThrottleTime = 3;
 
-    public static readonly int CLHTCPConnRetryDelayMs = 3000;
+    public const int CLHTCPConnRetryDelayMs = 3000;
 
-    public static readonly int CLHHeartbeatTimeoutS = 16;
-    public static readonly int CLHHeartbeatIntervalMS = 5000;
+    public const int CLHHeartbeatTimeoutS = 16;
+    public const int CLHHeartbeatIntervalMS = 5000;
 
     /// <summary>
     ///     Default timeout (in seconds) for start/stop.
     /// </summary>
-    public static readonly int DefaultProcessTPStartStopTimeout = 5;
+    public const int DefaultProcessTPStartStopTimeout = 5;
 
     /// <summary>
     ///     Default Hamlib files for windows

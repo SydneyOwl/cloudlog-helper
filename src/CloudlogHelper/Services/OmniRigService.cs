@@ -87,10 +87,10 @@ public class OmniRigService : IRigService, IDisposable
     {
         return _omniRigEngine is not null;
     }
-
-    public Task<List<RigInfo>> GetSupportedRigModels()
+    
+    public Task<RigInfo[]> GetSupportedRigModels()
     {
-        return Task.FromResult(new List<RigInfo>());
+        return Task.FromResult(Array.Empty<RigInfo>());
     }
 
     public Task<string> GetServiceVersion(params object[] args)

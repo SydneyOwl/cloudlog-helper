@@ -44,7 +44,7 @@ public interface IRigService
     ///     Get supported rig models
     /// </summary>
     /// <returns></returns>
-    Task<List<RigInfo>> GetSupportedRigModels();
+    Task<RigInfo[]> GetSupportedRigModels();
 
     /// <summary>
     ///     Get service version

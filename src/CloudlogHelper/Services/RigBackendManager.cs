@@ -189,7 +189,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         await _currentService.StartService(_getNewCancellationProcessToken());
     }
 
-    public async Task<List<RigInfo>> GetSupportedRigModels()
+    public async Task<RigInfo[]> GetSupportedRigModels()
     {
         return await _currentService.GetSupportedRigModels();
     }

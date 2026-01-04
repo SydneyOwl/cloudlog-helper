@@ -43,12 +43,12 @@ public static class ServiceCollectionExtensions
 
     public static Task AddViewModelsAsync(this IServiceCollection services)
     {
-        // Register all view models as singletons
-        services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<SettingsWindowViewModel>();
         services.AddTransient<AskExitOrMinimizeWindowViewModel>();
         services.AddTransient<QsoSyncAssistantWindowViewModel>();
-        services.AddSingleton<AboutWindowViewModel>();
+        services.AddTransient<AboutWindowViewModel>();
+        
+        services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<UDPLogInfoGroupboxUserControlViewModel>();
         services.AddSingleton<RIGDataGroupboxUserControlViewModel>();
         services.AddSingleton<UserBasicDataGroupboxUserControlViewModel>();

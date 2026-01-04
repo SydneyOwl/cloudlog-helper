@@ -37,7 +37,6 @@ public class SettingsWindowViewModel : ViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     private readonly bool _initSkipped;
-    private readonly INotificationManager _nativeNotificationManager;
     private readonly IRigBackendManager _rigBackendManager;
     private readonly IApplicationSettingsService _settingsService;
     private readonly CancellationTokenSource _source;
@@ -61,23 +60,17 @@ public class SettingsWindowViewModel : ViewModelBase
         IWindowManagerService windowManager,
         IApplicationSettingsService ss,
         IRigBackendManager rs,
-        ICLHServerService cs,
-        INotificationManager nm)
+        ICLHServerService cs)
     {
         _windowManagerService = windowManager;
         _settingsService = ss;
         _rigBackendManager = rs;
-        _nativeNotificationManager = nm;
         _clhServerService = cs;
-        _initSkipped = cmd.AutoUdpLogUploadOnly;
+        
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
         DraftSettings = settings!;
-        _source = new CancellationTokenSource();
-        InitializeLogSystems();
-
-        ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
-
+        
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
         HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
 
@@ -90,17 +83,18 @@ public class SettingsWindowViewModel : ViewModelBase
         var clhCmd = ReactiveCommand.CreateFromTask(_testClhServer, DraftSettings.CLHServerSettings.IsCLHServerValid);
         CLHServerTestButtonUserControl = new TestButtonUserControlViewModel(clhCmd);
 
-        RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
-
-        var cloudCmd =
-            ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
+        var cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
-
-        // save or discard conf
+        
+        RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
         DiscardConf = ReactiveCommand.Create(_discardConf);
+        SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
         OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
         OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
-        SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
+
+        _initSkipped = cmd.AutoUdpLogUploadOnly;
+        _source = new CancellationTokenSource();
+        ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
 
         this.WhenActivated(disposables =>
         {
@@ -134,7 +128,8 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
             cloudCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
                 .DisposeWith(disposables);
-            clhCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message));
+            clhCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
+                .DisposeWith(disposables);
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
             {
@@ -148,16 +143,24 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
         });
 
-        _ = _initializeHamlibAsync();
-        _ = _initializeOmniRigAsync();
-        MessageBus.Current.SendMessage(new SettingsChanged
-        {
-            Part = ChangedPart.NothingJustOpened
-        });
+        FullyInitialized = false;
+
+        Task.WhenAll(_initializeLogSystemsAsync(), _initializeHamlibAsync(), _initializeOmniRigAsync())
+            .ContinueWith((async task =>
+            { 
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    FullyInitialized = true;
+                });
+
+                MessageBus.Current.SendMessage(new SettingsChanged
+                {
+                    Part = ChangedPart.NothingJustOpened
+                });
+            }));
     }
 
     public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();
-
 
     public ReactiveCommand<Unit, Unit> SaveAndApplyConf { get; }
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
@@ -167,7 +170,7 @@ public class SettingsWindowViewModel : ViewModelBase
     public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
 
-    private void InitializeLogSystems()
+    private async Task _initializeLogSystemsAsync()
     {
         try
         {
@@ -379,6 +382,8 @@ public class SettingsWindowViewModel : ViewModelBase
         if (Design.IsDesignMode) return;
         _settingsService.RestoreSettings(this);
         _source.Cancel();
+        
+        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }
 
     private async Task _openConf()
@@ -398,8 +403,12 @@ public class SettingsWindowViewModel : ViewModelBase
         if (Design.IsDesignMode) return;
         _settingsService.ApplySettings(this, LogSystems.ToList());
         _source.Cancel();
-    }
 
+        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
+    }
+    
+    [Reactive] public bool FullyInitialized { get; set; } = false;
+    
     #region CloudlogAPI
 
     public FixedInfoPanelUserControlViewModel CloudlogInfoPanelUserControl { get; } = new();

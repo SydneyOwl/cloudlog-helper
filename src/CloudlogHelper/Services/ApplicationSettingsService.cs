@@ -118,8 +118,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.CLHServer });
             }
-
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
         }
     }
 
@@ -153,7 +151,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.FLRig });
             }
-            MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
 
             _isDraftLocked = false;
             _draftSettings = _currentSettings!.DeepClone();
