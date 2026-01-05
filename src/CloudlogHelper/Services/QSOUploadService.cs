@@ -162,8 +162,12 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         // now we check whether this qso is already in upload queue instead of if it is uploaded 
         // todo add lock here?
         // todo same qsos from difference sources will cause dupe upload
-        
-        if (rcd.IsInUploadQueue) return Task.CompletedTask;
+
+        if (rcd.IsInUploadQueue)
+        {
+            ClassLogger.Trace($"Skipping {rcd.DXCall}; It's already in queue");
+            return Task.CompletedTask;
+        }
         rcd.IsInUploadQueue = true;
 
         rcd.UploadStatus = UploadStatus.Pending;
@@ -298,14 +302,14 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         var result = false;
         Exception? lastException = null;
 
-        for (var attempt = 0; attempt <= maxRetries; attempt++)
+        for (var attempt = 0; attempt < maxRetries; attempt++)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             rcd.UploadStatus = attempt == 0 ? UploadStatus.Uploading : UploadStatus.Retrying;
             rcd.FailReason = null;
 
-            ClassLogger.Debug($"Upload attempt {attempt + 1}/{maxRetries + 1} for QSO: {rcd.DXCall}");
+            ClassLogger.Debug($"Upload attempt {attempt + 1}/{maxRetries} for QSO: {rcd.DXCall}");
 
             try
             {
