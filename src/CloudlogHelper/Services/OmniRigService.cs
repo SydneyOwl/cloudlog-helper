@@ -42,7 +42,7 @@ public class OmniRigService : IRigService, IDisposable
                 {
                     _omniRigEngine = Activator.CreateInstance(omniRigType);
                     if (_omniRigEngine is null) throw new Exception("Failed to create OmniRig instance!");
-                }, token).ConfigureAwait(false);
+                }, token);
 
                 _version = _omniRigEngine.InterfaceVersion;
 
@@ -75,7 +75,7 @@ public class OmniRigService : IRigService, IDisposable
         {
             _mutex.WaitOne();
             ClassLogger.Info("OmniRig service stopped");
-            await Task.Run(ReleaseUnmanagedResources, token).ConfigureAwait(false);
+            await Task.Run(ReleaseUnmanagedResources, token);
         }
         finally
         {

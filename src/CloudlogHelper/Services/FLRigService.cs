@@ -54,7 +54,7 @@ public class FLRigService : IRigService, IDisposable
     {
         var ip = args[0].ToString();
         var port = args[1].ToString();
-        return _getResultValue(await _sendXMLCmd(ip, port, "main.get_version").ConfigureAwait(false));
+        return _getResultValue(await _sendXMLCmd(ip, port, "main.get_version"));
     }
 
     public async Task<RadioData> GetAllRigInfo(bool reportRfPower, bool reportSplitInfo, CancellationToken token,
@@ -64,8 +64,8 @@ public class FLRigService : IRigService, IDisposable
         var port = args[1].ToString();
         var testbk = new RadioData();
 
-        var freqStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfo").ConfigureAwait(false));
-        var mode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_mode").ConfigureAwait(false));
+        var freqStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfo"));
+        var mode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_mode"));
 
         if (!long.TryParse(freqStr, out var freq))
             throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
@@ -80,7 +80,7 @@ public class FLRigService : IRigService, IDisposable
 
         if (reportRfPower)
         {
-            var powerStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_power").ConfigureAwait(false));
+            var powerStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_power"));
             if (!float.TryParse(powerStr, out var power))
                 throw new RigCommException("Invalid rig power!");
 
@@ -89,15 +89,15 @@ public class FLRigService : IRigService, IDisposable
 
         if (reportSplitInfo)
         {
-            var split = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_split").ConfigureAwait(false));
+            var split = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_split"));
             if (split == "0")
             {
                 ClassLogger.Trace("FLRig reported: Split is off");
             }
             else
             {
-                var txFreqStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfoB").ConfigureAwait(false));
-                var txMode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_modeB").ConfigureAwait(false));
+                var txFreqStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_vfoB"));
+                var txMode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_modeB"));
 
                 if (!long.TryParse(txFreqStr, out var txFreq))
                     throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
@@ -111,7 +111,7 @@ public class FLRigService : IRigService, IDisposable
             }
         }
 
-        var rigName = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_xcvr").ConfigureAwait(false));
+        var rigName = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_xcvr"));
         testbk.RigName = rigName;
         return testbk;
     }
@@ -123,7 +123,7 @@ public class FLRigService : IRigService, IDisposable
         return await targetServer
             .WithHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
             .PostStringAsync(template)
-            .ReceiveString().ConfigureAwait(false);
+            .ReceiveString();
     }
 
     private string _getResultValue(string raw)
