@@ -33,8 +33,8 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
                 Callsign,
                 Code,
                 ADIFData = string.Empty
-            }, cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            }, cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
 
         var xDocument = XDocument.Parse(responseText);
         XNamespace ns = "http://xml.hrdlog.com";
@@ -53,8 +53,8 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
                 Code,
                 App = DefaultConfigs.DefaultApplicationName,
                 ADIFData = adif
-            }, cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            }, cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
 
         var xDocument = XDocument.Parse(responseText);
         XNamespace ns = "http://xml.hrdlog.com";
@@ -88,8 +88,8 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
                 Callsign,
                 Code,
                 App = DefaultConfigs.DefaultApplicationName
-            }, cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            }, cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
 
         var xDocument = XDocument.Parse(responseText);
         XNamespace ns = "http://xml.hrdlog.com";

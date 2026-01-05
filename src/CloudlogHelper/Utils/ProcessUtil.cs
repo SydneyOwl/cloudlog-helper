@@ -28,10 +28,10 @@ public class ProcessUtil
         process.StartInfo = startInfo;
         process.Start();
 
-        var stdout = await process.StandardOutput.ReadToEndAsync();
-        var stderr = await process.StandardError.ReadToEndAsync();
+        var stdout = await process.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
+        var stderr = await process.StandardError.ReadToEndAsync().ConfigureAwait(false);
 
-        await process.WaitForExitAsync(token);
+        await process.WaitForExitAsync(token).ConfigureAwait(false);
 
         callback(stdout, stderr);
     }

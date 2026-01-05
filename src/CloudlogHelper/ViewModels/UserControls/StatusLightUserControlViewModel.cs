@@ -202,7 +202,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
             }
             catch (Exception a)
             {
-                ClassLogger.Error(a);
+                ClassLogger.Error(a,"Failed to update rig listen address.");
                 // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
                 CurrentRigBackendAddress = "(?)";
             }
@@ -245,7 +245,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
         }
         catch (Exception a)
         {
-            ClassLogger.Error(a);
+            ClassLogger.Error(a,"Failed to update udp listening address.");
             // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
         }
     }

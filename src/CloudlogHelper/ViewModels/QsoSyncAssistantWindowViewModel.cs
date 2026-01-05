@@ -86,7 +86,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                 }
                 catch (Exception ex)
                 {
-                    ClassLogger.Error(ex);
+                    ClassLogger.Error(ex, "Cleaning up QSO Assistant error");
                 }
             }).DisposeWith(disposable);
         });
@@ -303,7 +303,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logProgress($"Failed to sync QSOs: {ex.Message}", 100, ex);
-            ClassLogger.Error(ex);
+            ClassLogger.Error(ex, "Sync qso error");
             if (_executeOnStart)
                 await _inAppNotification.SendErrorNotificationAsync(
                     $"{TranslationHelper.GetString(LangKeys.failedsyncqso)}{ex.Message}");

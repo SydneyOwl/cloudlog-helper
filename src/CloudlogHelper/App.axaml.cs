@@ -99,9 +99,9 @@ public class App : Application
         _safeExecute(() => Directory.CreateDirectory(DefaultConfigs.DefaultTempFilePath));
 
         var collection = new ServiceCollection();
-        await collection.AddCommonServicesAsync();
-        await collection.AddViewModelsAsync();
-        await collection.AddExtraAsync();
+        await collection.AddCommonServicesAsync().ConfigureAwait(false);
+        await collection.AddViewModelsAsync().ConfigureAwait(false);
+        await collection.AddExtraAsync().ConfigureAwait(false);
 
         // now search for all assemblies marked as "log service"
         var lType = Assembly.GetExecutingAssembly().GetTypes()
@@ -141,7 +141,7 @@ public class App : Application
                 .LanguageType);
 
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
-        await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase);
+        await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase).ConfigureAwait(false);
         if (dbSer.IsUpgradeNeeded())
         {
             var msgBox = _servProvider.GetRequiredService<IMessageBoxManagerService>();
@@ -184,7 +184,7 @@ public class App : Application
             }
 
             ClassLogger.Info("User accepted disclaimer.");
-            await dbSer.UpgradeDatabaseAsync();
+            await dbSer.UpgradeDatabaseAsync().ConfigureAwait(false);
         }
 
         _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
@@ -247,7 +247,7 @@ public class App : Application
         catch (Exception ex)
         {
             // this may fail on Windows 7
-            ClassLogger.Warn(ex);
+            ClassLogger.Warn(ex, "Trayicon failed.");
         }
     }
 
@@ -308,7 +308,7 @@ public class App : Application
         }
         catch (Exception e)
         {
-            ClassLogger.Error(e);
+            ClassLogger.Error(e, "Error occurred while doing clean up.");
         }
     }
 
@@ -320,7 +320,7 @@ public class App : Application
         }
         catch (Exception e)
         {
-            ClassLogger.Error(e);
+            ClassLogger.Error(e, "Error occurred while doing clean up.");
         }
     }
 
@@ -361,7 +361,7 @@ public class App : Application
             }
             catch (Exception ex)
             {
-                ClassLogger.Warn(ex);
+                ClassLogger.Warn(ex, "Error occurred while releasing dep files.");
             }
 
         Directory.CreateDirectory(DefaultConfigs.HamlibFilePath);
@@ -372,11 +372,11 @@ public class App : Application
             var tPath = Path.Join(DefaultConfigs.HamlibFilePath, defaultHamlibFile);
             if (File.Exists(tPath))
             {
-                ClassLogger.Debug($"{tPath} exists. skipping...");
+                ClassLogger.Info($"{tPath} exists. skipping release hamlib files...");
                 continue;
             }
 
-            ClassLogger.Debug($"releasing {tPath} ..");
+            ClassLogger.Info($"Releasing hamlib files to {tPath} ..");
 
             try
             {

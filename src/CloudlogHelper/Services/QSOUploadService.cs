@@ -25,11 +25,9 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     private readonly IUdpServerService _udpService;
     
     private readonly BlockingCollection<UploadItem> _uploadQueue = new();
-    private readonly ConcurrentDictionary<string, DateTime> _processedItems = new();
-    private readonly TimeSpan _duplicateCheckWindow = TimeSpan.FromMinutes(5);
     
     private readonly CancellationTokenSource _serviceCts = new();
-    private Task _processingTask;
+    private Task? _processingTask;
     private readonly SemaphoreSlim _processingLock = new(1, 1);
     private bool _isStarted;
     private bool _isDisposed;
@@ -85,7 +83,6 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             _uploadQueue.CompleteAdding();
             _serviceCts.Cancel();
             
-            // 等待处理任务完成
             if (_processingTask is { IsCompleted: false })
             {
                 try
@@ -124,7 +121,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             ClassLogger.Info("Stopping QSO upload service...");
             _uploadQueue.CompleteAdding();
             _serviceCts.Cancel();
-            if (_processingTask != null && !_processingTask.IsCompleted)
+            if (_processingTask is not null && !_processingTask.IsCompleted)
             {
                 try
                 {
@@ -149,22 +146,25 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         }
     }
 
-    public  Task EnqueueQSOForUploadAsync(RecordedCallsignDetail rcd, CancellationToken cancellationToken = default)
+    public Task EnqueueQSOForUploadAsync(RecordedCallsignDetail rcd, CancellationToken cancellationToken = default)
     {
         if (rcd == null) throw new ArgumentNullException(nameof(rcd));
         
         if (!rcd.IsUploadable())
         {
-            ClassLogger.Trace($"Ignoring non-uploadable QSO: {rcd}");
+            ClassLogger.Trace($"Ignoring non-uploadable QSO: {rcd.DXCall}");
             return Task.CompletedTask;
         }
 
+        // reserved
         var itemKey = GenerateItemKey(rcd);
-        if (IsRecentlyProcessed(itemKey))
-        {
-            ClassLogger.Trace($"Skipping recently processed QSO: {rcd}");
-            return Task.CompletedTask;
-        }
+        
+        // now we check whether this qso is already in upload queue instead of if it is uploaded 
+        // todo add lock here?
+        // todo same qsos from difference sources will cause dupe upload
+        
+        if (rcd.IsInUploadQueue) return Task.CompletedTask;
+        rcd.IsInUploadQueue = true;
 
         rcd.UploadStatus = UploadStatus.Pending;
         var uploadItem = new UploadItem(rcd, itemKey);
@@ -172,17 +172,16 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         try
         {
             _uploadQueue.Add(uploadItem, cancellationToken);
-            MarkAsProcessed(itemKey);
-            ClassLogger.Trace($"Enqueued QSO for upload: {rcd}");
+            ClassLogger.Trace($"Enqueued QSO for upload: {rcd.DXCall}");
         }
         catch (InvalidOperationException ex) when (_uploadQueue.IsAddingCompleted)
         {
-            ClassLogger.Warn($"Failed to enqueue QSO - service is stopping: {rcd}");
+            ClassLogger.Warn($"Failed to enqueue QSO - service is stopping: {rcd.DXCall}");
             throw new InvalidOperationException("Upload service is stopping", ex);
         }
         catch (Exception ex)
         {
-            ClassLogger.Error(ex, $"Failed to enqueue QSO: {rcd}");
+            ClassLogger.Error(ex, $"Failed to enqueue QSO: {rcd.DXCall}");
             throw;
         }
         return  Task.CompletedTask;
@@ -212,10 +211,9 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                     break;
                 }
 
-                await ProcessUploadItemAsync(uploadItem, linkedToken);
-                
-                CleanupProcessedItems();
-                await Task.Delay(1000, CancellationToken.None);
+                await ProcessUploadItemAsync(uploadItem, linkedToken).ConfigureAwait(false);
+                uploadItem.RecordedCallsignDetail.IsInUploadQueue = false;
+                await Task.Delay(1000, linkedToken);
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -236,7 +234,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     private async Task ProcessUploadItemAsync(UploadItem uploadItem, CancellationToken cancellationToken)
     {
         var rcd = uploadItem.RecordedCallsignDetail;
-        ClassLogger.Debug($"Processing QSO: {rcd}");
+        ClassLogger.Debug($"Processing QSO: {rcd.DXCall}");
 
         try
         {
@@ -245,7 +243,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             {
                 rcd.UploadStatus = UploadStatus.Fail;
                 rcd.FailReason = TranslationHelper.GetString(LangKeys.invalidadif);
-                ClassLogger.Warn($"Invalid ADIF data for QSO: {rcd}");
+                ClassLogger.Warn($"Invalid ADIF data for QSO: {rcd.DXCall}");
                 return;
             }
 
@@ -253,18 +251,18 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             {
                 rcd.UploadStatus = UploadStatus.Ignored;
                 rcd.FailReason = TranslationHelper.GetString(LangKeys.qsouploaddisabled);
-                ClassLogger.Debug($"Auto upload not enabled, ignoring: {rcd}");
+                ClassLogger.Debug($"Auto upload not enabled, ignoring: {rcd.DXCall}");
                 return;
             }
 
-            var result = await UploadWithRetryAsync(rcd, adif, cancellationToken);
+            var result = await UploadWithRetryAsync(rcd, adif, cancellationToken).ConfigureAwait(false);
 
             if (_udpService.IsNotifyOnQsoUploaded())
             {
-                await SendUploadNotificationAsync(rcd, result);
+                await SendUploadNotificationAsync(rcd, result).ConfigureAwait(false);
             }
 
-            ClassLogger.Info($"QSO processing completed: {rcd}, Status: {rcd.UploadStatus}");
+            ClassLogger.Info($"QSO processing completed: {rcd.DXCall}, Status: {rcd.UploadStatus}");
         }
         catch (Exception ex)
         {
@@ -273,9 +271,9 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             rcd.FailReason = ex.Message;
             if (_udpService.IsNotifyOnQsoUploaded())
             {
-                await SendUploadNotificationAsync(rcd, false);
+                await SendUploadNotificationAsync(rcd, false).ConfigureAwait(false);
             }
-            ClassLogger.Error(ex, $"Error processing QSO: {rcd}");
+            ClassLogger.Error(ex, $"Error processing QSO: {rcd.DXCall}");
         }
     }
 
@@ -307,7 +305,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             rcd.UploadStatus = attempt == 0 ? UploadStatus.Uploading : UploadStatus.Retrying;
             rcd.FailReason = null;
 
-            ClassLogger.Debug($"Upload attempt {attempt + 1}/{maxRetries + 1} for QSO: {rcd}");
+            ClassLogger.Debug($"Upload attempt {attempt + 1}/{maxRetries + 1} for QSO: {rcd.DXCall}");
 
             try
             {
@@ -330,7 +328,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
                 if (uploadTasks.Any())
                 {
-                    var results = await Task.WhenAll(uploadTasks);
+                    var results = await Task.WhenAll(uploadTasks).ConfigureAwait(false);
                     result = results.All(r => r.Success);
                     
                     foreach (var serviceResult in results)
@@ -346,7 +344,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 if (result)
                 {
                     rcd.UploadStatus = UploadStatus.Success;
-                    ClassLogger.Info($"QSO uploaded successfully: {rcd}");
+                    ClassLogger.Info($"QSO uploaded successfully: {rcd.DXCall}");
                     break;
                 }
                 else
@@ -365,7 +363,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             catch (Exception ex) when (attempt < maxRetries)
             {
                 lastException = ex;
-                ClassLogger.Warn(ex, $"Upload attempt {attempt + 1} failed for QSO: {rcd}");
+                ClassLogger.Warn(ex, $"Upload attempt {attempt + 1} failed for QSO: {rcd.DXCall}");
                 await Task.Delay(CalculateRetryDelay(attempt), cancellationToken);
             }
             catch (Exception ex)
@@ -397,10 +395,10 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 _cloudlogSettings.CloudlogApiKey,
                 _cloudlogSettings.CloudlogStationInfo?.StationId!,
                 adif,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             var success = result.Status == "created";
-            ClassLogger.Debug($"Cloudlog upload {(success ? "succeeded" : "failed")}: {rcd}");
+            ClassLogger.Debug($"Cloudlog upload {(success ? "succeeded" : "failed")}: {rcd.DXCall}");
             
             return new ServiceUploadResult
             {
@@ -411,7 +409,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         }
         catch (Exception ex)
         {
-            ClassLogger.Error(ex, $"Cloudlog upload failed: {rcd}");
+            ClassLogger.Error(ex, $"Cloudlog upload failed: {rcd.DXCall}");
             return new ServiceUploadResult
             {
                 ServiceName = "CloudlogService",
@@ -430,8 +428,8 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     {
         try
         {
-            await service.UploadQSOAsync(adif, cancellationToken);
-            ClassLogger.Info($"QSO uploaded to {serviceName}: {rcd}");
+            await service.UploadQSOAsync(adif, cancellationToken).ConfigureAwait(false);
+            ClassLogger.Info($"QSO uploaded to {serviceName}: {rcd.DXCall}");
             
             return new ServiceUploadResult
             {
@@ -441,7 +439,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         }
         catch (Exception ex)
         {
-            ClassLogger.Error(ex, $"QSO upload to {serviceName} failed: {rcd}");
+            ClassLogger.Error(ex, $"QSO upload to {serviceName} failed: {rcd.DXCall}");
             return new ServiceUploadResult
             {
                 ServiceName = serviceName,
@@ -487,30 +485,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     {
         return $"{rcd.DXCall}_{rcd.Mode}_{rcd.DateTimeOn:yyyyMMddHHmmss}";
     }
-
-    private bool IsRecentlyProcessed(string itemKey)
-    {
-        return _processedItems.TryGetValue(itemKey, out var timestamp) && 
-               (DateTime.UtcNow - timestamp) < _duplicateCheckWindow;
-    }
-
-    private void MarkAsProcessed(string itemKey)
-    {
-        _processedItems[itemKey] = DateTime.UtcNow;
-    }
-
-    private void CleanupProcessedItems()
-    {
-        var cutoff = DateTime.UtcNow - _duplicateCheckWindow;
-        var oldKeys = _processedItems.Where(kv => kv.Value < cutoff)
-            .Select(kv => kv.Key)
-            .ToList();
-
-        foreach (var key in oldKeys)
-        {
-            _processedItems.TryRemove(key, out _);
-        }
-    }
+    
 
     public void Dispose()
     {
@@ -537,6 +512,8 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     private class UploadItem
     {
         public RecordedCallsignDetail RecordedCallsignDetail { get; }
+        
+        // reserved field..
         public string ItemKey { get; }
 
         public UploadItem(RecordedCallsignDetail rcd, string itemKey)

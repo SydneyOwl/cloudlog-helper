@@ -38,7 +38,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
     public override async Task TestConnectionAsync(CancellationToken token)
     {
         await ProcessUtil.ExecFile(LotwFilePath, new[] { "-q", "-v" },
-            (stdout, stderr) => { ClassLogger.Debug($"Lotw stderr detected: {stderr}"); }, token);
+            (stdout, stderr) => { ClassLogger.Trace($"Lotw stderr detected: {stderr}"); }, token).ConfigureAwait(false);
     }
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
@@ -48,7 +48,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         var generateHeader = new StringBuilder(AdifUtil.GenerateHeader());
         generateHeader.AppendLine(adif);
         var tempFileName = Path.Join(DefaultConfigs.DefaultTempFilePath, Guid.NewGuid().ToString().Replace("-", ""));
-        await File.WriteAllTextAsync(tempFileName, generateHeader.ToString(), token);
+        await File.WriteAllTextAsync(tempFileName, generateHeader.ToString(), token).ConfigureAwait(false);
 
         var args = new List<string>();
         args.Add("-a");
@@ -72,9 +72,9 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         await ProcessUtil.ExecFile(LotwFilePath, args.ToArray(), (stdout, stderr) =>
         {
             result = stderr;
-            ClassLogger.Debug($"Lotw stderr detected: {stderr}");
-            ClassLogger.Debug($"Lotw stdout detected: {stdout}");
-        }, token);
+            ClassLogger.Trace($"Lotw stderr detected: {stderr}");
+            ClassLogger.Trace($"Lotw stdout detected: {stdout}");
+        }, token).ConfigureAwait(false);
 
         if (result.Contains("Final Status: Success(0)")) return;
         throw new Exception($"Upload failed: {result}");

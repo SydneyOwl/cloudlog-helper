@@ -80,7 +80,7 @@ public class UdpServerService : IUdpServerService, IDisposable
         return int.TryParse(_applicationSettingsService.GetCurrentSettings().UDPSettings.RetryCount, out var ret) ? ret : 1;
     }
 
-    public async Task InitializeAsync(Action<WsjtxMessage> handler, Action<LogLevel, string> logger)
+    public async Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger)
     {
         await _restartUDPServerAsync(handler, _rawHandler, logger);
         
@@ -89,34 +89,27 @@ public class UdpServerService : IUdpServerService, IDisposable
             .Throttle(TimeSpan.FromMilliseconds(100)) // 防抖
             .Subscribe(_ =>
             {
-                ClassLogger.Info("UDP settings changed!");
+                ClassLogger.Trace("UDP settings changed!");
                 _restartUDPServerAsync(handler, _rawHandler, logger);
             });
     }
 
-    private async void _rawHandler(Memory<byte> message)
+    private async Task _rawHandler(Memory<byte> message)
     {
         // raw hander do forward works
-        try
+        var _udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
+        if (_udpSettings.ForwardMessage)
         {
-            var _udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
-            if (_udpSettings.ForwardMessage)
-            {
-                await  _forwardUDPMessageAsync(
-                    message, 
-                    IPEndPoint.Parse(_udpSettings.ForwardAddress));
-            }
-
-            if (_udpSettings.ForwardMessageToHttp)
-            {
-                await _forwardTCPMessageAsync(
-                    message, 
-                    _udpSettings.ForwardHttpAddress);
-            }
+            await _forwardUDPMessageAsync(
+                message, 
+                IPEndPoint.Parse(_udpSettings.ForwardAddress)).ConfigureAwait(false);
         }
-        catch (Exception e)
+
+        if (_udpSettings.ForwardMessageToHttp)
         {
-            ClassLogger.Error(e, "Failed to forward WSJT-X message");
+            await _forwardTCPMessageAsync(
+                message, 
+                _udpSettings.ForwardHttpAddress).ConfigureAwait(false);
         }
     }
 
@@ -129,24 +122,16 @@ public class UdpServerService : IUdpServerService, IDisposable
                 _forwardedClient?.Dispose();
                 _forwardedClient = new UdpClient();
                 _currentEndpoint = endPoint;
-                ClassLogger.Debug("Created new UdpClient instance");
+                ClassLogger.Trace("Created new UdpClient instance");
             }
             else
             {
-                ClassLogger.Debug("Reusing client");
+                ClassLogger.Trace("Reusing client");
             }
         }
 
-        try
-        {
-            await _forwardedClient.SendAsync(message, endPoint, new CancellationTokenSource(
-                TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout)).Token);
-        }
-        catch (Exception ex)
-        {
-            ClassLogger.Error(ex, "Failed to send message.");
-            throw;
-        }
+        await _forwardedClient.SendAsync(message, endPoint, new CancellationTokenSource(
+            TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout)).Token).ConfigureAwait(false);
     }
 
     private async Task _forwardTCPMessageAsync(Memory<byte> message, string server)
@@ -154,7 +139,7 @@ public class UdpServerService : IUdpServerService, IDisposable
         var deserializeWsjtxMessage = message.DeserializeWsjtxMessage();
         if (deserializeWsjtxMessage is null)
         {
-            ClassLogger.Debug("deserializeWsjtxMessage is empty so skipped,,");
+            ClassLogger.Trace("deserializeWsjtxMessage is empty so skipped");
             return;
         }
 
@@ -162,14 +147,14 @@ public class UdpServerService : IUdpServerService, IDisposable
             .WithHeader("Content-Type", "application/json")
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout))
             .PostStringAsync(JsonConvert.SerializeObject(deserializeWsjtxMessage))
-            .ReceiveString();
+            .ReceiveString().ConfigureAwait(false);
 
         if (receiveString != "OK")
             throw new Exception($"Result does not return as expected: expect \"OK\" but we got {receiveString}");
     }
 
-    private async Task _restartUDPServerAsync(Action<WsjtxMessage> handler,
-        Action<Memory<byte>> rawhandler,
+    private async Task _restartUDPServerAsync(Func<WsjtxMessage, Task> handler,
+        Func<Memory<byte>, Task> rawhandler,
         Action<LogLevel, string>? udpLogger = null)
     {
         try
@@ -181,15 +166,19 @@ public class UdpServerService : IUdpServerService, IDisposable
                 return;
             }
             
-            _cts = new CancellationTokenSource();
             // Small delay to ensure OS releases resources
             await Task.Delay(500);
-            ClassLogger.Debug("Asking udpserver to start.");
+            
+            _cts = new CancellationTokenSource();
+            ClassLogger.Trace("Asking udpserver to start.");
+
+            var wrappedLogger = new UDPServerLogger(udpLogger);
+
             _udpServer = new WsjtxUdpServer(
                 DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(handler, rawhandler),
                 _applicationSettingsService.GetCurrentSettings().UDPSettings.EnableConnectionFromOutside ? IPAddress.Any : IPAddress.Loopback,
                 int.Parse(_applicationSettingsService.GetCurrentSettings().UDPSettings.UDPPort),
-                logger: new UDPServerLogger(udpLogger));
+                logger: wrappedLogger);
             _udpServer.Start(_cts);
         }
         catch (Exception e)
@@ -259,10 +248,11 @@ public class UdpServerService : IUdpServerService, IDisposable
             Func<TState, Exception?, string> formatter)
         {
             if (!IsEnabled(logLevel)) return;
+            if (exception is null) return;
 
-            var msg = formatter(state, exception);
+            // var msg = formatter(state, exception);
             // ClassLogger.Log(NLog.LogLevel.FromOrdinal((int)logLevel), msg);
-            _logIt?.Invoke(logLevel, msg);
+            _logIt?.Invoke(logLevel, exception.Message);
         }
     }
 }

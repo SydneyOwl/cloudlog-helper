@@ -164,7 +164,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         try
         {
             var allInfo = await _rigBackendManager.GetAllRigInfo();
-            ClassLogger.Debug(allInfo.ToString());
             
             UpdateDisplayInfo(allInfo);
 
@@ -335,7 +334,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             else
             {
                 await _inAppNotification.SendErrorNotificationAsync(exception.Message);
-                ClassLogger.Error(exception);
+                ClassLogger.Error(exception, "Error while polling.");
             }
         }
         catch (Exception ex)
@@ -410,7 +409,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private IDisposable _createNewTimer()
     {
         ClassLogger.Trace("Creating new rig timer...");
-        
         _disposeAllTimers();
 
         var timerDisposable = Observable.Defer(() =>

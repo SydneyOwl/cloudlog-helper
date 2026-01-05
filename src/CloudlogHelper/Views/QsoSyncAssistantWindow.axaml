@@ -7,11 +7,11 @@
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="720"
         x:Class="CloudlogHelper.Views.QsoSyncAssistantWindow"
-        SizeToContent="Manual"
+        SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
         Icon="avares://CloudlogHelper/Assets/icon.png"
         Title="QSO Sync Assistant"
-        Width="600" Height="720"
+        Width="600"
         x:DataType="viewModels:QsoSyncAssistantWindowViewModel">
 
     <Design.DataContext>
@@ -22,13 +22,13 @@
         <converters:EllipsisMiddleConverter x:Key="EllipsisConverter" />
     </Window.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="15" ColumnDefinitions="*,*" RowSpacing="10"
+    <Grid RowDefinitions="Auto,Auto,Auto" Margin="15" ColumnDefinitions="*,*" RowSpacing="10"
           ShowGridLines="False">
         <!-- Header -->
-        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
-            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" />
-            <TextBlock Text="QSO Sync Assistant" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" />
-        </StackPanel>
+        <!-- <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10"> -->
+        <!--     <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" /> -->
+        <!--     <TextBlock Text="QSO Sync Assistant" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" /> -->
+        <!-- </StackPanel> -->
 
         <!-- Settings.QsoSyncAssistantSettings Section -->
         <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
@@ -153,6 +153,5 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-
     </Grid>
 </Window>

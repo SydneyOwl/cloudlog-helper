@@ -44,7 +44,7 @@ public class QsoSyncAssistantUtil
             ;
 
         var result = await loginRequest
-            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
+            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken).ConfigureAwait(false);
         var redirectUrl = result.Headers.FirstOrDefault("Location");
         if (!redirectUrl.Contains("dashboard")) throw new InvalidOperationException("Incorrect username or password");
         if (cancellationToken.IsCancellationRequested)
@@ -66,7 +66,7 @@ public class QsoSyncAssistantUtil
                 .AddString("station_profile", stationId)
                 .AddString("from", nDaysBefore)
                 .AddString("to", today), cancellationToken: cancellationToken)
-            .ReceiveBytes();
+            .ReceiveBytes().ConfigureAwait(false);
 
         return Encoding.UTF8.GetString(response);
     }
@@ -75,7 +75,7 @@ public class QsoSyncAssistantUtil
         int stationId, int qsoCount, IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
     {
         // check for instance
-        var instance = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(baseurl, CancellationToken.None);
+        var instance = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(baseurl, CancellationToken.None).ConfigureAwait(false);
         var tmp = new JObject();
         if (instance == ServerInstanceType.Wavelog)
         {
@@ -139,11 +139,11 @@ public class QsoSyncAssistantUtil
             .AppendPathSegments(DefaultConfigs.CloudlogQSOAdvancedEndpoint)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
             .WithCookies(cookies)
-            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken);
+            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken).ConfigureAwait(false);
 
         if (cancellationToken.IsCancellationRequested)
             throw new OperationCanceledException("Operation(DownloadQSOs) was canceled.");
-        return await recentQs.GetStringAsync();
+        return await recentQs.GetStringAsync().ConfigureAwait(false);
     }
 
     public static async Task<string> GetDateFormat(string baseurl, IEnumerable<FlurlCookie> cookies,
@@ -152,7 +152,7 @@ public class QsoSyncAssistantUtil
         var dashboard = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogDashboardEndpoint)
             .WithCookies(cookies)
-            .GetStringAsync(default, cancellationToken);
+            .GetStringAsync(default, cancellationToken).ConfigureAwait(false);
 
         var doc = new HtmlDocument();
         doc.LoadHtml(dashboard);
@@ -165,7 +165,7 @@ public class QsoSyncAssistantUtil
 
         var settingsPage = await accountLink
             .WithCookies(cookies)
-            .GetStringAsync(default, cancellationToken);
+            .GetStringAsync(default, cancellationToken).ConfigureAwait(false);
 
         doc = new HtmlDocument();
         doc.LoadHtml(settingsPage);
@@ -249,8 +249,8 @@ public class QsoSyncAssistantUtil
                         new MemoryStream(Encoding.UTF8.GetBytes(adif)),
                         "cloudlog-helper-generated.adi",
                         "application/octet-stream"), default, cancellationToken
-            );
-        var res = await resp.GetStringAsync();
+            ).ConfigureAwait(false);
+        var res = await resp.GetStringAsync().ConfigureAwait(false);
         if (cancellationToken.IsCancellationRequested)
             throw new OperationCanceledException("Operation(UploadAdifLogAsync) was canceled.");
         return res.Contains("ADIF Imported", StringComparison.InvariantCultureIgnoreCase);

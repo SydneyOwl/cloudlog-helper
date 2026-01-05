@@ -36,8 +36,8 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
         if (!string.IsNullOrEmpty(QTHNickname)) defaultParam += $"&QTHNickname={Uri.EscapeDataString(QTHNickname)}";
         var result = await EqslTestEndpoint
             .AppendQueryParam(defaultParam)
-            .GetAsync(cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            .GetAsync(cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
         if (!string.IsNullOrEmpty(responseText) && (responseText.Contains("Your ADIF log file has been built") ||
                                                     responseText.Contains("You have no log entries")))
             return;
@@ -70,8 +70,8 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             $"ADIFData={Uri.EscapeDataString(adif)}&EQSL_USER={Uri.EscapeDataString(Username)}&EQSL_PSWD={Uri.EscapeDataString(Password)}";
         var results = await EqslQsoUploadEndpoint
             .AppendQueryParam(param)
-            .GetAsync(cancellationToken: token);
-        var responseText = await results.GetStringAsync();
+            .GetAsync(cancellationToken: token).ConfigureAwait(false);
+        var responseText = await results.GetStringAsync().ConfigureAwait(false);
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(responseText);
         var bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");

@@ -295,7 +295,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         MessageBus.Current.Listen<SettingsChanged>()
             .Where(x => x.Part == ChangedPart.UDPServer)
-            .Throttle(TimeSpan.FromMilliseconds(100)) // 防抖
+            .Throttle(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ =>
             {
                 WaitFirstConn = _udpServerService.IsUdpServerEnabled();
@@ -437,7 +437,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         await writer.WriteAsync(adif.ToString());
     }
 
-    private async void _wsjtxMsgHandler(WsjtxMessage message)
+    private async Task _wsjtxMsgHandler(WsjtxMessage message)
     {
         try
         {

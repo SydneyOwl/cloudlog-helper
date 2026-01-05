@@ -32,7 +32,7 @@ public class OmniRigService : IRigService, IDisposable
         try
         {
             _mutex.WaitOne();
-            ClassLogger.Info("Starting OmniRig");
+            ClassLogger.Info("OmniRig service started.");
             if (_omniRigEngine is null)
             {
                 var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
@@ -42,7 +42,7 @@ public class OmniRigService : IRigService, IDisposable
                 {
                     _omniRigEngine = Activator.CreateInstance(omniRigType);
                     if (_omniRigEngine is null) throw new Exception("Failed to create OmniRig instance!");
-                }, token);
+                }, token).ConfigureAwait(false);
 
                 _version = _omniRigEngine.InterfaceVersion;
 
@@ -74,8 +74,8 @@ public class OmniRigService : IRigService, IDisposable
         try
         {
             _mutex.WaitOne();
-            ClassLogger.Info("Stopping OmniRig");
-            await Task.Run(ReleaseUnmanagedResources, token);
+            ClassLogger.Info("OmniRig service stopped");
+            await Task.Run(ReleaseUnmanagedResources, token).ConfigureAwait(false);
         }
         finally
         {
@@ -152,7 +152,7 @@ public class OmniRigService : IRigService, IDisposable
         }
         catch (Exception ex)
         {
-            ClassLogger.Warn("Failed to release COM object!");
+            ClassLogger.Warn(ex, "Failed to release COM object!");
         }
         finally
         {

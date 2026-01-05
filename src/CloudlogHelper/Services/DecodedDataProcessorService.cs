@@ -68,7 +68,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                     // refresh all data if my grid changed
                     if (_myGrid != _basicSettings.MyMaidenheadGrid)
                     {
-                        ClassLogger.Debug("Callsign differs. Cleaning all data..");
+                        ClassLogger.Debug("Grid differs. Cleaning all data..");
                         _callsignDistanceAndBearing.Clear();
                         _dataCacheService.Clear();
                         _myGrid = string.Empty;
@@ -76,8 +76,8 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                             _myGrid = _basicSettings.MyMaidenheadGrid!;
                     }
 
-                    await _saveCallsignGridInfo(decodes);
-                    await _cacheChartData(decodes);
+                    await _saveCallsignGridInfo(decodes).ConfigureAwait(false);
+                    await _cacheChartData(decodes).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -126,7 +126,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
             {
                 if (value.IsAccurate || grid is null)
                 {
-                    ClassLogger.Debug($"Cache hits - {callsign}");
+                    ClassLogger.Trace($"Cache hits - {callsign}");
                     chartQsoPoint.Azimuth = value.Bearing;
                     chartQsoPoint.Distance = value.Distance;
                     chartQsoPoint.DXCC = value.Dxcc;
@@ -137,12 +137,12 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                     continue;
                 }
 
-                ClassLogger.Debug($"{callsign} Cache hits but we could get a more accurate result by recalc grid...");
+                ClassLogger.Trace($"{callsign} Cache hits but we could get a more accurate result by recalc grid...");
             }
 
             string iGrid;
             var isAccurate = false;
-            var countryDetail = await _databaseService.GetCallsignDetailAsync(callsign);
+            var countryDetail = await _databaseService.GetCallsignDetailAsync(callsign).ConfigureAwait(false);
 
             // calc from grid
             if (grid is not null)
@@ -154,7 +154,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
             else
             {
                 // fallback option 01: find grid from database
-                var gridByCallsign = await _databaseService.GetGridByCallsign(callsign);
+                var gridByCallsign = await _databaseService.GetGridByCallsign(callsign).ConfigureAwait(false);
                 if (gridByCallsign is not null)
                 {
                     iGrid = gridByCallsign;
@@ -167,7 +167,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                     if (countryDetail.CountryNameEn == "Unknown") continue;
                     iGrid = MaidenheadGridUtil.GetGridSquare(
                         new LatLng(countryDetail.Latitude, countryDetail.Longitude));
-                    ClassLogger.Debug($"Calculating {callsign} from default country: " +
+                    ClassLogger.Trace($"Calculating {callsign} from default country: " +
                                       $"lat {countryDetail.Latitude} lon {countryDetail.Longitude}");
                 }
             }
@@ -214,7 +214,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                 });
         }
 
-        await _databaseService.BatchAddOrUpdateCallsignGridAsync(collectedGrid);
-        ClassLogger.Info($"Added {collectedGrid.Count} grids.");
+        await _databaseService.BatchAddOrUpdateCallsignGridAsync(collectedGrid).ConfigureAwait(false);
+        ClassLogger.Trace($"Added {collectedGrid.Count} grids.");
     }
 }

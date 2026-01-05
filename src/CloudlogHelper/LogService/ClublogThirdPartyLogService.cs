@@ -37,8 +37,8 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 type = "dxqsl",
                 startyear = 1999,
                 endyear = 1999
-            }, cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            }, cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
         var code = result.StatusCode;
         if (code == 200) return;
         throw new Exception(string.IsNullOrWhiteSpace(responseText)
@@ -57,9 +57,9 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 callsign = Callsign,
                 adif,
                 api = DefaultConfigs.Clkk
-            }, cancellationToken: token);
+            }, cancellationToken: token).ConfigureAwait(false);
 
-        var responseText = await result.GetStringAsync();
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
         var code = result.StatusCode;
         if (code == 200) return;
         throw new Exception(responseText);

@@ -76,8 +76,8 @@ public class DatabaseService : IDatabaseService, IDisposable
         ClassLogger.Info("Creating/Migrating database...");
 
         // Check if version number exists
-        await _conn.CreateTableAsync<ApplicationVersionDatabase>();
-        var dbVer = await _conn.Table<ApplicationVersionDatabase>().FirstOrDefaultAsync() ??
+        await _conn.CreateTableAsync<ApplicationVersionDatabase>().ConfigureAwait(false);
+        var dbVer = await _conn.Table<ApplicationVersionDatabase>().FirstOrDefaultAsync().ConfigureAwait(false) ??
                     ApplicationVersionDatabase.NewDefaultAppVersion();
         _dbVersion = new Version(dbVer.CurrentVersion!);
 
@@ -94,18 +94,19 @@ public class DatabaseService : IDatabaseService, IDisposable
             {
                 _appVersion = new Version(appVer);
             }
+            catch (FormatException e)
+            {
+                ClassLogger.Info("Dev tag detected.");
+            }
             catch (Exception e)
             {
                 ClassLogger.Error(e, "failed to parse version - ignored.");
             }
 
-        ClassLogger.Trace($"DBVer:{_dbVersion}");
-        ClassLogger.Trace($"appVersion:{_appVersion}");
-
         if (_appVersion > _dbVersion || forceInitDatabase)
         {
             _upgradeNeeded = true;
-            ClassLogger.Info("Upgrade needed.");
+            ClassLogger.Info("Upgrade needed. Requested for a upgrade.");
         }
         else
         {
@@ -113,15 +114,14 @@ public class DatabaseService : IDatabaseService, IDisposable
                 $"Current app version is same of less then db version: {_dbVersion} => {_appVersion}. Creating/Migrating skipped");
         }
 
-        ClassLogger.Info("Creating/Migrating done.");
-        await _conn.EnableWriteAheadLoggingAsync();
+        await _conn.EnableWriteAheadLoggingAsync().ConfigureAwait(false);
         _inited = true;
     }
 
     public async Task UpgradeDatabaseAsync()
     {
-        ClassLogger.Trace($"upgrading {_dbVersion} => {_appVersion}");
-        await InitCountryDicAsync();
+        ClassLogger.Info($"Upgrading database {_dbVersion} => {_appVersion}");
+        await InitCountryDicAsync().ConfigureAwait(false);
         await _conn!.RunInTransactionAsync(db =>
         {
             ClassLogger.Trace($"Running transaction: {_dbVersion} => {_appVersion}");
@@ -143,7 +143,9 @@ public class DatabaseService : IDatabaseService, IDisposable
             db.InsertOrReplace(
                 ApplicationVersionDatabase.NewAppVersionWithVersionNumber(_appVersion.ToString()));
             ClassLogger.Trace($"Tansaction done: {_dbVersion} => {_appVersion}");
-        });
+        }).ConfigureAwait(false);
+        
+        ClassLogger.Info("Creating/Migrating done.");
     }
 
     /// <summary>
@@ -162,7 +164,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// <returns></returns>
     public async Task<string> GetParentModeAsync(string mode)
     {
-        var quRes = await _conn!.Table<AdifModesDatabase>().Where(x => x.SubMode == mode).FirstOrDefaultAsync();
+        var quRes = await _conn!.Table<AdifModesDatabase>().Where(x => x.SubMode == mode).FirstOrDefaultAsync().ConfigureAwait(false);
         if (quRes is null) return string.Empty;
         var md = quRes.Mode;
         return string.IsNullOrEmpty(md) ? string.Empty : md;
@@ -184,7 +186,7 @@ public class DatabaseService : IDatabaseService, IDisposable
               OR (callsign='='||?)
               ORDER BY LENGTH(callsign) DESC
               LIMIT 1",
-            callsign, callsign);
+            callsign, callsign).ConfigureAwait(false);
         return countriesRes.Count == 0 ? new CountryDatabase() : countriesRes[0];
     }
 
@@ -192,10 +194,10 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         try
         {
-            if (!await IsQsoIgnored(ignoredQso))
+            if (!await IsQsoIgnored(ignoredQso).ConfigureAwait(false))
             {
                 ignoredQso.UpdatedAt = DateTime.Now;
-                await _conn!.InsertAsync(ignoredQso);
+                await _conn!.InsertAsync(ignoredQso).ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -212,11 +214,10 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         try
         {
-            var result = await FindIgnoredQso(ignoredQso);
+            var result = await FindIgnoredQso(ignoredQso).ConfigureAwait(false);
             if (result is null) return true;
             if (result.Count != 0)
             {
-                ClassLogger.Trace("We found the same ones!!!");
                 foreach (var qIgnoredQsoDatabase in result)
                 {
                     ClassLogger.Trace(qIgnoredQsoDatabase.ToString());
@@ -228,7 +229,7 @@ public class DatabaseService : IDatabaseService, IDisposable
                         (qIgnoredQsoDatabase.QsoStartTime - ignoredQso.QsoStartTime)!.Value.Minutes <
                         DefaultConfigs.AllowedTimeOffsetMinutes)
                     {
-                        ClassLogger.Info("Found same ignored qso. skipping...");
+                        ClassLogger.Trace("Found same ignored qso. skipping...");
                         return true;
                     }
                 }
@@ -265,7 +266,7 @@ public class DatabaseService : IDatabaseService, IDisposable
                 ON CONFLICT(callsign) DO UPDATE SET
                     grid_square = excluded.grid_square,
                     updated_at = excluded.updated_at",
-                parameters);
+                parameters).ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -279,7 +280,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         {
             var res = await _conn!.Table<CollectedGridDatabase>()
                 .Where(x => x.Callsign == callsign)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync().ConfigureAwait(false);
             return res?.GridSquare;
         }
         catch (Exception e)
@@ -306,7 +307,7 @@ public class DatabaseService : IDatabaseService, IDisposable
                 .Where(x => x.FinalMode == ignoredQso.FinalMode)
                 .Where(x => x.RstSent == ignoredQso.RstSent)
                 .Where(x => x.RstRecv == ignoredQso.RstRecv)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
             return res;
         }
         catch (Exception e)

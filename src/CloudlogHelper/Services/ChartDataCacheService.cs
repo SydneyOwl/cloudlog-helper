@@ -92,7 +92,7 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             }
             catch (Exception e)
             {
-                ClassLogger.Error(e);
+                ClassLogger.Error(e,"Error while adding chart point.");
             }
 
             _itemAddedSubject.OnNext(item);

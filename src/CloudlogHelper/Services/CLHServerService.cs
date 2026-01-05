@@ -50,13 +50,11 @@ public class CLHServerService : ICLHServerService, IDisposable
         MessageBus.Current.Listen<SettingsChanged>().Subscribe((async void (changed) =>
         {
             if (changed.Part != ChangedPart.CLHServer)return;
-            ClassLogger.Debug($"=======> Calling reconn from MessageBus.");
-            await ReconnectAsync();
+            await ReconnectAsync().ConfigureAwait(false);
         }));
         
         if (_appSettingsService.GetCurrentSettings().CLHServerSettings.CLHServerEnabled)
         {
-            ClassLogger.Debug($"Calling reconn from appstart.");
             _ = ReconnectAsync();
         }
     }
@@ -79,7 +77,7 @@ public class CLHServerService : ICLHServerService, IDisposable
         try
         {
             // Disconnect any existing connection first
-            await DisconnectAsync();
+            await DisconnectAsync().ConfigureAwait(false);
 
             if (!_appSettingsService.GetCurrentSettings().CLHServerSettings.CLHServerEnabled)
             {
@@ -121,7 +119,7 @@ public class CLHServerService : ICLHServerService, IDisposable
                     currentSettings.CLHServerSettings.UseTLS, 
                     currentSettings.CLHServerSettings.ServerKey,
                     currentSettings.InstanceName,
-                    cts.Token, connectCts.Token);
+                    cts.Token, connectCts.Token).ConfigureAwait(false);
                 
                 _onReceiveCallback += _heartbeatAckHandler;
 
@@ -141,7 +139,7 @@ public class CLHServerService : ICLHServerService, IDisposable
             }
             catch (Exception ex) when (!_disposed)
             {
-                ClassLogger.Error(ex, "Error occurred! ", ex);
+                ClassLogger.Error(ex, "Error occurred in connection loop. ");
             }
             finally
             {
@@ -161,7 +159,7 @@ public class CLHServerService : ICLHServerService, IDisposable
         // Connect TCP
         var tcpClient = new TcpClient();
 
-        await tcpClient.ConnectAsync(host, port, connectCts);
+        await tcpClient.ConnectAsync(host, port, connectCts).ConfigureAwait(false);
 
         Stream stream = tcpClient.GetStream();
 
@@ -176,7 +174,7 @@ public class CLHServerService : ICLHServerService, IDisposable
                 host,
                 clientCertificates: null,
                 enabledSslProtocols: SslProtocols.Tls12,
-                checkCertificateRevocation: false);
+                checkCertificateRevocation: false).ConfigureAwait(false);
 
             stream = sslStream;
         }
@@ -209,9 +207,9 @@ public class CLHServerService : ICLHServerService, IDisposable
             AuthKey = CLHServerUtil.CalcAuthKey(key, now),
             Timestamp = now,
             RunId = $"{instanceName}{(useTestMode ? "(test)" : "")}"
-        }, connectCts);
+        }, connectCts).ConfigureAwait(false);
 
-        var handshakeResp = await CLHServerUtil.ReadMsgAsync(stream, connectCts);
+        var handshakeResp = await CLHServerUtil.ReadMsgAsync(stream, connectCts).ConfigureAwait(false);
         var con = (HandshakeResponse)handshakeResp;
         if (!(con).Accept)
         {
@@ -232,7 +230,7 @@ public class CLHServerService : ICLHServerService, IDisposable
                 await SendData(new Ping
                 {
                     Timestamp = tm
-                });
+                }).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -246,34 +244,6 @@ public class CLHServerService : ICLHServerService, IDisposable
         ClassLogger.Trace("Send ping loop exited.");
     }
 
-    // private async Task ScanHeartbeatTimeout(CancellationToken token)
-    // {
-    //     while (!token.IsCancellationRequested)
-    //     {
-    //         try
-    //         {
-    //             if (DateTimeOffset.Now.ToUnixTimeSeconds() - _lastHeartbeatAckTimestamp >
-    //                 DefaultConfigs.CLHHeartbeatTimeoutS)
-    //             {
-    //                 ClassLogger.Warn("Heartbeart Timeout! ");
-    //                 
-    //                 ClassLogger.Info($"=======> Calling reconn from hb scan.");
-    //                 await ReconnectAsync();
-    //             }
-    //         }
-    //         catch (Exception ex)
-    //         {
-    //             ClassLogger.Error("Unable to scan heartbeat: " + ex.Message);
-    //         }
-    //         finally
-    //         {
-    //             await Task.Delay(2000, CancellationToken.None);
-    //         }
-    //     }
-    //    
-    //     ClassLogger.Trace("ScanHeartbeatTimeout loop exited.");
-    // }
-
     private void _heartbeatAckHandler(IMessage message)
     {
         var messageDescriptor = message.Descriptor;
@@ -281,7 +251,7 @@ public class CLHServerService : ICLHServerService, IDisposable
         {
             if (pong.Ack)
             {
-                ClassLogger.Trace("Ping accepted !");
+                ClassLogger.Trace("Ping accepted.");
                 lock (_lock)
                 {
                     _lastHeartbeatAckTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -299,7 +269,7 @@ public class CLHServerService : ICLHServerService, IDisposable
 
         while (!cancellationToken.IsCancellationRequested && stream.CanRead)
         {
-            var iMessage = await CLHServerUtil.ReadMsgAsync(stream, cancellationToken);
+            var iMessage = await CLHServerUtil.ReadMsgAsync(stream, cancellationToken).ConfigureAwait(false);
             _onReceiveCallback?.Invoke(iMessage);
         }
     }
@@ -309,7 +279,7 @@ public class CLHServerService : ICLHServerService, IDisposable
     {
         try
         {
-            await SendData(data);
+            await SendData(data).ConfigureAwait(false);
         }catch(Exception ex)
         {
             ClassLogger.Error("Error sending data: " + ex.Message);
@@ -333,8 +303,8 @@ public class CLHServerService : ICLHServerService, IDisposable
 
         try
         {
-            await CLHServerUtil.WriteMsgAsync(_networkStream, data);
-            await _networkStream.FlushAsync();
+            await CLHServerUtil.WriteMsgAsync(_networkStream, data).ConfigureAwait(false);
+            await _networkStream.FlushAsync().ConfigureAwait(false);
         }
         finally
         {
@@ -364,12 +334,12 @@ public class CLHServerService : ICLHServerService, IDisposable
     
         try
         {
-            if (_receiveTask != null) await _receiveTask.WaitAsync(CancellationToken.None);
-            ClassLogger.Info("Now recv exited.");
-            if (_heartbeatTask != null) await _heartbeatTask.WaitAsync(CancellationToken.None);
-            ClassLogger.Info("Now hbtask exited.");
-            if (_connectionLoopTask != null) await _connectionLoopTask.WaitAsync(CancellationToken.None);
-            ClassLogger.Info("Now loop. exited.");
+            if (_receiveTask != null) await _receiveTask.WaitAsync(CancellationToken.None).ConfigureAwait(false);
+            ClassLogger.Debug("Receive loop exited.");
+            if (_heartbeatTask != null) await _heartbeatTask.WaitAsync(CancellationToken.None).ConfigureAwait(false);
+            ClassLogger.Debug("Heartbeat exited.");
+            if (_connectionLoopTask != null) await _connectionLoopTask.WaitAsync(CancellationToken.None).ConfigureAwait(false);
+            ClassLogger.Debug("Main exited.");
         }
         catch { /* ignore */ }
 
@@ -387,7 +357,7 @@ public class CLHServerService : ICLHServerService, IDisposable
             draftSetting.CLHServerSettings.ServerKey,
             draftSetting.InstanceName,
             cts.Token, cts.Token,
-            useTestMode);
+            useTestMode).ConfigureAwait(false);
     }
 
     private void CleanupConnectionResources()

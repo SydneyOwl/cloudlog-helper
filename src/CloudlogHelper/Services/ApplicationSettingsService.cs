@@ -68,7 +68,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             if (!ReferenceEquals(_currentLockThreadOwner, owner))
                 throw new SynchronizationLockException("Draft setting is locked by another instance!");
 
-            ClassLogger.Debug($"Settings applied by {owner.GetType().FullName}");
+            ClassLogger.Trace($"Settings applied by {owner.GetType().FullName}");
 
             _isDraftLocked = false;
             _oldSettings = _currentSettings.DeepClone();
@@ -114,7 +114,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             
             if (IsCLHServerConfChanged())
             {
-                ClassLogger.Warn("><<<<<<<<<<<<<<<<<<<<<<clh server settings changed");
+                ClassLogger.Trace("clh server settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.CLHServer });
             }
@@ -133,7 +133,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             // make sure rig settings is not dirty
             if (IsHamlibConfChanged())
             {
-                ClassLogger.Info("=>hamlib settings changed");
+                ClassLogger.Trace("hamlib settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.Hamlib });
             }
@@ -147,7 +147,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
             if (IsFlrigConfChanged())
             {
-                ClassLogger.Info("=>flrig settings changed");
+                ClassLogger.Trace("flrig settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.FLRig });
             }
@@ -206,7 +206,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         applicationSettingsService._mapper = mapper;
         if (reinit)
         {
-            ClassLogger.Debug("Settings reinitializing");
+            ClassLogger.Trace("Settings reinitializing");
             applicationSettingsService.InitEmptySettings(logServices);
             return applicationSettingsService;
         }
@@ -218,7 +218,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf, _defaultSerializerSettings);
             if (applicationSettingsService._draftSettings is null)
             {
-                ClassLogger.Debug("Settings file not found. creating a new one instead.");
+                ClassLogger.Info("Settings file not found. creating a new one instead.");
                 applicationSettingsService.InitEmptySettings(logServices);
                 return applicationSettingsService;
             }

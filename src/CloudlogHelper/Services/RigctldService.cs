@@ -54,7 +54,7 @@ public sealed class RigctldService : IRigService, IDisposable
     
     public async Task StartService(CancellationToken token, params object[] args)
     {
-        ClassLogger.Info("Starting hamlib...");
+        ClassLogger.Info("Starting hamlib service...");
         
         if (_backgroundProcess?.HasExited == false)
         {
@@ -63,7 +63,7 @@ public sealed class RigctldService : IRigService, IDisposable
         }
         
         TerminateBackgroundProcess();
-        ClassLogger.Debug("Restarting rigctld background process...");
+        ClassLogger.Trace("Restarting rigctld background process...");
         
         var readyTcs = new TaskCompletionSource<(bool Success, string Message)>();
         await _backgroundProcessLock.WaitAsync(token);
@@ -76,7 +76,7 @@ public sealed class RigctldService : IRigService, IDisposable
             if (!_backgroundProcess.Start())
                 throw new Exception("Failed to start rigctld process");
             
-            ClassLogger.Debug($"Starting rigctld with args: {args[0]}");
+            ClassLogger.Trace($"Starting rigctld with args: {args[0]}");
             
             _backgroundProcess.BeginErrorReadLine();
             _backgroundProcess.BeginOutputReadLine();
@@ -119,13 +119,13 @@ public sealed class RigctldService : IRigService, IDisposable
             
             ClassLogger.Debug($"Querying rig info at {ip}:{port}");
             
-            var radioData = await GetBaseRadioData(ip, port);
+            var radioData = await GetBaseRadioData(ip, port).ConfigureAwait(false);
             
             if (reportSplitInfo)
-                await TryGetSplitInfo(radioData, ip, port);
+                await TryGetSplitInfo(radioData, ip, port).ConfigureAwait(false);
             
             if (reportRfPower)
-                await TryGetPowerInfo(radioData, ip, port);
+                await TryGetPowerInfo(radioData, ip, port).ConfigureAwait(false);
             
             return radioData;
         }
@@ -137,7 +137,7 @@ public sealed class RigctldService : IRigService, IDisposable
     
     public async Task<string> GetServiceVersion(params object[] args)
     {
-        return _cachedVersion ??= await ExecuteOnetimeCommandAsync("--version");
+        return _cachedVersion ??= await ExecuteOnetimeCommandAsync("--version").ConfigureAwait(false);
     }
     
     public async Task<RigInfo[]> GetSupportedRigModels()
@@ -145,7 +145,7 @@ public sealed class RigctldService : IRigService, IDisposable
         if (_cachedRigModels != null)
             return _cachedRigModels.ToArray();
         
-        var rigListText = await ExecuteOnetimeCommandAsync("--list");
+        var rigListText = await ExecuteOnetimeCommandAsync("--list").ConfigureAwait(false);
         _cachedRigModels = ParseRigModels(rigListText);
         return _cachedRigModels.ToArray();
     }
@@ -191,7 +191,7 @@ public sealed class RigctldService : IRigService, IDisposable
     {
         process.Exited += (_, _) =>
         {
-            ClassLogger.Info($"Rigctld exited with code {process.ExitCode}");
+            ClassLogger.Debug($"Rigctld exited with code {process.ExitCode}");
             if (process.ExitCode != 0)
                 ClassLogger.Warn($"Rigctld exited abnormally:\n{ReadAndClearLogBuffer()}");
             
@@ -209,8 +209,8 @@ public sealed class RigctldService : IRigService, IDisposable
         process.OutputDataReceived += (_, e) =>
         {
             AppendToLogBuffer(e.Data);
-            if (!string.IsNullOrWhiteSpace(e.Data))
-                ClassLogger.Trace($"stdout: {e.Data}");
+            // if (!string.IsNullOrWhiteSpace(e.Data))
+            //     ClassLogger.Trace($"stdout: {e.Data}");
         };
     }
     
@@ -219,7 +219,7 @@ public sealed class RigctldService : IRigService, IDisposable
         var radioData = new RadioData();
         
         // Get frequency
-        var freqRaw = await ExecuteCommand(ip, port, "f");
+        var freqRaw = await ExecuteCommand(ip, port, "f").ConfigureAwait(false);
         var freqStr = freqRaw.Split('\n')[0];
         if (!long.TryParse(freqStr, out var freq))
             throw new RigCommException($"{TranslationHelper.GetString(LangKeys.unsupportedrigfreq)}{freqStr}");
@@ -228,7 +228,7 @@ public sealed class RigctldService : IRigService, IDisposable
         radioData.FrequencyTx = freq;
         
         // Get mode
-        var modeRaw = await ExecuteCommand(ip, port, "m");
+        var modeRaw = await ExecuteCommand(ip, port, "m").ConfigureAwait(false);
         var mode = modeRaw.Split('\n')[0];
         if (!DefaultConfigs.AvailableRigModes.Contains(mode))
             throw new RigCommException($"{TranslationHelper.GetString(LangKeys.unsupportedrigmode)}{mode}");
@@ -243,29 +243,29 @@ public sealed class RigctldService : IRigService, IDisposable
     {
         try
         {
-            var splitRaw = await ExecuteCommand(ip, port, "s");
+            var splitRaw = await ExecuteCommand(ip, port, "s").ConfigureAwait(false);
             var splitStatus = splitRaw.Split('\n')[0];
             
             if (splitStatus == "0")
             {
-                ClassLogger.Trace("Split mode off");
+                ClassLogger.Trace("Rigctld reported Split mode off");
                 return;
             }
             
             if (splitStatus == "1")
             {
-                ClassLogger.Trace("Split mode on");
+                ClassLogger.Trace("Rigctld reported Split mode on");
                 radioData.IsSplit = true;
                 
                 // Get TX frequency
-                var txFreqRaw = await ExecuteCommand(ip, port, "i");
+                var txFreqRaw = await ExecuteCommand(ip, port, "i").ConfigureAwait(false);
                 var txFreqStr = txFreqRaw.Split('\n')[0];
                 if (!long.TryParse(txFreqStr, out var txFreq))
                     throw new RigCommException($"Unsupported TX frequency: {txFreqStr}");
                 radioData.FrequencyTx = txFreq;
                 
                 // Get TX mode
-                var txModeRaw = await ExecuteCommand(ip, port, "x");
+                var txModeRaw = await ExecuteCommand(ip, port, "x").ConfigureAwait(false);
                 var txMode = txModeRaw.Split('\n')[0];
                 if (!DefaultConfigs.AvailableRigModes.Contains(txMode))
                     throw new RigCommException($"Unsupported TX mode: {txMode}");
@@ -273,12 +273,12 @@ public sealed class RigctldService : IRigService, IDisposable
             }
             else
             {
-                ClassLogger.Trace($"Rig doesn't support split mode: {splitStatus}");
+                ClassLogger.Debug($"Rigctld: Rig doesn't support split mode: {splitStatus}");
             }
         }
         catch (Exception e)
         {
-            ClassLogger.Debug($"Failed to get split info: {e.Message}");
+            ClassLogger.Debug(e,$"Rigctld: Failed to get split info.");
         }
     }
     
@@ -286,17 +286,17 @@ public sealed class RigctldService : IRigService, IDisposable
     {
         try
         {
-            var powerRaw = await ExecuteCommand(ip, port, "l RFPOWER");
+            var powerRaw = await ExecuteCommand(ip, port, "l RFPOWER").ConfigureAwait(false);
             var powerStr = powerRaw.Split('\n')[0];
             
             if (!float.TryParse(powerStr, out var power) || power < 0)
             {
-                ClassLogger.Debug($"Rig doesn't support RFPOWER reading: {powerStr}");
+                ClassLogger.Debug($"Rigctld: Rig doesn't support RFPOWER reading: {powerStr}");
                 return;
             }
             
             var powerMwRaw = await ExecuteCommand(ip, port, 
-                $"\\power2mW {power} {radioData.FrequencyTx} {radioData.ModeTx}");
+                $"\\power2mW {power} {radioData.FrequencyTx} {radioData.ModeTx}").ConfigureAwait(false);
             var powerMwStr = powerMwRaw.Split('\n')[0];
             
             if (float.TryParse(powerMwStr, out var powerMw) && powerMw >= 0)
@@ -304,7 +304,7 @@ public sealed class RigctldService : IRigService, IDisposable
         }
         catch (Exception e)
         {
-            ClassLogger.Debug($"Failed to get power info: {e.Message}");
+            ClassLogger.Debug($"Rigctld: Failed to get power info: {e.Message}");
         }
     }
     
@@ -334,7 +334,7 @@ public sealed class RigctldService : IRigService, IDisposable
             _onetimeProcess.BeginErrorReadLine();
             
             using var cts = new CancellationTokenSource(timeout);
-            await _onetimeProcess.WaitForExitAsync(cts.Token);
+            await _onetimeProcess.WaitForExitAsync(cts.Token).ConfigureAwait(false);
             
             if (_onetimeProcess.ExitCode != 0)
             {
@@ -362,14 +362,14 @@ public sealed class RigctldService : IRigService, IDisposable
             {
                 _tcpClient?.Dispose();
                 _tcpClient = new TcpClient();
-                await _tcpClient.ConnectAsync(host, port, cts.Token);
+                await _tcpClient.ConnectAsync(host, port, cts.Token).ConfigureAwait(false);
             }
             
             command = command.EndsWith('\n') ? command : command + '\n';
             var data = Encoding.ASCII.GetBytes(command);
             var stream = _tcpClient.GetStream();
             
-            await stream.WriteAsync(data, 0, data.Length, cts.Token);
+            await stream.WriteAsync(data, 0, data.Length, cts.Token).ConfigureAwait(false);
             ClassLogger.Trace($"Sent: {command.Trim()}");
             
             var response = new StringBuilder();
@@ -377,7 +377,7 @@ public sealed class RigctldService : IRigService, IDisposable
             
             do
             {
-                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
+                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token).ConfigureAwait(false);
                 if (bytesRead == 0) break;
                 
                 var chunk = Encoding.ASCII.GetString(buffer, 0, bytesRead);

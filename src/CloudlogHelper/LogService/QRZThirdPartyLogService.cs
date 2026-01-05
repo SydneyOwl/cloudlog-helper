@@ -23,8 +23,8 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
             {
                 KEY = ApiKey,
                 ACTION = "STATUS"
-            }, cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            }, cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
         var nameValueCollection = HttpUtility.ParseQueryString(responseText);
         if (nameValueCollection.Get("RESULT") == "OK") return;
         throw new Exception($"QRZ Test failed: {nameValueCollection.Get("REASON")?.Trim()}");
@@ -38,9 +38,9 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
                 KEY = ApiKey,
                 ACTION = "INSERT",
                 ADIF = adif
-            }, cancellationToken: token);
+            }, cancellationToken: token).ConfigureAwait(false);
 
-        var responseText = await result.GetStringAsync();
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
         var nameValueCollection = HttpUtility.ParseQueryString(responseText);
         if (nameValueCollection.Get("RESULT") == "OK") return;
         throw new Exception($"QRZ Test failed: {nameValueCollection.Get("REASON")?.Trim()}");

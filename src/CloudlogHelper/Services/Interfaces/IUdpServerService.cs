@@ -17,5 +17,5 @@ public interface IUdpServerService
 
     int QSOUploadRetryCount();
 
-    Task InitializeAsync(Action<WsjtxMessage> handler, Action<LogLevel, string> logger);
+    Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger);
 }

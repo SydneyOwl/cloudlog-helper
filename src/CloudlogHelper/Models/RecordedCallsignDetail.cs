@@ -158,8 +158,7 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Client ID sent by client, e.g. `JTDX` `WSJT-X`
     /// </summary>
     public string ClientId { get; set; }
-
-
+    
     /// <summary>
     ///     Original adif data.
     /// </summary>
@@ -183,12 +182,15 @@ public class RecordedCallsignDetail : ReactiveObject
     [Reactive]
     public UploadStatus UploadStatus { get; set; } = UploadStatus.Pending;
 
+    /// <summary>
+    ///     Whether this QSO is in upload queue or not.
+    /// </summary>
+    public bool IsInUploadQueue = false;
 
     /// <summary>
     ///     Whether to force-upload this qso or not, even if auto upload function is not enabled.
     /// </summary>
     public bool ForcedUpload { get; set; }
-
 
     /// <summary>
     ///     Generate a RecordedCallsignDetail object by passing CountryDatabase and QsoLogged.
@@ -364,47 +366,39 @@ public class RecordedCallsignDetail : ReactiveObject
             : LangKeys.qsotemplate);
 
         return string.Format(template,
-            // 0-3: 基本呼号和国家信息
             DXCall ?? "N/A",
             LocalizedCountryName ?? "Unknown",
             CqZone,
             ItuZone,
 
-            // 4-7: 地理位置信息
             Continent ?? "N/A",
             Latitude.ToString("0.0000"),
             Longitude.ToString("0.0000"),
             GmtOffset,
 
-            // 8-9: DXCC和网格
             Dxcc ?? "N/A",
             DXGrid ?? "N/A",
 
-            // 10-13: 频率和模式
             FreqHelper.GetFrequencyStr(TXFrequencyInHz),
             TXFrequencyInMeters ?? "N/A",
             Mode ?? "N/A",
             ParentMode ?? "N/A",
 
-            // 14-17: 时间和报告
             DateTimeOn,
             DateTimeOff,
             ReportSent ?? "N/A",
             ReportReceived ?? "N/A",
 
-            // 18-21: 功率和操作信息
             TXPower ?? "N/A",
             OperatorCall ?? "N/A",
             MyCall ?? "N/A",
             MyGrid ?? "N/A",
 
-            // 22-25: 交换信息和传播
             ExchangeSent ?? "N/A",
             ExchangeReceived ?? "N/A",
             AdifPropagationMode ?? "N/A",
             Name ?? "Unknown",
 
-            // 26-29: 备注和状态信息
             Comments ?? "None",
             ClientId ?? "N/A",
             UploadStatus.ToString(),

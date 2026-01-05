@@ -32,7 +32,7 @@ public class TestButtonUserControlViewModel : ViewModelBase
 
             TestCommand?
                 .ThrownExceptions
-                .Do(err => ClassLogger.Error(err, "Ex when test:"))
+                .Do(err => ClassLogger.Error(err, "Error when testing:"))
                 .Subscribe(async void (ex) => { CheckPassed = false; })
                 .DisposeWith(disposables);
 

@@ -9,10 +9,11 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         mc:Ignorable="d"
-        d:DesignWidth="800" d:DesignHeight="700"
+        d:DesignWidth="700" d:DesignHeight="700"
         x:DataType="viewModels:SettingsWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.settings}}"
         SizeToContent="Width"
+        CanResize="False"
         Icon="avares://CloudlogHelper/Assets/icon.png"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI">
@@ -109,7 +110,7 @@
         </StackPanel>
 
         <!-- Main Content (TabControl) -->
-        <TabControl Grid.Row="1">
+        <TabControl Grid.Row="1" MaxWidth="750">
             <!-- Basic Settings Tab -->
             <TabItem Header="{I18N {x:Static resources:LangKeys.basicsettings}}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -155,7 +156,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-
             <!-- Cloudlog Tab -->
             <TabItem Header="Cloudlog">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -429,8 +429,8 @@
                                                   IsChecked="{Binding DraftSettings.FLRigSettings.ReportRFPower}" />
                                     </StackPanel>
 
-                                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*"
-                                          Margin="0 0 0 0">
+                                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto"
+                                          Margin="0 0 0 0" ColumnSpacing="10">
                                         <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
                                                    Classes="setting-label" />
                                         <TextBox Classes="setting-control" Grid.Column="1"
@@ -466,8 +466,7 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Grid ColumnDefinitions="*,2*,*"  IsVisible="{Binding 
-                                OmniRigInited}"
+                                <Grid ColumnDefinitions="*,2*,*"  IsVisible="{Binding OmniRigInited}"
                                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
                                       RowSpacing="10">
                                     <!-- Polling -->
@@ -492,14 +491,14 @@
                                               SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}"
                                               ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}" />
                                     
-                                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*"
-                                          Margin="0 0 0 0">
-                                        <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
-                                                   Classes="setting-label" />
-                                        <TextBox Classes="setting-control" Grid.Column="1"
-                                                 Text="{Binding DraftSettings.OmniRigSettings.SyncRigInfoAddress}"
-                                                 Watermark="{I18N {x:Static resources:LangKeys.spiltby}}" />
-                                    </Grid>
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
+                                               Grid.Row="3" Grid.Column="0"
+                                               Classes="setting-label" />
+                                    <TextBox Classes="setting-control" Grid.Row="3" Grid.Column="1"
+                                             HorizontalAlignment="Left"
+                                             Width="200"
+                                             Text="{Binding DraftSettings.OmniRigSettings.SyncRigInfoAddress}"
+                                             Watermark="{I18N {x:Static resources:LangKeys.spiltby}}" />
 
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding OmniRigTestButtonUserControl}" />
@@ -547,6 +546,7 @@
                                               IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessage}" />
                                     <TextBox Grid.Row="5" Grid.Column="1" Classes="setting-control" Margin="0,10,0,0"
                                              Text="{Binding DraftSettings.UDPSettings.ForwardAddress}"
+                                             Watermark="e.g. 192.168.1.5:2237"
                                              IsEnabled="{Binding #forwardudp.IsChecked}" />
 
                                     <!-- TDP Forwarding -->
@@ -556,6 +556,7 @@
                                               IsChecked="{Binding DraftSettings.UDPSettings.ForwardMessageToHttp}" />
                                     <TextBox Grid.Row="6" Grid.Column="1" Classes="setting-control" Margin="0,10,0,0"
                                              Text="{Binding DraftSettings.UDPSettings.ForwardHttpAddress}"
+                                             Watermark="e.g. http://domain/upload"
                                              IsEnabled="{Binding #forwardtcp.IsChecked}" />
 
                                     <!-- Notifications -->

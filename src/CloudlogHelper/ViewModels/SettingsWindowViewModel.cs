@@ -52,6 +52,8 @@ public class SettingsWindowViewModel : ViewModelBase
         OpenTempDir = ReactiveCommand.Create(() => { });
         SaveAndApplyConf = ReactiveCommand.Create(() => { });
         HamlibInited = true;
+        OmniRigInited = true;
+        FullyInitialized = true;
         // InitializeLogSystems();
     }
 
@@ -257,7 +259,7 @@ public class SettingsWindowViewModel : ViewModelBase
         catch (Exception e)
         {
             await Dispatcher.UIThread.InvokeAsync(() => { OmniRigInited = false; });
-            ClassLogger.Error(e);
+            ClassLogger.Error(e," Failed to init omnirig.");
             await Notification.SendErrorNotificationAsync(e.Message);
         }
     }
@@ -286,7 +288,7 @@ public class SettingsWindowViewModel : ViewModelBase
         catch (Exception e)
         {
             await Dispatcher.UIThread.InvokeAsync(() => { HamlibInited = false; });
-            ClassLogger.Error(e);
+            ClassLogger.Error(e, "Failed to init hamlib.");
             await Notification.SendErrorNotificationAsync(e.Message);
         }
     }

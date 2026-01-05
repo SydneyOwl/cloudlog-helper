@@ -69,7 +69,6 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 .Where(x => x.Part == ChangedPart.Cloudlog)
                 .Subscribe(x =>
                 {
-                    ClassLogger.Debug("Setting changed; updating cloudlog info");
                     Observable.Return(Unit.Default) // 触发信号
                         .Delay(TimeSpan.FromMilliseconds(500))
                         .InvokeCommand(_pollCommand)
@@ -102,9 +101,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
             _setStatusToUnknown();
             return;
         }
-
-        ;
-        ClassLogger.Debug("Refreshing userbasic data....");
+        
         if (_settings.IsCloudlogHasErrors(true))
             throw new Exception(TranslationHelper.GetString(LangKeys.confcloudlogfirst));
 

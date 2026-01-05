@@ -34,7 +34,7 @@ public class AboutWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ClassLogger.Error(e);
+            ClassLogger.Error(e, "Error while opening an uri");
         }
     }
 }

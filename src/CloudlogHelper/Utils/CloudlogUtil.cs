@@ -28,7 +28,7 @@ public class CloudlogUtil
             var result = await url
                 .AppendPathSegments(DefaultConfigs.CloudOrWaveCheckEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-                .GetStringAsync(cancellationToken: token);
+                .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
             var pp = JsonConvert.DeserializeObject<JObject>(result)!;
             var instanceName = pp.GetValue("name")!.ToString();
             return instanceName switch
@@ -55,7 +55,7 @@ public class CloudlogUtil
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogTestAPIEndpoint, key)
-            .GetStringAsync(cancellationToken: token);
+            .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
 
         if (!result.Contains("<auth>"))
         {
@@ -98,7 +98,7 @@ public class CloudlogUtil
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationStatisticsAPIEndpoint, key)
-            .GetStringAsync(cancellationToken: token);
+            .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
         var rawResult = JsonConvert.DeserializeObject<StationStatistics>(result);
         return rawResult;
     }
@@ -113,7 +113,7 @@ public class CloudlogUtil
     {
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationInfoAPIEndpoint, key)
-            .GetStringAsync(cancellationToken: token);
+            .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
         var rawResult = JsonConvert.DeserializeObject<List<StationInfo>>(result)
                         ?? new List<StationInfo>();
         return rawResult;
@@ -129,7 +129,7 @@ public class CloudlogUtil
     public static async Task<StationInfo?> GetStationInfoAsync(string url, string key, string stationId,
         CancellationToken token)
     {
-        var result = await GetStationInfoAsync(url, key, token);
+        var result = await GetStationInfoAsync(url, key, token).ConfigureAwait(false);
         if (result.Count == 0) return null;
         foreach (var stationInfo in result)
             if (stationInfo.StationId == stationId)
@@ -162,7 +162,7 @@ public class CloudlogUtil
         var results = await url
             .AppendPathSegments(DefaultConfigs.CloudlogRadioAPICallV2Endpoint)
             .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
-            .ReceiveString();
+            .ReceiveString().ConfigureAwait(false);
         return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
     }
 
@@ -183,7 +183,7 @@ public class CloudlogUtil
                 .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                 .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
-                .ReceiveString();
+                .ReceiveString().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
         }
         catch (Exception e)

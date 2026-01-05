@@ -34,8 +34,8 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
         var result = await HamCQQsoUploadEndpoint
             .AllowHttpStatus(406)
             .WithHeader("Content-Type", "application/json")
-            .PostStringAsync(reqJson.ToString(), cancellationToken: token);
-        var responseText = await result.GetStringAsync();
+            .PostStringAsync(reqJson.ToString(), cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync().ConfigureAwait(false);
         var code = result.StatusCode;
         if (responseText == "Pass") return;
         var res = JsonConvert.DeserializeObject<JObject>(responseText);

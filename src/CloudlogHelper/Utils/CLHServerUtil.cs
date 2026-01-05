@@ -189,7 +189,7 @@ public class CLHServerUtil
         Stream s, 
         CancellationToken cancellationToken = default)
     {
-        var (typeByte, buffer) = await ReadMsgInternalAsync(s, cancellationToken);
+        var (typeByte, buffer) = await ReadMsgInternalAsync(s, cancellationToken).ConfigureAwait(false);
         return UnPack(typeByte, buffer);
     }
 
@@ -198,7 +198,7 @@ public class CLHServerUtil
         IMessage msg, 
         CancellationToken cancellationToken = default)
     {
-        var (_, buffer) = await ReadMsgInternalAsync(s, cancellationToken);
+        var (_, buffer) = await ReadMsgInternalAsync(s, cancellationToken).ConfigureAwait(false);
         UnPackInto(buffer, msg);
     }
 

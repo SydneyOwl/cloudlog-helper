@@ -190,7 +190,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         }
         catch (Exception e)
         {
-            ClassLogger.Error(e);
+            ClassLogger.Error(e,"Error while updating polar.");
             PlotControl.Plot.Clear();
             ShowErrorMsg = true;
             ErrorMessage = e.Message;
