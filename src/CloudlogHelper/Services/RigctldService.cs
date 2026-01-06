@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -41,13 +42,19 @@ public sealed class RigctldService : IRigService, IDisposable
     {
         try
         {
+            if (_tcpClient is not null)
+            {
+                var endPoint = (IPEndPoint)_tcpClient.Client.RemoteEndPoint!;
+                if (_tcpClient.Connected && !IPAddress.IsLoopback(endPoint.Address)) return true;
+            }
+           
             return 
                 (_backgroundProcess?.HasExited == false) || 
                 (_onetimeProcess?.HasExited == false);
         }
         catch (InvalidOperationException)
         {
-            StopServiceSync();
+            // StopServiceSync();
             return false;
         }
     }

@@ -24,10 +24,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly IApplicationSettingsService _applicationSettingsService;
-
     private bool _applingSettings;
-    private IInAppNotificationService _inAppNotificationService;
 
     private bool _isRigctldUsingExternal;
 
@@ -47,10 +44,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
         IInAppNotificationService nw,
         CommandLineOptions cmd)
     {
-        _applicationSettingsService = ss;
         _udpServerService = uSer;
         _rigBackendManager = rigBackendManager;
-        _inAppNotificationService = nw;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         if (!InitSkipped)
         {
@@ -63,10 +58,10 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 try
                 {
                     UdpServerRunningStatus = StatusLightEnum.Loading;
-                    if (_applicationSettingsService.TryGetDraftSettings(this, out var draft))
+                    if (ss.TryGetDraftSettings(this, out var draft))
                     {
                         draft!.UDPSettings.EnableUDPServer = !draft!.UDPSettings.EnableUDPServer;
-                        _applicationSettingsService.ApplySettings(this);
+                        ss.ApplySettings(this);
                     }
 
                     await Task.Delay(500);
@@ -109,10 +104,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 switch (res.Part)
                 {
                     case ChangedPart.NothingJustClosed:
-                        _updateRigListeningAddress();
-                        break;
-                    case ChangedPart.UDPServer:
-                        _updateUdpServerListeningAddress();
+                        _updateRigInfo();
+                        _updateUdpServerInfo();
                         break;
                 }
             }).DisposeWith(disposables);
@@ -126,127 +119,23 @@ public class StatusLightUserControlViewModel : ViewModelBase
                     : StatusLightEnum.Stopped;
 
                 RigBackendRunningStatus = _rigBackendManager.IsServiceRunning()
-                                          || (_isRigctldUsingExternal && _rigBackendManager.GetServiceType() ==
-                                              RigBackendServiceEnum.Hamlib)
                     ? StatusLightEnum.Running
                     : StatusLightEnum.Stopped;
             }).DisposeWith(disposables);
         });
 
-        _updateUdpServerListeningAddress();
-        _updateRigListeningAddress();
+        _updateUdpServerInfo();
+        _updateRigInfo();
     }
 
-    private void _updateRigListeningAddress()
+    private void _updateRigInfo()
     {
-
-        var tp = _rigBackendManager.GetServiceType();
-        // Console.WriteLine($"========Current: {_rigBackendManager.GetServiceType()}");
-
-        if (tp == RigBackendServiceEnum.Hamlib)
-        {
-            BackendService = "Hamlib";
-            var hamlibSettings = _applicationSettingsService.GetCurrentSettings().HamlibSettings;
-            var ip = DefaultConfigs.RigctldDefaultHost;
-            var port = DefaultConfigs.RigctldDefaultPort;
-
-            try
-            {
-                if (hamlibSettings.UseExternalRigctld)
-                {
-                    _isRigctldUsingExternal = true;
-                    (ip, port) = IPAddrUtil.ParseAddress(hamlibSettings.ExternalRigctldHostAddress);
-                    CurrentRigBackendAddress = $"({ip}:{port})";
-                    return;
-                }
-
-                _isRigctldUsingExternal = false;
-
-                if (hamlibSettings.UseRigAdvanced &&
-                    !string.IsNullOrEmpty(hamlibSettings.OverrideCommandlineArg))
-                {
-                    var matchIp = Regex.Match(hamlibSettings.OverrideCommandlineArg, @"-T\s+(\S+)");
-                    if (matchIp.Success)
-                    {
-                        ip = matchIp.Groups[1].Value;
-                        ClassLogger.Debug($"Match ip from args: {ip}");
-                    }
-                    else
-                    {
-                        CurrentRigBackendAddress = "(?)";
-                        throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
-                    }
-
-                    var matchPort = Regex.Match(hamlibSettings.OverrideCommandlineArg, @"-t\s+(\S+)");
-                    if (matchPort.Success)
-                    {
-                        port = int.Parse(matchPort.Groups[1].Value);
-                    }
-                    else
-                    {
-                        CurrentRigBackendAddress = "(?)";
-                        throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
-                    }
-
-                    CurrentRigBackendAddress = $"({ip}:{port})";
-                    return;
-                }
-
-                if (hamlibSettings is { UseRigAdvanced: true, AllowExternalControl: true })
-                {
-                    CurrentRigBackendAddress = $"(0.0.0.0:{port})";
-                    return;
-                }
-
-                CurrentRigBackendAddress = $"({ip}:{port})";
-            }
-            catch (Exception a)
-            {
-                ClassLogger.Error(a,"Failed to update rig listen address.");
-                // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
-                CurrentRigBackendAddress = "(?)";
-            }
-        }
-
-        if (tp == RigBackendServiceEnum.FLRig)
-        {
-            BackendService = "FLRig";
-            var flrigSettings = _applicationSettingsService.GetCurrentSettings().FLRigSettings;
-            CurrentRigBackendAddress = $"({flrigSettings.FLRigHost}:{flrigSettings.FLRigPort})";
-        }
-        
-        if (tp == RigBackendServiceEnum.OmniRig)
-        {
-            BackendService = "OmniRig";
-            var omniRigSettings = _applicationSettingsService.GetCurrentSettings().OmniRigSettings;
-            CurrentRigBackendAddress = $"({omniRigSettings.SelectedRig})";
-        }
+        CurrentRigBackendAddress = _rigBackendManager.GetServiceEndpointAddress();
+        BackendService = _rigBackendManager.GetServiceType().ToString();
     }
 
-    private void _updateUdpServerListeningAddress()
+    private void _updateUdpServerInfo()
     {
-        try
-        {
-            var settings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
-            var port = settings.UDPPort;
-            if (string.IsNullOrEmpty(port))
-            {
-                CurrentUDPServerAddress = "(?)";
-                return;
-            }
-
-            if (settings.EnableConnectionFromOutside)
-            {
-                CurrentUDPServerAddress = $"(0.0.0.0:{port})";
-                return;
-            }
-
-            CurrentUDPServerAddress = $"(127.0.0.1:{port})";
-        }
-        catch (Exception a)
-        {
-            ClassLogger.Error(a,"Failed to update udp listening address.");
-            // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
-        }
+        CurrentUDPServerAddress = _udpServerService.GetUdpBindingAddress();
     }
 }

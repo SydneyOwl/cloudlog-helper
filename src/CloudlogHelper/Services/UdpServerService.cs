@@ -54,6 +54,32 @@ public class UdpServerService : IUdpServerService, IDisposable
         _cts.Dispose();
     }
 
+    public string GetUdpBindingAddress()
+    {
+        try
+        {
+            var settings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
+            var port = settings.UDPPort;
+            if (string.IsNullOrEmpty(port))
+            {
+                return "(?)";
+            }
+
+            if (settings.EnableConnectionFromOutside)
+            {
+                return $"(0.0.0.0:{port})";
+            }
+
+            return $"(127.0.0.1:{port})";
+        }
+        catch (Exception a)
+        {
+            ClassLogger.Error(a,"Failed to update udp listening address.");
+            return "?";
+            // _windowNotificationManagerService.SendErrorNotificationSync(a.Message);
+        }
+    }
+
     public bool IsUdpServerEnabled()
     {
         return _applicationSettingsService.GetCurrentSettings().UDPSettings.EnableUDPServer;

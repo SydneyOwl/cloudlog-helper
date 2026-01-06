@@ -9,6 +9,8 @@ namespace CloudlogHelper.Services.Interfaces;
 
 public interface IUdpServerService
 {
+    string GetUdpBindingAddress();
+    
     bool IsUdpServerEnabled();
     
     bool IsUdpServerRunning();

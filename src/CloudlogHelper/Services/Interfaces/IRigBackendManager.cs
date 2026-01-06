@@ -11,6 +11,7 @@ public interface IRigBackendManager
     Task InitializeAsync();
 
     RigBackendServiceEnum GetServiceType();
+    string GetServiceEndpointAddress();
     IRigService GetServiceByName(RigBackendServiceEnum rigBackend);
 
     bool IsServiceRunning();
