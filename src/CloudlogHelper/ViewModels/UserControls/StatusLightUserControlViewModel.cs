@@ -26,8 +26,6 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     private bool _applingSettings;
 
-    private bool _isRigctldUsingExternal;
-
     private readonly IRigBackendManager _rigBackendManager;
     private readonly IUdpServerService _udpServerService;
 
@@ -94,48 +92,49 @@ public class StatusLightUserControlViewModel : ViewModelBase
 
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
     [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigBackendCommand { get; set; }
+    
+    private ReactiveCommand<Unit,Unit> StatusUpdateCommand { get; set; }
 
     private void Initialize()
     {
+        StatusUpdateCommand = ReactiveCommand.Create(() =>
+        {
+            _updateUdpServerInfo();
+            _updateRigServiceInfo();
+        });
         this.WhenActivated(disposables =>
         {
-            MessageBus.Current.Listen<SettingsChanged>().Subscribe(res =>
-            {
-                switch (res.Part)
-                {
-                    case ChangedPart.NothingJustClosed:
-                        _updateRigInfo();
-                        _updateUdpServerInfo();
-                        break;
-                }
-            }).DisposeWith(disposables);
+            StatusUpdateCommand.ThrownExceptions.Subscribe(ex =>
+                ClassLogger.Error(ex, "Error while updating service status"));
+            MessageBus.Current.Listen<SettingsChanged>()
+                .Where(x => x.Part == ChangedPart.NothingJustClosed)
+                .Subscribe(res =>
+                { Observable.Return(Unit.Default).InvokeCommand(StatusUpdateCommand).DisposeWith(disposables); })
+                .DisposeWith(disposables);
 
-            Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)).Subscribe(_ =>
+            Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(5)).Subscribe(_ =>
             {
                 if (_applingSettings) return;
-
-                UdpServerRunningStatus = _udpServerService.IsUdpServerRunning()
-                    ? StatusLightEnum.Running
-                    : StatusLightEnum.Stopped;
-
-                RigBackendRunningStatus = _rigBackendManager.IsServiceRunning()
-                    ? StatusLightEnum.Running
-                    : StatusLightEnum.Stopped;
+                Observable.Return(Unit.Default).InvokeCommand(StatusUpdateCommand).DisposeWith(disposables);
             }).DisposeWith(disposables);
         });
-
-        _updateUdpServerInfo();
-        _updateRigInfo();
     }
 
-    private void _updateRigInfo()
+    private void _updateRigServiceInfo()
     {
+        RigBackendRunningStatus = _rigBackendManager.IsServiceRunning()
+            ? StatusLightEnum.Running
+            : StatusLightEnum.Stopped;
         CurrentRigBackendAddress = _rigBackendManager.GetServiceEndpointAddress();
         BackendService = _rigBackendManager.GetServiceType().ToString();
     }
 
     private void _updateUdpServerInfo()
     {
+        UdpServerRunningStatus = _udpServerService.IsUdpServerRunning()
+            ? StatusLightEnum.Running
+            : StatusLightEnum.Stopped;
+
         CurrentUDPServerAddress = _udpServerService.GetUdpBindingAddress();
     }
 }

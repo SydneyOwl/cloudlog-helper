@@ -8,19 +8,9 @@ public enum ChangedPart
     Cloudlog,
 
     /// <summary>
-    ///     Sent when setting window is closed and Hamlib config changed.
+    ///     Sent when setting window is closed and rig config changed.
     /// </summary>
-    Hamlib,
-
-    /// <summary>
-    ///     Sent when setting window is closed and FLRig config changed.
-    /// </summary>
-    FLRig,
-    
-    /// <summary>
-    /// Sent when setting window is closed and OmniRig config changed.
-    /// </summary>
-    OmniRig,
+    RigService,
 
     /// <summary>
     ///     Sent when setting window is closed and UDP config changed.

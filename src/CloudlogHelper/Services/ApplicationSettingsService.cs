@@ -84,25 +84,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.Cloudlog });
             }
 
-            if (IsHamlibConfChanged())
+            if (IsHamlibConfChanged() || IsOmniRigConfChanged() || IsFlrigConfChanged())
             {
-                ClassLogger.Trace("hamlib settings changed");
+                ClassLogger.Trace("RIG service settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.Hamlib });
-            }
-
-            if (IsFlrigConfChanged())
-            {
-                ClassLogger.Trace("flrig settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.FLRig });
-            }
-            
-            if (IsOmniRigConfChanged())
-            {
-                ClassLogger.Trace("omnirig settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.OmniRig });
+                    { Part = ChangedPart.RigService });
             }
 
             if (IsUDPConfChanged())
@@ -131,25 +117,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 throw new SynchronizationLockException("Draft setting is locked by another instance!");
             
             // make sure rig settings is not dirty
-            if (IsHamlibConfChanged())
+            if (IsHamlibConfChanged() || IsOmniRigConfChanged() || IsFlrigConfChanged())
             {
-                ClassLogger.Trace("hamlib settings changed");
+                ClassLogger.Trace("RIG service settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.Hamlib });
-            }
-            
-            if (IsOmniRigConfChanged())
-            {
-                ClassLogger.Trace("omnirig settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.OmniRig });
-            }
-
-            if (IsFlrigConfChanged())
-            {
-                ClassLogger.Trace("flrig settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.FLRig });
+                    { Part = ChangedPart.RigService });
             }
 
             _isDraftLocked = false;

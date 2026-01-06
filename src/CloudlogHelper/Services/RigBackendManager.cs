@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,60 +57,61 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         UpdateSettingsCache();
         
         // bind settings change
-        MessageBus.Current.Listen<SettingsChanged>().Subscribe(async (x) =>
-        {
-            try
-            {
-                await HandleSettingsChanged(x);
-            }
-            catch (Exception e)
-            {
-                ClassLogger.Error(e,"Error while switching rig services.");
-            }
-        });
+        MessageBus.Current.Listen<SettingsChanged>()
+            .Where(x => x.Part == ChangedPart.RigService )
+            .Subscribe(async (x) =>
+                {
+                    try
+                    {
+                        await HandleSettingsChanged();
+                    }
+                    catch (Exception e)
+                    {
+                        ClassLogger.Error(e,"Error while switching rig services.");
+                    } 
+                });
     }
 
-    private async Task HandleSettingsChanged(SettingsChanged x)
+    private async Task HandleSettingsChanged()
     {
-        var currentRigService = _getCurrentRigService();
-        
-        // Only stop service if service type actually changed
-        if (currentRigService.GetServiceType() != _currentService?.GetServiceType())
-        {
-            await StopCurrentService();
-            _currentService = currentRigService;
-        }
-
-        // Use dictionary for service handling to avoid repetitive switch
-        var serviceHandlers = new Dictionary<ChangedPart, Func<Task>>
-        {
-            [ChangedPart.NothingJustClosed] = HandleNothingJustClosed,
-            [ChangedPart.Hamlib] = () => HandleHamlibSettings(currentRigService),
-            [ChangedPart.FLRig] = () => HandleFLRigSettings(currentRigService),
-            [ChangedPart.OmniRig] = () => HandleOmniRigSettings(currentRigService)
-        };
-
-        if (serviceHandlers.TryGetValue(x.Part, out var handler))
-        {
-            await handler();
-        }
-        
         // Update cache after settings change
         UpdateSettingsCache();
+        
+        await StopAllServices();
+        
+        // find current server and start
+        _currentService = _getCurrentRigService();
+
+        switch (_currentService.GetServiceType())
+        {
+            case RigBackendServiceEnum.Hamlib:
+                await HandleHamlibSettings();
+                break;
+            case RigBackendServiceEnum.FLRig:
+                await HandleFLRigSettings();
+                break;
+            case RigBackendServiceEnum.OmniRig:
+                await HandleOmniRigSettings();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
     }
 
-    private async Task HandleNothingJustClosed()
+    private async Task StopAllServices()
     {
+        ClassLogger.Debug("Stopping all rig services now");
         var tasks = new List<Task>();
         
-        if (!_appSettings.HamlibSettings.PollAllowed)
+        // if (!_appSettings.HamlibSettings.PollAllowed)
             tasks.Add(_services[RigBackendServiceEnum.Hamlib].StopService(_getNewCancellationProcessToken()));
         
-        if (!_appSettings.FLRigSettings.PollAllowed)
+        // if (!_appSettings.FLRigSettings.PollAllowed)
             tasks.Add(_services[RigBackendServiceEnum.FLRig].StopService(_getNewCancellationProcessToken()));
         
-        if (!_appSettings.OmniRigSettings.PollAllowed && 
-            _services.TryGetValue(RigBackendServiceEnum.OmniRig, out var omniRigService))
+        // if (!_appSettings.OmniRigSettings.PollAllowed && 
+            if (_services.TryGetValue(RigBackendServiceEnum.OmniRig, out var omniRigService))
         {
             tasks.Add(omniRigService.StopService(_getNewCancellationProcessToken()));
         }
@@ -117,12 +119,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         await Task.WhenAll(tasks);
     }
 
-    private async Task HandleHamlibSettings(IRigService currentRigService)
+    private async Task HandleHamlibSettings()
     {
-        if (currentRigService.GetServiceType() != RigBackendServiceEnum.Hamlib) 
-            return;
-
-        await _currentService.StopService(_getNewCancellationProcessToken());
         if (_appSettings.HamlibSettings.UseExternalRigctld) 
             return;
 
@@ -134,11 +132,9 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         }
     }
 
-    private async Task HandleFLRigSettings(IRigService currentRigService)
+    private async Task HandleFLRigSettings()
     {
-        if (currentRigService.GetServiceType() != RigBackendServiceEnum.FLRig) 
-            return;
-
+        ClassLogger.Info("FLRig service started.");
         if (_appSettings.FLRigSettings.PollAllowed)
         {
             _syncRigInfoAddr.Clear();
@@ -146,11 +142,9 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         }
     }
 
-    private async Task HandleOmniRigSettings(IRigService currentRigService)
+    private async Task HandleOmniRigSettings()
     {
-        if (currentRigService.GetServiceType() != RigBackendServiceEnum.OmniRig) 
-            return;
-
+        ClassLogger.Info("omnirig service started.");
         if (_appSettings.OmniRigSettings.PollAllowed)
         {
             _syncRigInfoAddr.Clear();

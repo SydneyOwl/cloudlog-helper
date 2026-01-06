@@ -105,6 +105,7 @@ public sealed class RigctldService : IRigService, IDisposable
         ClassLogger.Info("Stopping hamlib...");
         TerminateBackgroundProcess();
         TerminateOnetimeProcess();
+        ClassLogger.Info("Hamlib service stopped.");
     }
     
     public Task StopService(CancellationToken token)
