@@ -121,6 +121,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
             MessageBus.Current.Listen<SettingsChanged>()
                 .Where(x => x.Part == ChangedPart.RigService)
+                .Delay(TimeSpan.FromMilliseconds(100))
                 .Subscribe( x =>
                 {
                     _createNewTimer().DisposeWith(disposables);

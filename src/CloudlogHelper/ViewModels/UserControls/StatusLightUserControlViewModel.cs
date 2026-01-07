@@ -108,6 +108,7 @@ public class StatusLightUserControlViewModel : ViewModelBase
                 ClassLogger.Error(ex, "Error while updating service status"));
             MessageBus.Current.Listen<SettingsChanged>()
                 .Where(x => x.Part == ChangedPart.NothingJustClosed)
+                .Delay(TimeSpan.FromMilliseconds(100))
                 .Subscribe(res =>
                 { Observable.Return(Unit.Default).InvokeCommand(StatusUpdateCommand).DisposeWith(disposables); })
                 .DisposeWith(disposables);
