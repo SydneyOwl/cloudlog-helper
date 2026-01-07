@@ -291,8 +291,8 @@ public class DefaultConfigs
 
     public const int CLHTCPConnRetryDelayMs = 3000;
 
-    public const int CLHHeartbeatTimeoutS = 16;
-    public const int CLHHeartbeatIntervalMS = 5000;
+    public const int CLHHeartbeatTimeoutSec = 16;
+    public const int CLHHeartbeatIntervalMilliSec = 5000;
 
     /// <summary>
     ///     Default timeout (in seconds) for start/stop.
@@ -323,6 +323,8 @@ public class DefaultConfigs
     public static string HamlibFilePath = Path.Join(
         ApplicationStartUpUtil.GetConfigDir(),
         "hamlib");
+
+    public const int LogServicePreinitTimeoutSec = 5;
 
     /// <summary>
     ///     Default World map

@@ -117,10 +117,29 @@ public class App : Application
             if (!typeof(ThirdPartyLogService).IsAssignableFrom(x))
                 throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
             return (ThirdPartyLogService)Activator.CreateInstance(x)!;
-        });
+        }).ToArray();
+
+        var preinitToken = new CancellationTokenSource();
+        preinitToken.CancelAfter(TimeSpan.FromSeconds(DefaultConfigs.LogServicePreinitTimeoutSec));
+        
+        ClassLogger.Debug("Pre-initing log services");
+        // initialize services at background
+        _ = Task.WhenAll(logServices.Select(x => x.PreInitAsync(preinitToken.Token)))
+            .ContinueWith(ex =>
+            {
+                if (ex.IsFaulted)
+                {
+                    ClassLogger.Error(ex.Exception, "Error while initing logservices.");
+                }
+                else
+                {
+                    ClassLogger.Debug("Pre-initing log services finished successfully.");
+                }
+            }, preinitToken.Token);
+        
         collection.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
             ApplicationSettingsService.GenerateApplicationSettingsService(
-                logServices.ToArray(), _cmdOptions.ReinitSettings, pr.GetRequiredService<IMapper>()
+                logServices, _cmdOptions.ReinitSettings, pr.GetRequiredService<IMapper>()
             ));
 
         collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);

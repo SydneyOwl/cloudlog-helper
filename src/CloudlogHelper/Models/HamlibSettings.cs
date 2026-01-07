@@ -100,7 +100,9 @@ public class HamlibSettings : ReactiveValidationObject
             x => x.PollAllowed,
             x => x.ReportRFPower,
             x => x.ReportSplitInfo
-        ).Skip(4).Subscribe(tmp =>
+        ) // fixme some trickly solutions...
+        .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
+        .Subscribe(tmp =>
         {
             _isConfChanged = true;
         }).DisposeWith(_disposable);
@@ -113,7 +115,9 @@ public class HamlibSettings : ReactiveValidationObject
             x => x.UseExternalRigctld,
             x => x.ExternalRigctldHostAddress,
             x => x.SyncRigInfoAddress
-        ).Skip(1).Subscribe(_ =>
+        )// fixme some trickly solutions...
+        .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
+        .Subscribe(_ =>
         {
             _isConfChanged = true;
         }).DisposeWith(_disposable);;

@@ -28,11 +28,11 @@ public abstract class ThirdPartyLogService
     }
 
     /// <summary>
-    ///     Preinit works. This will be called each time setting window opened!
-    ///     DON'T DO TIME COSTING WORKS HERE!
+    ///     Preinit works. This will be called on application start.
     /// </summary>
     /// <returns></returns>
-    public virtual void PreInitSync()
+    public virtual Task PreInitAsync(CancellationToken token)
     {
+        return Task.CompletedTask;
     }
 }

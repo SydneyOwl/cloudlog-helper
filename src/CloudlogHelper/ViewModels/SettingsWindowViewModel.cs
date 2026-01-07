@@ -174,15 +174,6 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _initializeLogSystemsAsync()
     {
-        try
-        {
-            foreach (var draftSettingsLogService in DraftSettings.LogServices) draftSettingsLogService.PreInitSync();
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Error(e, "Exception occurred while initializing log systems.");
-        }
-
         foreach (var draftSettingsLogService in DraftSettings.LogServices)
         {
             var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();

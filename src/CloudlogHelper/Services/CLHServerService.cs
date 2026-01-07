@@ -238,7 +238,7 @@ public class CLHServerService : ICLHServerService, IDisposable
             }
             finally
             {
-                await Task.Delay(DefaultConfigs.CLHHeartbeatIntervalMS, CancellationToken.None);
+                await Task.Delay(DefaultConfigs.CLHHeartbeatIntervalMilliSec, CancellationToken.None);
             }
         }
         ClassLogger.Trace("Send ping loop exited.");

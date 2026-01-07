@@ -206,6 +206,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
             _logProgress($"{cloudParser.QSOCount} Qsos from cloud parsed successfully.", 30);
 
             var cloudParsed = cloudParser.TheQSOs
+                .AsParallel()
+                .WithCancellation(_source.Token)
                 .Select(AdifLog.Parse)
                 .ToList();
 
@@ -237,6 +239,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                         CurrentProgress);
 
                     var localParsed = localParser.TheQSOs
+                        .AsParallel()
+                        .WithCancellation(_source.Token)
                         .Select(AdifLog.Parse)
                         .ToList();
 

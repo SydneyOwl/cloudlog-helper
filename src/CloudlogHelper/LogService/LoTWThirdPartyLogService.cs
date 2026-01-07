@@ -80,7 +80,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         throw new Exception($"Upload failed: {result}");
     }
 
-    public override void PreInitSync()
+    public override async Task PreInitAsync(CancellationToken token)
     {
         // find station infos
         if (Stations is null || Stations.Length == 0)
@@ -115,7 +115,7 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
             // check if file valid
             if (!string.IsNullOrEmpty(stationDataPath))
             {
-                var readAllText = File.ReadAllText(stationDataPath);
+                var readAllText = await File.ReadAllTextAsync(stationDataPath, token);
                 var doc = XDocument.Parse(readAllText);
 
                 var nameList = doc.Root?.Elements("StationData")

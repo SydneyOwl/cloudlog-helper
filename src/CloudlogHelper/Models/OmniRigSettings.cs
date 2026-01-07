@@ -59,7 +59,9 @@ public class OmniRigSettings : ReactiveValidationObject
             x => x.PollAllowed,
              x=> x.PollInterval,
             x => x.SyncRigInfoAddress
-        ).Skip(1).Subscribe(_ =>
+        )
+        .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
+        .Subscribe(_ =>
         {
             // Console.WriteLine("Oh seems like sth changed..");
             _isConfChanged = true;

@@ -62,6 +62,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     ///     Semaphore to prevent re-entrant polling
     /// </summary>
     private readonly SemaphoreSlim _pollLock = new(1, 1);
+    
+    /// <summary>
+    ///     Semaphore to prevent repeated timer (polling)
+    /// </summary>
+    private readonly SemaphoreSlim _pollTimerLock = new(1, 1);
+    
 
     public RIGDataGroupboxUserControlViewModel()
     {
@@ -113,17 +119,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         {
             _cancelSubject.DisposeWith(disposables);
 
-            // Handle settings changes with throttling to avoid excessive restarts
             MessageBus.Current.Listen<SettingsChanged>()
-                // .Throttle(TimeSpan.FromMilliseconds(500))
+                .Where(x => x.Part == ChangedPart.RigService)
                 .Subscribe( x =>
                 {
-                    if (x.Part == ChangedPart.NothingJustClosed)
-                    {
-                        _createNewTimer().DisposeWith(disposables);
-                        
-                        Interlocked.Exchange(ref  _rigConnFailedTimes, 0);
-                    }
+                    _createNewTimer().DisposeWith(disposables);
+                    Interlocked.Exchange(ref  _rigConnFailedTimes, 0);
                 })
                 .DisposeWith(disposables);
 
@@ -408,9 +409,9 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     
     private IDisposable _createNewTimer()
     {
-        ClassLogger.Trace("Creating new rig timer...");
         _disposeAllTimers();
-
+        _pollTimerLock.Wait(CancellationToken.None);
+        ClassLogger.Trace("Creating new rig timer.");
         var timerDisposable = Observable.Defer(() =>
             {
                 return Observable.Create<Unit>(observer =>
@@ -431,6 +432,13 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                             {
                                 await HandlePollExceptionAsync(ex);
                             }
+                        }
+                        else
+                        {
+                            // polling is not enabled - stop this timer immediately.
+                            ClassLogger.Trace("No rig service available - polling timer stopped.");
+                            observer.OnCompleted();
+                            return;
                         }
 
                         while (!innerCancellationToken.IsCancellationRequested)
@@ -493,6 +501,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                     
                     return Disposable.Create(() =>
                     {
+                        ClassLogger.Trace("Calling dispose.");
                         innerCancellation.Cancel();
                         timerTask.ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnFaulted);
                     });
@@ -502,7 +511,8 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             .Finally(() =>
             {
                 _resetStatus();
-                ClassLogger.Trace("Canceling radio timer...");
+                _pollTimerLock.Release();
+                ClassLogger.Trace("Cancelled radio timer.");
             })
             .Subscribe(
                 onNext: _ => { /* Timer tick handled in the observable */ },
