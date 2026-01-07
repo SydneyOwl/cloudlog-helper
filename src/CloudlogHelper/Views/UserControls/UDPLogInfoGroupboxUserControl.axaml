@@ -97,7 +97,7 @@
                                         <StackPanel Grid.Column="1" VerticalAlignment="Top">
                                             <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17"
                                                        MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0" />
-                                            <TextBlock Text="{Binding LocalizedCountryName}" FontSize="12"
+                                            <TextBlock Text="{I18N {Binding OriginalCountryName}}" FontSize="12"
                                                        FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" />
                                         </StackPanel>
                                         <Grid Grid.Column="2"

@@ -27,11 +27,6 @@ public class DatabaseService : IDatabaseService, IDisposable
     /// </summary>
     private SQLiteAsyncConnection? _conn;
 
-    /// <summary>
-    ///     Map English country names to Chinese. Only used when initializing database.
-    /// </summary>
-    private Dictionary<string, string> _countries = new();
-
     private Version _dbVersion;
 
     /// <summary>
@@ -121,7 +116,6 @@ public class DatabaseService : IDatabaseService, IDisposable
     public async Task UpgradeDatabaseAsync()
     {
         ClassLogger.Info($"Upgrading database {_dbVersion} => {_appVersion}");
-        await InitCountryDicAsync().ConfigureAwait(false);
         await _conn!.RunInTransactionAsync(db =>
         {
             ClassLogger.Trace($"Running transaction: {_dbVersion} => {_appVersion}");
@@ -318,42 +312,6 @@ public class DatabaseService : IDatabaseService, IDisposable
     }
 
     /// <summary>
-    ///     Init _countries dict.
-    /// </summary>
-    /// <returns></returns>
-    private Task InitCountryDicAsync()
-    {
-        try
-        {
-            var co_en2cn = ReadEmbeddedFileAsString(DefaultConfigs.EmbeddedCountryEn2cnFilename);
-            var st = co_en2cn.Split("\n");
-            _countries = new Dictionary<string, string>();
-            foreach (var t in st)
-            {
-                if (!t.Contains(":")) continue;
-                var cc = t.Split(":");
-                // Console.WriteLine($"{cc[0]} => {cc[1]}");
-                _countries[cc[0]] = cc[1];
-            }
-        }
-        catch (IOException e)
-        {
-        }
-
-        return Task.CompletedTask;
-    }
-
-    /// <summary>
-    ///     Get corrsponding english name by providing chinese.
-    /// </summary>
-    /// <param name="country"></param>
-    /// <returns></returns>
-    private string SearchEnForCountryNameCn(string country)
-    {
-        return _countries.TryGetValue(country, out var cnCountry) ? cnCountry : string.Empty;
-    }
-
-    /// <summary>
     ///     Init adif modes
     /// </summary>
     /// <param name="conn"></param>
@@ -387,7 +345,6 @@ public class DatabaseService : IDatabaseService, IDisposable
             {
                 if (!st[i].Contains(":")) continue;
                 var cdb = new CountryDatabase(st[i]);
-                cdb.CountryNameCn = SearchEnForCountryNameCn(cdb.CountryNameEn);
                 cdb.Id = i + 1;
 
                 countries.Add(cdb);

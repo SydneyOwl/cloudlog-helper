@@ -65,6 +65,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         var testQso = new RecordedCallsignDetail
         {
+            OriginalCountryName = "Taiwan China",
             LocalizedCountryName = "日本",
             CqZone = 25,
             ItuZone = 45,

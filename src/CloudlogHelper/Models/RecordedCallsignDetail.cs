@@ -18,6 +18,11 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Upload status of log services.
     /// </summary>
     public Dictionary<string, bool> UploadedServices = new();
+    
+    /// <summary>
+    ///     Original country names.
+    /// </summary>
+    [Reactive] public string OriginalCountryName { get; set; }
 
     /// <summary>
     ///     Localized country names.
@@ -212,9 +217,8 @@ public class RecordedCallsignDetail : ReactiveObject
 
         return new RecordedCallsignDetail
         {
-            LocalizedCountryName = lan == SupportedLanguage.SimplifiedChinese
-                ? cdb.CountryNameCn
-                : cdb.CountryNameEn,
+            OriginalCountryName = cdb.CountryName,
+            LocalizedCountryName = TranslationHelper.GetString(cdb.CountryName),
             CqZone = cdb.CqZone,
             ItuZone = cdb.ItuZone,
             Continent = cdb.Continent,
@@ -253,6 +257,7 @@ public class RecordedCallsignDetail : ReactiveObject
         if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
+            OriginalCountryName = "Local Log",
             LocalizedCountryName = markAsOldQso ? "Local Log" : "?",
             DXCall = info.Call!,
             MyCall = info.StationCallsign,

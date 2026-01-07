@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language", typeof(Language).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language", typeof(Language).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

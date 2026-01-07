@@ -1,0 +1,1173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="TestVal" xml:space="preserve">
+        <value>测试</value>
+    </data>
+    <data name="Sov Mil Order of Malta" xml:space="preserve">
+        <value>马耳他索夫米尔教团</value>
+    </data>
+    <data name="Spratly Islands China" xml:space="preserve">
+        <value>中国南沙群岛</value>
+    </data>
+    <data name="Monaco" xml:space="preserve">
+        <value>摩纳哥</value>
+    </data>
+    <data name="Agalega &amp; St. Brandon" xml:space="preserve">
+        <value>阿加莱加和圣布兰登岛</value>
+    </data>
+    <data name="Mauritius" xml:space="preserve">
+        <value>毛里求斯</value>
+    </data>
+    <data name="Rodriguez Island" xml:space="preserve">
+        <value>罗德里格斯岛</value>
+    </data>
+    <data name="Equatorial Guinea" xml:space="preserve">
+        <value>赤道几内亚</value>
+    </data>
+    <data name="Annobon Island" xml:space="preserve">
+        <value>安诺本岛</value>
+    </data>
+    <data name="Fiji" xml:space="preserve">
+        <value>斐济</value>
+    </data>
+    <data name="Conway Reef" xml:space="preserve">
+        <value>康威礁</value>
+    </data>
+    <data name="Rotuma Island" xml:space="preserve">
+        <value>罗图马岛</value>
+    </data>
+    <data name="Kingdom of Eswatini" xml:space="preserve">
+        <value>斯威士兰王国</value>
+    </data>
+    <data name="Tunisia" xml:space="preserve">
+        <value>突尼斯</value>
+    </data>
+    <data name="Vietnam" xml:space="preserve">
+        <value>越南</value>
+    </data>
+    <data name="Guinea" xml:space="preserve">
+        <value>几内亚</value>
+    </data>
+    <data name="Bouvet" xml:space="preserve">
+        <value>布韦岛</value>
+    </data>
+    <data name="Peter 1 Island" xml:space="preserve">
+        <value>彼得一世岛</value>
+    </data>
+    <data name="Azerbaijan" xml:space="preserve">
+        <value>阿塞拜疆</value>
+    </data>
+    <data name="Georgia" xml:space="preserve">
+        <value>格鲁吉亚</value>
+    </data>
+    <data name="Montenegro" xml:space="preserve">
+        <value>黑山</value>
+    </data>
+    <data name="Sri Lanka" xml:space="preserve">
+        <value>斯里兰卡</value>
+    </data>
+    <data name="ITU HQ" xml:space="preserve">
+        <value>国际电信联盟总部</value>
+    </data>
+    <data name="United Nations HQ" xml:space="preserve">
+        <value>联合国总部</value>
+    </data>
+    <data name="Vienna Intl Ctr" xml:space="preserve">
+        <value>维也纳国际中心</value>
+    </data>
+    <data name="Timor - Leste" xml:space="preserve">
+        <value>东帝汶</value>
+    </data>
+    <data name="Israel" xml:space="preserve">
+        <value>以色列</value>
+    </data>
+    <data name="Libya" xml:space="preserve">
+        <value>利比亚</value>
+    </data>
+    <data name="Cyprus" xml:space="preserve">
+        <value>塞浦路斯</value>
+    </data>
+    <data name="Tanzania" xml:space="preserve">
+        <value>坦桑尼亚</value>
+    </data>
+    <data name="Nigeria" xml:space="preserve">
+        <value>尼日利亚</value>
+    </data>
+    <data name="Madagascar" xml:space="preserve">
+        <value>马达加斯加</value>
+    </data>
+    <data name="Mauritania" xml:space="preserve">
+        <value>毛里塔尼亚</value>
+    </data>
+    <data name="Niger" xml:space="preserve">
+        <value>尼日尔</value>
+    </data>
+    <data name="Togo" xml:space="preserve">
+        <value>多哥</value>
+    </data>
+    <data name="Samoa" xml:space="preserve">
+        <value>萨摩亚</value>
+    </data>
+    <data name="Uganda" xml:space="preserve">
+        <value>乌干达</value>
+    </data>
+    <data name="Kenya" xml:space="preserve">
+        <value>肯尼亚</value>
+    </data>
+    <data name="Senegal" xml:space="preserve">
+        <value>塞内加尔</value>
+    </data>
+    <data name="Jamaica" xml:space="preserve">
+        <value>牙买加</value>
+    </data>
+    <data name="Yemen" xml:space="preserve">
+        <value>也门</value>
+    </data>
+    <data name="Lesotho" xml:space="preserve">
+        <value>莱索托</value>
+    </data>
+    <data name="Malawi" xml:space="preserve">
+        <value>马拉维</value>
+    </data>
+    <data name="Algeria" xml:space="preserve">
+        <value>阿尔及利亚</value>
+    </data>
+    <data name="Barbados" xml:space="preserve">
+        <value>巴巴多斯</value>
+    </data>
+    <data name="Maldives" xml:space="preserve">
+        <value>马尔代夫</value>
+    </data>
+    <data name="Guyana" xml:space="preserve">
+        <value>圭亚那</value>
+    </data>
+    <data name="Croatia" xml:space="preserve">
+        <value>克罗地亚</value>
+    </data>
+    <data name="Ghana" xml:space="preserve">
+        <value>加纳</value>
+    </data>
+    <data name="Malta" xml:space="preserve">
+        <value>马耳他</value>
+    </data>
+    <data name="Zambia" xml:space="preserve">
+        <value>赞比亚</value>
+    </data>
+    <data name="Kuwait" xml:space="preserve">
+        <value>科威特</value>
+    </data>
+    <data name="Sierra Leone" xml:space="preserve">
+        <value>塞拉利昂</value>
+    </data>
+    <data name="West Malaysia" xml:space="preserve">
+        <value>西马来西亚</value>
+    </data>
+    <data name="East Malaysia" xml:space="preserve">
+        <value>东马来西亚</value>
+    </data>
+    <data name="Nepal" xml:space="preserve">
+        <value>尼泊尔</value>
+    </data>
+    <data name="Dem. Rep. of the Congo" xml:space="preserve">
+        <value>刚果民主共和国</value>
+    </data>
+    <data name="Burundi" xml:space="preserve">
+        <value>布隆迪</value>
+    </data>
+    <data name="Singapore" xml:space="preserve">
+        <value>新加坡</value>
+    </data>
+    <data name="Rwanda" xml:space="preserve">
+        <value>卢旺达</value>
+    </data>
+    <data name="Trinidad &amp; Tobago" xml:space="preserve">
+        <value>特立尼达和多巴哥</value>
+    </data>
+    <data name="Botswana" xml:space="preserve">
+        <value>博茨瓦纳</value>
+    </data>
+    <data name="Tonga" xml:space="preserve">
+        <value>汤加</value>
+    </data>
+    <data name="Oman" xml:space="preserve">
+        <value>阿曼</value>
+    </data>
+    <data name="Bhutan" xml:space="preserve">
+        <value>不丹</value>
+    </data>
+    <data name="United Arab Emirates" xml:space="preserve">
+        <value>阿拉伯联合酋长国</value>
+    </data>
+    <data name="Qatar" xml:space="preserve">
+        <value>卡塔尔</value>
+    </data>
+    <data name="Bahrain" xml:space="preserve">
+        <value>巴林</value>
+    </data>
+    <data name="Pakistan" xml:space="preserve">
+        <value>巴基斯坦</value>
+    </data>
+    <data name="Scarborough Reef China" xml:space="preserve">
+        <value>中国黄岩岛</value>
+    </data>
+    <data name="Taiwan China" xml:space="preserve">
+        <value>中国台湾</value>
+    </data>
+    <data name="Pratas Island China" xml:space="preserve">
+        <value>中国东沙岛</value>
+    </data>
+    <data name="XinJiang China" xml:space="preserve">
+        <value>中国新疆</value>
+    </data>
+    <data name="XiZang China" xml:space="preserve">
+        <value>中国西藏</value>
+    </data>
+    <data name="BeiJing China" xml:space="preserve">
+        <value>中国北京</value>
+    </data>
+    <data name="HeiLongJiang China" xml:space="preserve">
+        <value>中国黑龙江</value>
+    </data>
+    <data name="JiLin China" xml:space="preserve">
+        <value>中国吉林</value>
+    </data>
+    <data name="LiaoNing China" xml:space="preserve">
+        <value>中国辽宁</value>
+    </data>
+    <data name="TianJin China" xml:space="preserve">
+        <value>中国天津</value>
+    </data>
+    <data name="NeiMengGu China" xml:space="preserve">
+        <value>中国内蒙古</value>
+    </data>
+    <data name="HeBei China" xml:space="preserve">
+        <value>中国河北</value>
+    </data>
+    <data name="ShiJiaZhuang HeBei China" xml:space="preserve">
+        <value>中国河北 石家庄</value>
+    </data>
+    <data name="ShanXi China" xml:space="preserve">
+        <value>中国山西</value>
+    </data>
+    <data name="ShangHai China" xml:space="preserve">
+        <value>中国上海</value>
+    </data>
+    <data name="ShanDong China" xml:space="preserve">
+        <value>中国山东</value>
+    </data>
+    <data name="JiangSu China" xml:space="preserve">
+        <value>中国江苏</value>
+    </data>
+    <data name="SuZhou JiangSu China" xml:space="preserve">
+        <value>中国江苏 苏州</value>
+    </data>
+    <data name="ZheJiang China" xml:space="preserve">
+        <value>中国浙江</value>
+    </data>
+    <data name="JiangXi China" xml:space="preserve">
+        <value>中国江西</value>
+    </data>
+    <data name="FuJian China" xml:space="preserve">
+        <value>中国福建</value>
+    </data>
+    <data name="AnHui China" xml:space="preserve">
+        <value>中国安徽</value>
+    </data>
+    <data name="HeNan China" xml:space="preserve">
+        <value>中国河南</value>
+    </data>
+    <data name="HuBei China" xml:space="preserve">
+        <value>中国湖北</value>
+    </data>
+    <data name="HuNan China" xml:space="preserve">
+        <value>中国湖南</value>
+    </data>
+    <data name="GuangDong China" xml:space="preserve">
+        <value>中国广东</value>
+    </data>
+    <data name="ShenZhen China" xml:space="preserve">
+        <value>中国深圳</value>
+    </data>
+    <data name="GuangXi China" xml:space="preserve">
+        <value>中国广西</value>
+    </data>
+    <data name="HaiNan China" xml:space="preserve">
+        <value>中国海南</value>
+    </data>
+    <data name="SiChuan China" xml:space="preserve">
+        <value>中国四川</value>
+    </data>
+    <data name="ChongQing China" xml:space="preserve">
+        <value>中国重庆</value>
+    </data>
+    <data name="GuiZhou China" xml:space="preserve">
+        <value>中国贵州</value>
+    </data>
+    <data name="YunNan China" xml:space="preserve">
+        <value>中国云南</value>
+    </data>
+    <data name="ShaanXi China" xml:space="preserve">
+        <value>中国陕西</value>
+    </data>
+    <data name="GanSu China" xml:space="preserve">
+        <value>中国甘肃</value>
+    </data>
+    <data name="Qingyang GanSu China" xml:space="preserve">
+        <value>中国甘肃 庆阳</value>
+    </data>
+    <data name="NingXia China" xml:space="preserve">
+        <value>中国宁夏</value>
+    </data>
+    <data name="YinChuan NingXia China" xml:space="preserve">
+        <value>中国宁夏 银川</value>
+    </data>
+    <data name="QingHai China" xml:space="preserve">
+        <value>中国青海</value>
+    </data>
+    <data name="China" xml:space="preserve">
+        <value>中国</value>
+    </data>
+    <data name="Nauru" xml:space="preserve">
+        <value>瑙鲁</value>
+    </data>
+    <data name="Andorra" xml:space="preserve">
+        <value>安道尔</value>
+    </data>
+    <data name="The Gambia" xml:space="preserve">
+        <value>冈比亚</value>
+    </data>
+    <data name="Bahamas" xml:space="preserve">
+        <value>巴哈马群岛</value>
+    </data>
+    <data name="Mozambique" xml:space="preserve">
+        <value>莫桑比克</value>
+    </data>
+    <data name="Chile" xml:space="preserve">
+        <value>智利</value>
+    </data>
+    <data name="San Felix &amp; San Ambrosio" xml:space="preserve">
+        <value>圣菲力斯和圣安布罗西奥岛</value>
+    </data>
+    <data name="Easter Island" xml:space="preserve">
+        <value>复活节岛</value>
+    </data>
+    <data name="Juan Fernandez Islands" xml:space="preserve">
+        <value>胡安费南德斯岛</value>
+    </data>
+    <data name="Antarctica" xml:space="preserve">
+        <value>南极洲</value>
+    </data>
+    <data name="Cuba" xml:space="preserve">
+        <value>古巴</value>
+    </data>
+    <data name="Morocco" xml:space="preserve">
+        <value>摩洛哥</value>
+    </data>
+    <data name="Bolivia" xml:space="preserve">
+        <value>玻利维亚</value>
+    </data>
+    <data name="Portugal" xml:space="preserve">
+        <value>葡萄牙</value>
+    </data>
+    <data name="Madeira Islands" xml:space="preserve">
+        <value>马德拉群岛</value>
+    </data>
+    <data name="Azores" xml:space="preserve">
+        <value>亚速尔群岛</value>
+    </data>
+    <data name="Uruguay" xml:space="preserve">
+        <value>乌拉圭</value>
+    </data>
+    <data name="Sable Island" xml:space="preserve">
+        <value>塞布尔岛</value>
+    </data>
+    <data name="St. Paul Island" xml:space="preserve">
+        <value>圣保罗岛</value>
+    </data>
+    <data name="Angola" xml:space="preserve">
+        <value>安哥拉</value>
+    </data>
+    <data name="Cape Verde" xml:space="preserve">
+        <value>佛得角</value>
+    </data>
+    <data name="Comoros" xml:space="preserve">
+        <value>科摩罗</value>
+    </data>
+    <data name="Fed. Rep. of Germany" xml:space="preserve">
+        <value>德国</value>
+    </data>
+    <data name="Philippines" xml:space="preserve">
+        <value>菲律宾</value>
+    </data>
+    <data name="Eritrea" xml:space="preserve">
+        <value>厄立特里亚</value>
+    </data>
+    <data name="Palestine" xml:space="preserve">
+        <value>巴勒斯坦</value>
+    </data>
+    <data name="North Cook Islands" xml:space="preserve">
+        <value>北库克群岛</value>
+    </data>
+    <data name="South Cook Islands" xml:space="preserve">
+        <value>南库克群岛</value>
+    </data>
+    <data name="Niue" xml:space="preserve">
+        <value>纽埃</value>
+    </data>
+    <data name="Bosnia-Herzegovina" xml:space="preserve">
+        <value>波斯尼亚和黑塞哥维那</value>
+    </data>
+    <data name="Spain" xml:space="preserve">
+        <value>西班牙</value>
+    </data>
+    <data name="Balearic Islands" xml:space="preserve">
+        <value>巴利阿里群岛</value>
+    </data>
+    <data name="Canary Islands" xml:space="preserve">
+        <value>加那利群岛</value>
+    </data>
+    <data name="Ceuta &amp; Melilla" xml:space="preserve">
+        <value>休达和梅利利亚</value>
+    </data>
+    <data name="Ireland" xml:space="preserve">
+        <value>爱尔兰</value>
+    </data>
+    <data name="Armenia" xml:space="preserve">
+        <value>亚美尼亚</value>
+    </data>
+    <data name="Liberia" xml:space="preserve">
+        <value>利比里亚</value>
+    </data>
+    <data name="Iran" xml:space="preserve">
+        <value>伊朗</value>
+    </data>
+    <data name="Moldova" xml:space="preserve">
+        <value>摩尔多瓦</value>
+    </data>
+    <data name="Estonia" xml:space="preserve">
+        <value>爱沙尼亚</value>
+    </data>
+    <data name="Ethiopia" xml:space="preserve">
+        <value>埃塞俄比亚</value>
+    </data>
+    <data name="Belarus" xml:space="preserve">
+        <value>白俄罗斯</value>
+    </data>
+    <data name="Kyrgyzstan" xml:space="preserve">
+        <value>吉尔吉斯斯坦</value>
+    </data>
+    <data name="Tajikistan" xml:space="preserve">
+        <value>塔吉克斯坦</value>
+    </data>
+    <data name="Turkmenistan" xml:space="preserve">
+        <value>土库曼斯坦</value>
+    </data>
+    <data name="France" xml:space="preserve">
+        <value>法国</value>
+    </data>
+    <data name="Guadeloupe" xml:space="preserve">
+        <value>瓜德罗普岛</value>
+    </data>
+    <data name="Mayotte" xml:space="preserve">
+        <value>马约特岛</value>
+    </data>
+    <data name="St. Barthelemy" xml:space="preserve">
+        <value>圣巴特勒米岛</value>
+    </data>
+    <data name="New Caledonia" xml:space="preserve">
+        <value>新喀里多尼亚</value>
+    </data>
+    <data name="Chesterfield Islands" xml:space="preserve">
+        <value>切斯特菲尔德岛</value>
+    </data>
+    <data name="Martinique" xml:space="preserve">
+        <value>马提尼克岛</value>
+    </data>
+    <data name="French Polynesia" xml:space="preserve">
+        <value>法属波利尼西亚</value>
+    </data>
+    <data name="Austral Islands" xml:space="preserve">
+        <value>南方群岛</value>
+    </data>
+    <data name="Clipperton Island" xml:space="preserve">
+        <value>克利珀顿岛</value>
+    </data>
+    <data name="Marquesas Islands" xml:space="preserve">
+        <value>马克萨斯岛</value>
+    </data>
+    <data name="St. Pierre &amp; Miquelon" xml:space="preserve">
+        <value>圣皮埃尔和密克隆岛</value>
+    </data>
+    <data name="Reunion Island" xml:space="preserve">
+        <value>留尼旺岛</value>
+    </data>
+    <data name="St. Martin" xml:space="preserve">
+        <value>圣马丁岛</value>
+    </data>
+    <data name="Glorioso Islands" xml:space="preserve">
+        <value>格洛里厄斯岛</value>
+    </data>
+    <data name="Juan de Nova, Europa" xml:space="preserve">
+        <value>新胡安岛欧罗巴岛,欧洲</value>
+    </data>
+    <data name="Tromelin Island" xml:space="preserve">
+        <value>特罗姆林岛</value>
+    </data>
+    <data name="Crozet Island" xml:space="preserve">
+        <value>克罗泽特岛</value>
+    </data>
+    <data name="Kerguelen Islands" xml:space="preserve">
+        <value>凯尔盖朗岛</value>
+    </data>
+    <data name="Amsterdam &amp; St. Paul Is." xml:space="preserve">
+        <value>阿姆斯特丹和圣保罗岛</value>
+    </data>
+    <data name="Wallis &amp; Futuna Islands" xml:space="preserve">
+        <value>瓦利斯和富图纳岛</value>
+    </data>
+    <data name="French Guiana" xml:space="preserve">
+        <value>法属圭亚那</value>
+    </data>
+    <data name="England" xml:space="preserve">
+        <value>英格兰</value>
+    </data>
+    <data name="Isle of Man" xml:space="preserve">
+        <value>马恩岛</value>
+    </data>
+    <data name="Northern Ireland" xml:space="preserve">
+        <value>北爱尔兰</value>
+    </data>
+    <data name="Jersey" xml:space="preserve">
+        <value>英国泽西岛</value>
+    </data>
+    <data name="Scotland" xml:space="preserve">
+        <value>苏格兰</value>
+    </data>
+    <data name="Shetland Islands" xml:space="preserve">
+        <value>设得兰群岛</value>
+    </data>
+    <data name="Guernsey" xml:space="preserve">
+        <value>根西岛</value>
+    </data>
+    <data name="Wales" xml:space="preserve">
+        <value>威尔士</value>
+    </data>
+    <data name="Solomon Islands" xml:space="preserve">
+        <value>所罗门群岛</value>
+    </data>
+    <data name="Temotu Province" xml:space="preserve">
+        <value>所罗门群岛泰莫图省</value>
+    </data>
+    <data name="Hungary" xml:space="preserve">
+        <value>匈牙利</value>
+    </data>
+    <data name="Switzerland" xml:space="preserve">
+        <value>瑞士</value>
+    </data>
+    <data name="Liechtenstein" xml:space="preserve">
+        <value>列支敦士登</value>
+    </data>
+    <data name="Ecuador" xml:space="preserve">
+        <value>厄瓜多尔</value>
+    </data>
+    <data name="Galapagos Islands" xml:space="preserve">
+        <value>加拉帕戈斯岛</value>
+    </data>
+    <data name="Haiti" xml:space="preserve">
+        <value>海地</value>
+    </data>
+    <data name="Dominican Republic" xml:space="preserve">
+        <value>多米尼加共和国</value>
+    </data>
+    <data name="Colombia" xml:space="preserve">
+        <value>哥伦比亚</value>
+    </data>
+    <data name="San Andres &amp; Providencia" xml:space="preserve">
+        <value>哥伦比亚圣安德列斯和普罗维登西亚岛</value>
+    </data>
+    <data name="Malpelo Island" xml:space="preserve">
+        <value>马尔佩洛岛</value>
+    </data>
+    <data name="Republic of Korea" xml:space="preserve">
+        <value>韩国</value>
+    </data>
+    <data name="Panama" xml:space="preserve">
+        <value>巴拿马</value>
+    </data>
+    <data name="Honduras" xml:space="preserve">
+        <value>洪都拉斯</value>
+    </data>
+    <data name="Thailand" xml:space="preserve">
+        <value>泰国</value>
+    </data>
+    <data name="Vatican City" xml:space="preserve">
+        <value>梵蒂冈</value>
+    </data>
+    <data name="Saudi Arabia" xml:space="preserve">
+        <value>沙特阿拉伯</value>
+    </data>
+    <data name="Italy" xml:space="preserve">
+        <value>意大利</value>
+    </data>
+    <data name="African Italy" xml:space="preserve">
+        <value>意大利非洲属地</value>
+    </data>
+    <data name="Sardinia" xml:space="preserve">
+        <value>意大利撒丁岛</value>
+    </data>
+    <data name="Sicily" xml:space="preserve">
+        <value>意大利西西里岛</value>
+    </data>
+    <data name="Djibouti" xml:space="preserve">
+        <value>吉布提</value>
+    </data>
+    <data name="Grenada" xml:space="preserve">
+        <value>格林纳达</value>
+    </data>
+    <data name="Guinea-Bissau" xml:space="preserve">
+        <value>几内亚比绍</value>
+    </data>
+    <data name="St. Lucia" xml:space="preserve">
+        <value>圣卢西亚</value>
+    </data>
+    <data name="Dominica" xml:space="preserve">
+        <value>多米尼克</value>
+    </data>
+    <data name="St. Vincent" xml:space="preserve">
+        <value>圣文森特岛</value>
+    </data>
+    <data name="Japan" xml:space="preserve">
+        <value>日本</value>
+    </data>
+    <data name="Minami Torishima" xml:space="preserve">
+        <value>日本南鸟岛</value>
+    </data>
+    <data name="Ogasawara" xml:space="preserve">
+        <value>日本小笠原群岛</value>
+    </data>
+    <data name="Mongolia" xml:space="preserve">
+        <value>蒙古国</value>
+    </data>
+    <data name="Svalbard" xml:space="preserve">
+        <value>挪威斯瓦尔巴岛</value>
+    </data>
+    <data name="Bear Island" xml:space="preserve">
+        <value>挪威熊岛</value>
+    </data>
+    <data name="Jan Mayen" xml:space="preserve">
+        <value>挪威扬马延岛</value>
+    </data>
+    <data name="Jordan" xml:space="preserve">
+        <value>约旦</value>
+    </data>
+    <data name="United States" xml:space="preserve">
+        <value>美国</value>
+    </data>
+    <data name="Guantanamo Bay" xml:space="preserve">
+        <value>关塔那摩湾</value>
+    </data>
+    <data name="Mariana Islands" xml:space="preserve">
+        <value>马里亚纳群岛</value>
+    </data>
+    <data name="Baker &amp; Howland Islands" xml:space="preserve">
+        <value>贝克和豪兰岛</value>
+    </data>
+    <data name="Guam" xml:space="preserve">
+        <value>关岛</value>
+    </data>
+    <data name="Johnston Island" xml:space="preserve">
+        <value>约翰斯顿岛</value>
+    </data>
+    <data name="Midway Island" xml:space="preserve">
+        <value>中途岛</value>
+    </data>
+    <data name="Palmyra &amp; Jarvis Islands" xml:space="preserve">
+        <value>巴尔米拉环礁和贾维斯岛</value>
+    </data>
+    <data name="Hawaii" xml:space="preserve">
+        <value>夏威夷</value>
+    </data>
+    <data name="Kure Island" xml:space="preserve">
+        <value>库雷环礁</value>
+    </data>
+    <data name="American Samoa" xml:space="preserve">
+        <value>美属萨摩亚</value>
+    </data>
+    <data name="Swains Island" xml:space="preserve">
+        <value>斯温斯岛</value>
+    </data>
+    <data name="Wake Island" xml:space="preserve">
+        <value>威克岛</value>
+    </data>
+    <data name="Alaska" xml:space="preserve">
+        <value>美国阿拉斯加</value>
+    </data>
+    <data name="Navassa Island" xml:space="preserve">
+        <value>纳瓦萨岛</value>
+    </data>
+    <data name="US Virgin Islands" xml:space="preserve">
+        <value>美属维京群岛</value>
+    </data>
+    <data name="Puerto Rico" xml:space="preserve">
+        <value>波多黎各</value>
+    </data>
+    <data name="Desecheo Island" xml:space="preserve">
+        <value>德塞切奥岛</value>
+    </data>
+    <data name="Norway" xml:space="preserve">
+        <value>挪威</value>
+    </data>
+    <data name="Argentina" xml:space="preserve">
+        <value>阿根廷</value>
+    </data>
+    <data name="Luxembourg" xml:space="preserve">
+        <value>卢森堡</value>
+    </data>
+    <data name="Lithuania" xml:space="preserve">
+        <value>立陶宛</value>
+    </data>
+    <data name="Bulgaria" xml:space="preserve">
+        <value>保加利亚</value>
+    </data>
+    <data name="Peru" xml:space="preserve">
+        <value>秘鲁</value>
+    </data>
+    <data name="Lebanon" xml:space="preserve">
+        <value>黎巴嫩</value>
+    </data>
+    <data name="Austria" xml:space="preserve">
+        <value>奥地利</value>
+    </data>
+    <data name="Finland" xml:space="preserve">
+        <value>芬兰</value>
+    </data>
+    <data name="Aland Islands" xml:space="preserve">
+        <value>奥兰群岛</value>
+    </data>
+    <data name="Market Reef" xml:space="preserve">
+        <value>马凯特礁</value>
+    </data>
+    <data name="Czech Republic" xml:space="preserve">
+        <value>捷克</value>
+    </data>
+    <data name="Slovak Republic" xml:space="preserve">
+        <value>斯洛伐克</value>
+    </data>
+    <data name="Belgium" xml:space="preserve">
+        <value>比利时</value>
+    </data>
+    <data name="Greenland" xml:space="preserve">
+        <value>格陵兰</value>
+    </data>
+    <data name="Faroe Islands" xml:space="preserve">
+        <value>法罗群岛</value>
+    </data>
+    <data name="Denmark" xml:space="preserve">
+        <value>丹麦</value>
+    </data>
+    <data name="Papua New Guinea" xml:space="preserve">
+        <value>巴布亚新几内亚</value>
+    </data>
+    <data name="Aruba" xml:space="preserve">
+        <value>阿鲁巴</value>
+    </data>
+    <data name="DPR of Korea" xml:space="preserve">
+        <value>北朝鲜</value>
+    </data>
+    <data name="Netherlands" xml:space="preserve">
+        <value>荷兰</value>
+    </data>
+    <data name="Curacao" xml:space="preserve">
+        <value>库拉索岛</value>
+    </data>
+    <data name="Bonaire" xml:space="preserve">
+        <value>博奈尔岛</value>
+    </data>
+    <data name="Saba &amp; St. Eustatius" xml:space="preserve">
+        <value>荷属萨巴和圣尤斯特歇斯岛</value>
+    </data>
+    <data name="Sint Maarten" xml:space="preserve">
+        <value>荷属圣马丁岛</value>
+    </data>
+    <data name="Brazil" xml:space="preserve">
+        <value>巴西</value>
+    </data>
+    <data name="Fernando de Noronha" xml:space="preserve">
+        <value>费尔南多迪诺罗尼亚岛</value>
+    </data>
+    <data name="St. Peter &amp; St. Paul" xml:space="preserve">
+        <value>圣彼得和圣保罗岩</value>
+    </data>
+    <data name="Trindade &amp; Martim Vaz" xml:space="preserve">
+        <value>特林达迪和马丁瓦斯岛</value>
+    </data>
+    <data name="Suriname" xml:space="preserve">
+        <value>苏里南</value>
+    </data>
+    <data name="Franz Josef Land" xml:space="preserve">
+        <value>法兰士约瑟夫地岛</value>
+    </data>
+    <data name="Western Sahara" xml:space="preserve">
+        <value>西撒哈拉</value>
+    </data>
+    <data name="Bangladesh" xml:space="preserve">
+        <value>孟加拉国</value>
+    </data>
+    <data name="Slovenia" xml:space="preserve">
+        <value>斯洛文尼亚</value>
+    </data>
+    <data name="Seychelles" xml:space="preserve">
+        <value>塞舌尔岛</value>
+    </data>
+    <data name="Sao Tome &amp; Principe" xml:space="preserve">
+        <value>圣多美和普林西比岛</value>
+    </data>
+    <data name="Sweden" xml:space="preserve">
+        <value>瑞典</value>
+    </data>
+    <data name="Poland" xml:space="preserve">
+        <value>波兰</value>
+    </data>
+    <data name="Sudan" xml:space="preserve">
+        <value>苏丹</value>
+    </data>
+    <data name="Egypt" xml:space="preserve">
+        <value>埃及</value>
+    </data>
+    <data name="Greece" xml:space="preserve">
+        <value>希腊</value>
+    </data>
+    <data name="Mount Athos" xml:space="preserve">
+        <value>希腊阿索斯圣山</value>
+    </data>
+    <data name="Dodecanese" xml:space="preserve">
+        <value>多德卡尼斯群岛</value>
+    </data>
+    <data name="Crete" xml:space="preserve">
+        <value>克里特岛</value>
+    </data>
+    <data name="Tuvalu" xml:space="preserve">
+        <value>图瓦卢</value>
+    </data>
+    <data name="Western Kiribati" xml:space="preserve">
+        <value>基里巴斯西部</value>
+    </data>
+    <data name="Central Kiribati" xml:space="preserve">
+        <value>基里巴斯中部</value>
+    </data>
+    <data name="Eastern Kiribati" xml:space="preserve">
+        <value>基里巴斯东部</value>
+    </data>
+    <data name="Banaba Island" xml:space="preserve">
+        <value>巴纳巴岛</value>
+    </data>
+    <data name="Somalia" xml:space="preserve">
+        <value>索马里</value>
+    </data>
+    <data name="San Marino" xml:space="preserve">
+        <value>圣马力诺</value>
+    </data>
+    <data name="Palau" xml:space="preserve">
+        <value>帕劳</value>
+    </data>
+    <data name="Asiatic Turkey" xml:space="preserve">
+        <value>土耳其·亚洲</value>
+    </data>
+    <data name="European Turkey" xml:space="preserve">
+        <value>土耳其·欧洲</value>
+    </data>
+    <data name="Iceland" xml:space="preserve">
+        <value>冰岛</value>
+    </data>
+    <data name="Guatemala" xml:space="preserve">
+        <value>危地马拉</value>
+    </data>
+    <data name="Costa Rica" xml:space="preserve">
+        <value>哥斯达黎加</value>
+    </data>
+    <data name="Cocos Island" xml:space="preserve">
+        <value>科科斯岛</value>
+    </data>
+    <data name="Cameroon" xml:space="preserve">
+        <value>喀麦隆</value>
+    </data>
+    <data name="Corsica" xml:space="preserve">
+        <value>科西嘉岛</value>
+    </data>
+    <data name="Central African Republic" xml:space="preserve">
+        <value>中非共和国</value>
+    </data>
+    <data name="Republic of the Congo" xml:space="preserve">
+        <value>刚果共和国</value>
+    </data>
+    <data name="Gabon" xml:space="preserve">
+        <value>加蓬</value>
+    </data>
+    <data name="Chad" xml:space="preserve">
+        <value>乍得共和国</value>
+    </data>
+    <data name="Cote d'Ivoire" xml:space="preserve">
+        <value>科特迪瓦</value>
+    </data>
+    <data name="Benin" xml:space="preserve">
+        <value>贝宁</value>
+    </data>
+    <data name="Mali" xml:space="preserve">
+        <value>马里</value>
+    </data>
+    <data name="European Russia" xml:space="preserve">
+        <value>俄罗斯·欧洲</value>
+    </data>
+    <data name="Kaliningrad" xml:space="preserve">
+        <value>俄罗斯·加里宁格勒</value>
+    </data>
+    <data name="Asiatic Russia" xml:space="preserve">
+        <value>俄罗斯·亚洲</value>
+    </data>
+    <data name="Uzbekistan" xml:space="preserve">
+        <value>乌兹别克斯坦</value>
+    </data>
+    <data name="Kazakhstan" xml:space="preserve">
+        <value>哈萨克斯坦</value>
+    </data>
+    <data name="Ukraine" xml:space="preserve">
+        <value>乌克兰</value>
+    </data>
+    <data name="Antigua &amp; Barbuda" xml:space="preserve">
+        <value>安提瓜和巴布达</value>
+    </data>
+    <data name="Belize" xml:space="preserve">
+        <value>伯利兹</value>
+    </data>
+    <data name="St. Kitts &amp; Nevis" xml:space="preserve">
+        <value>圣基茨和尼维斯</value>
+    </data>
+    <data name="Namibia" xml:space="preserve">
+        <value>纳米比亚</value>
+    </data>
+    <data name="Micronesia" xml:space="preserve">
+        <value>密克罗尼西亚</value>
+    </data>
+    <data name="Marshall Islands" xml:space="preserve">
+        <value>马绍尔群岛</value>
+    </data>
+    <data name="Brunei Darussalam" xml:space="preserve">
+        <value>文莱达鲁萨兰国</value>
+    </data>
+    <data name="Canada" xml:space="preserve">
+        <value>加拿大</value>
+    </data>
+    <data name="Australia" xml:space="preserve">
+        <value>澳大利亚</value>
+    </data>
+    <data name="Heard Island" xml:space="preserve">
+        <value>赫德岛</value>
+    </data>
+    <data name="Macquarie Island" xml:space="preserve">
+        <value>麦格理岛</value>
+    </data>
+    <data name="Cocos (Keeling) Islands" xml:space="preserve">
+        <value>科科斯（基林）群岛</value>
+    </data>
+    <data name="Lord Howe Island" xml:space="preserve">
+        <value>豪勋爵岛</value>
+    </data>
+    <data name="Mellish Reef" xml:space="preserve">
+        <value>梅利什礁</value>
+    </data>
+    <data name="Norfolk Island" xml:space="preserve">
+        <value>诺福克岛</value>
+    </data>
+    <data name="Willis Island" xml:space="preserve">
+        <value>威利斯岛</value>
+    </data>
+    <data name="Christmas Island" xml:space="preserve">
+        <value>圣诞岛</value>
+    </data>
+    <data name="Anguilla" xml:space="preserve">
+        <value>安圭拉岛</value>
+    </data>
+    <data name="Montserrat" xml:space="preserve">
+        <value>蒙特塞拉特岛</value>
+    </data>
+    <data name="British Virgin Islands" xml:space="preserve">
+        <value>英属维京岛</value>
+    </data>
+    <data name="Turks &amp; Caicos Islands" xml:space="preserve">
+        <value>特克斯和凯科斯岛</value>
+    </data>
+    <data name="Pitcairn Island" xml:space="preserve">
+        <value>皮特凯恩岛</value>
+    </data>
+    <data name="Ducie Island" xml:space="preserve">
+        <value>迪西岛</value>
+    </data>
+    <data name="Falkland Islands" xml:space="preserve">
+        <value>福克兰群岛</value>
+    </data>
+    <data name="South Georgia Island" xml:space="preserve">
+        <value>南乔治亚岛</value>
+    </data>
+    <data name="South Shetland Islands" xml:space="preserve">
+        <value>南设得兰群岛</value>
+    </data>
+    <data name="South Orkney Islands" xml:space="preserve">
+        <value>南奥克尼群岛</value>
+    </data>
+    <data name="South Sandwich Islands" xml:space="preserve">
+        <value>南桑维奇群岛</value>
+    </data>
+    <data name="Bermuda" xml:space="preserve">
+        <value>百慕大群岛</value>
+    </data>
+    <data name="Chagos Islands" xml:space="preserve">
+        <value>查戈斯群岛</value>
+    </data>
+    <data name="Hong Kong China" xml:space="preserve">
+        <value>中国香港</value>
+    </data>
+    <data name="India" xml:space="preserve">
+        <value>印度</value>
+    </data>
+    <data name="Andaman &amp; Nicobar Is." xml:space="preserve">
+        <value>安达曼和尼科巴岛</value>
+    </data>
+    <data name="Lakshadweep Islands" xml:space="preserve">
+        <value>拉克沙威岛</value>
+    </data>
+    <data name="Mexico" xml:space="preserve">
+        <value>墨西哥</value>
+    </data>
+    <data name="Revillagigedo" xml:space="preserve">
+        <value>雷维亚希赫多岛</value>
+    </data>
+    <data name="Burkina Faso" xml:space="preserve">
+        <value>布基纳法索</value>
+    </data>
+    <data name="Cambodia" xml:space="preserve">
+        <value>柬埔寨</value>
+    </data>
+    <data name="Laos" xml:space="preserve">
+        <value>老挝</value>
+    </data>
+    <data name="Macao" xml:space="preserve">
+        <value>中国澳门</value>
+    </data>
+    <data name="Myanmar" xml:space="preserve">
+        <value>缅甸</value>
+    </data>
+    <data name="Afghanistan" xml:space="preserve">
+        <value>阿富汗</value>
+    </data>
+    <data name="Indonesia" xml:space="preserve">
+        <value>印度尼西亚</value>
+    </data>
+    <data name="Iraq" xml:space="preserve">
+        <value>伊拉克</value>
+    </data>
+    <data name="Vanuatu" xml:space="preserve">
+        <value>瓦努阿图</value>
+    </data>
+    <data name="Syria" xml:space="preserve">
+        <value>叙利亚</value>
+    </data>
+    <data name="Latvia" xml:space="preserve">
+        <value>拉脱维亚</value>
+    </data>
+    <data name="Nicaragua" xml:space="preserve">
+        <value>尼加拉瓜</value>
+    </data>
+    <data name="Romania" xml:space="preserve">
+        <value>罗马尼亚</value>
+    </data>
+    <data name="El Salvador" xml:space="preserve">
+        <value>萨尔瓦多</value>
+    </data>
+    <data name="Serbia" xml:space="preserve">
+        <value>塞尔维亚</value>
+    </data>
+    <data name="Venezuela" xml:space="preserve">
+        <value>委内瑞拉</value>
+    </data>
+    <data name="Aves Island" xml:space="preserve">
+        <value>阿维斯岛</value>
+    </data>
+    <data name="Zimbabwe" xml:space="preserve">
+        <value>津巴布韦</value>
+    </data>
+    <data name="North Macedonia" xml:space="preserve">
+        <value>北马其顿</value>
+    </data>
+    <data name="Republic of Kosovo" xml:space="preserve">
+        <value>科索沃共和国</value>
+    </data>
+    <data name="Republic of South Sudan" xml:space="preserve">
+        <value>南苏丹共和国</value>
+    </data>
+    <data name="Albania" xml:space="preserve">
+        <value>阿尔巴尼亚</value>
+    </data>
+    <data name="Gibraltar" xml:space="preserve">
+        <value>直布罗陀</value>
+    </data>
+    <data name="UK Base Areas on Cyprus" xml:space="preserve">
+        <value>英属塞浦路斯基地</value>
+    </data>
+    <data name="St. Helena" xml:space="preserve">
+        <value>圣赫勒拿岛</value>
+    </data>
+    <data name="Ascension Island" xml:space="preserve">
+        <value>阿森松岛</value>
+    </data>
+    <data name="Tristan da Cunha &amp; Gough" xml:space="preserve">
+        <value>特里斯坦和达库尼亚岛</value>
+    </data>
+    <data name="Cayman Islands" xml:space="preserve">
+        <value>开曼群岛</value>
+    </data>
+    <data name="Tokelau Islands" xml:space="preserve">
+        <value>托克劳群岛</value>
+    </data>
+    <data name="New Zealand" xml:space="preserve">
+        <value>新西兰</value>
+    </data>
+    <data name="Chatham Islands" xml:space="preserve">
+        <value>查塔姆群岛</value>
+    </data>
+    <data name="Kermadec Islands" xml:space="preserve">
+        <value>克马德克群岛</value>
+    </data>
+    <data name="N.Z. Subantarctic Is." xml:space="preserve">
+        <value>新西兰亚南极群岛</value>
+    </data>
+    <data name="Paraguay" xml:space="preserve">
+        <value>巴拉圭</value>
+    </data>
+    <data name="South Africa" xml:space="preserve">
+        <value>南非</value>
+    </data>
+    <data name="Pr. Edward &amp; Marion Is." xml:space="preserve">
+        <value>爱德华王子和马里恩岛</value>
+    </data>
+    <data name="Local Log" xml:space="preserve">
+        <value>本地日志</value>
+    </data>
+</root>
