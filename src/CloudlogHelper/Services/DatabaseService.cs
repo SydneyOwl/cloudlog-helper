@@ -40,6 +40,7 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
 
         _connection = new SQLiteAsyncConnection(connectionString);
+        
         _logger.Info("Creating/Migrating database...");
 
         await _connection.CreateTableAsync<ApplicationVersionDatabase>().ConfigureAwait(false);
@@ -88,7 +89,7 @@ public class DatabaseService : IDatabaseService, IDisposable
             {
                 db.DropAndCreateTable<CallsignDatabase>();
                 db.DropAndCreateTable<CountryDatabase>();
-                InitializePrefixAndCountryData(db);
+                InitializePrefixAndCountryData(db, null);
             }
             else
             {
@@ -243,6 +244,17 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
+    public async Task UpdateCallsignAndCountry(string ctyDat)
+    {
+        _logger.Info("Updating callsign and country");
+        await _connection!.RunInTransactionAsync(db =>
+        {
+            db.DropAndCreateTable<CallsignDatabase>();
+            db.DropAndCreateTable<CountryDatabase>();
+            InitializePrefixAndCountryData(db, ctyDat);
+        }).ConfigureAwait(false);
+    }
+
     public void Dispose()
     {
         Dispose(true);
@@ -361,14 +373,14 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
-    private void InitializePrefixAndCountryData(SQLiteConnection connection)
+    private void InitializePrefixAndCountryData(SQLiteConnection connection, string? ctyData)
     {
         try
         {
             var callsigns = new List<CallsignDatabase>();
             var countries = new List<CountryDatabase>();
             
-            var ctyData = ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedCtyFilename);
+             ctyData ??= ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedCtyFilename);
             var entries = ctyData.Split(';', StringSplitOptions.RemoveEmptyEntries);
             
             for (int i = 0; i < entries.Length; i++)

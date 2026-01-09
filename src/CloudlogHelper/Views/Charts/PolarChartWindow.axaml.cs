@@ -16,21 +16,6 @@ public partial class PolarChartWindow : ReactiveWindow<PolarChartWindowViewModel
     public PolarChartWindow()
     {
         InitializeComponent();
-        this.WhenActivated(disposable =>
-        {
-            ViewModel!.OpenSaveFilePickerInteraction.RegisterHandler(SaveFilePickerDialog).DisposeWith(disposable);
-        });
-    }
-
-    private async Task SaveFilePickerDialog(IInteractionContext<Unit, IStorageFile?> interaction)
-    {
-        var file = await GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(
-            new FilePickerSaveOptions
-            {
-                SuggestedFileName = "Polar-Chart.png",
-                Title = TranslationHelper.GetString(LangKeys.savelogto)
-            });
-        interaction.SetOutput(file);
     }
 
     protected override void OnClosed(EventArgs e)

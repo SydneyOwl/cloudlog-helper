@@ -34,7 +34,9 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     private readonly IDatabaseService _dbService;
 
     private readonly IInAppNotificationService _inAppNotification;
-
+    
+    private readonly IWindowManagerService _windowManagerService;
+    
     private readonly IApplicationSettingsService settingsService;
 
     private bool _executeOnStart;
@@ -53,10 +55,12 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     public QsoSyncAssistantWindowViewModel(IDatabaseService dbService,
         IInAppNotificationService winNotification,
         IApplicationSettingsService ss,
+        IWindowManagerService windowManagerService,
         IMapper mapper)
     {
         _mapper = mapper;
         _dbService = dbService;
+        _windowManagerService = windowManagerService;
         _inAppNotification = winNotification;
         settingsService = ss;
         Settings = settingsService.GetCurrentSettings().DeepClone();
@@ -95,10 +99,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SaveConf { get; }
 
     public ApplicationSettings Settings { get; set; }
-
-
-    public Interaction<Unit, IStorageFile[]> ShowFileSelectWindow { get; } = new();
-
+    
     public ReactiveCommand<Unit, Unit> StartSyncCommand { get; }
     public ReactiveCommand<Unit, Unit> StopSyncCommand { get; }
     public ReactiveCommand<Unit, Unit> AddLogPathCommand { get; }
@@ -126,7 +127,10 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     private async Task AddLogPath()
     {
         Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
-        var ww = await ShowFileSelectWindow.Handle(Unit.Default);
+        var ww = await _windowManagerService.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            AllowMultiple = true
+        });
         foreach (var storageFile in ww)
         {
             if (Settings.QsoSyncAssistantSettings.LocalLogPath.Contains(storageFile.TryGetLocalPath()!)) continue;

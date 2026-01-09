@@ -30,25 +30,6 @@ public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogI
                         QsoBox.SelectedIndex = args.EventArgs.NewStartingIndex;
                 })
                 .DisposeWith(disposables);
-
-            ViewModel!.ShowFilePickerDialog.RegisterHandler(ShowSaveFilePickerDialog).DisposeWith(disposables);
         });
-    }
-
-    private async Task ShowSaveFilePickerDialog(IInteractionContext<Unit, IStorageFile?> interaction)
-    {
-        var storageProvider = TopLevel.GetTopLevel(this)?.StorageProvider;
-        if (storageProvider == null) return;
-        var file = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Adif export",
-            SuggestedFileName = $"exported-{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.adi",
-            DefaultExtension = "adi",
-            FileTypeChoices = new[]
-            {
-                new FilePickerFileType("adi") { Patterns = new[] { "*.adi" } }
-            }
-        });
-        interaction.SetOutput(file);
     }
 }

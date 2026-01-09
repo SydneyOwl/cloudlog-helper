@@ -25,23 +25,10 @@ public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantWin
                     h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged -= h)
                 .Subscribe(args => { localLogPath.SelectedIndex = args.EventArgs.NewStartingIndex; })
                 .DisposeWith(disposables);
-
-            ViewModel!.ShowFileSelectWindow.RegisterHandler(ShowFilePickerDialog).DisposeWith(disposables);
-
+            
             this.WhenAnyValue(x => x.ViewModel!.CurrentInfo)
                 .Subscribe(_ => { Dispatcher.UIThread.Invoke(() => currentInfoTextBlock.ScrollToEnd()); })
                 .DisposeWith(disposables);
         });
-    }
-
-    private async Task ShowFilePickerDialog(IInteractionContext<Unit, IStorageFile[]> interaction)
-    {
-        var storageProvider = GetTopLevel(this)?.StorageProvider;
-        if (storageProvider == null) return;
-        var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            AllowMultiple = true
-        });
-        interaction.SetOutput(file.ToArray());
     }
 }

@@ -127,6 +127,20 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         await tl!.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
     }
 
+    public async Task<IReadOnlyList<IStorageFile?>> OpenFilePickerAsync(FilePickerOpenOptions options, Window? topLevel = null)
+    {
+        var tl = topLevel ?? _desktop.MainWindow;
+
+        return await tl!.StorageProvider.OpenFilePickerAsync(options);
+    }
+    
+    public async Task<IStorageFile?> OpenFileSaverAsync(FilePickerSaveOptions options, Window? topLevel = null)
+    {
+        var tl = topLevel ?? _desktop.MainWindow;
+
+        return await tl!.StorageProvider.SaveFilePickerAsync(options);
+    }
+
     private bool TryGetWindow(Type wType, out Window? targetWindow)
     {
         AutoRemove();

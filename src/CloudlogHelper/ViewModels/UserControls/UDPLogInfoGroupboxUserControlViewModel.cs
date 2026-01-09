@@ -51,6 +51,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IQSOUploadService _qsoUploadService;
     private readonly IUdpServerService _udpServerService;
     private readonly ICLHServerService _clhServerService;
+    private readonly IWindowManagerService _windowManagerService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
@@ -63,7 +64,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
-        ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
 
         I18NExtension.Culture = new CultureInfo("ja-JP");
 
@@ -132,6 +132,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IInAppNotificationService inAppNotification,
         IMessageBoxManagerService messageBoxManagerService,
         IUdpServerService udpServerService,
+        IWindowManagerService windowManagerService,
         IClipboardService clipboardService,
         IApplicationSettingsService ss,
         IQSOUploadService qu,
@@ -147,11 +148,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _udpServerService = udpServerService;
         _databaseService = dbService;
         _messageBoxManagerService = messageBoxManagerService;
+        _windowManagerService = windowManagerService;
         _inAppNotification = inAppNotification;
 
         _clhServerService = clhServerService;
 
-        ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
         WaitFirstConn = _udpServerService.IsUdpServerEnabled();
 
         _ = _qsoUploadService.StartAsync();
@@ -221,7 +222,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
     public ReactiveCommand<Unit, Unit> IgnoreSelectedPermanentlyCommand { get; set; }
     public ReactiveCommand<RecordedCallsignDetail, Unit> ShowQSODetailCommand { get; set; }
-    public Interaction<Unit, IStorageFile?> ShowFilePickerDialog { get; }
 
     [Reactive] public bool TimeoutStatus { get; set; }
     [Reactive] public bool WaitFirstConn { get; set; }
@@ -441,7 +441,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             adif.AppendLine(item.GenerateAdif());
         }
 
-        var file = await ShowFilePickerDialog.Handle(Unit.Default);
+        var file = await _windowManagerService.OpenFileSaverAsync(new FilePickerSaveOptions
+        {
+            Title = "Adif export",
+            SuggestedFileName = $"exported-{DateTime.Now:yyyyMMdd-HHmmss}.adi",
+            DefaultExtension = "adi",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("adi") { Patterns = new[] { "*.adi" } }
+            }
+        });
         if (file is null) return;
 
         await using var saveStream = await file.OpenWriteAsync();

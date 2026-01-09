@@ -98,7 +98,8 @@
                                         <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0,0,10,0">
                                             <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17"
                                                        MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0" />
-                                            <TextBlock FontSize="12"
+                                            <TextBlock FontSize="12" MaxWidth="150" HorizontalAlignment="Left" TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
                                                        FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" >
                                                 <TextBlock.Text>
                                                     <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
