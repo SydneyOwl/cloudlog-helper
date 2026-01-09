@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CloudlogHelper.Resources {
+namespace CloudlogHelper.Resources.Language {
     using System;
     
     
@@ -2096,7 +2096,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🚀 QSO Logged!.
+        ///   Looks up a localized string similar to � QSO Logged!.
         /// </summary>
         public static string uploadedaqso {
             get {

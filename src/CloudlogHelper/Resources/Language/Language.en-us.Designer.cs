@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CloudlogHelper.Resources {
+namespace CloudlogHelper.Resources.Language {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.en-us", typeof(Language_en_us).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.en-us", typeof(Language_en_us).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -2096,7 +2096,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🚀 QSO Logged!.
+        ///   Looks up a localized string similar to � QSO Logged!.
         /// </summary>
         public static string uploadedaqso {
             get {

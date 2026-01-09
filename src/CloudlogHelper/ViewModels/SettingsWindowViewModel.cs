@@ -97,6 +97,8 @@ public class SettingsWindowViewModel : ViewModelBase
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         _source = new CancellationTokenSource();
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
+        
+        LanguageInfos.AddRange(TranslationHelper.GetSupportedLanguageInfos());
 
         this.WhenActivated(disposables =>
         {
@@ -401,6 +403,8 @@ public class SettingsWindowViewModel : ViewModelBase
     }
     
     [Reactive] public bool FullyInitialized { get; set; } = false;
+    
+    public ObservableCollection<SupportedLanguageInfo> LanguageInfos { get; } = new();
     
     #region CloudlogAPI
 

@@ -25,11 +25,6 @@ public class RecordedCallsignDetail : ReactiveObject
     [Reactive] public string OriginalCountryName { get; set; }
 
     /// <summary>
-    ///     Localized country names.
-    /// </summary>
-    public string LocalizedCountryName { get; set; }
-
-    /// <summary>
     ///     CQ Zone.
     /// </summary>
     public int CqZone { get; set; }
@@ -218,7 +213,6 @@ public class RecordedCallsignDetail : ReactiveObject
         return new RecordedCallsignDetail
         {
             OriginalCountryName = cdb.CountryName,
-            LocalizedCountryName = TranslationHelper.GetString(cdb.CountryName),
             CqZone = cdb.CqZone,
             ItuZone = cdb.ItuZone,
             Continent = cdb.Continent,
@@ -257,8 +251,7 @@ public class RecordedCallsignDetail : ReactiveObject
         if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
-            OriginalCountryName = "Local Log",
-            LocalizedCountryName = markAsOldQso ? "Local Log" : "?",
+            OriginalCountryName = DXCCKeys.locallog,
             DXCall = info.Call!,
             MyCall = info.StationCallsign,
             ReportSent = info.RstSent!,
@@ -315,7 +308,7 @@ public class RecordedCallsignDetail : ReactiveObject
     public override string ToString()
     {
         return
-            $"{nameof(LocalizedCountryName)}: {LocalizedCountryName}, {nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(DateTimeOff)}: {DateTimeOff}, {nameof(DXCall)}: {DXCall}, {nameof(DXGrid)}: {DXGrid}, {nameof(TXFrequencyInHz)}: {TXFrequencyInHz}, {nameof(TXFrequencyInMeters)}: {TXFrequencyInMeters}, {nameof(Mode)}: {Mode}, {nameof(ParentMode)}: {ParentMode}, {nameof(ReportSent)}: {ReportSent}, {nameof(ReportReceived)}: {ReportReceived}, {nameof(TXPower)}: {TXPower}, {nameof(Comments)}: {Comments}, {nameof(Name)}: {Name}, {nameof(DateTimeOn)}: {DateTimeOn}, {nameof(OperatorCall)}: {OperatorCall}, {nameof(MyCall)}: {MyCall}, {nameof(MyGrid)}: {MyGrid}, {nameof(ExchangeSent)}: {ExchangeSent}, {nameof(ExchangeReceived)}: {ExchangeReceived}, {nameof(AdifPropagationMode)}: {AdifPropagationMode}, {nameof(ClientId)}: {ClientId}, {nameof(Checked)}: {Checked}, {nameof(UploadStatus)}: {UploadStatus}";
+            $"{nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(DateTimeOff)}: {DateTimeOff}, {nameof(DXCall)}: {DXCall}, {nameof(DXGrid)}: {DXGrid}, {nameof(TXFrequencyInHz)}: {TXFrequencyInHz}, {nameof(TXFrequencyInMeters)}: {TXFrequencyInMeters}, {nameof(Mode)}: {Mode}, {nameof(ParentMode)}: {ParentMode}, {nameof(ReportSent)}: {ReportSent}, {nameof(ReportReceived)}: {ReportReceived}, {nameof(TXPower)}: {TXPower}, {nameof(Comments)}: {Comments}, {nameof(Name)}: {Name}, {nameof(DateTimeOn)}: {DateTimeOn}, {nameof(OperatorCall)}: {OperatorCall}, {nameof(MyCall)}: {MyCall}, {nameof(MyGrid)}: {MyGrid}, {nameof(ExchangeSent)}: {ExchangeSent}, {nameof(ExchangeReceived)}: {ExchangeReceived}, {nameof(AdifPropagationMode)}: {AdifPropagationMode}, {nameof(ClientId)}: {ClientId}, {nameof(Checked)}: {Checked}, {nameof(UploadStatus)}: {UploadStatus}";
     }
 
     protected bool Equals(RecordedCallsignDetail other)
@@ -372,7 +365,7 @@ public class RecordedCallsignDetail : ReactiveObject
 
         return string.Format(template,
             DXCall ?? "N/A",
-            LocalizedCountryName ?? "Unknown",
+            TranslationHelper.GetString(OriginalCountryName),
             CqZone,
             ItuZone,
 

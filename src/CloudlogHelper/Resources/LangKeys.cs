@@ -5,7 +5,7 @@ namespace CloudlogHelper.Resources;
 /// <summary>
 ///     I18N conf class.
 /// </summary>
-[ResourceKeysOf(typeof(Language))]
+[ResourceKeysOf(typeof(Language.Language))]
 public partial class LangKeys
 {
 }

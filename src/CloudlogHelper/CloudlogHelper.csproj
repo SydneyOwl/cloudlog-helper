@@ -88,16 +88,6 @@
         <None Remove="Hamlib\**"/>
         <None Remove="cloudlog-helper.zip"/>
         <EmbeddedResource Include="Resources\NE2_50M_SR_W_proc_small.jpg"/>
-        
-        <EmbeddedResource Update="Resources\DXCC\DXCC.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Resources\DXCC\DXCC.en-us.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hans.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
         <EmbeddedResource Update="Resources\Language\Language.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
@@ -106,6 +96,29 @@
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Language\Language.zh-hans.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hans.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.en-us.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.ja-jp.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language\Language.ja-jp.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hant.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>DXCC.zh-hant.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language\Language.zh-hant.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Language.zh-hant.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -139,6 +152,16 @@
 
     <ItemGroup>
         <Compile Remove="Hamlib\**" />
+        <Compile Update="Resources\DXCC\DXCC.zh-hant.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>DXCC.zh-hant.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Language\Language.zh-hant.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Language.zh-hant.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

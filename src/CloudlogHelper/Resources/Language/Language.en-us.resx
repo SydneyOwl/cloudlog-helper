@@ -570,7 +570,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
         <value>✅ A QSO Was made!</value>
     </data>
     <data name="uploadedaqso" xml:space="preserve">
-        <value>🚀 QSO Logged!</value>
+        <value>� QSO Logged!</value>
     </data>
     <data name="qsoconcisetemplate" xml:space="preserve">
         <value>Call Sign: {0}, Country: {1} ({8}) ,  Grid: {9},  Frequency: {10} ({11}), Mode: {12},  Time: {14} to {15},  Report: Sent '{16}' / Received '{17}'</value>

@@ -127,9 +127,14 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Language/语言" Classes="setting-label" />
                                 <ComboBox Classes="setting-control"
-                                          SelectedIndex="{Binding DraftSettings.BasicSettings.LanguageType}">
-                                    <ComboBoxItem>English</ComboBoxItem>
-                                    <ComboBoxItem>简体中文</ComboBoxItem>
+                                          ItemsSource="{Binding LanguageInfos}"
+                                          SelectedValueBinding="{Binding Language}"
+                                          SelectedValue="{Binding DraftSettings.BasicSettings.LanguageType}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding LanguageName}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">

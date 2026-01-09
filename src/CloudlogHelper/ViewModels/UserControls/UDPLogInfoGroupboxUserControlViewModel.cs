@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
@@ -63,10 +65,19 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
         ShowFilePickerDialog = new Interaction<Unit, IStorageFile?>();
 
+        I18NExtension.Culture = new CultureInfo("ja-JP");
+
+        // Task.Run(async () =>
+        // {
+        //     await Task.Delay(3000);
+        //     I18NExtension.Culture = new CultureInfo("en-US");
+        //     await Task.Delay(3000);
+        //     I18NExtension.Culture = new CultureInfo("zh-CN");
+        // });
+        
         var testQso = new RecordedCallsignDetail
         {
-            OriginalCountryName = "Taiwan China",
-            LocalizedCountryName = "日本",
+            OriginalCountryName = "Juan de Nova, Europa",
             CqZone = 25,
             ItuZone = 45,
             Continent = "AS",
