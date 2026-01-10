@@ -487,7 +487,7 @@
         <value>This QSO is ignored - Maybe none of third party log service is enabled?</value>
     </data>
     <data name="ignoreqsopermanently" xml:space="preserve">
-        <value>Warning: Ignore this qso permanently</value>
+        <value>This operation will permanently ignore the selected QSOs, and subsequent QSO Assistant scans will skip these entries. Do you want to continue?</value>
     </data>
     <data name="failrigcomm" xml:space="preserve">
         <value>Failed to communicate with rig!</value>
@@ -772,6 +772,6 @@ By continuing, you acknowledge that you have read and agree to the above terms a
 {0} call sign rules and {1} country data entries written</value>
     </data>
     <data name="updatebigctyfailed" xml:space="preserve">
-        <value />
+        <value>Call sign and country data update failed: {0}！</value>
     </data>
 </root>

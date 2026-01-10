@@ -896,7 +896,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Ignore this qso permanently.
+        ///   Looks up a localized string similar to This operation will permanently ignore the selected QSOs, and subsequent QSO Assistant scans will skip these entries. Do you want to continue?.
         /// </summary>
         public static string ignoreqsopermanently {
             get {
@@ -2078,7 +2078,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Call sign and country data update failed: {0}！.
         /// </summary>
         public static string updatebigctyfailed {
             get {

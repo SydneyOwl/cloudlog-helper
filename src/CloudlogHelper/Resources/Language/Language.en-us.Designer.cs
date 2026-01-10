@@ -411,7 +411,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Process conflict: {replace01} may disrupt radio data auto-reporting.&quot;.
+        ///   Looks up a localized string similar to Process conflict: {replace01} may disrupt radio data auto-reporting..
         /// </summary>
         public static string conflicthamlib {
             get {

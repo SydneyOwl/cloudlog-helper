@@ -169,7 +169,7 @@
         <value>Remember my choice</value>
     </data>
     <data name="conflicthamlib" xml:space="preserve">
-        <value>Process conflict: {replace01} may disrupt radio data auto-reporting."</value>
+        <value>Process conflict: {replace01} may disrupt radio data auto-reporting.</value>
     </data>
     <data name="stationid" xml:space="preserve">
         <value>Cloudlog Station ID</value>
