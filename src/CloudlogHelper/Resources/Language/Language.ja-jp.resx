@@ -353,7 +353,7 @@
         <value>経度</value>
     </data>
     <data name="madeaqso" xml:space="preserve">
-        <value>✅ QSOが完了しました！</value>
+        <value>✅️ QSOが完了しました！</value>
     </data>
     <data name="maxsamplecount" xml:space="preserve">
         <value>最大サンプルポイント数</value>

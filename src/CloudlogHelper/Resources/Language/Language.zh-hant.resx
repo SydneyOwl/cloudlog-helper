@@ -355,7 +355,7 @@
         <value>經度</value>
     </data>
     <data name="madeaqso" xml:space="preserve">
-        <value>✅ 完成了一個QSO！</value>
+        <value>✅️ 完成了一個QSO！</value>
     </data>
     <data name="maxsamplecount" xml:space="preserve">
         <value>最大取樣點數量</value>

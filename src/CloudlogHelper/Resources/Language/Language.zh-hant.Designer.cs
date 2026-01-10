@@ -1050,7 +1050,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ✅ 完成了一個QSO！.
+        ///   Looks up a localized string similar to ✅️ 完成了一個QSO！.
         /// </summary>
         internal static string madeaqso {
             get {

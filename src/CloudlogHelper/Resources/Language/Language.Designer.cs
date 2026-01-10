@@ -1049,7 +1049,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ✅ A QSO Was made!.
+        ///   Looks up a localized string similar to ✅️ A QSO Was made!.
         /// </summary>
         public static string madeaqso {
             get {
@@ -2124,7 +2124,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to � QSO Logged!.
+        ///   Looks up a localized string similar to ✅️ QSO Logged!.
         /// </summary>
         public static string uploadedaqso {
             get {

@@ -569,7 +569,7 @@
         <value>自动更新台站信息</value>
     </data>
     <data name="madeaqso" xml:space="preserve">
-        <value>✅ 完成了一个QSO！</value>
+        <value>✅️ 完成了一个QSO！</value>
     </data>
     <data name="uploadedaqso" xml:space="preserve">
         <value>✅️ QSO上传成功！</value>
