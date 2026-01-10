@@ -108,6 +108,7 @@ public class FLRigService : IRigService, IDisposable
 
                 testbk.ModeTx = txMode;
                 testbk.FrequencyTx = txFreq;
+                testbk.IsSplit = true;
             }
         }
 
