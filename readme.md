@@ -12,26 +12,22 @@ Cloudlog Helper is a lightweight, cross-platform, portable application that auto
 While providing first-class support for Cloudlog and Wavelog, it also functions as a powerful, stand-alone logging tool in its own right!
 
 + Automatically syncs radio and QSO data across multiple platforms.
-+ Supports both Hamlib and FLRig for radio control, seamlessly working with JTDX, WSJT-X, and most mainstream transceivers.
++ Supports both `Hamlib`/`FLRig`/`OmniRig` for radio control and seamlessly working with `JTDX`, `WSJT-X` or other compatible software.
 + Includes a rich set of charts and utilities - polar signal map, distance distribution map, global heatmap, QSO comparison assistant, etc.,
 + Portable and installation-free — ready to run right out of the box.
 + Native support for Windows and Linux, with macOS currently in development.
 + Easily integrates with new logging systems and custom backends, with support for pushing radio and decoded QSO data to user-defined APIs.
-+ Optimized for resource-constrained environments — runs reliably on low-end hardware with minimal system overhead.
++ Optimized for resource-constrained environments — runs reliably on low-end hardware.
 
 <p align="center">
-
   <img src="./md_assets/image-20251003205204844.png" alt="MainImg" width="700">
   <br />
   <img src="./md_assets/image-20251003211358747.png" alt="MainImg" width="700">
-  <br />
-  <img src="./md_assets/image-20251003211217422.png" alt="MainImg" width="700">
-
 </p>
 
-(Some call signs have been anonymized)
+**(Some call signs have been anonymized)**
 
-**⚠️ This is an UNOFFICIAL community project. It is NOT endorsed by, directly affiliated with, maintained, or sponsored by the Cloudlog/Wavelog development teams.**
+**⚠️ This is an UNOFFICIAL community project. It is NOT endorsed by, directly affiliated with, maintained, or sponsored by the `Cloudlog`/`Wavelog` development teams.**
 
 
 ## 💻 Supported Platforms
@@ -91,15 +87,18 @@ Enter your call sign/password or other configuration information in the correspo
 >
 > You can only choose either Hamlib or FLRig as the radio backend control system. Both cannot be enabled simultaneously.
 
-This software supports `Hamlib` and `FLRig` as control backends for radios, allowing periodic uploads of radio information (frequency, mode, etc.) to your Cloudlog server, HRDLog, or other specified backends. When you need to record QSO information, Cloudlog will automatically retrieve the current frequency, mode, or other data, and automatically populate the corresponding input fields to avoid manual entry errors. Meanwhile, the Cloudlog main interface will also display the radio's frequency, mode, and other information in real-time for reference during operation.
-
-![image-20251003210929186](./md_assets/image-20251003210929186.png)
+This software supports `Hamlib` / `FLRig` / `OmniRig` as control backends for radios, allowing periodic uploads of radio information
+(frequency, mode, etc.) to your Cloudlog server, HRDLog, or other specified backends. When you need to record QSO information, 
+Cloudlog will automatically retrieve the current frequency, mode, or other data, and automatically populate the corresponding 
+input fields to avoid manual entry errors. Meanwhile, the Cloudlog main interface will also display the radio's frequency, mode,
+and other information in real-time for reference during operation.
 
 <img src="./md_assets/image-20251003210857242.png" alt="image-20251003210857242" style="zoom:50%;" />
 
 > [!WARNING]
 >
-> If you **use Hamlib** as the control backend, since opening JTDX (or WSJT-X, hereinafter referred to as JTDX) will obtain exclusive control of the radio, this feature and JTDX cannot be enabled simultaneously before configuring JTDX. Please check the `Working with JTDX` section for solutions.
+> If you **use Hamlib** as the control backend, since opening JTDX (or WSJT-X, hereinafter referred to as JTDX) will obtain exclusive control of the radio,
+> this feature and JTDX cannot be enabled simultaneously before configuring JTDX. Please check the `Working with JTDX` section for solutions.
 
 + For Hamlib, Select your radio model from `Radio Model` dropdown and choose the port where your device is located in the `Device Port` field. For FLRig, input correct ip address and port.
 
@@ -364,7 +363,7 @@ CPU and memory usage after 1 hour of operation are shown below. The CPU spikes c
 
 ## ❓ Known Issues
 
-+ Double-clicking on QSO to view details does not work on Windows 7 and Linux.
++ (FIXED) Double-clicking on QSO to view details does not work on Windows 7 and Linux.
 
 ## 🙏 Acknowledgments
 
