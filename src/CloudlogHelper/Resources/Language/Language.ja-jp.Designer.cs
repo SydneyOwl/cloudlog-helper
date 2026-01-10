@@ -1356,12 +1356,7 @@ namespace CloudlogHelper.Resources.Language {
         ///• 備考: {26}
         ///• クライアント: {27}
         ///• アップロード状態: {28}
-        ///• 失敗理由: {29}• コールサイン: {0}
-        ///• 国: {1} (CQゾーン: {2}, ITUゾーン: {3})
-        ///• 大陸: {4}
-        ///• 位置: 緯度 {5}°, 経度 {6}° (GMT{7})
-        ///• DXCC: {8}
-        ///• グリッド: [rest of string was truncated]&quot;;.
+        ///• 失敗理由: {29}.
         /// </summary>
         internal static string qsotemplate {
             get {
