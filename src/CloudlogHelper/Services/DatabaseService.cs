@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Newtonsoft.Json;
+using Nito.AsyncEx;
 using NLog;
 using SQLite;
 
@@ -22,6 +24,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     private Version _appVersion;
     private Version _dbVersion;
     private bool _upgradeNeeded;
+    private readonly AsyncReaderWriterLock _callsignCountryUpdateLock = new();
 
     public async Task InitDatabaseAsync(string dbPath = "", bool forceInitDatabase = false)
     {
@@ -117,28 +120,29 @@ public class DatabaseService : IDatabaseService, IDisposable
 
     public async Task<CountryDatabase> GetCallsignDetailAsync(string callsign)
     {
+        using var readerLock = await _callsignCountryUpdateLock.ReaderLockAsync();
         if (string.IsNullOrEmpty(callsign)) return new CountryDatabase { CountryName = "Unknown", };
-        
+    
         var prefixes = new List<string>();
         var length = Math.Min(callsign.Length, 6);
         for (var i = length; i >= 1; i--)
             prefixes.Add(callsign.Substring(0, i));
         prefixes.Add($"={callsign}");
         var parameters = prefixes.Select(p => (object)p).ToArray();
-        
+    
         var placeholders = string.Join(",", Enumerable.Repeat("?", prefixes.Count));
 
         var query = $@"
-            SELECT a.*, b.*
-            FROM callsigns AS a
-            LEFT JOIN countries AS b ON a.country_id = b.id
-            WHERE a.callsign IN ({placeholders})
-            ORDER BY LENGTH(a.callsign) DESC
-            LIMIT 1";
+        SELECT a.*, b.*
+        FROM callsigns AS a
+        LEFT JOIN countries AS b ON a.country_id = b.id
+        WHERE a.callsign IN ({placeholders})
+        ORDER BY LENGTH(a.callsign) DESC
+        LIMIT 1";
 
         var results = await _connection!.QueryAsync<CountryDatabase>(query, parameters)
             .ConfigureAwait(false);
-        
+    
         return results.FirstOrDefault() ?? new CountryDatabase();
     }
 
@@ -242,15 +246,19 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
-    public async Task UpdateCallsignAndCountry(string ctyDat)
+    public async Task<(int, int)> UpdateCallsignAndCountry(string ctyDat)
     {
+        using var readerLock = await _callsignCountryUpdateLock.WriterLockAsync();
         _logger.Info("Updating callsign and country");
+        var countryRow = 0;
+        var callsignRow = 0;
         await _connection!.RunInTransactionAsync(db =>
         {
             db.DropAndCreateTable<CallsignDatabase>();
             db.DropAndCreateTable<CountryDatabase>();
-            InitializePrefixAndCountryData(db, ctyDat);
+            (countryRow,callsignRow) = InitializePrefixAndCountryData(db, ctyDat);
         }).ConfigureAwait(false);
+        return (countryRow, callsignRow);
     }
 
     public void Dispose()
@@ -355,60 +363,53 @@ public class DatabaseService : IDatabaseService, IDisposable
 
     private void InitializeAdifModesDatabase(SQLiteConnection connection)
     {
-        try
+        var json = ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedeAdifModeFilename);
+        var adifModes = JsonConvert.DeserializeObject<List<AdifModesDatabase>>(json);
+        
+        if (adifModes?.Count > 0)
         {
-            var json = ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedeAdifModeFilename);
-            var adifModes = JsonConvert.DeserializeObject<List<AdifModesDatabase>>(json);
-            
-            if (adifModes?.Count > 0)
-            {
-                connection.InsertAll(adifModes);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.Warn(ex, "Failed to initialize ADIF modes database");
+            connection.InsertAll(adifModes);
         }
     }
 
-    private void InitializePrefixAndCountryData(SQLiteConnection connection, string? ctyData)
+    private (int, int) InitializePrefixAndCountryData(SQLiteConnection connection, string? ctyData)
     {
-        try
+        var callsigns = new List<CallsignDatabase>();
+        var countries = new List<CountryDatabase>();
+        
+        ctyData ??= ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedCtyFilename);
+        var entries = ctyData.Split(';', StringSplitOptions.RemoveEmptyEntries);
+        
+        for (int i = 0; i < entries.Length; i++)
         {
-            var callsigns = new List<CallsignDatabase>();
-            var countries = new List<CountryDatabase>();
+            if (!entries[i].Contains(':')) continue;
             
-             ctyData ??= ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedCtyFilename);
-            var entries = ctyData.Split(';', StringSplitOptions.RemoveEmptyEntries);
-            
-            for (int i = 0; i < entries.Length; i++)
+            var country = new CountryDatabase(entries[i])
             {
-                if (!entries[i].Contains(':')) continue;
-                
-                var country = new CountryDatabase(entries[i])
-                {
-                    Id = i + 1
-                };
-                countries.Add(country);
-                
-                var countryPrefixes = ExtractCallsignPrefixes(entries[i]);
-                foreach (var prefix in countryPrefixes)
-                {
-                    callsigns.Add(new CallsignDatabase
-                    {
-                        Callsign = prefix,
-                        CountryId = i + 1
-                    });
-                }
-            }
+                Id = i + 1
+            };
+            countries.Add(country);
             
-            connection.InsertAll(countries);
-            connection.InsertAll(callsigns);
+            var countryPrefixes = ExtractCallsignPrefixes(entries[i]);
+            foreach (var prefix in countryPrefixes)
+            {
+                callsigns.Add(new CallsignDatabase
+                {
+                    Callsign = prefix,
+                    CountryId = i + 1
+                });
+            }
         }
-        catch (Exception ex)
+
+        if (countries.Count < 173 || callsigns.Count < 3539)
         {
-            _logger.Warn(ex, "Failed to initialize prefix and country data");
+            throw new Exception("invalid cty data");
         }
+        
+        var countryRowAdded = connection.InsertAll(countries);
+        var callsignRowAdded = connection.InsertAll(callsigns);
+        
+        return (countryRowAdded, callsignRowAdded);
     }
 
     private IEnumerable<string> ExtractCallsignPrefixes(string ctyEntry)

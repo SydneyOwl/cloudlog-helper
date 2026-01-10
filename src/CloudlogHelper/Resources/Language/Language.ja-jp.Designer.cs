@@ -2072,6 +2072,34 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 更新コールサインと国データ.
+        /// </summary>
+        internal static string updatebigcty {
+            get {
+                return ResourceManager.GetString("updatebigcty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to コールサインと国データの更新に失敗しました：{0}！.
+        /// </summary>
+        internal static string updatebigctyfailed {
+            get {
+                return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to コールサインと国データの更新が成功しました！
+        ///コールサイン規則を{0}件、国データを{1}件書き込みました.
+        /// </summary>
+        internal static string updatebigctysuccess {
+            get {
+                return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CloudlogにQSOを自動アップロード.
         /// </summary>
         internal static string upload2cloudlog {

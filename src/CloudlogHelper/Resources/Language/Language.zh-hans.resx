@@ -764,4 +764,15 @@
     <data name="invalidadif" xml:space="preserve">
         <value>无效的ADIF！</value>
     </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>更新呼号和国家数据</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>更新呼号和国家数据成功！
+写入呼号规则{0}个，国家数据{1}个
+</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>更新呼号和国家数据失败:{0}！</value>
+    </data>
 </root>

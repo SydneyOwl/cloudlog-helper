@@ -764,4 +764,14 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="invalidadif" xml:space="preserve">
         <value>Invalid ADIF!</value>
     </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>Update callsign and country data</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>Call sign and country data updated successfully!
+{0} call sign rules and {1} country data entries written</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>Call sign and country data update failed: {0}！</value>
+    </data>
 </root>

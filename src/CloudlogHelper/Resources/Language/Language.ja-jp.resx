@@ -776,4 +776,14 @@
     <data name="yearqsos" xml:space="preserve">
         <value>年間QSO数</value>
     </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>更新コールサインと国データ</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>コールサインと国データの更新が成功しました！
+コールサイン規則を{0}件、国データを{1}件書き込みました</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>コールサインと国データの更新に失敗しました：{0}！</value>
+    </data>
 </root>

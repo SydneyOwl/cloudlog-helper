@@ -2069,6 +2069,34 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update callsign and country data.
+        /// </summary>
+        public static string updatebigcty {
+            get {
+                return ResourceManager.GetString("updatebigcty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Call sign and country data update failed: {0}！.
+        /// </summary>
+        public static string updatebigctyfailed {
+            get {
+                return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Call sign and country data updated successfully!
+        ///{0} call sign rules and {1} country data entries written.
+        /// </summary>
+        public static string updatebigctysuccess {
+            get {
+                return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto upload QSO to Cloudlog.
         /// </summary>
         public static string upload2cloudlog {

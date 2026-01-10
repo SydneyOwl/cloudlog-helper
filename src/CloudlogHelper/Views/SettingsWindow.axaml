@@ -156,6 +156,10 @@
                                 <Button Content="{I18N {x:Static resources:LangKeys.opentempfolder}}"
                                         Command="{Binding OpenTempDir}" />
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <Button Content="{I18N {x:Static resources:LangKeys.updatebigcty}}"
+                                        Command="{Binding UpdateBigCty}" />
+                            </StackPanel>
                         </StackPanel>
                         <!-- </Border> -->
                     </StackPanel>

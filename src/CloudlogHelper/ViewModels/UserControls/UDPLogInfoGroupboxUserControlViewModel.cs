@@ -500,7 +500,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         RecordedQsosCount += 1;
         _qsoTimestamps.Enqueue(DateTime.UtcNow);
 
-        var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall);
+        var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall).ConfigureAwait(false);
         var rcd = RecordedCallsignDetail.GenerateCallsignDetail(
             cty, 
             message,

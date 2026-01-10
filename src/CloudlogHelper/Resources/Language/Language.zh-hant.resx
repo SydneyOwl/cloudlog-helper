@@ -758,4 +758,14 @@
     <data name="yearqsos" xml:space="preserve">
         <value>年度QSO數</value>
     </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>更新呼號和國家數據</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>更新呼號和國家數據成功！
+寫入呼號規則{0}個，國家數據{1}個</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>更新呼號和國家數據失敗：{0}！</value>
+    </data>
 </root>

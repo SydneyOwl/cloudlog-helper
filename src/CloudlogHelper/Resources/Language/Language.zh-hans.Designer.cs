@@ -2069,6 +2069,35 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 更新呼号和国家数据.
+        /// </summary>
+        public static string updatebigcty {
+            get {
+                return ResourceManager.GetString("updatebigcty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 更新呼号和国家数据失败:{0}！.
+        /// </summary>
+        public static string updatebigctyfailed {
+            get {
+                return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 更新呼号和国家数据成功！
+        ///写入呼号规则{0}个，国家数据{1}个
+        ///.
+        /// </summary>
+        public static string updatebigctysuccess {
+            get {
+                return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自动上传QSO到Cloudlog.
         /// </summary>
         public static string upload2cloudlog {

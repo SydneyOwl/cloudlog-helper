@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Reactive;
@@ -11,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
@@ -23,6 +25,8 @@ using CloudlogHelper.ViewModels.UserControls;
 using DesktopNotifications;
 using DynamicData;
 using Flurl.Http;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -42,6 +46,8 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly CancellationTokenSource _source;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ICLHServerService _clhServerService;
+    private readonly IDatabaseService _databaseService;
+    private readonly IMessageBoxManagerService _messageBoxManagerService;
 
     public SettingsWindowViewModel()
     {
@@ -50,6 +56,7 @@ public class SettingsWindowViewModel : ViewModelBase
         DiscardConf = ReactiveCommand.Create(() => { });
         OpenConfDir = ReactiveCommand.Create(() => { });
         OpenTempDir = ReactiveCommand.Create(() => { });
+        UpdateBigCty = ReactiveCommand.Create(() => { });
         SaveAndApplyConf = ReactiveCommand.Create(() => { });
         HamlibInited = true;
         OmniRigInited = true;
@@ -62,12 +69,16 @@ public class SettingsWindowViewModel : ViewModelBase
         IWindowManagerService windowManager,
         IApplicationSettingsService ss,
         IRigBackendManager rs,
-        ICLHServerService cs)
+        ICLHServerService cs,
+        IMessageBoxManagerService mm,
+        IDatabaseService ds)
     {
         _windowManagerService = windowManager;
         _settingsService = ss;
         _rigBackendManager = rs;
         _clhServerService = cs;
+        _databaseService = ds;
+        _messageBoxManagerService = mm;
         
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
@@ -93,6 +104,7 @@ public class SettingsWindowViewModel : ViewModelBase
         SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
         OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
         OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
+        UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
 
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         _source = new CancellationTokenSource();
@@ -124,16 +136,32 @@ public class SettingsWindowViewModel : ViewModelBase
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })
                 .DisposeWith(disposables);
-            hamlibCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
-            omniCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
-            flrigCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
-            cloudCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
-            clhCmd.ThrownExceptions.Subscribe(err => Notification?.SendErrorNotificationSync(err.Message))
-                .DisposeWith(disposables);
+
+            var cmds = new[]
+            {
+                RefreshPort,
+                DiscardConf,
+                SaveAndApplyConf,
+                OpenConfDir,
+                OpenTempDir,
+                UpdateBigCty,
+                hamlibCmd,
+                flrigCmd,
+                omniCmd,
+                cloudCmd,
+                clhCmd,
+            };
+            
+            foreach (var reactiveCommand in cmds)
+            {
+                reactiveCommand.ThrownExceptions
+                    .Subscribe(err =>
+                    {
+                        Notification?.SendErrorNotificationSync(err.Message);
+                        ClassLogger.Error(err);
+                    })
+                    .DisposeWith(disposables);
+            }
 
             RefreshPort.ThrownExceptions.Subscribe(err =>
             {
@@ -170,6 +198,7 @@ public class SettingsWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> DiscardConf { get; }
     public ReactiveCommand<Unit, Unit> OpenConfDir { get; }
     public ReactiveCommand<Unit, Unit> OpenTempDir { get; }
+    public ReactiveCommand<Unit, Unit> UpdateBigCty { get; }
 
     public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
@@ -393,6 +422,55 @@ public class SettingsWindowViewModel : ViewModelBase
         await _windowManagerService.LaunchDir(DefaultConfigs.DefaultTempFilePath);
     }
 
+    private async Task _updateBigCty()
+    {
+        if (Design.IsDesignMode) return;
+        try
+        {
+            var openFilePickerAsync = await _windowManagerService.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Select cty.dat",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("dat") { Patterns = new[] { "*.dat" } }
+                }
+            });
+
+            if (!openFilePickerAsync.Any()) return;
+            var selected = openFilePickerAsync[0];
+            if (selected is null) return;
+            var stream = await selected.OpenReadAsync();
+            using var reader = new StreamReader(stream);
+            var content = await reader.ReadToEndAsync();
+            var (countryRow, callsignRow) = await _databaseService.UpdateCallsignAndCountry(content);
+            await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(new List<ButtonDefinition>
+            {
+                new()
+                {
+                    Name = "OK",
+                    IsDefault = true,
+                    IsCancel = false
+                }
+            }, Icon.Success, TranslationHelper.GetString(LangKeys.success), 
+                string.Format(TranslationHelper.GetString(LangKeys.updatebigctysuccess), 
+                    callsignRow, countryRow), null);
+        }
+        catch (Exception ex)
+        {
+            await _messageBoxManagerService.DoShowCustomMessageboxDialogAsync(new List<ButtonDefinition>
+                {
+                    new()
+                    {
+                        Name = "Error",
+                        IsDefault = true,
+                        IsCancel = false
+                    }
+                }, Icon.Error, TranslationHelper.GetString(LangKeys.error), 
+                string.Format(TranslationHelper.GetString(LangKeys.updatebigctyfailed), ex.Message), null);
+        }
+    }
+    
     private void _saveAndApplyConf()
     {
         if (Design.IsDesignMode) return;
