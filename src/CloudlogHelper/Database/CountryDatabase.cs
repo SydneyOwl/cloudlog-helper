@@ -51,7 +51,7 @@ public class CountryDatabase
     /// <summary>
     ///     Country name in english.
     /// </summary>
-    [Column("country_name")]
+    [Column("country_en")]
     public string CountryName { get; set; } = "Unknown";
 
     /// <summary>

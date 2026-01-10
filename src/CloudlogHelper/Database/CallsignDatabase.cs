@@ -24,7 +24,7 @@ public class CallsignDatabase
     ///     prefix of the callsign. Used for callsign matching.
     /// </summary>
     ///
-    [Indexed(Unique = true)]
+    [Indexed]
     [Column("callsign")]
     public string Callsign { get; set; } = "";
 }

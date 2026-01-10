@@ -71,17 +71,20 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         _logger.Info($"Upgrading database {_dbVersion} => {_appVersion}");
         
-        var callsignCount = await _connection!.Table<CallsignDatabase>().CountAsync();
-        var countryCount = await _connection!.Table<CountryDatabase>().CountAsync();
-        
         await _connection!.RunInTransactionAsync(db =>
         {
             _logger.Trace($"Running upgrade transaction: {_dbVersion} => {_appVersion}");
             
-            // Recreate tables
             db.DropAndCreateTable<AdifModesDatabase>();
+            
             db.CreateTable<IgnoredQsoDatabase>();
             db.CreateTable<CollectedGridDatabase>();
+            
+            db.CreateTable<CallsignDatabase>();
+            db.CreateTable<CountryDatabase>();
+            
+            var callsignCount = db!.Table<CallsignDatabase>().Count();
+            var countryCount = db!.Table<CountryDatabase>().Count();
 
             // Only reset prefix/country data if insufficient
             // 2025.1.9 cty.dat has 346 countrries and 7078 callsigns. big cty has 346 countries and 29645 callsigns.
@@ -90,11 +93,6 @@ public class DatabaseService : IDatabaseService, IDisposable
                 db.DropAndCreateTable<CallsignDatabase>();
                 db.DropAndCreateTable<CountryDatabase>();
                 InitializePrefixAndCountryData(db, null);
-            }
-            else
-            {
-                db.CreateTable<CallsignDatabase>();
-                db.CreateTable<CountryDatabase>();
             }
             
             InitializeAdifModesDatabase(db);
