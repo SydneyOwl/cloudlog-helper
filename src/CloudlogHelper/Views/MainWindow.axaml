@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
         x:Class="CloudlogHelper.Views.MainWindow"

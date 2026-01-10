@@ -31,9 +31,11 @@
                             HorizontalContentAlignment="Center"
                             Margin="10"
                             VerticalAlignment="Center"
-                            Header="{I18N {x:Static resources:LangKeys.rigdata}}" MaxWidth="400">
-        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-              ShowGridLines="False" RowSpacing="5"
+                            Header="{I18N {x:Static resources:LangKeys.rigdata}}">
+        <Grid ColumnDefinitions="Auto,Auto"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+              ShowGridLines="False" RowSpacing="5" 
+              Margin="20,0,20,0"
               VerticalAlignment="Center" HorizontalAlignment="Center">
 
             <userControls1:WindowSplitToggleButtonUserControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"

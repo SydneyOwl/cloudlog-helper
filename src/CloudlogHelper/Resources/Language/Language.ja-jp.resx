@@ -160,7 +160,7 @@
         <value>本日のQSO数</value>
     </data>
     <data name="delsel" xml:space="preserve">
-        <value>選択項目を削除</value>
+        <value>削除</value>
     </data>
     <data name="deny" xml:space="preserve">
         <value>拒否</value>
@@ -528,7 +528,7 @@
         <value>アップロードを再試行中</value>
     </data>
     <data name="reuploadsel" xml:space="preserve">
-        <value>選択項目を再送信</value>
+        <value>再送信</value>
     </data>
     <data name="rfpowerhelp" xml:space="preserve">
         <value>一部の無線機は送信出力の読み取りをサポートしていないか、誤ったデータを返すため、この機能はデフォルトで無効になっています。</value>
