@@ -1,0 +1,771 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="about" xml:space="preserve">
+        <value>關於</value>
+    </data>
+    <data name="accept" xml:space="preserve">
+        <value>接受</value>
+    </data>
+    <data name="advancedsettings" xml:space="preserve">
+        <value>進階設定</value>
+    </data>
+    <data name="allowexternalcontrol" xml:space="preserve">
+        <value>允許外部控制</value>
+    </data>
+    <data name="allowproxy" xml:space="preserve">
+        <value>允許請求代理</value>
+    </data>
+    <data name="angweight" xml:space="preserve">
+        <value>角度權重</value>
+    </data>
+    <data name="apikey" xml:space="preserve">
+        <value>API金鑰</value>
+    </data>
+    <data name="autopollstatus" xml:space="preserve">
+        <value>自動更新台站資訊</value>
+    </data>
+    <data name="autoqsoupload" xml:space="preserve">
+        <value>自動上傳QSO</value>
+    </data>
+    <data name="autosel" xml:space="preserve">
+        <value>自動選擇</value>
+    </data>
+    <data name="autoupdateriginfo" xml:space="preserve">
+        <value>電臺數據自動上報</value>
+    </data>
+    <data name="autoupload2" xml:space="preserve">
+        <value>自動上傳QSO到</value>
+    </data>
+    <data name="basicinfo" xml:space="preserve">
+        <value>基本資訊</value>
+    </data>
+    <data name="basicsettings" xml:space="preserve">
+        <value>基礎設定</value>
+    </data>
+    <data name="baudrate" xml:space="preserve">
+        <value>鮑率</value>
+    </data>
+    <data name="bearingdeg" xml:space="preserve">
+        <value>角度（度）</value>
+    </data>
+    <data name="bootfail" xml:space="preserve">
+        <value>啟動失敗！是否嘗試重置所有設定？</value>
+    </data>
+    <data name="calculating" xml:space="preserve">
+        <value>計算中...</value>
+    </data>
+    <data name="callsign" xml:space="preserve">
+        <value>呼號</value>
+    </data>
+    <data name="charts" xml:space="preserve">
+        <value>圖表</value>
+    </data>
+    <data name="chartsdisabled" xml:space="preserve">
+        <value>圖表功能被禁用，請在設定中啟用！</value>
+    </data>
+    <data name="checkrigconn" xml:space="preserve">
+        <value>請檢查電臺連線！</value>
+    </data>
+    <data name="clear" xml:space="preserve">
+        <value>清空</value>
+    </data>
+    <data name="clhhintinfo" xml:space="preserve">
+        <value>Cloudlog Helper能夠連線CLH-Server，自動上報解碼的數據模式資訊和電臺資訊到伺服器。當您使用特定的安卓app連線到伺服器時，伺服器將會推送資訊到您的手機上。</value>
+    </data>
+    <data name="clhseraddr" xml:space="preserve">
+        <value>CLH伺服器IP</value>
+    </data>
+    <data name="clhserkey" xml:space="preserve">
+        <value>CLH伺服器金鑰</value>
+    </data>
+    <data name="clhserport" xml:space="preserve">
+        <value>CLH伺服器埠</value>
+    </data>
+    <data name="clhserver" xml:space="preserve">
+        <value>CLH伺服器</value>
+    </data>
+    <data name="clhusetls" xml:space="preserve">
+        <value>使用TLS</value>
+    </data>
+    <data name="close" xml:space="preserve">
+        <value>關閉視窗</value>
+    </data>
+    <data name="closeormin" xml:space="preserve">
+        <value>您希望最小化到托盤還是關閉本程式？</value>
+    </data>
+    <data name="cloudlogapihelp" xml:space="preserve">
+        <value>填寫您的apikey。這個key需要具備讀/寫許可權。可在主頁賬號的下拉方塊中找到。</value>
+    </data>
+    <data name="cloudlogstationid" xml:space="preserve">
+        <value>可以在主頁賬號的下拉方塊中“站點地址”找到。</value>
+    </data>
+    <data name="cloudlogurlhelp" xml:space="preserve">
+        <value>只需填寫網域名稱，不需要包含index.php/api/qso，程式會自動填充。</value>
+    </data>
+    <data name="clublogsettings" xml:space="preserve">
+        <value>Clublog設定</value>
+    </data>
+    <data name="cmdarghelp" xml:space="preserve">
+        <value>如果此欄位不為空，軟體將使用填寫的內容作為啟動rigctld的預設引數，其他所有配置將被忽略。</value>
+    </data>
+    <data name="confcloudlogfirst" xml:space="preserve">
+        <value>Cloudlog配置無效，請在設定中修改！</value>
+    </data>
+    <data name="confflrigfirst" xml:space="preserve">
+        <value>FLRIG配置有誤，請在設定中修正！</value>
+    </data>
+    <data name="confhamlibfirst" xml:space="preserve">
+        <value>Hamlib配置無效，請在設定中修改！</value>
+    </data>
+    <data name="conflicthamlib" xml:space="preserve">
+        <value>檢測到進程 {replace01} 正在執行，可能影響電臺數據自動上報功能！</value>
+    </data>
+    <data name="confomnifirst" xml:space="preserve">
+        <value>請檢查OmniRig配置！</value>
+    </data>
+    <data name="controlpanel" xml:space="preserve">
+        <value>控制面板</value>
+    </data>
+    <data name="currentfreq" xml:space="preserve">
+        <value>當前頻率</value>
+    </data>
+    <data name="currrentmode" xml:space="preserve">
+        <value>當前模式</value>
+    </data>
+    <data name="dark" xml:space="preserve">
+        <value>深色模式</value>
+    </data>
+    <data name="databit" xml:space="preserve">
+        <value>資料位</value>
+    </data>
+    <data name="dayqsos" xml:space="preserve">
+        <value>今日QSO數</value>
+    </data>
+    <data name="delsel" xml:space="preserve">
+        <value>刪除選中項</value>
+    </data>
+    <data name="deny" xml:space="preserve">
+        <value>拒絕</value>
+    </data>
+    <data name="deviceport" xml:space="preserve">
+        <value>裝置埠</value>
+    </data>
+    <data name="disablecharts" xml:space="preserve">
+        <value>禁用圖表功能（僅低效能裝置）</value>
+    </data>
+    <data name="disableptt" xml:space="preserve">
+        <value>禁用PTT控制</value>
+    </data>
+    <data name="disableptthelp" xml:space="preserve">
+        <value>部分Linux發行版中如果不禁用rts/dtr可能導致PTT無法正確初始化，表現為PTT始終處於觸發狀態。</value>
+    </data>
+    <data name="discard" xml:space="preserve">
+        <value>取消</value>
+    </data>
+    <data name="disclaimer" xml:space="preserve">
+        <value>歡迎使用Cloudlog Helper v{1}!
+
+在您開始使用前，請先閱讀並同意下方的【免責宣告與使用者協議】
+
+【免責宣告與使用者協議】
+本軟體採用The Unlicense協議開源，按“原樣”提供，僅供技術交流與學習之用。使用者需自行承擔所有風險。
+開發者對因使用本軟體而產生的任何數據丟失、裝置損壞或其他損失概不負責。
+繼續使用即表示您已閱讀並同意上述條款及專案主頁上的完整免責宣告 (https://github.com/sydneyowl/cloudlog-helper)。
+</value>
+    </data>
+    <data name="distkm" xml:space="preserve">
+        <value>距離（公里）</value>
+    </data>
+    <data name="distweight" xml:space="preserve">
+        <value>距離權重</value>
+    </data>
+    <data name="doubletap2seemore" xml:space="preserve">
+        <value>雙擊查看更多</value>
+    </data>
+    <data name="dupeinstance" xml:space="preserve">
+        <value>程式已在執行！</value>
+    </data>
+    <data name="duperigservdetected" xml:space="preserve">
+        <value>不允許同時啟用兩個電臺後端控制服務！</value>
+    </data>
+    <data name="email" xml:space="preserve">
+        <value>電子郵箱</value>
+    </data>
+    <data name="enableadvanced" xml:space="preserve">
+        <value>進階設定</value>
+    </data>
+    <data name="enableclhserver" xml:space="preserve">
+        <value>啟用CLH伺服器</value>
+    </data>
+    <data name="enableoutsideconn" xml:space="preserve">
+        <value>允許外部連線</value>
+    </data>
+    <data name="enableudpserver" xml:space="preserve">
+        <value>啟用UDP伺服器</value>
+    </data>
+    <data name="error" xml:space="preserve">
+        <value>錯誤</value>
+    </data>
+    <data name="errorccurred" xml:space="preserve">
+        <value>出錯啦！</value>
+    </data>
+    <data name="exit" xml:space="preserve">
+        <value>退出</value>
+    </data>
+    <data name="export" xml:space="preserve">
+        <value>匯出</value>
+    </data>
+    <data name="export2adif" xml:space="preserve">
+        <value>匯出為adi</value>
+    </data>
+    <data name="externalrigctldhost" xml:space="preserve">
+        <value>Rigctld服務地址</value>
+    </data>
+    <data name="failed" xml:space="preserve">
+        <value>失敗！</value>
+    </data>
+    <data name="failedqso" xml:space="preserve">
+        <value>此QSO上傳失敗。</value>
+    </data>
+    <data name="failedriginfo" xml:space="preserve">
+        <value>無法獲取電臺數據！</value>
+    </data>
+    <data name="failedstationinfo" xml:space="preserve">
+        <value>無法獲取站點資訊！</value>
+    </data>
+    <data name="failedstationstat" xml:space="preserve">
+        <value>無法獲取站點數據！</value>
+    </data>
+    <data name="failedsyncqso" xml:space="preserve">
+        <value>QSO同步出錯：</value>
+    </data>
+    <data name="failextractinfo" xml:space="preserve">
+        <value>無法從命令列引數中提取埠號。請顯式使用引數-t指明。</value>
+    </data>
+    <data name="failrigcomm" xml:space="preserve">
+        <value>與電臺通訊失敗！</value>
+    </data>
+    <data name="failuploadriginfoto" xml:space="preserve">
+        <value>無法上傳到{addr}，請檢視日誌！</value>
+    </data>
+    <data name="fillall" xml:space="preserve">
+        <value>請完整填寫所有資訊！</value>
+    </data>
+    <data name="filterdupebycallsign" xml:space="preserve">
+        <value>過濾重複樣本（呼號）</value>
+    </data>
+    <data name="forward2tcp" xml:space="preserve">
+        <value>轉發解碼資訊到http伺服器</value>
+    </data>
+    <data name="forwardmsg" xml:space="preserve">
+        <value>轉發原始UDP數據包到</value>
+    </data>
+    <data name="forwardto" xml:space="preserve">
+        <value>轉發原始UDP數據包到</value>
+    </data>
+    <data name="gettinginfo" xml:space="preserve">
+        <value>獲取數據中...</value>
+    </data>
+    <data name="grid" xml:space="preserve">
+        <value>座標</value>
+    </data>
+    <data name="griderror" xml:space="preserve">
+        <value>網格座標為空或有誤，請檢查設定！
+</value>
+    </data>
+    <data name="hamcqsettings" xml:space="preserve">
+        <value>HamCQ設定</value>
+    </data>
+    <data name="help" xml:space="preserve">
+        <value>幫助</value>
+    </data>
+    <data name="helpfeedback" xml:space="preserve">
+        <value>希望您能將出錯資訊反饋到Github，幫助開發者修正此BUG！</value>
+    </data>
+    <data name="ignoreqso" xml:space="preserve">
+        <value>此QSO已被忽略 - 是不是把所有第三方日誌的上傳功能都關了？</value>
+    </data>
+    <data name="ignoreqsopermanently" xml:space="preserve">
+        <value>此操作將永久忽略選中的QSO，後續QSO助手掃描本地QSO時將忽略這些項。是否繼續？</value>
+    </data>
+    <data name="inithamlibfailed" xml:space="preserve">
+        <value>Hamlib初始化失敗!</value>
+    </data>
+    <data name="instancename" xml:space="preserve">
+        <value>例項名稱</value>
+    </data>
+    <data name="instancenamehint" xml:space="preserve">
+        <value>此欄位為軟體註冊到clh-server時使用的名稱。此名稱應當是唯一的。</value>
+    </data>
+    <data name="instanceuncompitable" xml:space="preserve">
+        <value>您使用的後端服務似乎是{replace01}而不是Cloudlog，因此軟體部分功能可能不支援。</value>
+    </data>
+    <data name="invalidaddr" xml:space="preserve">
+        <value>地址無效！</value>
+    </data>
+    <data name="invalidadif" xml:space="preserve">
+        <value>無效的ADIF！</value>
+    </data>
+    <data name="invalidapikey" xml:space="preserve">
+        <value>此APIKEY無效！</value>
+    </data>
+    <data name="invalidconf" xml:space="preserve">
+        <value>配置無效！</value>
+    </data>
+    <data name="invalidport" xml:space="preserve">
+        <value>埠號無效</value>
+    </data>
+    <data name="invalidudpconf" xml:space="preserve">
+        <value>UDP伺服器配置無效！</value>
+    </data>
+    <data name="invalidurl" xml:space="preserve">
+        <value>URL無效！</value>
+    </data>
+    <data name="kval" xml:space="preserve">
+        <value>K值(KNN)</value>
+    </data>
+    <data name="lackwriteaccess" xml:space="preserve">
+        <value>APIKEY需要讀/寫許可權但提供的apikey只有讀許可權！</value>
+    </data>
+    <data name="latitude" xml:space="preserve">
+        <value>緯度</value>
+    </data>
+    <data name="light" xml:space="preserve">
+        <value>淺色模式</value>
+    </data>
+    <data name="longitude" xml:space="preserve">
+        <value>經度</value>
+    </data>
+    <data name="madeaqso" xml:space="preserve">
+        <value>✅ 完成了一個QSO！</value>
+    </data>
+    <data name="maxsamplecount" xml:space="preserve">
+        <value>最大取樣點數量</value>
+    </data>
+    <data name="monthqsos" xml:space="preserve">
+        <value>本月QSO數</value>
+    </data>
+    <data name="mustverbose" xml:space="preserve">
+        <value>命令列引數必須新增-vvvvv！</value>
+    </data>
+    <data name="mygrid" xml:space="preserve">
+        <value>我的網格座標</value>
+    </data>
+    <data name="nextuploadtime" xml:space="preserve">
+        <value>下次上報時間</value>
+    </data>
+    <data name="nodata" xml:space="preserve">
+        <value>（無數據）</value>
+    </data>
+    <data name="notice" xml:space="preserve">
+        <value>注意</value>
+    </data>
+    <data name="notnull" xml:space="preserve">
+        <value>此項不能為空！</value>
+    </data>
+    <data name="omniinitfailed" xml:space="preserve">
+        <value>請檢查OmniRig是否已正確安裝，另外OmniRIg目前僅在Windows平臺上支援。</value>
+    </data>
+    <data name="onlymaindomain" xml:space="preserve">
+        <value>只需輸入主網域名稱，不允許以/api/qso結尾！</value>
+    </data>
+    <data name="op" xml:space="preserve">
+        <value>操作員</value>
+    </data>
+    <data name="open" xml:space="preserve">
+        <value>開啟</value>
+    </data>
+    <data name="openconfpath" xml:space="preserve">
+        <value>開啟配置目錄</value>
+    </data>
+    <data name="opentempfolder" xml:space="preserve">
+        <value>開啟快取目錄</value>
+    </data>
+    <data name="password" xml:space="preserve">
+        <value>密碼</value>
+    </data>
+    <data name="pause" xml:space="preserve">
+        <value>暫停</value>
+    </data>
+    <data name="pendingqso" xml:space="preserve">
+        <value>此QSO正在等待上傳。</value>
+    </data>
+    <data name="polldisabled" xml:space="preserve">
+        <value>請在設定中開啟“電臺數據自動上報”</value>
+    </data>
+    <data name="pollinterval" xml:space="preserve">
+        <value>輪詢間隔（秒）</value>
+    </data>
+    <data name="pollintervalreq" xml:space="preserve">
+        <value>輪詢間隔必須為整數且大於1！</value>
+    </data>
+    <data name="port" xml:space="preserve">
+        <value>埠號</value>
+    </data>
+    <data name="proxyhelp" xml:space="preserve">
+        <value>允許代理其他應用程式傳送的請求。用於避免同時向rigctld傳送請求時可能造成的衝突。</value>
+    </data>
+    <data name="pseselfirst" xml:space="preserve">
+        <value>請先勾選QSO!</value>
+    </data>
+    <data name="pushnotificationon" xml:space="preserve">
+        <value>出現下列情況時推送系統通知：</value>
+    </data>
+    <data name="qsoassistant" xml:space="preserve">
+        <value>QSO上傳助手</value>
+    </data>
+    <data name="qsoconcisetemplate" xml:space="preserve">
+        <value>呼號: {0}, 國家: {1} ({8}), 網格: {9},  頻率: {10} ({11}),  模式: {12}, 時間: {14} 至 {15}, 訊號報告: 傳送 '{16}' / 接收 '{17}'</value>
+    </data>
+    <data name="qsofinished" xml:space="preserve">
+        <value>QSO完成時</value>
+    </data>
+    <data name="qsorate" xml:space="preserve">
+        <value>QSO速率：</value>
+    </data>
+    <data name="qsoretrycount" xml:space="preserve">
+        <value>QSO上傳失敗重試次數</value>
+    </data>
+    <data name="qsosyncing" xml:space="preserve">
+        <value>正在同步QSO...</value>
+    </data>
+    <data name="qsosyncsucc" xml:space="preserve">
+        <value>QSO同步成功！</value>
+    </data>
+    <data name="qsotemplate" xml:space="preserve">
+        <value>• 呼號: {0}
+• 國家: {1} (CQ區: {2}, ITU區: {3})
+• 大洲: {4}
+• 位置: 緯度 {5}°, 經度 {6}° (GMT{7})
+• DXCC: {8}
+• 網格: {9}
+• 頻率: {10} ({11})
+• 模式: {12} (父模式: {13})
+• 時間: {14} 至 {15}
+• 訊號報告: 傳送 '{16}' / 接收 '{17}'
+• 功率: {18}
+• 操作員: {19}
+• 本機呼號: {20}
+• 本機網格: {21}
+• 交換資訊: 傳送 '{22}' / 接收 '{23}'
+• 傳播模式: {24}
+• 姓名: {25}
+• 備註: {26}
+• 客戶端: {27}
+• 上傳狀態: {28}
+• 失敗原因: {29}</value>
+    </data>
+    <data name="qsouploaddisabled" xml:space="preserve">
+        <value>QSO自動上傳功能未啟用。</value>
+    </data>
+    <data name="qsouploaded" xml:space="preserve">
+        <value>QSO上傳完成時</value>
+    </data>
+    <data name="qthnick" xml:space="preserve">
+        <value>QTH別名（可選）</value>
+    </data>
+    <data name="qthnickname" xml:space="preserve">
+        <value>QTH暱稱（可選）</value>
+    </data>
+    <data name="reachminiumpollinterval" xml:space="preserve">
+        <value>輪詢間隔應當大於一秒！</value>
+    </data>
+    <data name="recvqso" xml:space="preserve">
+        <value>已完成的QSO資訊</value>
+    </data>
+    <data name="refresh" xml:space="preserve">
+        <value>重新整理</value>
+    </data>
+    <data name="remembermychoice" xml:space="preserve">
+        <value>記住我的選擇</value>
+    </data>
+    <data name="reportpwr" xml:space="preserve">
+        <value>報告發射功率</value>
+    </data>
+    <data name="reportsplit" xml:space="preserve">
+        <value>報告異頻資訊</value>
+    </data>
+    <data name="retrycountreq" xml:space="preserve">
+        <value>重試次數應為大於0的整數！</value>
+    </data>
+    <data name="retryingqso" xml:space="preserve">
+        <value>正在重試上傳</value>
+    </data>
+    <data name="reuploadsel" xml:space="preserve">
+        <value>重傳選中項</value>
+    </data>
+    <data name="rfpowerhelp" xml:space="preserve">
+        <value>部分電臺不支援讀取髮射功率或讀取的數據錯誤，因此本功能預設未開啟。</value>
+    </data>
+    <data name="rigbackendsystem" xml:space="preserve">
+        <value>電臺後端控制系統</value>
+    </data>
+    <data name="rigctldcmdarg" xml:space="preserve">
+        <value>Rigctld命令列引數</value>
+    </data>
+    <data name="rigctldnotstart" xml:space="preserve">
+        <value>Rigctld服務未啟動，請檢查設定！</value>
+    </data>
+    <data name="rigdata" xml:space="preserve">
+        <value>電臺數據</value>
+    </data>
+    <data name="rigmodel" xml:space="preserve">
+        <value>電臺型號</value>
+    </data>
+    <data name="rigtimeout" xml:space="preserve">
+        <value>與電臺通訊超時，請檢查連線！</value>
+    </data>
+    <data name="samplecount" xml:space="preserve">
+        <value>樣本數 = </value>
+    </data>
+    <data name="save" xml:space="preserve">
+        <value>應用更改</value>
+    </data>
+    <data name="savelog" xml:space="preserve">
+        <value>儲存日誌</value>
+    </data>
+    <data name="savelogto" xml:space="preserve">
+        <value>儲存日誌到..</value>
+    </data>
+    <data name="selall" xml:space="preserve">
+        <value>全選</value>
+    </data>
+    <data name="settings" xml:space="preserve">
+        <value>設定</value>
+    </data>
+    <data name="showdensitycolor" xml:space="preserve">
+        <value>展示密度顏色</value>
+    </data>
+    <data name="showfailonly" xml:space="preserve">
+        <value>僅顯示上傳失敗項</value>
+    </data>
+    <data name="shutdown" xml:space="preserve">
+        <value>關閉程式</value>
+    </data>
+    <data name="signalcount" xml:space="preserve">
+        <value>訊號計數</value>
+    </data>
+    <data name="signalpolarchart" xml:space="preserve">
+        <value>訊號分佈極座標圖</value>
+    </data>
+    <data name="spacenotallowed" xml:space="preserve">
+        <value>字串前後不允許空格</value>
+    </data>
+    <data name="spiltby" xml:space="preserve">
+        <value>用分號分隔的地址</value>
+    </data>
+    <data name="splithelp" xml:space="preserve">
+        <value>部分電臺不支援讀取異頻資訊或讀取的數據錯誤，因此本功能預設未開啟。</value>
+    </data>
+    <data name="startwithhttp" xml:space="preserve">
+        <value>URL 必須以 http:// 或 https:// 開頭！</value>
+    </data>
+    <data name="stationbearing" xml:space="preserve">
+        <value>站點方位分佈 - {0}波段 {1}</value>
+    </data>
+    <data name="stationdistance" xml:space="preserve">
+        <value>站點距離分佈 - {0}波段 {1}</value>
+    </data>
+    <data name="stationid" xml:space="preserve">
+        <value>Cloudlog 站點ID</value>
+    </data>
+    <data name="stationname" xml:space="preserve">
+        <value>站點名稱</value>
+    </data>
+    <data name="stationstatisticgraph" xml:space="preserve">
+        <value>解碼站點統計</value>
+    </data>
+    <data name="stopbit" xml:space="preserve">
+        <value>停止位</value>
+    </data>
+    <data name="success" xml:space="preserve">
+        <value>成功！</value>
+    </data>
+    <data name="successqso" xml:space="preserve">
+        <value>此QSO上傳成功。</value>
+    </data>
+    <data name="syncrigto" xml:space="preserve">
+        <value>同時報告電臺資訊到</value>
+    </data>
+    <data name="targetrig" xml:space="preserve">
+        <value>目標電臺</value>
+    </data>
+    <data name="testandapply" xml:space="preserve">
+        <value>* 每次修改配置後，您必須點選“測試”來測試並應用本次更改。</value>
+    </data>
+    <data name="testconn" xml:space="preserve">
+        <value>測試</value>
+    </data>
+    <data name="testing" xml:space="preserve">
+        <value>測試中...</value>
+    </data>
+    <data name="themecolor" xml:space="preserve">
+        <value>主題色</value>
+    </data>
+    <data name="thirdpartylogsys" xml:space="preserve">
+        <value>第三方日誌系統</value>
+    </data>
+    <data name="titleerror" xml:space="preserve">
+        <value>錯誤</value>
+    </data>
+    <data name="titleinfo" xml:space="preserve">
+        <value>提示</value>
+    </data>
+    <data name="titlesuccess" xml:space="preserve">
+        <value>成功</value>
+    </data>
+    <data name="titlewarning" xml:space="preserve">
+        <value>注意</value>
+    </data>
+    <data name="tools" xml:space="preserve">
+        <value>工具</value>
+    </data>
+    <data name="top10decoded" xml:space="preserve">
+        <value>前10 DXCC - {0}波段 {1}</value>
+    </data>
+    <data name="totaldec" xml:space="preserve">
+        <value>總解碼數：</value>
+    </data>
+    <data name="totaldivqso" xml:space="preserve">
+        <value>總解碼數 / QSO數：</value>
+    </data>
+    <data name="totalrec" xml:space="preserve">
+        <value>已記錄數：</value>
+    </data>
+    <data name="totaluploaded" xml:space="preserve">
+        <value>已上傳數：</value>
+    </data>
+    <data name="totray" xml:space="preserve">
+        <value>最小化到托盤</value>
+    </data>
+    <data name="tqslpassword" xml:space="preserve">
+        <value>TQSL密碼</value>
+    </data>
+    <data name="tqslpath" xml:space="preserve">
+        <value>TQSL路徑</value>
+    </data>
+    <data name="transparency" xml:space="preserve">
+        <value>透明度</value>
+    </data>
+    <data name="txing" xml:space="preserve">
+        <value>發射中...</value>
+    </data>
+    <data name="t_Fail" xml:space="preserve">
+        <value>上傳失敗</value>
+    </data>
+    <data name="t_Ignored" xml:space="preserve">
+        <value>忽略上傳</value>
+    </data>
+    <data name="t_Pending" xml:space="preserve">
+        <value>等待中...</value>
+    </data>
+    <data name="t_Retrying" xml:space="preserve">
+        <value>重試中...</value>
+    </data>
+    <data name="t_Success" xml:space="preserve">
+        <value>上傳成功</value>
+    </data>
+    <data name="t_Uploading" xml:space="preserve">
+        <value>上傳中..</value>
+    </data>
+    <data name="udpporthelp" xml:space="preserve">
+        <value>埠號應與JTDX/wsjt-x中設定的一致.預設為2237</value>
+    </data>
+    <data name="udpserver" xml:space="preserve">
+        <value>UDP伺服器</value>
+    </data>
+    <data name="udptimeout" xml:space="preserve">
+        <value>UDP連線超時！</value>
+    </data>
+    <data name="unable2checkapi" xml:space="preserve">
+        <value>無法檢查apikey的可用性；請檢查輸入的地址是否正確！</value>
+    </data>
+    <data name="unknown" xml:space="preserve">
+        <value>未知</value>
+    </data>
+    <data name="unsupportedrigfreq" xml:space="preserve">
+        <value>不支援的電臺頻率：</value>
+    </data>
+    <data name="unsupportedrigmode" xml:space="preserve">
+        <value>不支援的電臺模式:</value>
+    </data>
+    <data name="upload2cloudlog" xml:space="preserve">
+        <value>自動上傳QSO到Cloudlog</value>
+    </data>
+    <data name="upload2clublog" xml:space="preserve">
+        <value>自動上傳QSO到Clublog</value>
+    </data>
+    <data name="upload2hamcq" xml:space="preserve">
+        <value>自動上傳QSO到HamCQ</value>
+    </data>
+    <data name="uploadedaqso" xml:space="preserve">
+        <value>✅️ QSO上傳成功！</value>
+    </data>
+    <data name="uploadfailedaqso" xml:space="preserve">
+        <value>☹️ QSO 上傳失敗！</value>
+    </data>
+    <data name="uploading" xml:space="preserve">
+        <value>上傳中...</value>
+    </data>
+    <data name="uploadingqso" xml:space="preserve">
+        <value>正在上傳此QSO。</value>
+    </data>
+    <data name="uploadriginfo" xml:space="preserve">
+        <value>上傳電臺資訊</value>
+    </data>
+    <data name="uploadstatus" xml:space="preserve">
+        <value>上報狀態</value>
+    </data>
+    <data name="urlexample" xml:space="preserve">
+        <value>示例: http://cloudlog.com</value>
+    </data>
+    <data name="urlformaterror" xml:space="preserve">
+        <value>URL格式有誤！</value>
+    </data>
+    <data name="useexternalrigctld" xml:space="preserve">
+        <value>使用外部rigctld服務</value>
+    </data>
+    <data name="username" xml:space="preserve">
+        <value>使用者名稱</value>
+    </data>
+    <data name="waitconn" xml:space="preserve">
+        <value>等待連線..</value>
+    </data>
+    <data name="within5min" xml:space="preserve">
+        <value>5分鐘內取得的每分鐘QSO平均值。</value>
+    </data>
+    <data name="worldheatmap" xml:space="preserve">
+        <value>熱力圖 - {0}波段 {1}</value>
+    </data>
+    <data name="yearqsos" xml:space="preserve">
+        <value>年度QSO數</value>
+    </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>更新呼號和國家數據</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>更新呼號和國家數據成功！
+寫入呼號規則{0}個，國家數據{1}個</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>更新呼號和國家數據失敗：{0}！</value>
+    </data>
+</root>

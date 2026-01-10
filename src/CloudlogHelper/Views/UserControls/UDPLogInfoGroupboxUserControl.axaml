@@ -15,10 +15,11 @@
     </Design.DataContext>
     <UserControl.Resources>
         <converters:StringToColorConverter x:Key="StatusToColor" />
-        <converters:UploadStatusToTranslatedStringConverter x:Key="StringToTranslatedString" />
+        <converters:UploadStatusToLangKeyConverter x:Key="StatusToLanguageKey" />
         <converters:UploadStatusToVisibilityConverter x:Key="StatusToVisibility" />
         <converters:FailReasonToTooltipConverter x:Key="FailReasonToTooltip" />
         <converters:StringToColorConverter x:Key="StringToColor" />
+        <converters:OriginNameToDXCCKeyConverter x:Key="NameToKey" />
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal" Margin="5">
         <HeaderedContentControl Header="QSO Logs">
@@ -94,11 +95,19 @@
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Center">
                                         <CheckBox IsChecked="{Binding Checked}" Grid.Column="0" VerticalAlignment="Top" />
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0,0,10,0">
                                             <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17"
                                                        MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0" />
-                                            <TextBlock Text="{Binding LocalizedCountryName}" FontSize="12"
-                                                       FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" />
+                                            <TextBlock FontSize="12" MaxWidth="150" HorizontalAlignment="Left" TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" >
+                                                <TextBlock.Text>
+                                                    <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
+                                                        <LanguageBinding Key="{x:Static resources:DXCCKeys.empty}"/>
+                                                        <Binding Path="OriginalCountryName" Converter="{StaticResource NameToKey}"/>
+                                                    </I18N>
+                                                </TextBlock.Text>
+                                            </TextBlock>
                                         </StackPanel>
                                         <Grid Grid.Column="2"
                                               Margin="0,0,24,0"
@@ -166,9 +175,15 @@
                                                         Spacing="5">
                                                 <TextBlock
                                                     Foreground="{Binding UploadStatus, Converter={StaticResource StatusToColor}}"
-                                                    Text="{Binding UploadStatus, Converter={StaticResource StringToTranslatedString}}"
                                                     VerticalAlignment="Bottom"
-                                                    FontWeight="Bold" />
+                                                    FontWeight="Bold" >
+                                                    <TextBlock.Text>
+                                                        <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
+                                                            <LanguageBinding Key="{x:Static resources:DXCCKeys.empty}"/>
+                                                            <Binding Path="UploadStatus" Converter="{StaticResource StatusToLanguageKey}"/>
+                                                        </I18N>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
                                                 <avalonia:MaterialIcon Kind="HelpCircleOutline"
                                                                        Foreground="DeepSkyBlue"
                                                                        Background="Transparent"

@@ -16,12 +16,15 @@ public class CallsignDatabase
     /// <summary>
     ///     Id of the item.
     /// </summary>
+    [Indexed]
     [Column("country_id")]
     public int CountryId { get; set; }
 
     /// <summary>
     ///     prefix of the callsign. Used for callsign matching.
     /// </summary>
+    ///
+    [Indexed]
     [Column("callsign")]
     public string Callsign { get; set; } = "";
 }

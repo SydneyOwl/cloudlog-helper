@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CloudlogHelper.Resources {
+namespace CloudlogHelper.Resources.Language {
     using System;
     
     
@@ -21,24 +21,24 @@ namespace CloudlogHelper.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Language_zh_hans {
+    internal class Language_zh_hant {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Language_zh_hans() {
+        internal Language_zh_hant() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.zh-hans", typeof(Language_zh_hans).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.zh-hant", typeof(Language_zh_hant).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -50,7 +50,7 @@ namespace CloudlogHelper.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -60,9 +60,9 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 关于.
+        ///   Looks up a localized string similar to 關於.
         /// </summary>
-        public static string about {
+        internal static string about {
             get {
                 return ResourceManager.GetString("about", resourceCulture);
             }
@@ -71,124 +71,124 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 接受.
         /// </summary>
-        public static string accept {
+        internal static string accept {
             get {
                 return ResourceManager.GetString("accept", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 高级设置.
+        ///   Looks up a localized string similar to 進階設定.
         /// </summary>
-        public static string advancedsettings {
+        internal static string advancedsettings {
             get {
                 return ResourceManager.GetString("advancedsettings", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 允许外部控制.
+        ///   Looks up a localized string similar to 允許外部控制.
         /// </summary>
-        public static string allowexternalcontrol {
+        internal static string allowexternalcontrol {
             get {
                 return ResourceManager.GetString("allowexternalcontrol", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 允许请求代理.
+        ///   Looks up a localized string similar to 允許請求代理.
         /// </summary>
-        public static string allowproxy {
+        internal static string allowproxy {
             get {
                 return ResourceManager.GetString("allowproxy", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 角度权重.
+        ///   Looks up a localized string similar to 角度權重.
         /// </summary>
-        public static string angweight {
+        internal static string angweight {
             get {
                 return ResourceManager.GetString("angweight", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to API密钥.
+        ///   Looks up a localized string similar to API金鑰.
         /// </summary>
-        public static string apikey {
+        internal static string apikey {
             get {
                 return ResourceManager.GetString("apikey", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动更新台站信息.
+        ///   Looks up a localized string similar to 自動更新台站資訊.
         /// </summary>
-        public static string autopollstatus {
+        internal static string autopollstatus {
             get {
                 return ResourceManager.GetString("autopollstatus", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动上传QSO.
+        ///   Looks up a localized string similar to 自動上傳QSO.
         /// </summary>
-        public static string autoqsoupload {
+        internal static string autoqsoupload {
             get {
                 return ResourceManager.GetString("autoqsoupload", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动选择.
+        ///   Looks up a localized string similar to 自動選擇.
         /// </summary>
-        public static string autosel {
+        internal static string autosel {
             get {
                 return ResourceManager.GetString("autosel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 电台数据自动上报.
+        ///   Looks up a localized string similar to 電臺數據自動上報.
         /// </summary>
-        public static string autoupdateriginfo {
+        internal static string autoupdateriginfo {
             get {
                 return ResourceManager.GetString("autoupdateriginfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动上传QSO到.
+        ///   Looks up a localized string similar to 自動上傳QSO到.
         /// </summary>
-        public static string autoupload2 {
+        internal static string autoupload2 {
             get {
                 return ResourceManager.GetString("autoupload2", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 基本信息.
+        ///   Looks up a localized string similar to 基本資訊.
         /// </summary>
-        public static string basicinfo {
+        internal static string basicinfo {
             get {
                 return ResourceManager.GetString("basicinfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 基础设置.
+        ///   Looks up a localized string similar to 基礎設定.
         /// </summary>
-        public static string basicsettings {
+        internal static string basicsettings {
             get {
                 return ResourceManager.GetString("basicsettings", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 波特率.
+        ///   Looks up a localized string similar to 鮑率.
         /// </summary>
-        public static string baudrate {
+        internal static string baudrate {
             get {
                 return ResourceManager.GetString("baudrate", resourceCulture);
             }
@@ -197,61 +197,61 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 角度（度）.
         /// </summary>
-        public static string bearingdeg {
+        internal static string bearingdeg {
             get {
                 return ResourceManager.GetString("bearingdeg", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 启动失败！是否尝试重置所有设置？.
+        ///   Looks up a localized string similar to 啟動失敗！是否嘗試重置所有設定？.
         /// </summary>
-        public static string bootfail {
+        internal static string bootfail {
             get {
                 return ResourceManager.GetString("bootfail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 计算中....
+        ///   Looks up a localized string similar to 計算中....
         /// </summary>
-        public static string calculating {
+        internal static string calculating {
             get {
                 return ResourceManager.GetString("calculating", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 呼号.
+        ///   Looks up a localized string similar to 呼號.
         /// </summary>
-        public static string callsign {
+        internal static string callsign {
             get {
                 return ResourceManager.GetString("callsign", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 图表.
+        ///   Looks up a localized string similar to 圖表.
         /// </summary>
-        public static string charts {
+        internal static string charts {
             get {
                 return ResourceManager.GetString("charts", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 图表功能被禁用，请在设置中启用！.
+        ///   Looks up a localized string similar to 圖表功能被禁用，請在設定中啟用！.
         /// </summary>
-        public static string chartsdisabled {
+        internal static string chartsdisabled {
             get {
                 return ResourceManager.GetString("chartsdisabled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请检查电台连接！.
+        ///   Looks up a localized string similar to 請檢查電臺連線！.
         /// </summary>
-        public static string checkrigconn {
+        internal static string checkrigconn {
             get {
                 return ResourceManager.GetString("checkrigconn", resourceCulture);
             }
@@ -260,52 +260,52 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 清空.
         /// </summary>
-        public static string clear {
+        internal static string clear {
             get {
                 return ResourceManager.GetString("clear", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cloudlog Helper能够连接CLH-Server，自动上报解码的数据模式信息和电台信息到服务器。当您使用特定的安卓app连接到服务器时，服务器将会推送信息到您的手机上。.
+        ///   Looks up a localized string similar to Cloudlog Helper能夠連線CLH-Server，自動上報解碼的數據模式資訊和電臺資訊到伺服器。當您使用特定的安卓app連線到伺服器時，伺服器將會推送資訊到您的手機上。.
         /// </summary>
-        public static string clhhintinfo {
+        internal static string clhhintinfo {
             get {
                 return ResourceManager.GetString("clhhintinfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CLH服务器IP.
+        ///   Looks up a localized string similar to CLH伺服器IP.
         /// </summary>
-        public static string clhseraddr {
+        internal static string clhseraddr {
             get {
                 return ResourceManager.GetString("clhseraddr", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CLH服务器密钥.
+        ///   Looks up a localized string similar to CLH伺服器金鑰.
         /// </summary>
-        public static string clhserkey {
+        internal static string clhserkey {
             get {
                 return ResourceManager.GetString("clhserkey", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CLH服务器端口.
+        ///   Looks up a localized string similar to CLH伺服器埠.
         /// </summary>
-        public static string clhserport {
+        internal static string clhserport {
             get {
                 return ResourceManager.GetString("clhserport", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CLH服务器.
+        ///   Looks up a localized string similar to CLH伺服器.
         /// </summary>
-        public static string clhserver {
+        internal static string clhserver {
             get {
                 return ResourceManager.GetString("clhserver", resourceCulture);
             }
@@ -314,115 +314,115 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 使用TLS.
         /// </summary>
-        public static string clhusetls {
+        internal static string clhusetls {
             get {
                 return ResourceManager.GetString("clhusetls", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 关闭窗口.
+        ///   Looks up a localized string similar to 關閉視窗.
         /// </summary>
-        public static string close {
+        internal static string close {
             get {
                 return ResourceManager.GetString("close", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 您希望最小化到托盘还是关闭本程序？.
+        ///   Looks up a localized string similar to 您希望最小化到托盤還是關閉本程式？.
         /// </summary>
-        public static string closeormin {
+        internal static string closeormin {
             get {
                 return ResourceManager.GetString("closeormin", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 填写您的apikey。这个key需要具备读/写权限。可在主页账号的下拉框中找到。.
+        ///   Looks up a localized string similar to 填寫您的apikey。這個key需要具備讀/寫許可權。可在主頁賬號的下拉方塊中找到。.
         /// </summary>
-        public static string cloudlogapihelp {
+        internal static string cloudlogapihelp {
             get {
                 return ResourceManager.GetString("cloudlogapihelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 可以在主页账号的下拉框中“站点地址”找到。.
+        ///   Looks up a localized string similar to 可以在主頁賬號的下拉方塊中“站點地址”找到。.
         /// </summary>
-        public static string cloudlogstationid {
+        internal static string cloudlogstationid {
             get {
                 return ResourceManager.GetString("cloudlogstationid", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 只需填写域名，不需要包含index.php/api/qso，程序会自动填充。.
+        ///   Looks up a localized string similar to 只需填寫網域名稱，不需要包含index.php/api/qso，程式會自動填充。.
         /// </summary>
-        public static string cloudlogurlhelp {
+        internal static string cloudlogurlhelp {
             get {
                 return ResourceManager.GetString("cloudlogurlhelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clublog设置.
+        ///   Looks up a localized string similar to Clublog設定.
         /// </summary>
-        public static string clublogsettings {
+        internal static string clublogsettings {
             get {
                 return ResourceManager.GetString("clublogsettings", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 如果此字段不为空，软件将使用填写的内容作为启动rigctld的默认参数，其他所有配置将被忽略。.
+        ///   Looks up a localized string similar to 如果此欄位不為空，軟體將使用填寫的內容作為啟動rigctld的預設引數，其他所有配置將被忽略。.
         /// </summary>
-        public static string cmdarghelp {
+        internal static string cmdarghelp {
             get {
                 return ResourceManager.GetString("cmdarghelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cloudlog配置无效，请在设置中修改！.
+        ///   Looks up a localized string similar to Cloudlog配置無效，請在設定中修改！.
         /// </summary>
-        public static string confcloudlogfirst {
+        internal static string confcloudlogfirst {
             get {
                 return ResourceManager.GetString("confcloudlogfirst", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FLRIG配置有误，请在设置中修正！.
+        ///   Looks up a localized string similar to FLRIG配置有誤，請在設定中修正！.
         /// </summary>
-        public static string confflrigfirst {
+        internal static string confflrigfirst {
             get {
                 return ResourceManager.GetString("confflrigfirst", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hamlib配置无效，请在设置中修改！.
+        ///   Looks up a localized string similar to Hamlib配置無效，請在設定中修改！.
         /// </summary>
-        public static string confhamlibfirst {
+        internal static string confhamlibfirst {
             get {
                 return ResourceManager.GetString("confhamlibfirst", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 检测到进程 {replace01} 正在运行，可能影响电台数据自动上报功能！.
+        ///   Looks up a localized string similar to 檢測到進程 {replace01} 正在執行，可能影響電臺數據自動上報功能！.
         /// </summary>
-        public static string conflicthamlib {
+        internal static string conflicthamlib {
             get {
                 return ResourceManager.GetString("conflicthamlib", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请检查OmniRig配置！.
+        ///   Looks up a localized string similar to 請檢查OmniRig配置！.
         /// </summary>
-        public static string confomnifirst {
+        internal static string confomnifirst {
             get {
                 return ResourceManager.GetString("confomnifirst", resourceCulture);
             }
@@ -431,25 +431,25 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 控制面板.
         /// </summary>
-        public static string controlpanel {
+        internal static string controlpanel {
             get {
                 return ResourceManager.GetString("controlpanel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 当前频率.
+        ///   Looks up a localized string similar to 當前頻率.
         /// </summary>
-        public static string currentfreq {
+        internal static string currentfreq {
             get {
                 return ResourceManager.GetString("currentfreq", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 当前模式.
+        ///   Looks up a localized string similar to 當前模式.
         /// </summary>
-        public static string currrentmode {
+        internal static string currrentmode {
             get {
                 return ResourceManager.GetString("currrentmode", resourceCulture);
             }
@@ -458,61 +458,61 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 深色模式.
         /// </summary>
-        public static string dark {
+        internal static string dark {
             get {
                 return ResourceManager.GetString("dark", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 数据位.
+        ///   Looks up a localized string similar to 資料位.
         /// </summary>
-        public static string databit {
+        internal static string databit {
             get {
                 return ResourceManager.GetString("databit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 今日QSO数.
+        ///   Looks up a localized string similar to 今日QSO數.
         /// </summary>
-        public static string dayqsos {
+        internal static string dayqsos {
             get {
                 return ResourceManager.GetString("dayqsos", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 删除选中项.
+        ///   Looks up a localized string similar to 刪除選中項.
         /// </summary>
-        public static string delsel {
+        internal static string delsel {
             get {
                 return ResourceManager.GetString("delsel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 拒绝.
+        ///   Looks up a localized string similar to 拒絕.
         /// </summary>
-        public static string deny {
+        internal static string deny {
             get {
                 return ResourceManager.GetString("deny", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 设备端口.
+        ///   Looks up a localized string similar to 裝置埠.
         /// </summary>
-        public static string deviceport {
+        internal static string deviceport {
             get {
                 return ResourceManager.GetString("deviceport", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 禁用图表功能（仅低性能设备）.
+        ///   Looks up a localized string similar to 禁用圖表功能（僅低效能裝置）.
         /// </summary>
-        public static string disablecharts {
+        internal static string disablecharts {
             get {
                 return ResourceManager.GetString("disablecharts", resourceCulture);
             }
@@ -521,16 +521,16 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 禁用PTT控制.
         /// </summary>
-        public static string disableptt {
+        internal static string disableptt {
             get {
                 return ResourceManager.GetString("disableptt", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 部分Linux发行版中如果不禁用rts/dtr可能导致PTT无法正确初始化，表现为PTT始终处于触发状态。.
+        ///   Looks up a localized string similar to 部分Linux發行版中如果不禁用rts/dtr可能導致PTT無法正確初始化，表現為PTT始終處於觸發狀態。.
         /// </summary>
-        public static string disableptthelp {
+        internal static string disableptthelp {
             get {
                 return ResourceManager.GetString("disableptthelp", resourceCulture);
             }
@@ -539,132 +539,132 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 取消.
         /// </summary>
-        public static string discard {
+        internal static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 欢迎使用Cloudlog Helper v{1}!
+        ///   Looks up a localized string similar to 歡迎使用Cloudlog Helper v{1}!
         ///
-        ///在您开始使用前，请先阅读并同意下方的【免责声明与用户协议】
+        ///在您開始使用前，請先閱讀並同意下方的【免責宣告與使用者協議】
         ///
-        ///【免责声明与用户协议】
-        ///本软件采用The Unlicense协议开源，按“原样”提供，仅供技术交流与学习之用。使用者需自行承担所有风险。
-        ///开发者对因使用本软件而产生的任何数据丢失、设备损坏或其他损失概不负责。
-        ///继续使用即表示您已阅读并同意上述条款及项目主页上的完整免责声明 (https://github.com/sydneyowl/cloudlog-helper)。
+        ///【免責宣告與使用者協議】
+        ///本軟體採用The Unlicense協議開源，按“原樣”提供，僅供技術交流與學習之用。使用者需自行承擔所有風險。
+        ///開發者對因使用本軟體而產生的任何數據丟失、裝置損壞或其他損失概不負責。
+        ///繼續使用即表示您已閱讀並同意上述條款及專案主頁上的完整免責宣告 (https://github.com/sydneyowl/cloudlog-helper)。
         ///.
         /// </summary>
-        public static string disclaimer {
+        internal static string disclaimer {
             get {
                 return ResourceManager.GetString("disclaimer", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 距离（千米）.
+        ///   Looks up a localized string similar to 距離（公里）.
         /// </summary>
-        public static string distkm {
+        internal static string distkm {
             get {
                 return ResourceManager.GetString("distkm", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 距离权重.
+        ///   Looks up a localized string similar to 距離權重.
         /// </summary>
-        public static string distweight {
+        internal static string distweight {
             get {
                 return ResourceManager.GetString("distweight", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 双击查看更多.
+        ///   Looks up a localized string similar to 雙擊查看更多.
         /// </summary>
-        public static string doubletap2seemore {
+        internal static string doubletap2seemore {
             get {
                 return ResourceManager.GetString("doubletap2seemore", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 程序已在运行！.
+        ///   Looks up a localized string similar to 程式已在執行！.
         /// </summary>
-        public static string dupeinstance {
+        internal static string dupeinstance {
             get {
                 return ResourceManager.GetString("dupeinstance", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 不允许同时启用两个电台后端控制服务！.
+        ///   Looks up a localized string similar to 不允許同時啟用兩個電臺後端控制服務！.
         /// </summary>
-        public static string duperigservdetected {
+        internal static string duperigservdetected {
             get {
                 return ResourceManager.GetString("duperigservdetected", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 电子邮箱.
+        ///   Looks up a localized string similar to 電子郵箱.
         /// </summary>
-        public static string email {
+        internal static string email {
             get {
                 return ResourceManager.GetString("email", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 高级设置.
+        ///   Looks up a localized string similar to 進階設定.
         /// </summary>
-        public static string enableadvanced {
+        internal static string enableadvanced {
             get {
                 return ResourceManager.GetString("enableadvanced", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 启用CLH服务器.
+        ///   Looks up a localized string similar to 啟用CLH伺服器.
         /// </summary>
-        public static string enableclhserver {
+        internal static string enableclhserver {
             get {
                 return ResourceManager.GetString("enableclhserver", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 允许外部连接.
+        ///   Looks up a localized string similar to 允許外部連線.
         /// </summary>
-        public static string enableoutsideconn {
+        internal static string enableoutsideconn {
             get {
                 return ResourceManager.GetString("enableoutsideconn", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 启用UDP服务器.
+        ///   Looks up a localized string similar to 啟用UDP伺服器.
         /// </summary>
-        public static string enableudpserver {
+        internal static string enableudpserver {
             get {
                 return ResourceManager.GetString("enableudpserver", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 错误.
+        ///   Looks up a localized string similar to 錯誤.
         /// </summary>
-        public static string error {
+        internal static string error {
             get {
                 return ResourceManager.GetString("error", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 出错啦！.
+        ///   Looks up a localized string similar to 出錯啦！.
         /// </summary>
-        public static string errorccurred {
+        internal static string errorccurred {
             get {
                 return ResourceManager.GetString("errorccurred", resourceCulture);
             }
@@ -673,332 +673,332 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 退出.
         /// </summary>
-        public static string exit {
+        internal static string exit {
             get {
                 return ResourceManager.GetString("exit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 导出.
+        ///   Looks up a localized string similar to 匯出.
         /// </summary>
-        public static string export {
+        internal static string export {
             get {
                 return ResourceManager.GetString("export", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 导出为adi.
+        ///   Looks up a localized string similar to 匯出為adi.
         /// </summary>
-        public static string export2adif {
+        internal static string export2adif {
             get {
                 return ResourceManager.GetString("export2adif", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rigctld服务地址.
+        ///   Looks up a localized string similar to Rigctld服務地址.
         /// </summary>
-        public static string externalrigctldhost {
+        internal static string externalrigctldhost {
             get {
                 return ResourceManager.GetString("externalrigctldhost", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 失败！.
+        ///   Looks up a localized string similar to 失敗！.
         /// </summary>
-        public static string failed {
+        internal static string failed {
             get {
                 return ResourceManager.GetString("failed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此QSO上传失败。.
+        ///   Looks up a localized string similar to 此QSO上傳失敗。.
         /// </summary>
-        public static string failedqso {
+        internal static string failedqso {
             get {
                 return ResourceManager.GetString("failedqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无法获取电台数据！.
+        ///   Looks up a localized string similar to 無法獲取電臺數據！.
         /// </summary>
-        public static string failedriginfo {
+        internal static string failedriginfo {
             get {
                 return ResourceManager.GetString("failedriginfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无法获取站点信息！.
+        ///   Looks up a localized string similar to 無法獲取站點資訊！.
         /// </summary>
-        public static string failedstationinfo {
+        internal static string failedstationinfo {
             get {
                 return ResourceManager.GetString("failedstationinfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无法获取站点数据！.
+        ///   Looks up a localized string similar to 無法獲取站點數據！.
         /// </summary>
-        public static string failedstationstat {
+        internal static string failedstationstat {
             get {
                 return ResourceManager.GetString("failedstationstat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO同步出错：.
+        ///   Looks up a localized string similar to QSO同步出錯：.
         /// </summary>
-        public static string failedsyncqso {
+        internal static string failedsyncqso {
             get {
                 return ResourceManager.GetString("failedsyncqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无法从命令行参数中提取端口号。请显式使用参数-t指明。.
+        ///   Looks up a localized string similar to 無法從命令列引數中提取埠號。請顯式使用引數-t指明。.
         /// </summary>
-        public static string failextractinfo {
+        internal static string failextractinfo {
             get {
                 return ResourceManager.GetString("failextractinfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 与电台通信失败！.
+        ///   Looks up a localized string similar to 與電臺通訊失敗！.
         /// </summary>
-        public static string failrigcomm {
+        internal static string failrigcomm {
             get {
                 return ResourceManager.GetString("failrigcomm", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无法上传到{addr}，请查看日志！.
+        ///   Looks up a localized string similar to 無法上傳到{addr}，請檢視日誌！.
         /// </summary>
-        public static string failuploadriginfoto {
+        internal static string failuploadriginfoto {
             get {
                 return ResourceManager.GetString("failuploadriginfoto", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请完整填写所有信息！.
+        ///   Looks up a localized string similar to 請完整填寫所有資訊！.
         /// </summary>
-        public static string fillall {
+        internal static string fillall {
             get {
                 return ResourceManager.GetString("fillall", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 过滤重复样本（呼号）.
+        ///   Looks up a localized string similar to 過濾重複樣本（呼號）.
         /// </summary>
-        public static string filterdupebycallsign {
+        internal static string filterdupebycallsign {
             get {
                 return ResourceManager.GetString("filterdupebycallsign", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发解码信息到http服务器.
+        ///   Looks up a localized string similar to 轉發解碼資訊到http伺服器.
         /// </summary>
-        public static string forward2tcp {
+        internal static string forward2tcp {
             get {
                 return ResourceManager.GetString("forward2tcp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发原始UDP数据包到.
+        ///   Looks up a localized string similar to 轉發原始UDP數據包到.
         /// </summary>
-        public static string forwardmsg {
+        internal static string forwardmsg {
             get {
                 return ResourceManager.GetString("forwardmsg", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 转发原始UDP数据包到.
+        ///   Looks up a localized string similar to 轉發原始UDP數據包到.
         /// </summary>
-        public static string forwardto {
+        internal static string forwardto {
             get {
                 return ResourceManager.GetString("forwardto", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 获取数据中....
+        ///   Looks up a localized string similar to 獲取數據中....
         /// </summary>
-        public static string gettinginfo {
+        internal static string gettinginfo {
             get {
                 return ResourceManager.GetString("gettinginfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 坐标.
+        ///   Looks up a localized string similar to 座標.
         /// </summary>
-        public static string grid {
+        internal static string grid {
             get {
                 return ResourceManager.GetString("grid", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 网格坐标为空或有误，请检查设置！
+        ///   Looks up a localized string similar to 網格座標為空或有誤，請檢查設定！
         ///.
         /// </summary>
-        public static string griderror {
+        internal static string griderror {
             get {
                 return ResourceManager.GetString("griderror", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HamCQ设置.
+        ///   Looks up a localized string similar to HamCQ設定.
         /// </summary>
-        public static string hamcqsettings {
+        internal static string hamcqsettings {
             get {
                 return ResourceManager.GetString("hamcqsettings", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 帮助.
+        ///   Looks up a localized string similar to 幫助.
         /// </summary>
-        public static string help {
+        internal static string help {
             get {
                 return ResourceManager.GetString("help", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 希望您能将出错信息反馈到Github，帮助开发者修正此BUG！.
+        ///   Looks up a localized string similar to 希望您能將出錯資訊反饋到Github，幫助開發者修正此BUG！.
         /// </summary>
-        public static string helpfeedback {
+        internal static string helpfeedback {
             get {
                 return ResourceManager.GetString("helpfeedback", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此QSO已被忽略 - 是不是把所有第三方日志的上传功能都关了？.
+        ///   Looks up a localized string similar to 此QSO已被忽略 - 是不是把所有第三方日誌的上傳功能都關了？.
         /// </summary>
-        public static string ignoreqso {
+        internal static string ignoreqso {
             get {
                 return ResourceManager.GetString("ignoreqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此操作将永久忽略选中的QSO，后续QSO助手扫描本地QSO时将忽略这些项。是否继续？.
+        ///   Looks up a localized string similar to 此操作將永久忽略選中的QSO，後續QSO助手掃描本地QSO時將忽略這些項。是否繼續？.
         /// </summary>
-        public static string ignoreqsopermanently {
+        internal static string ignoreqsopermanently {
             get {
                 return ResourceManager.GetString("ignoreqsopermanently", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hamlib初始化失败!.
+        ///   Looks up a localized string similar to Hamlib初始化失敗!.
         /// </summary>
-        public static string inithamlibfailed {
+        internal static string inithamlibfailed {
             get {
                 return ResourceManager.GetString("inithamlibfailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 实例名称.
+        ///   Looks up a localized string similar to 例項名稱.
         /// </summary>
-        public static string instancename {
+        internal static string instancename {
             get {
                 return ResourceManager.GetString("instancename", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此字段为软件注册到clh-server时使用的名称。此名称应当是唯一的。.
+        ///   Looks up a localized string similar to 此欄位為軟體註冊到clh-server時使用的名稱。此名稱應當是唯一的。.
         /// </summary>
-        public static string instancenamehint {
+        internal static string instancenamehint {
             get {
                 return ResourceManager.GetString("instancenamehint", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 您使用的后端服务似乎是{replace01}而不是Cloudlog，因此软件部分功能可能不受支持。.
+        ///   Looks up a localized string similar to 您使用的後端服務似乎是{replace01}而不是Cloudlog，因此軟體部分功能可能不支援。.
         /// </summary>
-        public static string instanceuncompitable {
+        internal static string instanceuncompitable {
             get {
                 return ResourceManager.GetString("instanceuncompitable", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 地址无效！.
+        ///   Looks up a localized string similar to 地址無效！.
         /// </summary>
-        public static string invalidaddr {
+        internal static string invalidaddr {
             get {
                 return ResourceManager.GetString("invalidaddr", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无效的ADIF！.
+        ///   Looks up a localized string similar to 無效的ADIF！.
         /// </summary>
-        public static string invalidadif {
+        internal static string invalidadif {
             get {
                 return ResourceManager.GetString("invalidadif", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此APIKEY无效！.
+        ///   Looks up a localized string similar to 此APIKEY無效！.
         /// </summary>
-        public static string invalidapikey {
+        internal static string invalidapikey {
             get {
                 return ResourceManager.GetString("invalidapikey", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 配置无效！.
+        ///   Looks up a localized string similar to 配置無效！.
         /// </summary>
-        public static string invalidconf {
+        internal static string invalidconf {
             get {
                 return ResourceManager.GetString("invalidconf", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 端口号无效.
+        ///   Looks up a localized string similar to 埠號無效.
         /// </summary>
-        public static string invalidport {
+        internal static string invalidport {
             get {
                 return ResourceManager.GetString("invalidport", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UDP服务器配置无效！.
+        ///   Looks up a localized string similar to UDP伺服器配置無效！.
         /// </summary>
-        public static string invalidudpconf {
+        internal static string invalidudpconf {
             get {
                 return ResourceManager.GetString("invalidudpconf", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to URL无效！.
+        ///   Looks up a localized string similar to URL無效！.
         /// </summary>
-        public static string invalidurl {
+        internal static string invalidurl {
             get {
                 return ResourceManager.GetString("invalidurl", resourceCulture);
             }
@@ -1007,106 +1007,106 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to K值(KNN).
         /// </summary>
-        public static string kval {
+        internal static string kval {
             get {
                 return ResourceManager.GetString("kval", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to APIKEY需要读/写权限但提供的apikey只有读权限！.
+        ///   Looks up a localized string similar to APIKEY需要讀/寫許可權但提供的apikey只有讀許可權！.
         /// </summary>
-        public static string lackwriteaccess {
+        internal static string lackwriteaccess {
             get {
                 return ResourceManager.GetString("lackwriteaccess", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 纬度.
+        ///   Looks up a localized string similar to 緯度.
         /// </summary>
-        public static string latitude {
+        internal static string latitude {
             get {
                 return ResourceManager.GetString("latitude", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 浅色模式.
+        ///   Looks up a localized string similar to 淺色模式.
         /// </summary>
-        public static string light {
+        internal static string light {
             get {
                 return ResourceManager.GetString("light", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 经度.
+        ///   Looks up a localized string similar to 經度.
         /// </summary>
-        public static string longitude {
+        internal static string longitude {
             get {
                 return ResourceManager.GetString("longitude", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ✅ 完成了一个QSO！.
+        ///   Looks up a localized string similar to ✅ 完成了一個QSO！.
         /// </summary>
-        public static string madeaqso {
+        internal static string madeaqso {
             get {
                 return ResourceManager.GetString("madeaqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 最大取样点数量.
+        ///   Looks up a localized string similar to 最大取樣點數量.
         /// </summary>
-        public static string maxsamplecount {
+        internal static string maxsamplecount {
             get {
                 return ResourceManager.GetString("maxsamplecount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 本月QSO数.
+        ///   Looks up a localized string similar to 本月QSO數.
         /// </summary>
-        public static string monthqsos {
+        internal static string monthqsos {
             get {
                 return ResourceManager.GetString("monthqsos", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 命令行参数必须添加-vvvvv！.
+        ///   Looks up a localized string similar to 命令列引數必須新增-vvvvv！.
         /// </summary>
-        public static string mustverbose {
+        internal static string mustverbose {
             get {
                 return ResourceManager.GetString("mustverbose", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我的网格坐标.
+        ///   Looks up a localized string similar to 我的網格座標.
         /// </summary>
-        public static string mygrid {
+        internal static string mygrid {
             get {
                 return ResourceManager.GetString("mygrid", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 下次上报时间.
+        ///   Looks up a localized string similar to 下次上報時間.
         /// </summary>
-        public static string nextuploadtime {
+        internal static string nextuploadtime {
             get {
                 return ResourceManager.GetString("nextuploadtime", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to （无数据）.
+        ///   Looks up a localized string similar to （無數據）.
         /// </summary>
-        public static string nodata {
+        internal static string nodata {
             get {
                 return ResourceManager.GetString("nodata", resourceCulture);
             }
@@ -1115,187 +1115,187 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 注意.
         /// </summary>
-        public static string notice {
+        internal static string notice {
             get {
                 return ResourceManager.GetString("notice", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此项不能为空！.
+        ///   Looks up a localized string similar to 此項不能為空！.
         /// </summary>
-        public static string notnull {
+        internal static string notnull {
             get {
                 return ResourceManager.GetString("notnull", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请检查OmniRig是否已正确安装，另外OmniRIg目前仅在Windows平台上支持。.
+        ///   Looks up a localized string similar to 請檢查OmniRig是否已正確安裝，另外OmniRIg目前僅在Windows平臺上支援。.
         /// </summary>
-        public static string omniinitfailed {
+        internal static string omniinitfailed {
             get {
                 return ResourceManager.GetString("omniinitfailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 只需输入主域名，不允许以/api/qso结尾！.
+        ///   Looks up a localized string similar to 只需輸入主網域名稱，不允許以/api/qso結尾！.
         /// </summary>
-        public static string onlymaindomain {
+        internal static string onlymaindomain {
             get {
                 return ResourceManager.GetString("onlymaindomain", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 操作员.
+        ///   Looks up a localized string similar to 操作員.
         /// </summary>
-        public static string op {
+        internal static string op {
             get {
                 return ResourceManager.GetString("op", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 打开.
+        ///   Looks up a localized string similar to 開啟.
         /// </summary>
-        public static string open {
+        internal static string open {
             get {
                 return ResourceManager.GetString("open", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 打开配置目录.
+        ///   Looks up a localized string similar to 開啟配置目錄.
         /// </summary>
-        public static string openconfpath {
+        internal static string openconfpath {
             get {
                 return ResourceManager.GetString("openconfpath", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 打开缓存目录.
+        ///   Looks up a localized string similar to 開啟快取目錄.
         /// </summary>
-        public static string opentempfolder {
+        internal static string opentempfolder {
             get {
                 return ResourceManager.GetString("opentempfolder", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 密码.
+        ///   Looks up a localized string similar to 密碼.
         /// </summary>
-        public static string password {
+        internal static string password {
             get {
                 return ResourceManager.GetString("password", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂停.
+        ///   Looks up a localized string similar to 暫停.
         /// </summary>
-        public static string pause {
+        internal static string pause {
             get {
                 return ResourceManager.GetString("pause", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此QSO正在等待上传。.
+        ///   Looks up a localized string similar to 此QSO正在等待上傳。.
         /// </summary>
-        public static string pendingqso {
+        internal static string pendingqso {
             get {
                 return ResourceManager.GetString("pendingqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请在设置中打开“电台数组自动上报”.
+        ///   Looks up a localized string similar to 請在設定中開啟“電臺數據自動上報”.
         /// </summary>
-        public static string polldisabled {
+        internal static string polldisabled {
             get {
                 return ResourceManager.GetString("polldisabled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 轮询间隔（秒）.
+        ///   Looks up a localized string similar to 輪詢間隔（秒）.
         /// </summary>
-        public static string pollinterval {
+        internal static string pollinterval {
             get {
                 return ResourceManager.GetString("pollinterval", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 轮询间隔必须为整数且大于1！.
+        ///   Looks up a localized string similar to 輪詢間隔必須為整數且大於1！.
         /// </summary>
-        public static string pollintervalreq {
+        internal static string pollintervalreq {
             get {
                 return ResourceManager.GetString("pollintervalreq", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 端口号.
+        ///   Looks up a localized string similar to 埠號.
         /// </summary>
-        public static string port {
+        internal static string port {
             get {
                 return ResourceManager.GetString("port", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 允许代理其他应用程序发送的请求。用于避免同时向rigctld发送请求时可能造成的冲突。.
+        ///   Looks up a localized string similar to 允許代理其他應用程式傳送的請求。用於避免同時向rigctld傳送請求時可能造成的衝突。.
         /// </summary>
-        public static string proxyhelp {
+        internal static string proxyhelp {
             get {
                 return ResourceManager.GetString("proxyhelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请先勾选QSO!.
+        ///   Looks up a localized string similar to 請先勾選QSO!.
         /// </summary>
-        public static string pseselfirst {
+        internal static string pseselfirst {
             get {
                 return ResourceManager.GetString("pseselfirst", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 出现下列情况时推送系统通知：.
+        ///   Looks up a localized string similar to 出現下列情況時推送系統通知：.
         /// </summary>
-        public static string pushnotificationon {
+        internal static string pushnotificationon {
             get {
                 return ResourceManager.GetString("pushnotificationon", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO上传助手.
+        ///   Looks up a localized string similar to QSO上傳助手.
         /// </summary>
-        public static string qsoassistant {
+        internal static string qsoassistant {
             get {
                 return ResourceManager.GetString("qsoassistant", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 呼号: {0}, 国家: {1} ({8}), 网格: {9},  频率: {10} ({11}),  模式: {12}, 时间: {14} 至 {15}, 信号报告: 发送 &apos;{16}&apos; / 接收 &apos;{17}&apos;.
+        ///   Looks up a localized string similar to 呼號: {0}, 國家: {1} ({8}), 網格: {9},  頻率: {10} ({11}),  模式: {12}, 時間: {14} 至 {15}, 訊號報告: 傳送 &apos;{16}&apos; / 接收 &apos;{17}&apos;.
         /// </summary>
-        public static string qsoconcisetemplate {
+        internal static string qsoconcisetemplate {
             get {
                 return ResourceManager.GetString("qsoconcisetemplate", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO完成时.
+        ///   Looks up a localized string similar to QSO完成時.
         /// </summary>
-        public static string qsofinished {
+        internal static string qsofinished {
             get {
                 return ResourceManager.GetString("qsofinished", resourceCulture);
             }
@@ -1304,16 +1304,16 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to QSO速率：.
         /// </summary>
-        public static string qsorate {
+        internal static string qsorate {
             get {
                 return ResourceManager.GetString("qsorate", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO上传失败重试次数.
+        ///   Looks up a localized string similar to QSO上傳失敗重試次數.
         /// </summary>
-        public static string qsoretrycount {
+        internal static string qsoretrycount {
             get {
                 return ResourceManager.GetString("qsoretrycount", resourceCulture);
             }
@@ -1322,7 +1322,7 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 正在同步QSO....
         /// </summary>
-        public static string qsosyncing {
+        internal static string qsosyncing {
             get {
                 return ResourceManager.GetString("qsosyncing", resourceCulture);
             }
@@ -1331,396 +1331,396 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to QSO同步成功！.
         /// </summary>
-        public static string qsosyncsucc {
+        internal static string qsosyncsucc {
             get {
                 return ResourceManager.GetString("qsosyncsucc", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to • 呼号: {0}
-        ///• 国家: {1} (CQ区: {2}, ITU区: {3})
+        ///   Looks up a localized string similar to • 呼號: {0}
+        ///• 國家: {1} (CQ區: {2}, ITU區: {3})
         ///• 大洲: {4}
-        ///• 位置: 纬度 {5}°, 经度 {6}° (GMT{7})
+        ///• 位置: 緯度 {5}°, 經度 {6}° (GMT{7})
         ///• DXCC: {8}
-        ///• 网格: {9}
-        ///• 频率: {10} ({11})
+        ///• 網格: {9}
+        ///• 頻率: {10} ({11})
         ///• 模式: {12} (父模式: {13})
-        ///• 时间: {14} 至 {15}
-        ///• 信号报告: 发送 &apos;{16}&apos; / 接收 &apos;{17}&apos;
+        ///• 時間: {14} 至 {15}
+        ///• 訊號報告: 傳送 &apos;{16}&apos; / 接收 &apos;{17}&apos;
         ///• 功率: {18}
-        ///• 操作员: {19}
-        ///• 本机呼号: {20}
-        ///• 本机网格: {21}
-        ///• 交换信息: 发送 &apos;{22}&apos; / 接收 &apos;{23}&apos;
-        ///• 传播模式: {24}
+        ///• 操作員: {19}
+        ///• 本機呼號: {20}
+        ///• 本機網格: {21}
+        ///• 交換資訊: 傳送 &apos;{22}&apos; / 接收 &apos;{23}&apos;
+        ///• 傳播模式: {24}
         ///• 姓名: {25}
-        ///• 备注: {26}
-        ///• 客户端: {27}
-        ///• 上传状态: {28}
-        ///• 失败原因: {29}.
+        ///• 備註: {26}
+        ///• 客戶端: {27}
+        ///• 上傳狀態: {28}
+        ///• 失敗原因: {29}.
         /// </summary>
-        public static string qsotemplate {
+        internal static string qsotemplate {
             get {
                 return ResourceManager.GetString("qsotemplate", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO自动上传功能未启用。.
+        ///   Looks up a localized string similar to QSO自動上傳功能未啟用。.
         /// </summary>
-        public static string qsouploaddisabled {
+        internal static string qsouploaddisabled {
             get {
                 return ResourceManager.GetString("qsouploaddisabled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO上传完成时.
+        ///   Looks up a localized string similar to QSO上傳完成時.
         /// </summary>
-        public static string qsouploaded {
+        internal static string qsouploaded {
             get {
                 return ResourceManager.GetString("qsouploaded", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QTH别名（可选）.
+        ///   Looks up a localized string similar to QTH別名（可選）.
         /// </summary>
-        public static string qthnick {
+        internal static string qthnick {
             get {
                 return ResourceManager.GetString("qthnick", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QTH昵称（可选）.
+        ///   Looks up a localized string similar to QTH暱稱（可選）.
         /// </summary>
-        public static string qthnickname {
+        internal static string qthnickname {
             get {
                 return ResourceManager.GetString("qthnickname", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 轮询间隔应当大于一秒！.
+        ///   Looks up a localized string similar to 輪詢間隔應當大於一秒！.
         /// </summary>
-        public static string reachminiumpollinterval {
+        internal static string reachminiumpollinterval {
             get {
                 return ResourceManager.GetString("reachminiumpollinterval", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 已完成的QSO信息.
+        ///   Looks up a localized string similar to 已完成的QSO資訊.
         /// </summary>
-        public static string recvqso {
+        internal static string recvqso {
             get {
                 return ResourceManager.GetString("recvqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 刷新.
+        ///   Looks up a localized string similar to 重新整理.
         /// </summary>
-        public static string refresh {
+        internal static string refresh {
             get {
                 return ResourceManager.GetString("refresh", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 记住我的选择.
+        ///   Looks up a localized string similar to 記住我的選擇.
         /// </summary>
-        public static string remembermychoice {
+        internal static string remembermychoice {
             get {
                 return ResourceManager.GetString("remembermychoice", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 报告发射功率.
+        ///   Looks up a localized string similar to 報告發射功率.
         /// </summary>
-        public static string reportpwr {
+        internal static string reportpwr {
             get {
                 return ResourceManager.GetString("reportpwr", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 报告异频信息.
+        ///   Looks up a localized string similar to 報告異頻資訊.
         /// </summary>
-        public static string reportsplit {
+        internal static string reportsplit {
             get {
                 return ResourceManager.GetString("reportsplit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 重试次数应为大于0的整数！.
+        ///   Looks up a localized string similar to 重試次數應為大於0的整數！.
         /// </summary>
-        public static string retrycountreq {
+        internal static string retrycountreq {
             get {
                 return ResourceManager.GetString("retrycountreq", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在重试上传.
+        ///   Looks up a localized string similar to 正在重試上傳.
         /// </summary>
-        public static string retryingqso {
+        internal static string retryingqso {
             get {
                 return ResourceManager.GetString("retryingqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 重传选中项.
+        ///   Looks up a localized string similar to 重傳選中項.
         /// </summary>
-        public static string reuploadsel {
+        internal static string reuploadsel {
             get {
                 return ResourceManager.GetString("reuploadsel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 部分电台不支持读取发射功率或读取的数据错误，因此本功能默认未开启。.
+        ///   Looks up a localized string similar to 部分電臺不支援讀取髮射功率或讀取的數據錯誤，因此本功能預設未開啟。.
         /// </summary>
-        public static string rfpowerhelp {
+        internal static string rfpowerhelp {
             get {
                 return ResourceManager.GetString("rfpowerhelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 电台后端控制系统.
+        ///   Looks up a localized string similar to 電臺後端控制系統.
         /// </summary>
-        public static string rigbackendsystem {
+        internal static string rigbackendsystem {
             get {
                 return ResourceManager.GetString("rigbackendsystem", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rigctld命令行参数.
+        ///   Looks up a localized string similar to Rigctld命令列引數.
         /// </summary>
-        public static string rigctldcmdarg {
+        internal static string rigctldcmdarg {
             get {
                 return ResourceManager.GetString("rigctldcmdarg", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rigctld服务未启动，请检查设置！.
+        ///   Looks up a localized string similar to Rigctld服務未啟動，請檢查設定！.
         /// </summary>
-        public static string rigctldnotstart {
+        internal static string rigctldnotstart {
             get {
                 return ResourceManager.GetString("rigctldnotstart", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 电台数据.
+        ///   Looks up a localized string similar to 電臺數據.
         /// </summary>
-        public static string rigdata {
+        internal static string rigdata {
             get {
                 return ResourceManager.GetString("rigdata", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 电台型号.
+        ///   Looks up a localized string similar to 電臺型號.
         /// </summary>
-        public static string rigmodel {
+        internal static string rigmodel {
             get {
                 return ResourceManager.GetString("rigmodel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 与电台通信超时，请检查链接！.
+        ///   Looks up a localized string similar to 與電臺通訊超時，請檢查連線！.
         /// </summary>
-        public static string rigtimeout {
+        internal static string rigtimeout {
             get {
                 return ResourceManager.GetString("rigtimeout", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 样本数 = .
+        ///   Looks up a localized string similar to 樣本數 = .
         /// </summary>
-        public static string samplecount {
+        internal static string samplecount {
             get {
                 return ResourceManager.GetString("samplecount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 应用更改.
+        ///   Looks up a localized string similar to 應用更改.
         /// </summary>
-        public static string save {
+        internal static string save {
             get {
                 return ResourceManager.GetString("save", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 保存日志.
+        ///   Looks up a localized string similar to 儲存日誌.
         /// </summary>
-        public static string savelog {
+        internal static string savelog {
             get {
                 return ResourceManager.GetString("savelog", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 保存日志到...
+        ///   Looks up a localized string similar to 儲存日誌到...
         /// </summary>
-        public static string savelogto {
+        internal static string savelogto {
             get {
                 return ResourceManager.GetString("savelogto", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 全选.
+        ///   Looks up a localized string similar to 全選.
         /// </summary>
-        public static string selall {
+        internal static string selall {
             get {
                 return ResourceManager.GetString("selall", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 设置.
+        ///   Looks up a localized string similar to 設定.
         /// </summary>
-        public static string settings {
+        internal static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 展示密度颜色.
+        ///   Looks up a localized string similar to 展示密度顏色.
         /// </summary>
-        public static string showdensitycolor {
+        internal static string showdensitycolor {
             get {
                 return ResourceManager.GetString("showdensitycolor", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 仅显示上传失败项.
+        ///   Looks up a localized string similar to 僅顯示上傳失敗項.
         /// </summary>
-        public static string showfailonly {
+        internal static string showfailonly {
             get {
                 return ResourceManager.GetString("showfailonly", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 关闭程序.
+        ///   Looks up a localized string similar to 關閉程式.
         /// </summary>
-        public static string shutdown {
+        internal static string shutdown {
             get {
                 return ResourceManager.GetString("shutdown", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 信号计数.
+        ///   Looks up a localized string similar to 訊號計數.
         /// </summary>
-        public static string signalcount {
+        internal static string signalcount {
             get {
                 return ResourceManager.GetString("signalcount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 信号分布极坐标图.
+        ///   Looks up a localized string similar to 訊號分佈極座標圖.
         /// </summary>
-        public static string signalpolarchart {
+        internal static string signalpolarchart {
             get {
                 return ResourceManager.GetString("signalpolarchart", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 字符串前后不允许空格.
+        ///   Looks up a localized string similar to 字串前後不允許空格.
         /// </summary>
-        public static string spacenotallowed {
+        internal static string spacenotallowed {
             get {
                 return ResourceManager.GetString("spacenotallowed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用分号分隔的地址.
+        ///   Looks up a localized string similar to 用分號分隔的地址.
         /// </summary>
-        public static string spiltby {
+        internal static string spiltby {
             get {
                 return ResourceManager.GetString("spiltby", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 部分电台不支持读取异频信息或读取的数据错误，因此本功能默认未开启。.
+        ///   Looks up a localized string similar to 部分電臺不支援讀取異頻資訊或讀取的數據錯誤，因此本功能預設未開啟。.
         /// </summary>
-        public static string splithelp {
+        internal static string splithelp {
             get {
                 return ResourceManager.GetString("splithelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to URL 必须以 http:// 或 https:// 开头！.
+        ///   Looks up a localized string similar to URL 必須以 http:// 或 https:// 開頭！.
         /// </summary>
-        public static string startwithhttp {
+        internal static string startwithhttp {
             get {
                 return ResourceManager.GetString("startwithhttp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 站点方位分布 - {0}波段 {1}.
+        ///   Looks up a localized string similar to 站點方位分佈 - {0}波段 {1}.
         /// </summary>
-        public static string stationbearing {
+        internal static string stationbearing {
             get {
                 return ResourceManager.GetString("stationbearing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 站点距离分布 - {0}波段 {1}.
+        ///   Looks up a localized string similar to 站點距離分佈 - {0}波段 {1}.
         /// </summary>
-        public static string stationdistance {
+        internal static string stationdistance {
             get {
                 return ResourceManager.GetString("stationdistance", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cloudlog 站点ID.
+        ///   Looks up a localized string similar to Cloudlog 站點ID.
         /// </summary>
-        public static string stationid {
+        internal static string stationid {
             get {
                 return ResourceManager.GetString("stationid", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 站点名称.
+        ///   Looks up a localized string similar to 站點名稱.
         /// </summary>
-        public static string stationname {
+        internal static string stationname {
             get {
                 return ResourceManager.GetString("stationname", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 解码站点统计.
+        ///   Looks up a localized string similar to 解碼站點統計.
         /// </summary>
-        public static string stationstatisticgraph {
+        internal static string stationstatisticgraph {
             get {
                 return ResourceManager.GetString("stationstatisticgraph", resourceCulture);
             }
@@ -1729,7 +1729,7 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 停止位.
         /// </summary>
-        public static string stopbit {
+        internal static string stopbit {
             get {
                 return ResourceManager.GetString("stopbit", resourceCulture);
             }
@@ -1738,43 +1738,43 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 成功！.
         /// </summary>
-        public static string success {
+        internal static string success {
             get {
                 return ResourceManager.GetString("success", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 此QSO上传成功。.
+        ///   Looks up a localized string similar to 此QSO上傳成功。.
         /// </summary>
-        public static string successqso {
+        internal static string successqso {
             get {
                 return ResourceManager.GetString("successqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 同时报告电台信息到.
+        ///   Looks up a localized string similar to 同時報告電臺資訊到.
         /// </summary>
-        public static string syncrigto {
+        internal static string syncrigto {
             get {
                 return ResourceManager.GetString("syncrigto", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 上传失败.
+        ///   Looks up a localized string similar to 上傳失敗.
         /// </summary>
-        public static string t_Fail {
+        internal static string t_Fail {
             get {
                 return ResourceManager.GetString("t_Fail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 忽略上传.
+        ///   Looks up a localized string similar to 忽略上傳.
         /// </summary>
-        public static string t_Ignored {
+        internal static string t_Ignored {
             get {
                 return ResourceManager.GetString("t_Ignored", resourceCulture);
             }
@@ -1783,97 +1783,97 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 等待中....
         /// </summary>
-        public static string t_Pending {
+        internal static string t_Pending {
             get {
                 return ResourceManager.GetString("t_Pending", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 重试中....
+        ///   Looks up a localized string similar to 重試中....
         /// </summary>
-        public static string t_Retrying {
+        internal static string t_Retrying {
             get {
                 return ResourceManager.GetString("t_Retrying", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 上传成功.
+        ///   Looks up a localized string similar to 上傳成功.
         /// </summary>
-        public static string t_Success {
+        internal static string t_Success {
             get {
                 return ResourceManager.GetString("t_Success", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 上传中...
+        ///   Looks up a localized string similar to 上傳中...
         /// </summary>
-        public static string t_Uploading {
+        internal static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 目标电台.
+        ///   Looks up a localized string similar to 目標電臺.
         /// </summary>
-        public static string targetrig {
+        internal static string targetrig {
             get {
                 return ResourceManager.GetString("targetrig", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to * 每次修改配置后，您必须点击“测试”来测试并应用本次更改。.
+        ///   Looks up a localized string similar to * 每次修改配置後，您必須點選“測試”來測試並應用本次更改。.
         /// </summary>
-        public static string testandapply {
+        internal static string testandapply {
             get {
                 return ResourceManager.GetString("testandapply", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 测试.
+        ///   Looks up a localized string similar to 測試.
         /// </summary>
-        public static string testconn {
+        internal static string testconn {
             get {
                 return ResourceManager.GetString("testconn", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 测试中....
+        ///   Looks up a localized string similar to 測試中....
         /// </summary>
-        public static string testing {
+        internal static string testing {
             get {
                 return ResourceManager.GetString("testing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 主题色.
+        ///   Looks up a localized string similar to 主題色.
         /// </summary>
-        public static string themecolor {
+        internal static string themecolor {
             get {
                 return ResourceManager.GetString("themecolor", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 第三方日志系统.
+        ///   Looks up a localized string similar to 第三方日誌系統.
         /// </summary>
-        public static string thirdpartylogsys {
+        internal static string thirdpartylogsys {
             get {
                 return ResourceManager.GetString("thirdpartylogsys", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 错误.
+        ///   Looks up a localized string similar to 錯誤.
         /// </summary>
-        public static string titleerror {
+        internal static string titleerror {
             get {
                 return ResourceManager.GetString("titleerror", resourceCulture);
             }
@@ -1882,7 +1882,7 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 提示.
         /// </summary>
-        public static string titleinfo {
+        internal static string titleinfo {
             get {
                 return ResourceManager.GetString("titleinfo", resourceCulture);
             }
@@ -1891,7 +1891,7 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 成功.
         /// </summary>
-        public static string titlesuccess {
+        internal static string titlesuccess {
             get {
                 return ResourceManager.GetString("titlesuccess", resourceCulture);
             }
@@ -1900,7 +1900,7 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 注意.
         /// </summary>
-        public static string titlewarning {
+        internal static string titlewarning {
             get {
                 return ResourceManager.GetString("titlewarning", resourceCulture);
             }
@@ -1909,7 +1909,7 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 工具.
         /// </summary>
-        public static string tools {
+        internal static string tools {
             get {
                 return ResourceManager.GetString("tools", resourceCulture);
             }
@@ -1918,70 +1918,70 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 前10 DXCC - {0}波段 {1}.
         /// </summary>
-        public static string top10decoded {
+        internal static string top10decoded {
             get {
                 return ResourceManager.GetString("top10decoded", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 总解码数：.
+        ///   Looks up a localized string similar to 總解碼數：.
         /// </summary>
-        public static string totaldec {
+        internal static string totaldec {
             get {
                 return ResourceManager.GetString("totaldec", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 总解码数 / QSO数：.
+        ///   Looks up a localized string similar to 總解碼數 / QSO數：.
         /// </summary>
-        public static string totaldivqso {
+        internal static string totaldivqso {
             get {
                 return ResourceManager.GetString("totaldivqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 已记录数：.
+        ///   Looks up a localized string similar to 已記錄數：.
         /// </summary>
-        public static string totalrec {
+        internal static string totalrec {
             get {
                 return ResourceManager.GetString("totalrec", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 已上传数：.
+        ///   Looks up a localized string similar to 已上傳數：.
         /// </summary>
-        public static string totaluploaded {
+        internal static string totaluploaded {
             get {
                 return ResourceManager.GetString("totaluploaded", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 最小化到托盘.
+        ///   Looks up a localized string similar to 最小化到托盤.
         /// </summary>
-        public static string totray {
+        internal static string totray {
             get {
                 return ResourceManager.GetString("totray", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TQSL密码.
+        ///   Looks up a localized string similar to TQSL密碼.
         /// </summary>
-        public static string tqslpassword {
+        internal static string tqslpassword {
             get {
                 return ResourceManager.GetString("tqslpassword", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TQSL路径.
+        ///   Looks up a localized string similar to TQSL路徑.
         /// </summary>
-        public static string tqslpath {
+        internal static string tqslpath {
             get {
                 return ResourceManager.GetString("tqslpath", resourceCulture);
             }
@@ -1990,52 +1990,52 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 透明度.
         /// </summary>
-        public static string transparency {
+        internal static string transparency {
             get {
                 return ResourceManager.GetString("transparency", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 发射中....
+        ///   Looks up a localized string similar to 發射中....
         /// </summary>
-        public static string txing {
+        internal static string txing {
             get {
                 return ResourceManager.GetString("txing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 端口号应与JTDX/wsjt-x中设置的一致.默认为2237.
+        ///   Looks up a localized string similar to 埠號應與JTDX/wsjt-x中設定的一致.預設為2237.
         /// </summary>
-        public static string udpporthelp {
+        internal static string udpporthelp {
             get {
                 return ResourceManager.GetString("udpporthelp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UDP服务器.
+        ///   Looks up a localized string similar to UDP伺服器.
         /// </summary>
-        public static string udpserver {
+        internal static string udpserver {
             get {
                 return ResourceManager.GetString("udpserver", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UDP连接超时！.
+        ///   Looks up a localized string similar to UDP連線超時！.
         /// </summary>
-        public static string udptimeout {
+        internal static string udptimeout {
             get {
                 return ResourceManager.GetString("udptimeout", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无法检查apikey的可用性；请检查输入的地址是否正确！.
+        ///   Looks up a localized string similar to 無法檢查apikey的可用性；請檢查輸入的地址是否正確！.
         /// </summary>
-        public static string unable2checkapi {
+        internal static string unable2checkapi {
             get {
                 return ResourceManager.GetString("unable2checkapi", resourceCulture);
             }
@@ -2044,106 +2044,134 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 未知.
         /// </summary>
-        public static string unknown {
+        internal static string unknown {
             get {
                 return ResourceManager.GetString("unknown", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 不支持的电台频率：.
+        ///   Looks up a localized string similar to 不支援的電臺頻率：.
         /// </summary>
-        public static string unsupportedrigfreq {
+        internal static string unsupportedrigfreq {
             get {
                 return ResourceManager.GetString("unsupportedrigfreq", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 不支持的电台模式:.
+        ///   Looks up a localized string similar to 不支援的電臺模式:.
         /// </summary>
-        public static string unsupportedrigmode {
+        internal static string unsupportedrigmode {
             get {
                 return ResourceManager.GetString("unsupportedrigmode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动上传QSO到Cloudlog.
+        ///   Looks up a localized string similar to 更新呼號和國家數據.
         /// </summary>
-        public static string upload2cloudlog {
+        internal static string updatebigcty {
+            get {
+                return ResourceManager.GetString("updatebigcty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 更新呼號和國家數據失敗：{0}！.
+        /// </summary>
+        internal static string updatebigctyfailed {
+            get {
+                return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 更新呼號和國家數據成功！
+        ///寫入呼號規則{0}個，國家數據{1}個.
+        /// </summary>
+        internal static string updatebigctysuccess {
+            get {
+                return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自動上傳QSO到Cloudlog.
+        /// </summary>
+        internal static string upload2cloudlog {
             get {
                 return ResourceManager.GetString("upload2cloudlog", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动上传QSO到Clublog.
+        ///   Looks up a localized string similar to 自動上傳QSO到Clublog.
         /// </summary>
-        public static string upload2clublog {
+        internal static string upload2clublog {
             get {
                 return ResourceManager.GetString("upload2clublog", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动上传QSO到HamCQ.
+        ///   Looks up a localized string similar to 自動上傳QSO到HamCQ.
         /// </summary>
-        public static string upload2hamcq {
+        internal static string upload2hamcq {
             get {
                 return ResourceManager.GetString("upload2hamcq", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🚀 QSO上传成功！.
+        ///   Looks up a localized string similar to ✅️ QSO上傳成功！.
         /// </summary>
-        public static string uploadedaqso {
+        internal static string uploadedaqso {
             get {
                 return ResourceManager.GetString("uploadedaqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ☹️ QSO 上传失败！.
+        ///   Looks up a localized string similar to ☹️ QSO 上傳失敗！.
         /// </summary>
-        public static string uploadfailedaqso {
+        internal static string uploadfailedaqso {
             get {
                 return ResourceManager.GetString("uploadfailedaqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 上传中....
+        ///   Looks up a localized string similar to 上傳中....
         /// </summary>
-        public static string uploading {
+        internal static string uploading {
             get {
                 return ResourceManager.GetString("uploading", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在上传此QSO。.
+        ///   Looks up a localized string similar to 正在上傳此QSO。.
         /// </summary>
-        public static string uploadingqso {
+        internal static string uploadingqso {
             get {
                 return ResourceManager.GetString("uploadingqso", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 上传电台信息.
+        ///   Looks up a localized string similar to 上傳電臺資訊.
         /// </summary>
-        public static string uploadriginfo {
+        internal static string uploadriginfo {
             get {
                 return ResourceManager.GetString("uploadriginfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 上报状态.
+        ///   Looks up a localized string similar to 上報狀態.
         /// </summary>
-        public static string uploadstatus {
+        internal static string uploadstatus {
             get {
                 return ResourceManager.GetString("uploadstatus", resourceCulture);
             }
@@ -2152,70 +2180,70 @@ namespace CloudlogHelper.Resources {
         /// <summary>
         ///   Looks up a localized string similar to 示例: http://cloudlog.com.
         /// </summary>
-        public static string urlexample {
+        internal static string urlexample {
             get {
                 return ResourceManager.GetString("urlexample", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to URL格式有误！.
+        ///   Looks up a localized string similar to URL格式有誤！.
         /// </summary>
-        public static string urlformaterror {
+        internal static string urlformaterror {
             get {
                 return ResourceManager.GetString("urlformaterror", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 使用外部rigctld服务.
+        ///   Looks up a localized string similar to 使用外部rigctld服務.
         /// </summary>
-        public static string useexternalrigctld {
+        internal static string useexternalrigctld {
             get {
                 return ResourceManager.GetString("useexternalrigctld", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用户名.
+        ///   Looks up a localized string similar to 使用者名稱.
         /// </summary>
-        public static string username {
+        internal static string username {
             get {
                 return ResourceManager.GetString("username", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 等待连接...
+        ///   Looks up a localized string similar to 等待連線...
         /// </summary>
-        public static string waitconn {
+        internal static string waitconn {
             get {
                 return ResourceManager.GetString("waitconn", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 5分钟内取得的每分钟QSO平均值。.
+        ///   Looks up a localized string similar to 5分鐘內取得的每分鐘QSO平均值。.
         /// </summary>
-        public static string within5min {
+        internal static string within5min {
             get {
                 return ResourceManager.GetString("within5min", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 热力图 - {0}波段 {1}.
+        ///   Looks up a localized string similar to 熱力圖 - {0}波段 {1}.
         /// </summary>
-        public static string worldheatmap {
+        internal static string worldheatmap {
             get {
                 return ResourceManager.GetString("worldheatmap", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 年度QSO数.
+        ///   Looks up a localized string similar to 年度QSO數.
         /// </summary>
-        public static string yearqsos {
+        internal static string yearqsos {
             get {
                 return ResourceManager.GetString("yearqsos", resourceCulture);
             }

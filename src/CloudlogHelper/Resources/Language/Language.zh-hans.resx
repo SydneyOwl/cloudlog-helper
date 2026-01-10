@@ -572,7 +572,7 @@
         <value>✅ 完成了一个QSO！</value>
     </data>
     <data name="uploadedaqso" xml:space="preserve">
-        <value>🚀 QSO上传成功！</value>
+        <value>✅️ QSO上传成功！</value>
     </data>
     <data name="qsoconcisetemplate" xml:space="preserve">
         <value>呼号: {0}, 国家: {1} ({8}), 网格: {9},  频率: {10} ({11}),  模式: {12}, 时间: {14} 至 {15}, 信号报告: 发送 '{16}' / 接收 '{17}'</value>
@@ -763,5 +763,16 @@
     </data>
     <data name="invalidadif" xml:space="preserve">
         <value>无效的ADIF！</value>
+    </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>更新呼号和国家数据</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>更新呼号和国家数据成功！
+写入呼号规则{0}个，国家数据{1}个
+</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>更新呼号和国家数据失败:{0}！</value>
     </data>
 </root>

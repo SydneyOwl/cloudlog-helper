@@ -164,7 +164,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                 else
                 {
                     // fallback option 02: find target country and use that gridcountryDetail
-                    if (countryDetail.CountryNameEn == "Unknown") continue;
+                    if (countryDetail.CountryName == "Unknown") continue;
                     iGrid = MaidenheadGridUtil.GetGridSquare(
                         new LatLng(countryDetail.Latitude, countryDetail.Longitude));
                     ClassLogger.Trace($"Calculating {callsign} from default country: " +

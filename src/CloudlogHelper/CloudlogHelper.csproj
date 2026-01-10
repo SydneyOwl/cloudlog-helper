@@ -52,6 +52,7 @@
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
         <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
         <PackageReference Include="NLog" Version="5.4.0"/>
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41"/>
         <PackageReference Include="ReactiveUI.Validation" Version="4.1.1"/>
@@ -80,17 +81,6 @@
     </Choose>
 
     <ItemGroup>
-        <EmbeddedResource Update="Resources\Language.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Language.en.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Language.zh-hans.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
-        <None Remove="Resources\country_en2cn.dat"/>
-        <EmbeddedResource Include="Resources\country_en2cn.dat"/>
         <None Remove="Resources\cty.dat"/>
         <EmbeddedResource Include="Resources\cty.dat"/>
         <None Remove="Resources\adifmode.dat"/>
@@ -99,48 +89,90 @@
         <None Remove="Hamlib\**"/>
         <None Remove="cloudlog-helper.zip"/>
         <EmbeddedResource Include="Resources\NE2_50M_SR_W_proc_small.jpg"/>
+        <EmbeddedResource Update="Resources\Language\Language.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language\Language.en-us.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language\Language.zh-hans.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hans.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.en-us.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.ja-jp.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language\Language.ja-jp.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hant.resx">
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>DXCC.zh-hant.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language\Language.zh-hant.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Language.zh-hant.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*"/>
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*"/>
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x64\*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x86\*"/>
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\win-x86\*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-x64\*"/>
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-x64\*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-armhf\*"/>
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-armhf\*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
-        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-arm64\*"/>
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-arm64\*" />
     </ItemGroup>
 
     <ItemGroup>
-        <AvaloniaXaml Remove="Hamlib\**"/>
+        <AvaloniaXaml Remove="Hamlib\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Hamlib\**"/>
+        <Compile Remove="Hamlib\**" />
+        <Compile Update="Resources\DXCC\DXCC.zh-hant.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>DXCC.zh-hant.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Language\Language.zh-hant.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Language.zh-hant.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Remove="Hamlib\**"/>
-        <AdditionalFiles Include="Views\UserControls\FixedInfoPanelUserControl.axaml"/>
-        <AdditionalFiles Include="Views\UserControls\RIGDataGroupboxUserControl.axaml"/>
-        <AdditionalFiles Include="Views\UserControls\TestButtonUserControl.axaml"/>
-        <AdditionalFiles Include="Views\UserControls\TipIconUserControl.axaml"/>
-        <AdditionalFiles Include="Views\UserControls\UDPLogInfoGroupboxUserControl.axaml"/>
-        <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml"/>
+        <AdditionalFiles Remove="Hamlib\**" />
+        <AdditionalFiles Include="Views\UserControls\FixedInfoPanelUserControl.axaml" />
+        <AdditionalFiles Include="Views\UserControls\RIGDataGroupboxUserControl.axaml" />
+        <AdditionalFiles Include="Views\UserControls\TestButtonUserControl.axaml" />
+        <AdditionalFiles Include="Views\UserControls\TipIconUserControl.axaml" />
+        <AdditionalFiles Include="Views\UserControls\UDPLogInfoGroupboxUserControl.axaml" />
+        <AdditionalFiles Include="Views\UserControls\UserBasicDataGroupboxUserControl.axaml" />
     </ItemGroup>
 
     <ItemGroup>

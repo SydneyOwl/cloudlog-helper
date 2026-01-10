@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CloudlogHelper.Resources {
+namespace CloudlogHelper.Resources.Language {
     using System;
     
     
@@ -21,14 +21,14 @@ namespace CloudlogHelper.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Language {
+    public class Language_en_us {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Language() {
+        internal Language_en_us() {
         }
         
         /// <summary>
@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language", typeof(Language).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.en-us", typeof(Language_en_us).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -896,7 +896,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Ignore this qso permanently.
+        ///   Looks up a localized string similar to This operation will permanently ignore the selected QSOs, and subsequent QSO Assistant scans will skip these entries. Do you want to continue?.
         /// </summary>
         public static string ignoreqsopermanently {
             get {
@@ -905,7 +905,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to init hamlib!.
+        ///   Looks up a localized string similar to Falied to init hamlib!.
         /// </summary>
         public static string inithamlibfailed {
             get {
@@ -1139,7 +1139,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please input domain only; don&apos;t end with /api/qso!.
+        ///   Looks up a localized string similar to Please input domain only;  don&apos;t end with /api/qso!.
         /// </summary>
         public static string onlymaindomain {
             get {
@@ -1301,7 +1301,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO Rate: .
+        ///   Looks up a localized string similar to QSO Rate:.
         /// </summary>
         public static string qsorate {
             get {
@@ -1438,7 +1438,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Report rfpower.
+        ///   Looks up a localized string similar to Report RFPOWER.
         /// </summary>
         public static string reportpwr {
             get {
@@ -1943,7 +1943,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recorded: .
+        ///   Looks up a localized string similar to Recorded:.
         /// </summary>
         public static string totalrec {
             get {
@@ -2069,6 +2069,34 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update callsign and country data.
+        /// </summary>
+        public static string updatebigcty {
+            get {
+                return ResourceManager.GetString("updatebigcty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Call sign and country data update failed: {0}！.
+        /// </summary>
+        public static string updatebigctyfailed {
+            get {
+                return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Call sign and country data updated successfully!
+        ///{0} call sign rules and {1} country data entries written.
+        /// </summary>
+        public static string updatebigctysuccess {
+            get {
+                return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto upload QSO to Cloudlog.
         /// </summary>
         public static string upload2cloudlog {
@@ -2096,7 +2124,7 @@ namespace CloudlogHelper.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🚀 QSO Logged!.
+        ///   Looks up a localized string similar to � QSO Logged!.
         /// </summary>
         public static string uploadedaqso {
             get {

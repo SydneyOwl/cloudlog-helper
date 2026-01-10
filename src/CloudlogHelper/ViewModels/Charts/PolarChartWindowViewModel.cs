@@ -31,6 +31,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     private readonly BasicSettings _basicSettings;
 
     private readonly IChartDataCacheService _chartDataCacheService;
+    private readonly IWindowManagerService _windowManagerService;
 
     private PolarAxis _polarAxis;
 
@@ -39,17 +40,23 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     }
 
     public PolarChartWindowViewModel(IChartDataCacheService chartDataCacheService,
-        IApplicationSettingsService applicationSettingsService)
+        IApplicationSettingsService applicationSettingsService,
+        IWindowManagerService windowManagerService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;
+        _windowManagerService = windowManagerService;
 
         Application.Current!.ActualThemeVariantChanged += (sender, args) => { UpdatePolar(); };
 
         PlotControl = new AvaPlot();
         SaveChart = ReactiveCommand.CreateFromTask(async () =>
         {
-            var a = await OpenSaveFilePickerInteraction?.Handle(Unit.Default)!;
+            var a = await _windowManagerService.OpenFileSaverAsync( new FilePickerSaveOptions
+            {
+                SuggestedFileName = "Polar-Chart.png",
+                Title = TranslationHelper.GetString(LangKeys.savelogto)
+            });
             if (a is null) return;
             PlotControl.Plot.GetImage(DefaultConfigs.ExportedPolarChartSize,
                 DefaultConfigs.ExportedPolarChartSize).SavePng(a.Path.AbsolutePath);
@@ -97,7 +104,6 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     [Reactive] public int QSOSamples { get; set; } = DefaultConfigs.DefaultPolarQSOSamples;
     [Reactive] public bool ShowDestColor { get; set; } = true;
 
-    public Interaction<Unit, IStorageFile?> OpenSaveFilePickerInteraction { get; set; } = new();
     public ReactiveCommand<Unit, Unit> SaveChart { get; }
     public ReactiveCommand<Unit, Unit> RefreshChart { get; }
     public ReactiveCommand<Unit, Unit> ClearChart { get; }

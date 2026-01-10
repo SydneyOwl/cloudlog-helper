@@ -31,9 +31,11 @@
                             HorizontalContentAlignment="Center"
                             Margin="10"
                             VerticalAlignment="Center"
-                            Header="{I18N {x:Static resources:LangKeys.rigdata}}" MaxWidth="400">
-        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-              ShowGridLines="False" RowSpacing="5"
+                            Header="{I18N {x:Static resources:LangKeys.rigdata}}">
+        <Grid ColumnDefinitions="Auto,Auto"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+              ShowGridLines="False" RowSpacing="5" 
+              Margin="20,0,20,0"
               VerticalAlignment="Center" HorizontalAlignment="Center">
 
             <userControls1:WindowSplitToggleButtonUserControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"
@@ -45,9 +47,9 @@
                     Padding="20,10,20,10">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
-                        <Border CornerRadius="4" Background="#FF8C00" Padding="6,3"
+                        <Border CornerRadius="4" Background="CornflowerBlue" Padding="6,3"
                                 IsVisible="{Binding IsSplit}">
-                            <TextBlock Text="SPLIT-Rx" FontSize="11" FontWeight="Bold"
+                            <TextBlock Text="RX" FontSize="11" FontWeight="Bold"
                                        Foreground="White" />
                         </Border>
 
@@ -89,7 +91,7 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
                         <Border CornerRadius="4" Background="#FF8C00" Padding="6,3">
-                            <TextBlock Text="SPLIT-Tx" FontSize="11" FontWeight="Bold"
+                            <TextBlock Text="TX" FontSize="11" FontWeight="Bold"
                                        Foreground="White" />
                         </Border>
 

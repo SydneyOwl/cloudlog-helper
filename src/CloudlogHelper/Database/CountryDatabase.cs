@@ -13,7 +13,7 @@ public class CountryDatabase
     {
         var info = s.Split(":");
         if (info.Length < 9) return;
-        CountryNameEn = info[0].Replace("\n", "").Trim();
+        CountryName = info[0].Replace("\n", "").Trim();
         CqZone = int.Parse(info[1].Replace("\n", "").Replace(" ", ""));
         ItuZone = int.Parse(info[2].Replace("\n", "").Replace(" ", ""));
         Continent = info[3].Replace("\n", "").Replace(" ", "");
@@ -23,12 +23,11 @@ public class CountryDatabase
         Dxcc = info[7].Replace("\n", "").Replace(" ", "");
     }
 
-    public CountryDatabase(int id, string countryNameEn, string countryNameCn, int cqZone, int ituZone,
+    public CountryDatabase(int id, string countryName, int cqZone, int ituZone,
         string continent, float latitude, float longitude, float gmtOffset, string dxcc)
     {
         Id = id;
-        CountryNameEn = countryNameEn;
-        CountryNameCn = countryNameCn;
+        CountryName = countryName;
         CqZone = cqZone;
         ItuZone = ituZone;
         Continent = continent;
@@ -53,13 +52,7 @@ public class CountryDatabase
     ///     Country name in english.
     /// </summary>
     [Column("country_en")]
-    public string CountryNameEn { get; set; } = "Unknown";
-
-    /// <summary>
-    ///     Country name in chinese.
-    /// </summary>
-    [Column("country_cn")]
-    public string CountryNameCn { get; set; } = "未知";
+    public string CountryName { get; set; } = "Unknown";
 
     /// <summary>
     ///     CQ Zone of current country.
@@ -106,6 +99,6 @@ public class CountryDatabase
     public override string ToString()
     {
         return
-            $"{nameof(Id)}: {Id}, {nameof(CountryNameEn)}: {CountryNameEn}, {nameof(CountryNameCn)}: {CountryNameCn}, {nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}";
+            $"{nameof(Id)}: {Id}, {nameof(CountryName)}: {CountryName}, {nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}";
     }
 }

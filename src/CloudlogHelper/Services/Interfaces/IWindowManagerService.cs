@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 
 namespace CloudlogHelper.Services.Interfaces;
 
@@ -18,4 +20,8 @@ public interface IWindowManagerService
 
     Task LaunchBrowser(string uri, Window? topLevel = null);
     Task LaunchDir(string path, Window? topLevel = null);
+
+    Task<IReadOnlyList<IStorageFile?>> OpenFilePickerAsync(FilePickerOpenOptions options, Window? topLevel = null);
+
+    Task<IStorageFile?> OpenFileSaverAsync(FilePickerSaveOptions options, Window? topLevel = null);
 }

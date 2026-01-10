@@ -15,11 +15,6 @@ public class DefaultConfigs
     public const string RepoAddress = "https://github.com/SydneyOwl/cloudlog-helper";
 
     /// <summary>
-    ///     Embedded resource filename for the country code mapping (English to Chinese).
-    /// </summary>
-    public const string EmbeddedCountryEn2cnFilename = "country_en2cn.dat";
-
-    /// <summary>
     ///     Embedded resource filename for the CTY (Country) data file.
     /// </summary>
     public const string EmbeddedCtyFilename = "cty.dat";

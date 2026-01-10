@@ -24,14 +24,14 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="settings" xml:space="preserve">
-        <value>Settings</value>
-    </data>
     <data name="about" xml:space="preserve">
         <value>About</value>
     </data>
     <data name="help" xml:space="preserve">
         <value>Help</value>
+    </data>
+    <data name="settings" xml:space="preserve">
+        <value>Settings</value>
     </data>
     <data name="themecolor" xml:space="preserve">
         <value>Theme Color</value>
@@ -73,7 +73,7 @@
         <value>URL must start with http:// or https://</value>
     </data>
     <data name="onlymaindomain" xml:space="preserve">
-        <value>Please input domain only; don't end with /api/qso!</value>
+        <value>Please input domain only;  don't end with /api/qso!</value>
     </data>
     <data name="invalidurl" xml:space="preserve">
         <value>URL is invalid!</value>
@@ -109,7 +109,7 @@
         <value>Apikey needs read/write access but only read is given here!</value>
     </data>
     <data name="inithamlibfailed" xml:space="preserve">
-        <value>Failed to init hamlib!</value>
+        <value>Falied to init hamlib!</value>
     </data>
     <data name="autoupdateriginfo" xml:space="preserve">
         <value>Auto upload rig status</value>
@@ -159,11 +159,11 @@
     <data name="closeormin" xml:space="preserve">
         <value>Would you like to minimize to the tray or close the application?</value>
     </data>
-    <data name="totray" xml:space="preserve">
-        <value>Minimize to tray</value>
-    </data>
     <data name="shutdown" xml:space="preserve">
         <value>Close App</value>
+    </data>
+    <data name="totray" xml:space="preserve">
+        <value>Minimize to tray</value>
     </data>
     <data name="remembermychoice" xml:space="preserve">
         <value>Remember my choice</value>
@@ -310,7 +310,7 @@
         <value>The average number of QSOs per minute achieved within 5 minutes.</value>
     </data>
     <data name="qsorate" xml:space="preserve">
-        <value>QSO Rate: </value>
+        <value>QSO Rate:</value>
     </data>
     <data name="export2adif" xml:space="preserve">
         <value>Export adi</value>
@@ -355,7 +355,7 @@
         <value>QSO upload failed retry count</value>
     </data>
     <data name="reportpwr" xml:space="preserve">
-        <value>Report rfpower</value>
+        <value>Report RFPOWER</value>
     </data>
     <data name="reportsplit" xml:space="preserve">
         <value>Report split info</value>
@@ -487,7 +487,7 @@
         <value>This QSO is ignored - Maybe none of third party log service is enabled?</value>
     </data>
     <data name="ignoreqsopermanently" xml:space="preserve">
-        <value>Warning: Ignore this qso permanently</value>
+        <value>This operation will permanently ignore the selected QSOs, and subsequent QSO Assistant scans will skip these entries. Do you want to continue?</value>
     </data>
     <data name="failrigcomm" xml:space="preserve">
         <value>Failed to communicate with rig!</value>
@@ -570,7 +570,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
         <value>✅ A QSO Was made!</value>
     </data>
     <data name="uploadedaqso" xml:space="preserve">
-        <value>🚀 QSO Logged!</value>
+        <value>� QSO Logged!</value>
     </data>
     <data name="qsoconcisetemplate" xml:space="preserve">
         <value>Call Sign: {0}, Country: {1} ({8}) ,  Grid: {9},  Frequency: {10} ({11}), Mode: {12},  Time: {14} to {15},  Report: Sent '{16}' / Received '{17}'</value>
@@ -729,7 +729,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
         <value>Decoded:</value>
     </data>
     <data name="totalrec" xml:space="preserve">
-        <value>Recorded: </value>
+        <value>Recorded:</value>
     </data>
     <data name="totaluploaded" xml:space="preserve">
         <value>Uploaded:</value>
@@ -763,5 +763,15 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     </data>
     <data name="invalidadif" xml:space="preserve">
         <value>Invalid ADIF!</value>
+    </data>
+    <data name="updatebigcty" xml:space="preserve">
+        <value>Update callsign and country data</value>
+    </data>
+    <data name="updatebigctysuccess" xml:space="preserve">
+        <value>Call sign and country data updated successfully!
+{0} call sign rules and {1} country data entries written</value>
+    </data>
+    <data name="updatebigctyfailed" xml:space="preserve">
+        <value>Call sign and country data update failed: {0}！</value>
     </data>
 </root>

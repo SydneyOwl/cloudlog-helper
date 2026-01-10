@@ -15,4 +15,5 @@ public interface IDatabaseService
     Task<bool> IsQsoIgnored(IgnoredQsoDatabase ignoredQso);
     Task BatchAddOrUpdateCallsignGridAsync(List<CollectedGridDatabase> collectedGrid);
     Task<string?> GetGridByCallsign(string callsign);
+    Task<(int, int)> UpdateCallsignAndCountry(string ctyDat);
 }

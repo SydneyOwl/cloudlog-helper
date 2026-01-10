@@ -127,9 +127,14 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Language/语言" Classes="setting-label" />
                                 <ComboBox Classes="setting-control"
-                                          SelectedIndex="{Binding DraftSettings.BasicSettings.LanguageType}">
-                                    <ComboBoxItem>English</ComboBoxItem>
-                                    <ComboBoxItem>简体中文</ComboBoxItem>
+                                          ItemsSource="{Binding LanguageInfos}"
+                                          SelectedValueBinding="{Binding Language}"
+                                          SelectedValue="{Binding DraftSettings.BasicSettings.LanguageType}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding LanguageName}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
@@ -150,6 +155,10 @@
 
                                 <Button Content="{I18N {x:Static resources:LangKeys.opentempfolder}}"
                                         Command="{Binding OpenTempDir}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <Button Content="{I18N {x:Static resources:LangKeys.updatebigcty}}"
+                                        Command="{Binding UpdateBigCty}" />
                             </StackPanel>
                         </StackPanel>
                         <!-- </Border> -->

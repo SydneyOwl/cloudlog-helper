@@ -1,8 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Enums;
+using CloudlogHelper.Models;
 using NLog;
 
 namespace CloudlogHelper.Utils;
@@ -17,6 +22,52 @@ public static class TranslationHelper
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
+    public static SupportedLanguageInfo[] GetSupportedLanguageInfos()
+    {
+        return Enum.GetValues(typeof(SupportedLanguage))
+            .Cast<SupportedLanguage>()
+            .Where(x => x is not SupportedLanguage.NotSpecified)
+            .Select(x =>
+            {
+                var description = x.GetType().GetField(x.ToString())!.GetCustomAttribute<DescriptionAttribute>()
+                    ?.Description;
+                if (string.IsNullOrEmpty(description)) description = x.ToString();
+                return new SupportedLanguageInfo
+                {
+                    LanguageName = description,
+                    Language = x
+                };
+            })
+            .ToArray();
+    }
+    
+    
+    /// <summary>
+    ///  Cleans a string to contain only English letters, numbers, and underscores.
+    ///  Multiple consecutive underscores are merged into a single one.
+    ///  this is used for dxcc resx key
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public static string ParseToDXCCKey(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return string.Empty;
+
+        var result = Regex.Replace(input, @"[^a-zA-Z0-9_]", "_");
+        result = Regex.Replace(result, @"_+", "_");
+        result = result.Trim();
+        
+        // check if this translation exists
+        // if not we use original key
+        if (string.IsNullOrEmpty(I18NExtension.Translate(result)))
+        {
+            return input;
+        }
+        
+        return result;
+    }
+
     /// <summary>
     ///     Gets the translated string for the specified key.
     /// </summary>
@@ -24,7 +75,11 @@ public static class TranslationHelper
     /// <returns>The translated string, or empty string if not found.</returns>
     public static string GetString(string key)
     {
-        return I18NExtension.Translate(key) ?? (key ?? string.Empty);
+        if (string.IsNullOrEmpty(key))
+        {
+            return string.Empty;
+        }
+        return I18NExtension.Translate(key) ?? key;
     }
 
     /// <summary>
@@ -37,7 +92,14 @@ public static class TranslationHelper
         {
             var lanName = Thread.CurrentThread.CurrentCulture.Name.ToLower();
             if (lanName.Contains("en")) return SupportedLanguage.English;
-            if (lanName.Contains("zh")) return SupportedLanguage.SimplifiedChinese;
+            
+            if (lanName.Contains("zh"))
+            {
+                if (lanName is "zh-tw" or "zh-hk" or "zh-mo") return SupportedLanguage.TraditionalChinese;
+                return SupportedLanguage.SimplifiedChinese;
+            }
+            
+            if (lanName.Contains("ja")) return SupportedLanguage.Japanese;
         }
         catch (Exception ex)
         {
@@ -58,6 +120,8 @@ public static class TranslationHelper
         {
             SupportedLanguage.English => new CultureInfo("en-US"),
             SupportedLanguage.SimplifiedChinese => new CultureInfo("zh-CN"),
+            SupportedLanguage.TraditionalChinese => new CultureInfo("zh-TW"),
+            SupportedLanguage.Japanese => new CultureInfo("ja-JP"),
             _ => new CultureInfo("en-US")
         };
     }
