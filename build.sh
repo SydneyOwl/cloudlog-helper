@@ -18,7 +18,7 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  -t, --tag <version>       Application build version number, default is dev-build"
             echo "  -p, --platforms <list>    Target platforms (comma-separated, e.g., win-x64,linux-x64)"
-            echo "                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64"
+            echo "                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64,linux-musl-x64"
             echo "  -h, --help                Show this help message"
             exit 0
             ;;
@@ -160,7 +160,7 @@ if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"win-x64"* ]]; then
         "true"
 fi
 
-if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-x64"* ]]; then
+if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-x64"* ]] || [[ "$TARGET_PLATFORMS" == *"linux-musl-x64"* ]]; then
     download_and_extract \
         "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-linux-amd64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
         "./tmp/Hamlib-linux-amd64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
@@ -258,6 +258,7 @@ if [ -z "$TARGET_PLATFORMS" ]; then
     build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
     build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
     build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
+    build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
     build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
     build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
 else
@@ -272,6 +273,9 @@ else
                 ;;
             "linux-x64")
                 build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
+                ;;
+            "linux-musl-x64")
+                build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
                 ;;
             "linux-arm")
                 build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
