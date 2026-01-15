@@ -155,7 +155,12 @@ function Build-And-Package
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
     if ($aot) {
-        dotnet publish -c Release -r "$runtime" -f "$framework_name" -p:TrimUnusedDependencies=true
+        if ($runtime -notlike "win-*") {
+            Write-Host "non-windows aot build is not supported by powershell!" -ForegroundColor Red
+            return
+        }
+        $frameworkName = "net10.0-windows10.0.17763.0"
+        dotnet publish -c Release -r $runtime -f $frameworkName -p:TrimUnusedDependencies=true
     } else { 
         dotnet publish -c Release -r $runtime `
         -f $frameworkName `
@@ -166,26 +171,41 @@ function Build-And-Package
         -p:TrimUnusedDependencies=true `
         -p:IncludeNativeLibrariesForSelfExtract=true
     }
-    
-    $publishPath = "bin/Release/$frameworkName/$runtime/publish/$exeName"
 
+    $publish_path = "bin/Release/$frameworkName/$runtime/publish"
+    Remove-Item "$publish_path/CloudlogHelper.pdb" -ErrorAction SilentlyContinue
+    Remove-Item "$publish_path/CloudlogHelper.dbg" -ErrorAction SilentlyContinue
+
+    $zipName = ""
+    if ($Version)
+    {
+        if ($aot) {
+            $zipName = "bin/CloudlogHelper-v$Version-$archName-AOT.zip"
+        }
+        else
+        {
+            $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
+        }
+    }
+    else
+    {
+        if ($aot){
+            $zipName = "bin/CloudlogHelper-$archName-AOT.zip"
+        }else{
+            $zipName = "bin/CloudlogHelper-$archName.zip"
+        }
+    }
+    
     # if cygwin installed
     if (Get-Command chmod -ErrorAction SilentlyContinue)
     {
         Write-Host "Cygwin env found here!"
-        chmod +x $publishPath
+        chmod +x "$publish_path/CloudlogHelper"
     }
 
-    $zipName = if ($Version)
-    {
-        "bin/CloudlogHelper-v$Version-$archName.zip"
-    }
-    else
-    {
-        "bin/CloudlogHelper-$archName.zip"
-    }
 
-    Compress-Archive -Path $publishPath -DestinationPath $zipName -Force
+    $files_to_compress = Get-ChildItem -Path $publish_path -File
+    Compress-Archive -Path $files_to_compress.FullName -DestinationPath $zipName -Force
     Write-Host "Created: $zipName"
 }
 
@@ -206,7 +226,8 @@ foreach ($p in $Platforms)
         Build-And-Package -runtime $p `
                           -archName $cfg.arch `
                           -frameworkName $cfg.fw `
-                          -exeName $cfg.exe
+                          -exeName $cfg.exe `
+                          -aot $aot
     }
     else
     {

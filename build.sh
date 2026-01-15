@@ -6,6 +6,7 @@ BUILD_TYPE="NORMAL"
 AOT_BUILD=false
 INSTALL_ARM_CHAIN=false
 INSTALL_MUSL_CHAIN=false
+INSTALL_UBUNTU_CHAIN=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -21,6 +22,10 @@ while [[ $# -gt 0 ]]; do
             AOT_BUILD=true
             shift
             ;;
+        --install-ubuntu-chain)
+          INSTALL_UBUNTU_CHAIN=true
+          shift
+          ;;
         --install-arm-chain)
             INSTALL_ARM_CHAIN=true
             shift
@@ -36,7 +41,6 @@ while [[ $# -gt 0 ]]; do
             echo "  -p, --platforms <list>    Target platforms (comma-separated, e.g., win-x64,linux-x64)"
             echo "                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64,linux-musl-x64"
             echo "  --aot                     Build using AOT compilation"
-            echo "  --install-chain           Install ARM crossbuild chains (requires sudo)"
             echo "  -h, --help                Show this help message"
             exit 0
             ;;
@@ -75,6 +79,16 @@ check_command dotnet
 check_command curl
 check_command unzip
 check_command jq
+
+# Install Ubuntu build chains if requested
+if [ "$INSTALL_UBUNTU_CHAIN" = true ]; then
+    echo "Installing MUSL chains..."
+    sudo apt update
+    sudo apt install git curl unzip jq -y
+    sudo apt install -y clang zlib1g-dev
+    
+    echo "ubuntu chains installed successfully!"
+fi
 
 # Install musl chains if requested
 if [ "$INSTALL_MUSL_CHAIN" = true ]; then
@@ -325,13 +339,13 @@ build_and_package() {
     local zip_name
     if [ -n "$TAG_NAME" ]; then
         if [ "$is_aot" = true ]; then
-            zip_name="bin/CloudlogHelper-v$TAG_NAME-AOT-$arch_name.zip"
+            zip_name="bin/CloudlogHelper-v$TAG_NAME-$arch_name-AOT.zip"
         else
             zip_name="bin/CloudlogHelper-v$TAG_NAME-$arch_name.zip"
         fi
     else
         if [ "$is_aot" = true ]; then
-            zip_name="bin/CloudlogHelper-AOT-$arch_name.zip"
+            zip_name="bin/CloudlogHelper-$arch_name-AOTs.zip"
         else
             zip_name="bin/CloudlogHelper-$arch_name.zip"
         fi
