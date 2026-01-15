@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
@@ -8,6 +9,7 @@ using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("Clublog", Description = "Clublog Log Service")]
 public class ClublogThirdPartyLogService : ThirdPartyLogService
 {

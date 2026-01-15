@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CloudlogHelper.Models;
 
@@ -7,24 +7,24 @@ public struct AdifQSOUploadCall
     /// <summary>
     ///     Apikey of cloudlog.
     /// </summary>
-    [JsonProperty("key")]
+    [JsonPropertyName("key")]
     public string Key { get; set; }
 
     /// <summary>
     ///     Profile id of cloudlog.
     /// </summary>
-    [JsonProperty("station_profile_id")]
+    [JsonPropertyName("station_profile_id")]
     public string StationProfileId { get; set; }
 
     /// <summary>
     ///     Type of the log.
     /// </summary>
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 
     /// <summary>
     ///     Log string.
     /// </summary>
-    [JsonProperty("string")]
+    [JsonPropertyName("string")]
     public string LogString { get; set; }
 }

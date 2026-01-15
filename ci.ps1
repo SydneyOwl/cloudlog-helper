@@ -1,8 +1,11 @@
 ﻿param(
-    [string]$Version = "dev-build",
-    [string[]]$Platforms = @("win-x64", "win-x86", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64")
+    [string]$Version = "dev_build",
+    [string[]]$Platforms = @("win-x64", "win-x86", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64"),
+    [switch]$aot
 )
 
+
+$buildType = "NORMAL"
 $ErrorActionPreference = "Stop"
 
 $commitHash = git rev-parse --short HEAD
@@ -13,6 +16,11 @@ Set-Location src\CloudlogHelper
 $versionInfoPath = "Resources/VersionInfo.cs"
 $versionInfoPathBak = "Resources/VersionInfo.bak"
 
+if ($aot)
+{
+    $buildType="AOT"    
+}
+
 if (Test-Path $versionInfoPath)
 {
     $content = Get-Content $versionInfoPath -Raw
@@ -20,7 +28,8 @@ if (Test-Path $versionInfoPath)
 
     $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
                           -replace '@INTERNAL_TIME@', $buildTime `
-                          -replace '@INTERNAL_VERSION@', $Version
+                          -replace '@INTERNAL_VERSION@', $Version `
+                          -replace '@INTERNAL_BUILDTYPE@', $buildType
 
     Set-Content $versionInfoPath -Value $content -NoNewline
 }
@@ -139,12 +148,16 @@ function Build-And-Package
         [string]$runtime,
         [string]$archName,
         [string]$frameworkName,
-        [string]$exeName
+        [string]$exeName,
+        [switch]$aot
     )
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
-    dotnet publish -c Release -r $runtime `
+    if ($aot) {
+        dotnet publish -c Release -r "$runtime" -f "$framework_name" -p:TrimUnusedDependencies=true
+    } else { 
+        dotnet publish -c Release -r $runtime `
         -f $frameworkName `
         -p:PublishSingleFile=true `
         --self-contained true `
@@ -152,7 +165,8 @@ function Build-And-Package
         -p:PublishTrimmed=false `
         -p:TrimUnusedDependencies=true `
         -p:IncludeNativeLibrariesForSelfExtract=true
-
+    }
+    
     $publishPath = "bin/Release/$frameworkName/$runtime/publish/$exeName"
 
     # if cygwin installed

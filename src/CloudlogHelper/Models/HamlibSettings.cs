@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -14,42 +14,41 @@ using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Models;
 
-[JsonObject(MemberSerialization.OptIn)]
 public class HamlibSettings : ReactiveValidationObject
 {
-    [Reactive] [JsonProperty] public RigInfo? SelectedRigInfo { get; set; } = new();
-    [Reactive] [JsonProperty] public string SelectedPort { get; set; } = string.Empty;
+    [Reactive] public RigInfo? SelectedRigInfo { get; set; } = new();
+    [Reactive] public string SelectedPort { get; set; } = string.Empty;
 
     [Reactive]
-    [JsonProperty]
     public string PollInterval { get; set; } = DefaultConfigs.RigDefaultPollingInterval.ToString();
 
-    [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
+    [Reactive] public bool PollAllowed { get; set; }
 
-    [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }
+    [Reactive] public bool ReportRFPower { get; set; }
 
-    [Reactive] [JsonProperty] public bool ReportSplitInfo { get; set; }
+    [Reactive] public bool ReportSplitInfo { get; set; }
 
-    [Reactive] [JsonProperty] public bool UseRigAdvanced { get; set; }
+    [Reactive] public bool UseRigAdvanced { get; set; }
 
-    [Reactive] [JsonProperty] public bool DisablePTT { get; set; }
+    [Reactive] public bool DisablePTT { get; set; }
 
-    [Reactive] [JsonProperty] public bool AllowExternalControl { get; set; }
+    [Reactive] public bool AllowExternalControl { get; set; }
 
-    [Reactive] [JsonProperty] public string OverrideCommandlineArg { get; set; } = string.Empty;
+    [Reactive] public string OverrideCommandlineArg { get; set; } = string.Empty;
 
-    [Reactive] [JsonProperty] public bool UseExternalRigctld { get; set; }
+    [Reactive] public bool UseExternalRigctld { get; set; }
 
     [Reactive]
-    [JsonProperty]
     public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
 
-    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
+    [Reactive]  public string SyncRigInfoAddress { get; set; } = string.Empty;
 
     private bool _isConfChanged;
 
     private CompositeDisposable _disposable = new();
 
+    
+    [JsonIgnore]
     public IObservable<bool> IsHamlibValid => this.WhenAnyValue(
         x => x.SelectedRigInfo,
         x => x.SelectedPort,

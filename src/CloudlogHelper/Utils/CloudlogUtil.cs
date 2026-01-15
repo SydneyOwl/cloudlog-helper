@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
@@ -7,8 +9,6 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using Flurl;
 using Flurl.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace CloudlogHelper.Utils;
@@ -29,8 +29,13 @@ public class CloudlogUtil
                 .AppendPathSegments(DefaultConfigs.CloudOrWaveCheckEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                 .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
-            var pp = JsonConvert.DeserializeObject<JObject>(result)!;
-            var instanceName = pp.GetValue("name")!.ToString();
+            var node = JsonNode.Parse(result);
+            if (node is not JsonObject obj)
+            {
+                throw new Exception("Invalid JSON received!");
+            }
+            
+            var instanceName = obj["name"]?.ToString();
             return instanceName switch
             {
                 "Cloudlog" => ServerInstanceType.Cloudlog,
@@ -99,7 +104,7 @@ public class CloudlogUtil
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationStatisticsAPIEndpoint, key)
             .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
-        var rawResult = JsonConvert.DeserializeObject<StationStatistics>(result);
+        var rawResult = JsonSerializer.Deserialize(result, SourceGenerationContext.Default.StationStatistics);
         return rawResult;
     }
 
@@ -114,7 +119,7 @@ public class CloudlogUtil
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationInfoAPIEndpoint, key)
             .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
-        var rawResult = JsonConvert.DeserializeObject<List<StationInfo>>(result)
+        var rawResult = JsonSerializer.Deserialize(result, SourceGenerationContext.Default.ListStationInfo)
                         ?? new List<StationInfo>();
         return rawResult;
     }
@@ -161,9 +166,9 @@ public class CloudlogUtil
         };
         var results = await url
             .AppendPathSegments(DefaultConfigs.CloudlogRadioAPICallV2Endpoint)
-            .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
+            .PostStringAsync(JsonSerializer.Serialize(payloadI, SourceGenerationContext.Default.RadioApiCallV2), cancellationToken: token)
             .ReceiveString().ConfigureAwait(false);
-        return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
+        return JsonSerializer.Deserialize(results, SourceGenerationContext.Default.CommonCloudlogResp);
     }
 
     public static async Task<CommonCloudlogResp> UploadAdifLogAsync(string url, string key, string profileId,
@@ -182,9 +187,9 @@ public class CloudlogUtil
             var results = await url
                 .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-                .PostStringAsync(JsonConvert.SerializeObject(payloadI), cancellationToken: token)
+                .PostStringAsync(JsonSerializer.Serialize(payloadI, SourceGenerationContext.Default.AdifQSOUploadCall), cancellationToken: token)
                 .ReceiveString().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<CommonCloudlogResp>(results);
+            return JsonSerializer.Deserialize(results, SourceGenerationContext.Default.CommonCloudlogResp);
         }
         catch (Exception e)
         {

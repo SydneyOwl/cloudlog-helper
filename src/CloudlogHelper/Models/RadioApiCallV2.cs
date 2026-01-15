@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CloudlogHelper.Models;
 
@@ -8,43 +8,43 @@ public record RadioApiCallV2
     /// <summary>
     ///     Apikey of cloudlog.
     /// </summary>
-    [JsonProperty("key")]
+    [JsonPropertyName("key")]
     public string Key { get; set; }
 
     /// <summary>
     ///     Rig model. (used for assigning received data)
     /// </summary>
-    [JsonProperty("radio")]
+    [JsonPropertyName("radio")]
     public string Radio { get; set; }
 
     /// <summary>
     ///     Frequency in Hz.
     /// </summary>
-    [JsonProperty("frequency")]
+    [JsonPropertyName("frequency")]
     public long Frequency { get; set; }
 
     /// <summary>
     ///     Mode of the rig.
     /// </summary>
-    [JsonProperty("mode")]
+    [JsonPropertyName("mode")]
     public string Mode { get; set; }
 
     /// <summary>
     ///     Optional Rx frequency in Hz.
     /// </summary>
-    [JsonProperty("frequency_rx")]
+    [JsonPropertyName("frequency_rx")]
     public long? FrequencyRx { get; set; }
 
     /// <summary>
     ///     Optional Rx mode (not logged).
     /// </summary>
-    [JsonProperty("mode_rx")]
+    [JsonPropertyName("mode_rx")]
     public string? ModeRx { get; set; }
 
     /// <summary>
     ///     Optional transmit power in Watts.
     /// </summary>
-    [JsonProperty("power")]
+    [JsonPropertyName("power")]
     public float? Power { get; set; }
 
     // "prop_mode" and "sat_name"

@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using Newtonsoft.Json;
 using Nito.AsyncEx;
 using NLog;
 using SQLite;
@@ -364,7 +363,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     private void InitializeAdifModesDatabase(SQLiteConnection connection)
     {
         var json = ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedeAdifModeFilename);
-        var adifModes = JsonConvert.DeserializeObject<List<AdifModesDatabase>>(json);
+        var adifModes = JsonSerializer.Deserialize(json, SourceGenerationContext.Default.ListAdifModesDatabase);
         
         if (adifModes?.Count > 0)
         {

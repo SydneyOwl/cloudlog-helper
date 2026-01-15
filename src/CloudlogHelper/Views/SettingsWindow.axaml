@@ -159,6 +159,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <Button Content="{I18N {x:Static resources:LangKeys.updatebigcty}}"
                                         Command="{Binding UpdateBigCty}" />
+                                <userControls1:TipIconUserControl TooltipText="{I18N {x:Static resources:LangKeys.bigctyhint}}"/>
                             </StackPanel>
                         </StackPanel>
                         <!-- </Border> -->
@@ -204,6 +205,7 @@
                                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Spacing="8"
                                                 IsVisible="{Binding ShowCloudlogStationIdCombobox}">
                                         <ComboBox Classes="setting-control"
+                                                   PlaceholderText="{I18N {x:Static resources:LangKeys.psesel}}"
                                                   ItemsSource="{Binding DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo}"
                                                   SelectedValue="{Binding DraftSettings.CloudlogSettings.CloudlogStationInfo}">
                                             <ComboBox.ItemTemplate>

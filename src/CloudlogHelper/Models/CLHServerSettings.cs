@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -14,16 +13,16 @@ namespace CloudlogHelper.Models;
 /// <summary>
 ///     Settings of cloudlog.
 /// </summary>
-[JsonObject(MemberSerialization.OptIn)]
 public class CLHServerSettings: ReactiveValidationObject
 {
-    [Reactive] [JsonProperty] public bool CLHServerEnabled { get; set; }
-    [Reactive] [JsonProperty] public string ServerHost { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public int ServerPort { get; set; } = 7410;
-    [Reactive] [JsonProperty] public string ServerKey { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public bool UseTLS { get; set; } = true;
+    [Reactive] public bool CLHServerEnabled { get; set; }
+    [Reactive] public string ServerHost { get; set; } = string.Empty;
+    [Reactive] public int ServerPort { get; set; } = 7410;
+    [Reactive] public string ServerKey { get; set; } = string.Empty;
+    [Reactive] public bool UseTLS { get; set; } = true;
 
     
+    [JsonIgnore]
     public IObservable<bool> IsCLHServerValid => this.WhenAnyValue(
         x => x.ServerHost,
         x => x.ServerPort,

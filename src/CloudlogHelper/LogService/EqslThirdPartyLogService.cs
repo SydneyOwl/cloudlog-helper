@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using HtmlAgilityPack;
 
 namespace CloudlogHelper.LogService;
 
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("eqsl.cc", Description = "eqsl Log Service")]
 public class EqslThirdPartyLogService : ThirdPartyLogService
 {

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json.Serialization;
 using CloudlogHelper.Validation;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -14,27 +15,37 @@ namespace CloudlogHelper.Models;
 /// <summary>
 ///     Settings of cloudlog.
 /// </summary>
-[JsonObject(MemberSerialization.OptIn)]
 public class CloudlogSettings : ReactiveValidationObject
 {
-    [Reactive] [JsonProperty] public string CloudlogUrl { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public string CloudlogApiKey { get; set; } = string.Empty;
-    [Reactive] [JsonProperty] public StationInfo? CloudlogStationInfo { get; set; }
+    [Reactive] public string CloudlogUrl { get; set; } = string.Empty;
+    [Reactive] public string CloudlogApiKey { get; set; } = string.Empty;
+    
+    [Reactive] public string? CloudlogStationInfoId { get; set; }
+    
+    [JsonIgnore]
+    public StationInfo? CloudlogStationInfo
+    {
+        get => AvailableCloudlogStationInfo.FirstOrDefault(s => s.StationId == CloudlogStationInfoId);
+        set => CloudlogStationInfoId = value?.StationId;
+    }
 
-    [Reactive] [JsonProperty] public bool AutoQSOUploadEnabled { get; set; } = true;
-    [Reactive] [JsonProperty] public bool AutoPollStationStatus { get; set; } = true;
+    [Reactive] public bool AutoQSOUploadEnabled { get; set; } = true;
+    [Reactive] public bool AutoPollStationStatus { get; set; } = true;
 
     [Reactive]
-    [JsonProperty]
     public ObservableCollection<StationInfo> AvailableCloudlogStationInfo { get; set; } = new();
 
+    [JsonIgnore]
     public IObservable<bool> IsCloudlogValid => this.WhenAnyValue(
         x => x.CloudlogUrl,
         x => x.CloudlogApiKey,
         x => x.CloudlogStationInfo,
         (url, key, id) => !IsCloudlogHasErrors()
     );
-
+   
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<StationInfo>))]
+    public CloudlogSettings(){}
+    
     public void ReinitRules()
     {
         this.ClearValidationRules();

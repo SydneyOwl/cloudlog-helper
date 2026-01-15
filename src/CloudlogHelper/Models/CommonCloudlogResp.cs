@@ -1,9 +1,9 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CloudlogHelper.Models;
 
 public struct CommonCloudlogResp
 {
-    [JsonProperty("status")] public string Status;
-    [JsonProperty("reason")] public string Reason;
+    [JsonPropertyName("status")] public string Status;
+    [JsonPropertyName("reason")] public string Reason;
 }

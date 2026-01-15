@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Newtonsoft.Json;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
@@ -11,12 +11,18 @@ namespace CloudlogHelper.Models;
 
 public class QsoSyncAssistantSettings : ReactiveValidationObject
 {
-    [Reactive] [JsonProperty] public bool ExecuteOnStart { get; set; }
-    [Reactive] [JsonProperty] public string? CloudlogUserName { get; set; }
-    [Reactive] [JsonProperty] public string? CloudlogPassword { get; set; }
-    [Reactive] [JsonProperty] public ObservableCollection<string>? LocalLogPath { get; set; }
-    [Reactive] [JsonProperty] public int CloudlogQSODayRange { get; set; } = 120;
-    [Reactive] [JsonProperty] public int LocalQSOSampleCount { get; set; } = 50;
+    [Reactive] public bool ExecuteOnStart { get; set; }
+    [Reactive] public string? CloudlogUserName { get; set; }
+    [Reactive] public string? CloudlogPassword { get; set; }
+    [Reactive] public ObservableCollection<string>? LocalLogPath { get; set; }
+    [Reactive] public int CloudlogQSODayRange { get; set; } = 120;
+    [Reactive] public int LocalQSOSampleCount { get; set; } = 50;
+
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<string>))]
+    public QsoSyncAssistantSettings()
+    {
+        
+    }
 
     public void ReinitRules()
     {

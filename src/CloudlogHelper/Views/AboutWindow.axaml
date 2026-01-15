@@ -19,12 +19,42 @@
     <Grid Margin="10" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*"
           ShowGridLines="False">
 
-        <Image Source="avares://CloudlogHelper/Assets/icon.png"
-               Width="90"
-               Grid.Row="0" Grid.Column="0"
-               Grid.RowSpan="4"
-               VerticalAlignment="Center"
-               Margin="0,0,20,0" />
+        <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="4"
+              VerticalAlignment="Center"
+              Margin="0,0,20,0">
+    
+            <Image Source="avares://CloudlogHelper/Assets/icon.png"
+                   Width="90" />
+    
+            <StackPanel
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top">
+                <Border Background="#CCFF9800"  
+                        CornerRadius="4"
+                        Padding="4,2"
+                        IsVisible="{Binding IsBuildTypeTagVisible}"
+                        Margin="0,0,5,5">
+                    <TextBlock Text="{Binding BuildTypeTagName}"
+                               HorizontalAlignment="Center"
+                               Foreground="White"
+                               FontSize="10"
+                               FontWeight="Bold" />
+                </Border>
+                
+                <Border Background="#CC2196F3"  
+                        CornerRadius="4"
+                        Padding="4,2"
+                        IsVisible="{Binding IsDevTagVisible}"
+                        Margin="0,0,5,5">
+                    <TextBlock Text="{Binding DevTagName}"
+                               Foreground="White"
+                               FontSize="10"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold" />
+                </Border>
+            </StackPanel>
+            
+        </Grid>
 
         <TextBlock Text="Cloudlog Helper"
                    HorizontalAlignment="Center"

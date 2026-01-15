@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
@@ -9,7 +11,6 @@ using CloudlogHelper.Resources;
 using Flurl;
 using Flurl.Http;
 using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace CloudlogHelper.Utils;
@@ -34,17 +35,24 @@ public class QsoSyncAssistantUtil
     public static async Task<IReadOnlyList<FlurlCookie>> LoginAndGetCookies(string baseurl, string username,
         string password, CancellationToken cancellationToken)
     {
-        var tmp = new JObject();
+        var tmp = new JsonObject();
         tmp.Add("user_name", username);
         tmp.Add("user_password", password);
+        
+        var formData = tmp
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value?.ToString()
+            );
+
+        
         var loginRequest = baseurl
-                .AllowHttpStatus(303)
-                .WithAutoRedirect(false)
-                .AppendPathSegments(DefaultConfigs.CloudlogLoginEndpoint)
-            ;
+            .AllowHttpStatus(303)
+            .WithAutoRedirect(false)
+            .AppendPathSegments(DefaultConfigs.CloudlogLoginEndpoint);
 
         var result = await loginRequest
-            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken).ConfigureAwait(false);
+            .PostUrlEncodedAsync(formData, default, cancellationToken).ConfigureAwait(false);
         var redirectUrl = result.Headers.FirstOrDefault("Location");
         if (!redirectUrl.Contains("dashboard")) throw new InvalidOperationException("Incorrect username or password");
         if (cancellationToken.IsCancellationRequested)
@@ -76,7 +84,7 @@ public class QsoSyncAssistantUtil
     {
         // check for instance
         var instance = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(baseurl, CancellationToken.None).ConfigureAwait(false);
-        var tmp = new JObject();
+        var tmp = new JsonObject();
         if (instance == ServerInstanceType.Wavelog)
         {
             tmp.Add("dateFrom", "");
@@ -134,12 +142,14 @@ public class QsoSyncAssistantUtil
             tmp.Add("contest", "");
             tmp.Add("comment", "");
         }
+        
+        var formData = tmp.ToDictionary(k => k.Key, v => v.Value?.ToString());
 
         var recentQs = await baseurl
             .AppendPathSegments(DefaultConfigs.CloudlogQSOAdvancedEndpoint)
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.QSODownloadRequestTimeout))
             .WithCookies(cookies)
-            .PostUrlEncodedAsync(tmp.ToObject<Dictionary<string, string>>(), default, cancellationToken).ConfigureAwait(false);
+            .PostUrlEncodedAsync(formData, default, cancellationToken).ConfigureAwait(false);
 
         if (cancellationToken.IsCancellationRequested)
             throw new OperationCanceledException("Operation(DownloadQSOs) was canceled.");

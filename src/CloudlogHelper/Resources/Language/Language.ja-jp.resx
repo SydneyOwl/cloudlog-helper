@@ -766,4 +766,11 @@
     <data name="updatebigctyfailed" xml:space="preserve">
         <value>コールサインと国データの更新に失敗しました：{0}！</value>
     </data>
+    <data name="psesel" xml:space="preserve">
+        <value>--選択してください--</value>
+    </data>
+    <data name="bigctyhint" xml:space="preserve">
+        <value>cty.datまたはbigcty.datをインポートするために選択できます。詳細はhttps://www.country-files.com/でご確認ください。
+</value>
+    </data>
 </root>

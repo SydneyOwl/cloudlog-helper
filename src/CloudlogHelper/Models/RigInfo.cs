@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace CloudlogHelper.Models;
 
@@ -8,12 +7,12 @@ namespace CloudlogHelper.Models;
 /// </summary>
 public class RigInfo
 {
-    [JsonProperty] public string? Id { get; set; }
-    [JsonProperty] public string? Manufacturer { get; set; }
-    [JsonProperty] public string? Model { get; set; }
-    [JsonProperty] public string? Version { get; set; }
-    [JsonProperty] public string? Status { get; set; }
-    [JsonProperty] public string? Macro { get; set; }
+   public string? Id { get; set; }
+   public string? Manufacturer { get; set; }
+   public string? Model { get; set; }
+   public string? Version { get; set; }
+   public string? Status { get; set; }
+   public string? Macro { get; set; }
 
     public override string ToString()
     {

@@ -14,15 +14,17 @@
     </Design.DataContext>
 
     <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}" Margin="10"
-                            MaxWidth="400"
+                            MaxWidth="450"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
         <Border CornerRadius="12"
                 Padding="16" BorderThickness="1"
                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
                 HorizontalAlignment="Stretch">
 
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="2*,*,*"
-                  VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" 
+                  ColumnDefinitions="2*,3*,*"
+                  ColumnSpacing="10"
+                  VerticalAlignment="Center" HorizontalAlignment="Center">
 
                 <!-- op -->
                 <TextBlock Grid.Row="0" Grid.Column="0"
@@ -32,7 +34,9 @@
                 <Border Grid.Row="0" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
                         HorizontalAlignment="Stretch">
                     <TextBlock Text="{Binding OP}" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                               HorizontalAlignment="Left"
+                               TextWrapping="Wrap" 
+                               MaxWidth="250" /> 
                 </Border>
 
                 <!-- grid -->

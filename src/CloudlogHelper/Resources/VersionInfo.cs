@@ -7,4 +7,6 @@ public class VersionInfo
     public const string Commit = "@INTERNAL_COMMIT@";
 
     public const string BuildTime = "@INTERNAL_TIME@";
+    
+    public const string BuildType = "@INTERNAL_BUILDTYPE@";
 }

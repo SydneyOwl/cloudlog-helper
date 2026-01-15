@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
@@ -12,7 +14,6 @@ using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NLog;
 using ReactiveUI;
 using WsjtxUtilsPatch.WsjtxMessages;
@@ -42,6 +43,7 @@ public class UdpServerService : IUdpServerService, IDisposable
 
     private IApplicationSettingsService _applicationSettingsService;
         
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(WsjtxMessage))]
     public UdpServerService(IApplicationSettingsService applicationSettingsService)
     {
         _applicationSettingsService = applicationSettingsService;
@@ -172,7 +174,7 @@ public class UdpServerService : IUdpServerService, IDisposable
         var receiveString = await server.WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithHeader("Content-Type", "application/json")
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout))
-            .PostStringAsync(JsonConvert.SerializeObject(deserializeWsjtxMessage))
+            .PostStringAsync(JsonSerializer.Serialize(deserializeWsjtxMessage))
             .ReceiveString().ConfigureAwait(false);
 
         if (receiveString != "OK")

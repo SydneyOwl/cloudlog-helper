@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -64,7 +65,8 @@ public class SettingsWindowViewModel : ViewModelBase
         // InitializeLogSystems();
     }
 
-
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<LogSystemConfig>))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<SupportedLanguageInfo>))]
     public SettingsWindowViewModel(CommandLineOptions cmd,
         IWindowManagerService windowManager,
         IApplicationSettingsService ss,
@@ -109,7 +111,6 @@ public class SettingsWindowViewModel : ViewModelBase
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         _source = new CancellationTokenSource();
         ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
-        
         LanguageInfos.AddRange(TranslationHelper.GetSupportedLanguageInfos());
 
         this.WhenActivated(disposables =>
@@ -335,22 +336,11 @@ public class SettingsWindowViewModel : ViewModelBase
                 throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
             }
 
-            var oldVal = DraftSettings.CloudlogSettings.CloudlogStationInfo;
 
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
             ShowCloudlogStationIdCombobox = true;
-
-            if (string.IsNullOrEmpty(DraftSettings.CloudlogSettings.CloudlogStationInfo?.StationId))
-            {
-                DraftSettings.CloudlogSettings.CloudlogStationInfo = stationInfo[0];
-            }
-            else
-            {
-                DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
-                DraftSettings.CloudlogSettings.CloudlogStationInfo = oldVal;
-            }
-
+            
             var instType =
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                     _source.Token);
