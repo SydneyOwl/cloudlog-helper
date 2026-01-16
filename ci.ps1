@@ -1,7 +1,7 @@
 ﻿param(
     [string]$Version = "dev_build",
-    [string[]]$Platforms = @("win-x64", "win-x86", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64"),
-    [switch]$aot
+    [string[]]$Platforms = @("win-x64", "win-x86", "win-arm64", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64"),
+    [switch]$aot = $false
 )
 
 
@@ -11,7 +11,7 @@ $ErrorActionPreference = "Stop"
 $commitHash = git rev-parse --short HEAD
 $buildTime = Get-Date -Format "yyyyMMdd HHmmss"
 
-Write-Host "Building version=$Version commit=$commitHash time=$buildTime"
+Write-Host "Building version=$Version commit=$commitHash time=$buildTime AOT=$aot"
 Set-Location src\CloudlogHelper
 $versionInfoPath = "Resources/VersionInfo.cs"
 $versionInfoPathBak = "Resources/VersionInfo.bak"
@@ -110,8 +110,8 @@ if (Need "win-x64")
                        -CopyTo "./Resources/Dependencies/hamlib/win-x64"
 }
 
-### Linux x64 / musl64
-if (Need "linux-x64" -or Need "linux-musl-x64")
+### Linux x64
+if (Need "linux-x64")
 {
     $url = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip"
     Invoke-WebRequest -Uri $url -OutFile "./tmp/linux-amd64.zip"
@@ -149,12 +149,12 @@ function Build-And-Package
         [string]$archName,
         [string]$frameworkName,
         [string]$exeName,
-        [switch]$aot
+        [bool]$doaot = $false
     )
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
-    if ($aot) {
+    if ($doaot) {
         if ($runtime -notlike "win-*") {
             Write-Host "non-windows aot build is not supported by powershell!" -ForegroundColor Red
             return
@@ -179,8 +179,8 @@ function Build-And-Package
     $zipName = ""
     if ($Version)
     {
-        if ($aot) {
-            $zipName = "bin/CloudlogHelper-v$Version-$archName-AOT.zip"
+        if ($doaot) {
+            $zipName = "bin/CloudlogHelper-v$Version-AOT-$archName.zip"
         }
         else
         {
@@ -189,8 +189,8 @@ function Build-And-Package
     }
     else
     {
-        if ($aot){
-            $zipName = "bin/CloudlogHelper-$archName-AOT.zip"
+        if ($doaot){
+            $zipName = "bin/CloudlogHelper-AOT-$archName.zip"
         }else{
             $zipName = "bin/CloudlogHelper-$archName.zip"
         }
@@ -204,7 +204,7 @@ function Build-And-Package
     }
 
 
-    $files_to_compress = Get-ChildItem -Path $publish_path -File
+    $files_to_compress = Get-ChildItem -Path $publish_path
     Compress-Archive -Path $files_to_compress.FullName -DestinationPath $zipName -Force
     Write-Host "Created: $zipName"
 }
@@ -212,6 +212,7 @@ function Build-And-Package
 $PlatformMap = @{
     "win-x64" = @{ arch = "windows-x64"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
     "win-x86" = @{ arch = "windows-x86"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
+    "win-arm64" = @{ arch = "windows-arm64"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
     "linux-x64" = @{ arch = "linux-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
     "linux-musl-x64" = @{ arch = "linux-musl-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
     "linux-arm" = @{ arch = "linux-arm"; exe = "CloudlogHelper"; fw = "net6.0" }
@@ -227,7 +228,7 @@ foreach ($p in $Platforms)
                           -archName $cfg.arch `
                           -frameworkName $cfg.fw `
                           -exeName $cfg.exe `
-                          -aot $aot
+                          -doaot $aot.IsPresent
     }
     else
     {

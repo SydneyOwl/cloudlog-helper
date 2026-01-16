@@ -82,7 +82,7 @@ check_command jq
 
 # Install Ubuntu build chains if requested
 if [ "$INSTALL_UBUNTU_CHAIN" = true ]; then
-    echo "Installing MUSL chains..."
+    echo "Installing ubuntu chains..."
     sudo apt update
     sudo apt install git curl unzip jq -y
     sudo apt install -y clang zlib1g-dev
@@ -129,7 +129,7 @@ if [ "$AOT_BUILD" = true ]; then
         IFS=',' read -ra PLATFORMS <<< "$TARGET_PLATFORMS"
         for platform in "${PLATFORMS[@]}"; do
             case "$platform" in
-                "linux-arm"|"linux-arm64"|"linux-x64"|"linux-musl-x64")
+                "linux-arm"|"linux-arm64"|"linux-x64")
                     BUILD_TYPE="AOT"
                     # Valid AOT platforms
                     ;;
@@ -252,7 +252,7 @@ if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"win-x64"* ]]; then
         "true"
 fi
 
-if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-x64"* ]] || [[ "$TARGET_PLATFORMS" == *"linux-musl-x64"* ]]; then
+if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-x64"* ]]; then
     download_and_extract \
         "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-linux-amd64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
         "./tmp/Hamlib-linux-amd64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
@@ -332,28 +332,30 @@ build_and_package() {
             -p:IncludeNativeLibrariesForSelfExtract=true
     fi
     
-    local publish_path="bin/Release/$framework_name/$runtime/publish"
+    
+    local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"
+    local bin_path="$(pwd)/bin"
     rm -f "$publish_path/CloudlogHelper.pdb"
     rm -f "$publish_path/CloudlogHelper.dbg"
     
     local zip_name
     if [ -n "$TAG_NAME" ]; then
         if [ "$is_aot" = true ]; then
-            zip_name="bin/CloudlogHelper-v$TAG_NAME-$arch_name-AOT.zip"
+            zip_name="CloudlogHelper-v$TAG_NAME-AOT-$arch_name.zip"
         else
-            zip_name="bin/CloudlogHelper-v$TAG_NAME-$arch_name.zip"
+            zip_name="CloudlogHelper-v$TAG_NAME-$arch_name.zip"
         fi
     else
         if [ "$is_aot" = true ]; then
-            zip_name="bin/CloudlogHelper-$arch_name-AOTs.zip"
+            zip_name="CloudlogHelper-AOT-$arch_name.zip"
         else
-            zip_name="bin/CloudlogHelper-$arch_name.zip"
+            zip_name="CloudlogHelper-$arch_name.zip"
         fi
     fi
     
     if [ -f "$publish_path/CloudlogHelper" ]; then
         chmod +x "$publish_path/CloudlogHelper"
-        zip "$zip_name" "$publish_path"/*
+        (cd "$publish_path" && zip -r "$bin_path/$zip_name" ./*)
         echo "Created: $zip_name"
     else
         echo "Warning: Publish file not found: $publish_path"
