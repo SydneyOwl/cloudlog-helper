@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -11,25 +11,24 @@ using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Models;
 
-[JsonObject(MemberSerialization.OptIn)]
 public class FLRigSettings : ReactiveValidationObject
 {
     [Reactive]
-    [JsonProperty]
     public string PollInterval { get; set; } = DefaultConfigs.RigDefaultPollingInterval.ToString();
 
-    [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
+    [Reactive] public bool PollAllowed { get; set; }
 
-    [Reactive] [JsonProperty] public bool ReportRFPower { get; set; }
+    [Reactive] public bool ReportRFPower { get; set; }
 
-    [Reactive] [JsonProperty] public bool ReportSplitInfo { get; set; }
+    [Reactive] public bool ReportSplitInfo { get; set; }
 
-    [Reactive] [JsonProperty] public string FLRigHost { get; set; } = DefaultConfigs.FLRigDefaultHost;
+    [Reactive] public string FLRigHost { get; set; } = DefaultConfigs.FLRigDefaultHost;
 
-    [Reactive] [JsonProperty] public string FLRigPort { get; set; } = DefaultConfigs.FLRigDefaultPort;
+    [Reactive] public string FLRigPort { get; set; } = DefaultConfigs.FLRigDefaultPort;
 
-    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
+    [Reactive] public string SyncRigInfoAddress { get; set; } = string.Empty;
 
+    [JsonIgnore]
     public IObservable<bool> IsFLRigValid => this.WhenAnyValue(
         x => x.PollInterval,
         x => x.FLRigHost,

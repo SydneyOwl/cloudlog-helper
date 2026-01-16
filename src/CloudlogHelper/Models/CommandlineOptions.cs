@@ -1,4 +1,6 @@
-﻿using CommandLine;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using CommandLine;
 
 namespace CloudlogHelper.Models;
 
@@ -29,4 +31,7 @@ public class CommandLineOptions
 
     [Option("crash-report", HelpText = "Path to crash report file.", Hidden = true)]
     public string? CrashReportFile { get; set; }
+    
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(CommandLineOptions))]
+    public CommandLineOptions(){}
 }

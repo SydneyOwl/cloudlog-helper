@@ -204,6 +204,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You can choose cty.dat or bigcty.dat for import. You can find them at https://www.country-files.com/..
+        /// </summary>
+        public static string bigctyhint {
+            get {
+                return ResourceManager.GetString("bigctyhint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to start applicaiton. Would you like to reset application?.
         /// </summary>
         public static string bootfail {
@@ -1252,6 +1261,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string proxyhelp {
             get {
                 return ResourceManager.GetString("proxyhelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ----Please select----.
+        /// </summary>
+        public static string psesel {
+            get {
+                return ResourceManager.GetString("psesel", resourceCulture);
             }
         }
         

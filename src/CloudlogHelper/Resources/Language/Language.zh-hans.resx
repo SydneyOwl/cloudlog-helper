@@ -775,4 +775,10 @@
     <data name="updatebigctyfailed" xml:space="preserve">
         <value>更新呼号和国家数据失败:{0}！</value>
     </data>
+    <data name="psesel" xml:space="preserve">
+        <value>----请选择----</value>
+    </data>
+    <data name="bigctyhint" xml:space="preserve">
+        <value>您可以选择cty.dat或bigcty.dat进行导入。您可以在https://www.country-files.com/找到。</value>
+    </data>
 </root>

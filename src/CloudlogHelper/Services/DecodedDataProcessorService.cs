@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -48,6 +49,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
 
     private string _myGrid;
 
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<Decode>))]
     public DecodedDataProcessorService(IDatabaseService databaseService,
         IApplicationSettingsService applicationSettingsService,
         IChartDataCacheService chartDataCacheService)

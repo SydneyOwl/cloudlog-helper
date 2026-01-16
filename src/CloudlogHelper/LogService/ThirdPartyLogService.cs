@@ -1,9 +1,18 @@
-﻿using System.Threading;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 
 namespace CloudlogHelper.LogService;
 
+[JsonDerivedType(typeof(ClublogThirdPartyLogService), nameof(ClublogThirdPartyLogService))]
+[JsonDerivedType(typeof(EqslThirdPartyLogService),  nameof(EqslThirdPartyLogService))]
+[JsonDerivedType(typeof(HamCQThirdPartyLogService),  nameof(HamCQThirdPartyLogService))]
+[JsonDerivedType(typeof(HRDLogThirdPartyLogService),   nameof(HRDLogThirdPartyLogService))]
+[JsonDerivedType(typeof(LoTWThirdPartyLogService),   nameof(LoTWThirdPartyLogService))]
+[JsonDerivedType(typeof(QRZThirdPartyLogService),    nameof(QRZThirdPartyLogService))]
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 public abstract class ThirdPartyLogService
 {
     /// <summary>

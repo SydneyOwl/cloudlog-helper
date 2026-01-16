@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using Flurl.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace CloudlogHelper.LogService;
 
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("HamCQ", Description = "HamCQ Log Service")]
 public class HamCQThirdPartyLogService : ThirdPartyLogService
 {
@@ -24,7 +25,8 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
-        var reqJson = new JObject { { "key", ApiKey } };
+        var reqJson = new JsonObject();
+        reqJson.Add("key", ApiKey);
         if (adif is not null)
         {
             reqJson.Add("adif", adif);
@@ -38,9 +40,13 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
         var responseText = await result.GetStringAsync().ConfigureAwait(false);
         var code = result.StatusCode;
         if (responseText == "Pass") return;
-        var res = JsonConvert.DeserializeObject<JObject>(responseText);
-        if (res is null)
-            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)}({responseText})");
-        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)} ({res["message"]})");
+        
+        var node = JsonNode.Parse(responseText);
+        if (node is JsonObject obj)
+        {
+            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)} ({obj["message"]})");
+        }
+
+        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)}({responseText})");
     }
 }

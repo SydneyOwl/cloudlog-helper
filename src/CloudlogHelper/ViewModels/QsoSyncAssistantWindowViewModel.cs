@@ -17,7 +17,7 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using Force.DeepCloner;
+using DynamicData.Binding;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -63,7 +63,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         _windowManagerService = windowManagerService;
         _inAppNotification = winNotification;
         settingsService = ss;
-        Settings = settingsService.GetCurrentSettings().DeepClone();
+        Settings = settingsService.GetCurrentSettings().FastDeepClone();
 
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
@@ -77,7 +77,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         });
 
         AddLogPathCommand = ReactiveCommand.CreateFromTask(AddLogPath);
-        Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
+        Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollectionExtended<string>();
 
         this.WhenActivated(disposable =>
         {
@@ -126,7 +126,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private async Task AddLogPath()
     {
-        Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollection<string>();
+        Settings.QsoSyncAssistantSettings.LocalLogPath ??= new ObservableCollectionExtended<string>();
         var ww = await _windowManagerService.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             AllowMultiple = true
@@ -198,7 +198,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                 $"Login successfully. Downloading QSOs within {Settings.QsoSyncAssistantSettings.CloudlogQSODayRange} days...",
                 15);
             var cloudAdif = await QsoSyncAssistantUtil.DownloadQSOFile(Settings.CloudlogSettings.CloudlogUrl,
-                Settings.CloudlogSettings.CloudlogStationInfo!.Value.StationId!,
+                Settings.CloudlogSettings.CloudlogStationInfo!.StationId!,
                 Settings.QsoSyncAssistantSettings.CloudlogQSODayRange,
                 cookies,
                 _source.Token);

@@ -1,17 +1,25 @@
 ﻿param(
-    [string]$Version = "dev-build",
-    [string[]]$Platforms = @("win-x64", "win-x86", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64")
+    [string]$Version = "dev_build",
+    [string[]]$Platforms = @("win-x64", "win-x86", "win-arm64", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64"),
+    [switch]$aot = $false
 )
 
+
+$buildType = "NORMAL"
 $ErrorActionPreference = "Stop"
 
 $commitHash = git rev-parse --short HEAD
 $buildTime = Get-Date -Format "yyyyMMdd HHmmss"
 
-Write-Host "Building version=$Version commit=$commitHash time=$buildTime"
+Write-Host "Building version=$Version commit=$commitHash time=$buildTime AOT=$aot"
 Set-Location src\CloudlogHelper
 $versionInfoPath = "Resources/VersionInfo.cs"
 $versionInfoPathBak = "Resources/VersionInfo.bak"
+
+if ($aot)
+{
+    $buildType="AOT"    
+}
 
 if (Test-Path $versionInfoPath)
 {
@@ -20,7 +28,8 @@ if (Test-Path $versionInfoPath)
 
     $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
                           -replace '@INTERNAL_TIME@', $buildTime `
-                          -replace '@INTERNAL_VERSION@', $Version
+                          -replace '@INTERNAL_VERSION@', $Version `
+                          -replace '@INTERNAL_BUILDTYPE@', $buildType
 
     Set-Content $versionInfoPath -Value $content -NoNewline
 }
@@ -101,8 +110,8 @@ if (Need "win-x64")
                        -CopyTo "./Resources/Dependencies/hamlib/win-x64"
 }
 
-### Linux x64 / musl64
-if (Need "linux-x64" -or Need "linux-musl-x64")
+### Linux x64
+if (Need "linux-x64")
 {
     $url = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-linux-amd64-$latestHamlibLinuxVersion.zip"
     Invoke-WebRequest -Uri $url -OutFile "./tmp/linux-amd64.zip"
@@ -139,12 +148,21 @@ function Build-And-Package
         [string]$runtime,
         [string]$archName,
         [string]$frameworkName,
-        [string]$exeName
+        [string]$exeName,
+        [bool]$doaot = $false
     )
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
-    dotnet publish -c Release -r $runtime `
+    if ($doaot) {
+        if ($runtime -notlike "win-*") {
+            Write-Host "non-windows aot build is not supported by powershell!" -ForegroundColor Red
+            return
+        }
+        $frameworkName = "net10.0-windows10.0.17763.0"
+        dotnet publish -c Release -r $runtime -f $frameworkName -p:TrimUnusedDependencies=true
+    } else { 
+        dotnet publish -c Release -r $runtime `
         -f $frameworkName `
         -p:PublishSingleFile=true `
         --self-contained true `
@@ -152,32 +170,49 @@ function Build-And-Package
         -p:PublishTrimmed=false `
         -p:TrimUnusedDependencies=true `
         -p:IncludeNativeLibrariesForSelfExtract=true
+    }
 
-    $publishPath = "bin/Release/$frameworkName/$runtime/publish/$exeName"
+    $publish_path = "bin/Release/$frameworkName/$runtime/publish"
+    Remove-Item "$publish_path/CloudlogHelper.pdb" -ErrorAction SilentlyContinue
+    Remove-Item "$publish_path/CloudlogHelper.dbg" -ErrorAction SilentlyContinue
 
+    $zipName = ""
+    if ($Version)
+    {
+        if ($doaot) {
+            $zipName = "bin/CloudlogHelper-v$Version-AOT-$archName.zip"
+        }
+        else
+        {
+            $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
+        }
+    }
+    else
+    {
+        if ($doaot){
+            $zipName = "bin/CloudlogHelper-AOT-$archName.zip"
+        }else{
+            $zipName = "bin/CloudlogHelper-$archName.zip"
+        }
+    }
+    
     # if cygwin installed
     if (Get-Command chmod -ErrorAction SilentlyContinue)
     {
         Write-Host "Cygwin env found here!"
-        chmod +x $publishPath
+        chmod +x "$publish_path/CloudlogHelper"
     }
 
-    $zipName = if ($Version)
-    {
-        "bin/CloudlogHelper-v$Version-$archName.zip"
-    }
-    else
-    {
-        "bin/CloudlogHelper-$archName.zip"
-    }
 
-    Compress-Archive -Path $publishPath -DestinationPath $zipName -Force
+    $files_to_compress = Get-ChildItem -Path $publish_path
+    Compress-Archive -Path $files_to_compress.FullName -DestinationPath $zipName -Force
     Write-Host "Created: $zipName"
 }
 
 $PlatformMap = @{
     "win-x64" = @{ arch = "windows-x64"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
     "win-x86" = @{ arch = "windows-x86"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
+    "win-arm64" = @{ arch = "windows-arm64"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
     "linux-x64" = @{ arch = "linux-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
     "linux-musl-x64" = @{ arch = "linux-musl-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
     "linux-arm" = @{ arch = "linux-arm"; exe = "CloudlogHelper"; fw = "net6.0" }
@@ -192,7 +227,8 @@ foreach ($p in $Platforms)
         Build-And-Package -runtime $p `
                           -archName $cfg.arch `
                           -frameworkName $cfg.fw `
-                          -exeName $cfg.exe
+                          -exeName $cfg.exe `
+                          -doaot $aot.IsPresent
     }
     else
     {

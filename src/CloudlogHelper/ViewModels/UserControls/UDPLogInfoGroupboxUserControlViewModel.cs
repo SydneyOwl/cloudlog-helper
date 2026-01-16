@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -127,6 +128,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         // WaitFirstConn = true;
     }
 
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollectionExtended<RecordedCallsignDetail>))]
     public UDPLogInfoGroupboxUserControlViewModel(
         IDatabaseService dbService,
         IInAppNotificationService inAppNotification,

@@ -774,4 +774,10 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="updatebigctyfailed" xml:space="preserve">
         <value>Call sign and country data update failed: {0}！</value>
     </data>
+    <data name="psesel" xml:space="preserve">
+        <value>----Please select----</value>
+    </data>
+    <data name="bigctyhint" xml:space="preserve">
+        <value>You can choose cty.dat or bigcty.dat for import. You can find them at https://www.country-files.com/.</value>
+    </data>
 </root>

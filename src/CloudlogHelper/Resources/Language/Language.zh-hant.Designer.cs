@@ -204,6 +204,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 您可以選擇cty.dat或bigcty.dat進行導入。您可以在https://www.country-files.com/找到。.
+        /// </summary>
+        internal static string bigctyhint {
+            get {
+                return ResourceManager.GetString("bigctyhint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 啟動失敗！是否嘗試重置所有設定？.
         /// </summary>
         internal static string bootfail {
@@ -1253,6 +1262,15 @@ namespace CloudlogHelper.Resources.Language {
         internal static string proxyhelp {
             get {
                 return ResourceManager.GetString("proxyhelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ----請選擇----.
+        /// </summary>
+        internal static string psesel {
+            get {
+                return ResourceManager.GetString("psesel", resourceCulture);
             }
         }
         

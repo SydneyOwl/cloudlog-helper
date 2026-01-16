@@ -109,8 +109,8 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
             _settings.CloudlogStationInfo?.StationId!, CancellationToken.None);
         if (info is null) throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
 
-        OP = info.Value.StationCallsign;
-        GridSquare = info.Value.StationGridsquare;
+        OP = info.StationCallsign;
+        GridSquare = info.StationGridsquare;
 
         // polling statstics
         var statistic = await CloudlogUtil.GetStationStatisticsAsync(_settings.CloudlogUrl,

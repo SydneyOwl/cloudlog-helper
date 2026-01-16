@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -7,6 +8,8 @@ using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
+
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("QRZ.com", Description = "QRZ Log Service")]
 public class QRZThirdPartyLogService : ThirdPartyLogService
 {

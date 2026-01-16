@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using AutoMapper;
 using CloudlogHelper.Enums;
@@ -12,10 +16,10 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using Force.DeepCloner;
-using Newtonsoft.Json;
 using NLog;
 using ReactiveUI;
+using ReactiveUI.Validation.Contexts;
+using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Services;
 
@@ -28,16 +32,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-
-    /// <summary>
-    ///     default json serializer settings.
-    /// </summary>
-    private static readonly JsonSerializerSettings _defaultSerializerSettings = new()
-    {
-        TypeNameHandling = TypeNameHandling.Auto,
-        Formatting = Formatting.Indented
-    };
-
 
     private readonly object _draftLock = new();
     
@@ -70,13 +64,14 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
             ClassLogger.Trace($"Settings applied by {owner.GetType().FullName}");
 
-            _isDraftLocked = false;
-            _oldSettings = _currentSettings.DeepClone();
+            _oldSettings = _currentSettings.FastDeepClone();
             _mapper.Map(_draftSettings, _currentSettings);
             _applyLogServiceChanges(rawConfigs);
 
             // apply changes for log services here
             _writeCurrentSettingsToFile(_draftSettings!);
+            
+            _isDraftLocked = false;
 
             if (IsCloudlogConfChanged())
             {
@@ -125,7 +120,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             }
 
             _isDraftLocked = false;
-            _draftSettings = _currentSettings!.DeepClone();
+            _draftSettings = _currentSettings!.FastDeepClone();
         }
     }
 
@@ -136,7 +131,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     public ApplicationSettings GetCurrentDraftSettingsSnapshot()
     {
-        return _draftSettings.DeepClone()!;
+        return _draftSettings.FastDeepClone()!;
     }
 
     public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings)
@@ -167,8 +162,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
-        _currentSettings = _draftSettings.DeepClone();
-        _oldSettings = _draftSettings.DeepClone();
+        _currentSettings = _draftSettings.FastDeepClone();
+        _oldSettings = _draftSettings.FastDeepClone();
     }
 
     public static ApplicationSettingsService GenerateApplicationSettingsService(ThirdPartyLogService[] logServices,
@@ -187,7 +182,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         {
             var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
             applicationSettingsService._draftSettings =
-                JsonConvert.DeserializeObject<ApplicationSettings>(defaultConf, _defaultSerializerSettings);
+                JsonSerializer.Deserialize(defaultConf, SourceGenerationContext.Default.ApplicationSettings);
             if (applicationSettingsService._draftSettings is null)
             {
                 ClassLogger.Info("Settings file not found. creating a new one instead.");
@@ -216,8 +211,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 applicationSettingsService._draftSettings.LogServices.Add(service);
             }
 
-            applicationSettingsService._currentSettings = applicationSettingsService._draftSettings.DeepClone();
-            applicationSettingsService._oldSettings = applicationSettingsService._draftSettings.DeepClone();
+            applicationSettingsService._currentSettings = applicationSettingsService._draftSettings.FastDeepClone();
+            applicationSettingsService._oldSettings = applicationSettingsService._draftSettings.FastDeepClone();
 
             ClassLogger.Trace("Config restored successfully.");
         }
@@ -310,7 +305,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
         try
         {
             File.WriteAllText(DefaultConfigs.DefaultSettingsFile,
-                JsonConvert.SerializeObject(settings, _defaultSerializerSettings));
+                JsonSerializer.Serialize<ApplicationSettings>(settings, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    TypeInfoResolver = SourceGenerationContext.Default
+                        .WithAddedModifier(JsonExtensions.IgnorePropertiesDeclaredBy<ReactiveValidationObject>())
+                        .WithAddedModifier(JsonExtensions.IgnorePropertiesDeclaredBy<ReactiveObject>())
+                }));
             ClassLogger.Trace(
                 $"_writeCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
@@ -319,7 +320,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
             ClassLogger.Error(e1, "Failed to write settings. Ignored.");
         }
     }
-
+    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(ThirdPartyLogService))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(LogSystemConfig))]
     private void _applyLogServiceChanges(List<LogSystemConfig>? rawConfigs = null)
     {
         if (rawConfigs is null) return;
@@ -327,6 +329,10 @@ public class ApplicationSettingsService : IApplicationSettingsService
         foreach (var appSet in settings)
         foreach (var logService in appSet!.LogServices)
         {
+            if (logService is null)
+            {
+                throw new NullReferenceException("Seems like some log service is null!");
+            }
             var servType = logService.GetType();
             var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
             if (logSystemConfig is null)

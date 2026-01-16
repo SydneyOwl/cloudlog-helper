@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Flurl.Http;
-using Newtonsoft.Json;
 using NLog;
 using ReactiveUI;
 
@@ -32,29 +32,12 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     private IRigService _currentService;
     private bool _initialized;
     private readonly Dictionary<RigBackendServiceEnum, IRigService> _services = new();
-    
-    private PollingSettingsCache _settingsCache;
-    private DateTime _lastSettingsUpdate = DateTime.MinValue;
-    
-    private class PollingSettingsCache
-    {
-        public bool HamlibPollAllowed { get; set; }
-        public bool FLRigPollAllowed { get; set; }
-        public bool OmniRigPollAllowed { get; set; }
-        public int HamlibPollInterval { get; set; }
-        public int FLRigPollInterval { get; set; }
-        public int OmniRigPollInterval { get; set; }
-        public DateTime CacheTime { get; set; }
-    }
 
     public RigBackendManager(IEnumerable<IRigService> rigSources, IApplicationSettingsService appSettingsService)
     {
         _appSettings = appSettingsService.GetCurrentSettings();
         foreach (var rigService in rigSources) 
             _services[rigService.GetServiceType()] = rigService;
-        
-        // Initialize cache
-        UpdateSettingsCache();
         
         // bind settings change
         MessageBus.Current.Listen<SettingsChanged>()
@@ -74,9 +57,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
     private async Task HandleSettingsChanged()
     {
-        // Update cache after settings change
-        UpdateSettingsCache();
-        
         await StopAllServices();
         
         // find current server and start
@@ -204,9 +184,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         {
             ClassLogger.Error(ex, "Error while initing rig service");
         }
-        
-        // Initialize cache
-        UpdateSettingsCache();
     }
 
     public RigBackendServiceEnum GetServiceType()
@@ -298,11 +275,11 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     public async Task<RadioData> GetAllRigInfo(CancellationToken cancellationToken)
     {
         // Create a settings snapshot to avoid repeated property access
-        var settingsSnapshot = new
+        var settingsSnapshot = new SettingsSnapshot()
         {
-            Hamlib = _appSettings.HamlibSettings,
-            FLRig = _appSettings.FLRigSettings,
-            OmniRig = _appSettings.OmniRigSettings,
+            HamlibSettings = _appSettings.HamlibSettings,
+            FLRigSettings = _appSettings.FLRigSettings,
+            OmniRigSettings = _appSettings.OmniRigSettings,
             ServiceType = _currentService.GetServiceType()
         };
 
@@ -343,13 +320,13 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         }
     }
 
-    private async Task<RadioData> GetRigDataForService(dynamic settings, CancellationToken cancellationToken)
+    private async Task<RadioData> GetRigDataForService(SettingsSnapshot settings, CancellationToken cancellationToken)
     {
         return settings.ServiceType switch
         {
-            RigBackendServiceEnum.Hamlib => await GetHamlibData(settings.Hamlib, cancellationToken),
-            RigBackendServiceEnum.FLRig => await GetFLRigData(settings.FLRig, cancellationToken),
-            RigBackendServiceEnum.OmniRig => await GetOmniRigData(settings.OmniRig, cancellationToken),
+            RigBackendServiceEnum.Hamlib => await GetHamlibData(settings.HamlibSettings, cancellationToken),
+            RigBackendServiceEnum.FLRig => await GetFLRigData(settings.FLRigSettings, cancellationToken),
+            RigBackendServiceEnum.OmniRig => await GetOmniRigData(settings.OmniRigSettings, cancellationToken),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -418,26 +395,27 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
     public int GetPollingInterval()
     {
-        UpdateSettingsCache(); // Use cached values
+        var settingsCache = GetSettingsCache();
         
         return _currentService.GetServiceType() switch
         {
-            RigBackendServiceEnum.FLRig => Math.Max(1, _settingsCache.FLRigPollInterval),
-            RigBackendServiceEnum.Hamlib => Math.Max(1, _settingsCache.HamlibPollInterval),
-            RigBackendServiceEnum.OmniRig => Math.Max(1, _settingsCache.OmniRigPollInterval),
+            RigBackendServiceEnum.FLRig => Math.Max(1, settingsCache.FLRigPollInterval),
+            RigBackendServiceEnum.Hamlib => Math.Max(1, settingsCache.HamlibPollInterval),
+            RigBackendServiceEnum.OmniRig => Math.Max(1, settingsCache.OmniRigPollInterval),
             _ => DefaultConfigs.RigDefaultPollingInterval
         };
     }
 
     public bool GetPollingAllowed()
     {
-        UpdateSettingsCache(); // Use cached values
+        var settingsCache = GetSettingsCache();
         
         return _currentService.GetServiceType() switch
         {
-            RigBackendServiceEnum.FLRig => _settingsCache.FLRigPollAllowed,
-            RigBackendServiceEnum.Hamlib => _settingsCache.HamlibPollAllowed,
-            RigBackendServiceEnum.OmniRig => _settingsCache.OmniRigPollAllowed
+            RigBackendServiceEnum.FLRig => settingsCache.FLRigPollAllowed,
+            RigBackendServiceEnum.Hamlib => settingsCache.HamlibPollAllowed,
+            RigBackendServiceEnum.OmniRig => settingsCache.OmniRigPollAllowed,
+            _ => false
         };
     }
 
@@ -573,19 +551,16 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
         var results = await url
             .WithHeader("Content-Type", "application/json")
-            .PostStringAsync(JsonConvert.SerializeObject(payload), cancellationToken: token)
+            .PostStringAsync(JsonSerializer.Serialize(payload, SourceGenerationContext.Default.RadioApiCallV2), cancellationToken: token)
             .ReceiveString();
         
         if (results != "OK")
             throw new Exception($"Expected 'OK' but got: {results}");
     }
 
-    private void UpdateSettingsCache()
+    private PollingSettingsCache GetSettingsCache()
     {
-        if (_settingsCache != null && (DateTime.Now - _lastSettingsUpdate).TotalSeconds < 5)
-            return;
-            
-        _settingsCache = new PollingSettingsCache
+        return new PollingSettingsCache
         {
             HamlibPollAllowed = _appSettings.HamlibSettings.PollAllowed,
             FLRigPollAllowed = _appSettings.FLRigSettings.PollAllowed,
@@ -593,10 +568,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             HamlibPollInterval = ParsePollInterval(_appSettings.HamlibSettings.PollInterval),
             FLRigPollInterval = ParsePollInterval(_appSettings.FLRigSettings.PollInterval),
             OmniRigPollInterval = ParsePollInterval(_appSettings.OmniRigSettings.PollInterval),
-            CacheTime = DateTime.Now
         };
-        
-        _lastSettingsUpdate = DateTime.Now;
     }
 
     private int ParsePollInterval(string interval)
@@ -605,4 +577,24 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             return intervalInt;
         return DefaultConfigs.RigDefaultPollingInterval;
     }
+}
+
+
+internal struct PollingSettingsCache
+{
+    public bool HamlibPollAllowed { get; set; }
+    public bool FLRigPollAllowed { get; set; }
+    public bool OmniRigPollAllowed { get; set; }
+    public int HamlibPollInterval { get; set; }
+    public int FLRigPollInterval { get; set; }
+    public int OmniRigPollInterval { get; set; }
+}
+
+internal struct SettingsSnapshot
+{
+    public RigBackendServiceEnum ServiceType { get; set; }
+    
+    public HamlibSettings HamlibSettings { get; set; }
+    public FLRigSettings FLRigSettings { get; set; }
+    public OmniRigSettings OmniRigSettings { get; set; }
 }

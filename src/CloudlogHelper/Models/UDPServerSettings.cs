@@ -2,7 +2,6 @@
 using System.Linq;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
-using Newtonsoft.Json;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
@@ -14,18 +13,18 @@ namespace CloudlogHelper.Models;
 /// </summary>
 public class UDPServerSettings : ReactiveValidationObject
 {
-    [Reactive] [JsonProperty] public bool EnableUDPServer { get; set; } = true;
-    [Reactive] [JsonProperty] public bool EnableConnectionFromOutside { get; set; }
-    [Reactive] [JsonProperty] public string UDPPort { get; set; } = DefaultConfigs.UDPServerDefaultPort.ToString();
+    [Reactive] public bool EnableUDPServer { get; set; } = true;
+    [Reactive] public bool EnableConnectionFromOutside { get; set; }
+    [Reactive] public string UDPPort { get; set; } = DefaultConfigs.UDPServerDefaultPort.ToString();
 
-    [Reactive] [JsonProperty] public string RetryCount { get; set; } = "3";
+    [Reactive] public string RetryCount { get; set; } = "3";
 
-    [Reactive] [JsonProperty] public bool ForwardMessage { get; set; }
-    [Reactive] [JsonProperty] public string ForwardAddress { get; set; }
+    [Reactive] public bool ForwardMessage { get; set; }
+    [Reactive] public string ForwardAddress { get; set; }
 
 
-    [Reactive] [JsonProperty] public bool ForwardMessageToHttp { get; set; }
-    [Reactive] [JsonProperty] public string ForwardHttpAddress { get; set; }
+    [Reactive] public bool ForwardMessageToHttp { get; set; }
+    [Reactive] public string ForwardHttpAddress { get; set; }
 
     // === Notification groupbox
 
@@ -33,14 +32,12 @@ public class UDPServerSettings : ReactiveValidationObject
     ///     Push notification when a qso is uploaded, either successfully or unsuccessfully.
     /// </summary>
     [Reactive]
-    [JsonProperty]
     public bool PushNotificationOnQSOUploaded { get; set; } = true;
 
     /// <summary>
     ///     Push notification when a qso is made. This is read directly from wsjtx message.
     /// </summary>
     [Reactive]
-    [JsonProperty]
     public bool PushNotificationOnQSOMade { get; set; }
 
     public void ReinitRules()

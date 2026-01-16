@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,6 +19,8 @@ namespace CloudlogHelper.LogService;
 
 // https://lotw.arrl.org/lotw-help/cmdline/
 
+
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("LoTW", Description = "LoTW Log Service")]
 public class LoTWThirdPartyLogService : ThirdPartyLogService
 {

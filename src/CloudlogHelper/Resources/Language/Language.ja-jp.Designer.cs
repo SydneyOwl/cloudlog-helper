@@ -204,6 +204,16 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to cty.datまたはbigcty.datをインポートするために選択できます。詳細はhttps://www.country-files.com/でご確認ください。
+        ///.
+        /// </summary>
+        internal static string bigctyhint {
+            get {
+                return ResourceManager.GetString("bigctyhint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 起動に失敗しました！すべての設定をリセットしますか？.
         /// </summary>
         internal static string bootfail {
@@ -1251,6 +1261,15 @@ namespace CloudlogHelper.Resources.Language {
         internal static string proxyhelp {
             get {
                 return ResourceManager.GetString("proxyhelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --選択してください--.
+        /// </summary>
+        internal static string psesel {
+            get {
+                return ResourceManager.GetString("psesel", resourceCulture);
             }
         }
         

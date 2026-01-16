@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -13,24 +13,23 @@ using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Models;
 
-[JsonObject(MemberSerialization.OptIn)]
 public class OmniRigSettings : ReactiveValidationObject
 {
     [Reactive]
-    [JsonProperty]
     public string PollInterval { get; set; } = DefaultConfigs.RigDefaultPollingInterval.ToString();
 
-    [Reactive] [JsonProperty] public bool PollAllowed { get; set; }
+    [Reactive] public bool PollAllowed { get; set; }
 
-    [Reactive] [JsonProperty] public string SelectedRig { get; set; } = DefaultConfigs.OmniRigAvailableRig.First();
+    [Reactive] public string SelectedRig { get; set; } = DefaultConfigs.OmniRigAvailableRig.First();
 
-    [Reactive] [JsonProperty] public string SyncRigInfoAddress { get; set; } = string.Empty;
+    [Reactive] public string SyncRigInfoAddress { get; set; } = string.Empty;
     
     
     private bool _isConfChanged;
 
     private CompositeDisposable _disposable = new();
     
+    [JsonIgnore]
     public IObservable<bool> IsOmniRigValid => this.WhenAnyValue(
         x => x.PollInterval,
         x => x.PollAllowed,
