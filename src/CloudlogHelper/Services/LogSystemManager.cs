@@ -26,13 +26,16 @@ public class LogSystemManager : ILogSystemManager, IDisposable
     public LogSystemManager()
     {
         _cachedLogServices = _discoverLogServices();
-        
+    }
+
+    public async Task PreInitLogSystem(IEnumerable<ThirdPartyLogService> ls)
+    {
         var preinitToken = new CancellationTokenSource();
         preinitToken.CancelAfter(TimeSpan.FromSeconds(DefaultConfigs.LogServicePreinitTimeoutSec));
         
         ClassLogger.Debug("Pre-initing log services");
         // initialize services at background
-        _ = Task.WhenAll(_cachedLogServices.Select(x => x.PreInitAsync(preinitToken.Token)))
+        await Task.WhenAll(ls.Select(x => x.PreInitAsync(preinitToken.Token)))
             .ContinueWith(ex =>
             {
                 if (ex.IsFaulted)
@@ -46,7 +49,7 @@ public class LogSystemManager : ILogSystemManager, IDisposable
             }, preinitToken.Token);
     }
 
-    public ThirdPartyLogService[]? GetLogServices()
+    public ThirdPartyLogService[]? GetEmptySupportedLogServices()
     {
         return _cachedLogServices;
     }

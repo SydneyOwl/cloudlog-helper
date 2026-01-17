@@ -176,11 +176,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
         var applicationSettingsService = new ApplicationSettingsService();
         applicationSettingsService._mapper = mapper;
         applicationSettingsService._logSystemManager = logSystemManager;
-        var logServices = logSystemManager.GetLogServices();
+        var spLogServices = logSystemManager.GetEmptySupportedLogServices();
         if (reinit)
         {
             ClassLogger.Trace("Settings reinitializing");
-            applicationSettingsService.InitEmptySettings(logServices);
+            applicationSettingsService.InitEmptySettings(spLogServices);
             return applicationSettingsService;
         }
 
@@ -203,7 +203,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             if (applicationSettingsService._draftSettings is null)
             {
                 ClassLogger.Info("Settings file not found. creating a new one instead.");
-                applicationSettingsService.InitEmptySettings(logServices);
+                applicationSettingsService.InitEmptySettings(spLogServices);
                 return applicationSettingsService;
             }
 
@@ -220,7 +220,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
             var tps = applicationSettingsService._draftSettings
                 .LogServices.Select(x => x.GetType()).ToArray();
-            foreach (var service in logServices)
+            foreach (var service in spLogServices)
             {
                 if (tps.Contains(service.GetType())) continue;
                 ClassLogger.Debug(
@@ -236,10 +236,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
         catch (Exception e1)
         {
             ClassLogger.Warn(e1, "Failed to read settings; use default settings instead.");
-            applicationSettingsService.InitEmptySettings(logServices);
+            applicationSettingsService.InitEmptySettings(spLogServices);
         }
         finally
         {
+            _ = logSystemManager.PreInitLogSystem(applicationSettingsService._draftSettings!.LogServices);
             _writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
         }
 

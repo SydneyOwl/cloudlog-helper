@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Models;
 
@@ -6,7 +7,9 @@ namespace CloudlogHelper.Services.Interfaces;
 
 public interface ILogSystemManager
 {
-    ThirdPartyLogService[]? GetLogServices();
+    ThirdPartyLogService[]? GetEmptySupportedLogServices();
+
+    Task PreInitLogSystem(IEnumerable<ThirdPartyLogService> ls);
 
     LogSystemConfig[]? ExtractLogSystemConfigBatch(IEnumerable<ThirdPartyLogService> ls);
 
