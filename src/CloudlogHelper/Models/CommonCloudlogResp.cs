@@ -4,6 +4,6 @@ namespace CloudlogHelper.Models;
 
 public struct CommonCloudlogResp
 {
-    [JsonPropertyName("status")] public string Status;
-    [JsonPropertyName("reason")] public string Reason;
+    [JsonPropertyName("status")] public string Status { get; set; }
+    [JsonPropertyName("reason")] public string Reason { get; set; }
 }

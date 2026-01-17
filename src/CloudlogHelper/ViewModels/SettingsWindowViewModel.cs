@@ -220,6 +220,12 @@ public class SettingsWindowViewModel : ViewModelBase
         try
         {
             if (_initSkipped) return;
+            if (VersionInfo.BuildType == "AOT")
+            {
+                OmniRigInited = false;
+                return;
+            }
+            
             if (!OperatingSystem.IsWindows())
             {
                 OmniRigInited = false;
@@ -311,7 +317,6 @@ public class SettingsWindowViewModel : ViewModelBase
             ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }
     }
-
 
     private async Task _testHamlib()
     {

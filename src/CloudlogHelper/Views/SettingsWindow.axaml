@@ -205,7 +205,7 @@
                                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Spacing="8"
                                                 IsVisible="{Binding ShowCloudlogStationIdCombobox}">
                                         <ComboBox Classes="setting-control"
-                                                   PlaceholderText="{I18N {x:Static resources:LangKeys.psesel}}"
+                                                  PlaceholderText="{I18N {x:Static resources:LangKeys.psesel}}"
                                                   ItemsSource="{Binding DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo}"
                                                   SelectedValue="{Binding DraftSettings.CloudlogSettings.CloudlogStationInfo}">
                                             <ComboBox.ItemTemplate>
