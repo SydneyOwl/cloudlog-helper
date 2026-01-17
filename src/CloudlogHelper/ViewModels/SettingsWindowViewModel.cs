@@ -228,8 +228,9 @@ public class SettingsWindowViewModel : ViewModelBase
                             .GetField(t.attr.SelectionsArrayName)?
                             .GetValue(draftSettingsLogService);
 
+                        // try property
                         if (value is null)
-                            draftType
+                            value = draftType
                                 .GetProperty(t.attr.SelectionsArrayName)?
                                 .GetValue(draftSettingsLogService);
 

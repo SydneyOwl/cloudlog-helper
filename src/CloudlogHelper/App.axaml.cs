@@ -140,7 +140,9 @@ public class App : Application
         
         collection.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
             ApplicationSettingsService.GenerateApplicationSettingsService(
-                logServices, _cmdOptions.ReinitSettings, pr.GetRequiredService<IMapper>()
+                logServices, _cmdOptions.ReinitSettings, 
+                pr.GetRequiredService<IDatabaseService>().GetVersionBeforeUpdate(),
+                pr.GetRequiredService<IMapper>()
             ));
 
         collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
@@ -152,13 +154,8 @@ public class App : Application
             new MessageBoxManagerService(desktop));
         collection.AddSingleton<IClipboardService, ClipboardService>(_ =>
             new ClipboardService(desktop));
-
+        
         _servProvider = collection.BuildServiceProvider();
-
-        var applicationSettingsService = _servProvider.GetRequiredService<IApplicationSettingsService>();
-        I18NExtension.Culture =
-            TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings
-                .LanguageType);
 
         var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
         await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase).ConfigureAwait(false);
@@ -206,6 +203,11 @@ public class App : Application
             ClassLogger.Info("User accepted disclaimer.");
             await dbSer.UpgradeDatabaseAsync().ConfigureAwait(false);
         }
+        
+        var applicationSettingsService = _servProvider.GetRequiredService<IApplicationSettingsService>();
+        I18NExtension.Culture =
+            TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings
+                .LanguageType);
 
         _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
 
@@ -9,6 +10,7 @@ public interface IDatabaseService
     Task InitDatabaseAsync(string dbPath = "", bool forceInitDatabase = false);
     Task UpgradeDatabaseAsync();
     bool IsUpgradeNeeded();
+    Version GetVersionBeforeUpdate();
     Task<string> GetParentModeAsync(string mode);
     Task<CountryDatabase> GetCallsignDetailAsync(string callsign);
     Task MarkQsoIgnored(IgnoredQsoDatabase ignoredQso);

@@ -25,6 +25,11 @@ public class DatabaseService : IDatabaseService, IDisposable
     private bool _upgradeNeeded;
     private readonly AsyncReaderWriterLock _callsignCountryUpdateLock = new();
 
+    public Version GetVersionBeforeUpdate()
+    {
+        return _dbVersion;
+    }
+
     public async Task InitDatabaseAsync(string dbPath = "", bool forceInitDatabase = false)
     {
         if (_initialized) return;

@@ -12,6 +12,7 @@ using AutoMapper;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
+using CloudlogHelper.Migration;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
@@ -166,8 +167,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _oldSettings = _draftSettings.FastDeepClone();
     }
 
-    public static ApplicationSettingsService GenerateApplicationSettingsService(ThirdPartyLogService[] logServices,
-        bool reinit, IMapper mapper)
+    public static ApplicationSettingsService GenerateApplicationSettingsService(ThirdPartyLogService[] logServices, bool reinit, Version version,
+        IMapper mapper)
     {
         var applicationSettingsService = new ApplicationSettingsService();
         applicationSettingsService._mapper = mapper;
@@ -181,6 +182,17 @@ public class ApplicationSettingsService : IApplicationSettingsService
         try
         {
             var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
+
+            ClassLogger.Debug($"Got current version {version}");
+            if (version != Version.Parse("0.0.0"))
+            {
+                if (version < Version.Parse("0.3.0"))
+                {
+                    ClassLogger.Debug("Migrating MigrateSettings_B4_0_3_0");
+                    defaultConf = SettingsMigration.MigrateSettings_B4_0_3_0(defaultConf);
+                }
+            }
+            
             applicationSettingsService._draftSettings =
                 JsonSerializer.Deserialize(defaultConf, SourceGenerationContext.Default.ApplicationSettings);
             if (applicationSettingsService._draftSettings is null)
@@ -305,7 +317,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         try
         {
             File.WriteAllText(DefaultConfigs.DefaultSettingsFile,
-                JsonSerializer.Serialize<ApplicationSettings>(settings, new JsonSerializerOptions
+                JsonSerializer.Serialize(settings, new JsonSerializerOptions
                 {
                     WriteIndented = true,
                     TypeInfoResolver = SourceGenerationContext.Default
