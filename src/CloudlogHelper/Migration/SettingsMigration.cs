@@ -6,6 +6,7 @@ public class SettingsMigration
 {
     public static string MigrateSettings_B4_0_3_0(string rawSettings)
     {
+        rawSettings = rawSettings.Replace("CloudlogHelper.LogService.ClublogThirdPartyLogService, CloudlogHelper","ClublogThirdPartyLogService");
         rawSettings = rawSettings.Replace("CloudlogHelper.LogService.EqslThirdPartyLogService, CloudlogHelper","EqslThirdPartyLogService");
         rawSettings = rawSettings.Replace("CloudlogHelper.LogService.HamCQThirdPartyLogService, CloudlogHelper","HamCQThirdPartyLogService");
         rawSettings = rawSettings.Replace("CloudlogHelper.LogService.HRDLogThirdPartyLogService, CloudlogHelper","HRDLogThirdPartyLogService");
