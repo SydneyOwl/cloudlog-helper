@@ -38,6 +38,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         services.AddSingleton<ICLHServerService, CLHServerService>();
+        services.AddSingleton<ILogSystemManager, LogSystemManager>();
         return Task.CompletedTask;
     }
 

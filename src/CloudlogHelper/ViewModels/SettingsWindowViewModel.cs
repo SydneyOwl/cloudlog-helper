@@ -20,6 +20,7 @@ using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
@@ -49,6 +50,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly ICLHServerService _clhServerService;
     private readonly IDatabaseService _databaseService;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
+    private readonly ILogSystemManager _logSystemManager;
 
     public SettingsWindowViewModel()
     {
@@ -73,6 +75,7 @@ public class SettingsWindowViewModel : ViewModelBase
         IRigBackendManager rs,
         ICLHServerService cs,
         IMessageBoxManagerService mm,
+        ILogSystemManager lm,
         IDatabaseService ds)
     {
         _windowManagerService = windowManager;
@@ -81,6 +84,7 @@ public class SettingsWindowViewModel : ViewModelBase
         _clhServerService = cs;
         _databaseService = ds;
         _messageBoxManagerService = mm;
+        _logSystemManager = lm;
         
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
@@ -206,58 +210,9 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _initializeLogSystemsAsync()
     {
-        foreach (var draftSettingsLogService in DraftSettings.LogServices)
-        {
-            var classAttr = draftSettingsLogService.GetType().GetCustomAttribute<LogServiceAttribute>();
-            if (classAttr == null) throw new Exception("Failed to find class attr!");
-
-            var properties = draftSettingsLogService.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.IsDefined(typeof(UserInputAttribute), false));
-
-            var fields = properties.Select(prop =>
-                    new { prop, attr = prop.GetCustomAttribute<UserInputAttribute>()! })
-                .Select(t =>
-                {
-                    var selections = Array.Empty<string>();
-
-                    if (!string.IsNullOrWhiteSpace(t.attr.SelectionsArrayName))
-                    {
-                        var draftType = draftSettingsLogService.GetType();
-                        var value = draftType
-                            .GetField(t.attr.SelectionsArrayName)?
-                            .GetValue(draftSettingsLogService);
-
-                        // try property
-                        if (value is null)
-                            value = draftType
-                                .GetProperty(t.attr.SelectionsArrayName)?
-                                .GetValue(draftSettingsLogService);
-
-                        if (value is string[] ss) selections = ss;
-                    }
-
-                    return new LogSystemField
-                    {
-                        DisplayNameLangKey = t.attr.DisplayNameLangKey,
-                        PropertyName = t.prop.Name,
-                        Type = t.attr.InputType,
-                        Watermark = t.attr.WaterMark,
-                        Description = t.attr.Description,
-                        IsRequired = t.attr.IsRequired,
-                        Selections = selections,
-                        Value = t.prop.GetValue(draftSettingsLogService)?.ToString()
-                    };
-                }).ToList();
-
-            LogSystems.Add(new LogSystemConfig
-            {
-                DisplayName = classAttr.ServiceName,
-                Fields = fields,
-                RawType = draftSettingsLogService.GetType(),
-                UploadEnabled = draftSettingsLogService.AutoQSOUploadEnabled
-            });
-        }
+        var config = _logSystemManager.ExtractLogSystemConfigBatch(DraftSettings.LogServices);
+        if (config is null) return;
+        LogSystems.AddRange(config);
     }
 
     private async Task _initializeOmniRigAsync()

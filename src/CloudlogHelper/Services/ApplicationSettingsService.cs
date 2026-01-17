@@ -46,6 +46,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     private IMapper _mapper;
 
+    private ILogSystemManager _logSystemManager;
+    
     private ApplicationSettings? _oldSettings;
 
     public void InjectMockSettings(ApplicationSettings settings)
@@ -167,11 +169,14 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _oldSettings = _draftSettings.FastDeepClone();
     }
 
-    public static ApplicationSettingsService GenerateApplicationSettingsService(ThirdPartyLogService[] logServices, bool reinit, Version version,
+    public static ApplicationSettingsService GenerateApplicationSettingsService(ILogSystemManager logSystemManager,
+        bool reinit, Version version,
         IMapper mapper)
     {
         var applicationSettingsService = new ApplicationSettingsService();
         applicationSettingsService._mapper = mapper;
+        applicationSettingsService._logSystemManager = logSystemManager;
+        var logServices = logSystemManager.GetLogServices();
         if (reinit)
         {
             ClassLogger.Trace("Settings reinitializing");
@@ -339,41 +344,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
         if (rawConfigs is null) return;
         List<ApplicationSettings> settings = new() { _draftSettings!, _currentSettings! };
         foreach (var appSet in settings)
-        foreach (var logService in appSet!.LogServices)
         {
-            if (logService is null)
-            {
-                throw new NullReferenceException("Seems like some log service is null!");
-            }
-            var servType = logService.GetType();
-            var logSystemConfig = rawConfigs.FirstOrDefault(x => x.RawType == servType);
-            if (logSystemConfig is null)
-            {
-                ClassLogger.Warn($"Class not found for {servType.FullName}. Skipped.");
-                continue;
-            }
-
-            servType.GetProperty("AutoQSOUploadEnabled")?.SetValue(logService, logSystemConfig.UploadEnabled);
-
-            foreach (var logSystemField in logSystemConfig.Fields)
-            {
-                var fieldInfo = servType.GetProperty(logSystemField.PropertyName,
-                    BindingFlags.Public | BindingFlags.Instance);
-                if (fieldInfo is null)
-                {
-                    ClassLogger.Warn(
-                        $"Field not found for {servType.FullName} - {logSystemField.PropertyName}. Skipped.");
-                    continue;
-                }
-
-                if (fieldInfo.PropertyType == typeof(bool) && logSystemField.Value is string logVal)
-                {
-                    fieldInfo.SetValue(logService, logVal == "True");
-                    continue;
-                }
-
-                fieldInfo.SetValue(logService, logSystemField.Value);
-            }
+            _logSystemManager.ApplyLogServiceChanges(appSet!.LogServices, rawConfigs);
         }
     }
 }

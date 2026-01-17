@@ -103,44 +103,10 @@ public class App : Application
         await collection.AddCommonServicesAsync().ConfigureAwait(false);
         await collection.AddViewModelsAsync().ConfigureAwait(false);
         await collection.AddExtraAsync().ConfigureAwait(false);
-
-        // now search for all assemblies marked as "log service"
-        var lType = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
-            .ToList();
-
-        if (lType.GroupBy(n => n).Any(c => c.Count() > 1))
-            throw new InvalidOperationException("Dupe log service found. This is not allowed!");
-
-        // create those types and assign back to settings...
-        var logServices = lType.Select(x =>
-        {
-            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x))
-                throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
-            return (ThirdPartyLogService)Activator.CreateInstance(x)!;
-        }).ToArray();
-
-        var preinitToken = new CancellationTokenSource();
-        preinitToken.CancelAfter(TimeSpan.FromSeconds(DefaultConfigs.LogServicePreinitTimeoutSec));
-        
-        ClassLogger.Debug("Pre-initing log services");
-        // initialize services at background
-        _ = Task.WhenAll(logServices.Select(x => x.PreInitAsync(preinitToken.Token)))
-            .ContinueWith(ex =>
-            {
-                if (ex.IsFaulted)
-                {
-                    ClassLogger.Error(ex.Exception, "Error while initing logservices.");
-                }
-                else
-                {
-                    ClassLogger.Debug("Pre-initing log services finished successfully.");
-                }
-            }, preinitToken.Token);
         
         collection.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
             ApplicationSettingsService.GenerateApplicationSettingsService(
-                logServices, _cmdOptions.ReinitSettings, 
+                pr.GetRequiredService<ILogSystemManager>()!, _cmdOptions.ReinitSettings, 
                 pr.GetRequiredService<IDatabaseService>().GetVersionBeforeUpdate(),
                 pr.GetRequiredService<IMapper>()
             ));

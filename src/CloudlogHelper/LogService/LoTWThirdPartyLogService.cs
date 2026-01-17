@@ -85,48 +85,48 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
 
     public override async Task PreInitAsync(CancellationToken token)
     {
-        // find station infos
-        if (Stations is null || Stations.Length == 0)
+        var stationDataPath = string.Empty;
+        var combineSTP = string.Empty;
+        if (OperatingSystem.IsWindows())
         {
-            var stationDataPath = string.Empty;
-            var combine = string.Empty;
-            if (OperatingSystem.IsWindows())
+            combineSTP = Path.Combine(Environment.GetEnvironmentVariable("APPDATA") ?? string.Empty,
+                "TrustedQSL",
+                "station_data");
+            if (File.Exists(combineSTP))
             {
-                combine = Path.Combine(Environment.GetEnvironmentVariable("APPDATA") ?? string.Empty,
-                    "TrustedQSL",
-                    "station_data");
-                if (File.Exists(combine))
-                {
-                    stationDataPath = combine;
-                }
-                else
-                {
-                    combine = Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA") ?? string.Empty,
-                        "TrustedQSL",
-                        "station_data");
-                    if (File.Exists(combine)) stationDataPath = combine;
-                }
+                stationDataPath = combineSTP;
             }
             else
             {
-                combine = Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? string.Empty,
-                    ".tqsl",
+                combineSTP = Path.Combine(Environment.GetEnvironmentVariable("LOCALAPPDATA") ?? string.Empty,
+                    "TrustedQSL",
                     "station_data");
-                if (File.Exists(combine)) stationDataPath = combine;
+                if (File.Exists(combineSTP)) stationDataPath = combineSTP;
             }
+        }
+        else
+        {
+            combineSTP = Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? string.Empty,
+                ".tqsl",
+                "station_data");
+            if (File.Exists(combineSTP)) stationDataPath = combineSTP;
+        }
 
-            // check if file valid
-            if (!string.IsNullOrEmpty(stationDataPath))
+        // check if file valid
+        if (!string.IsNullOrEmpty(stationDataPath))
+        {
+            var readAllText = await File.ReadAllTextAsync(stationDataPath, token);
+            var doc = XDocument.Parse(readAllText);
+
+            var nameList = doc.Root?.Elements("StationData")
+                .Select(stationElement => stationElement.Attribute("name")?.Value)
+                .ToList();
+            Stations = nameList?.ToArray();
+            if (string.IsNullOrWhiteSpace(StationName) &&
+                Stations is not null && Stations.Length > 0 &&
+                !string.IsNullOrWhiteSpace(Stations[0]))
             {
-                var readAllText = await File.ReadAllTextAsync(stationDataPath, token);
-                var doc = XDocument.Parse(readAllText);
-
-                var nameList = doc.Root?.Elements("StationData")
-                    .Select(stationElement => stationElement.Attribute("name")?.Value)
-                    .ToList();
-                Stations = nameList?.ToArray();
-                if (Stations is not null && Stations.Length > 0 && !string.IsNullOrWhiteSpace(Stations[0]))
-                    StationName = Stations[0];
+                StationName = Stations[0];
             }
         }
 
