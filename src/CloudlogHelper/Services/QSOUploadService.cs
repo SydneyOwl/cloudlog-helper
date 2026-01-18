@@ -343,6 +343,8 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                             rcd.UploadedServicesErrorMessage[serviceUploadResult.ServiceName] = serviceUploadResult.ErrorMessage;
                         }
                     }
+
+                    if (results.All(x => x.Success)) result = true;
                 }
                 else
                 {
