@@ -35,25 +35,21 @@ public class QsoSyncAssistantUtil
     public static async Task<IReadOnlyList<FlurlCookie>> LoginAndGetCookies(string baseurl, string username,
         string password, CancellationToken cancellationToken)
     {
-        var tmp = new JsonObject();
-        tmp.Add("user_name", username);
-        tmp.Add("user_password", password);
-        
-        var formData = tmp
-            .ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value?.ToString()
-            );
-
-        
         var loginRequest = baseurl
             .AllowHttpStatus(303)
             .WithAutoRedirect(false)
             .AppendPathSegments(DefaultConfigs.CloudlogLoginEndpoint);
 
         var result = await loginRequest
-            .PostUrlEncodedAsync(formData, default, cancellationToken).ConfigureAwait(false);
+            .PostUrlEncodedAsync(new
+            {
+                user_name = username,
+                user_password = password
+            }, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+        
         var redirectUrl = result.Headers.FirstOrDefault("Location");
+        if (redirectUrl is null) throw new InvalidOperationException("Username or password should not be empty!");
         if (!redirectUrl.Contains("dashboard")) throw new InvalidOperationException("Incorrect username or password");
         if (cancellationToken.IsCancellationRequested)
             throw new OperationCanceledException("Operation(LoginAndGetCookies) was canceled.");
