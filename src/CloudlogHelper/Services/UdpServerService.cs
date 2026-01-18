@@ -114,14 +114,21 @@ public class UdpServerService : IUdpServerService, IDisposable
 
         async Task Wrapped(WsjtxMessage msg)
         {
-            await handler(msg).ConfigureAwait(false);
-        
-            var udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
-            if (udpSettings.ForwardMessageToHttp)
+            try
             {
-                await _forwardTCPMessageAsync(
-                    msg,
-                    udpSettings.ForwardHttpAddress).ConfigureAwait(false);
+                await handler(msg).ConfigureAwait(false);
+        
+                var udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
+                if (udpSettings.ForwardMessageToHttp)
+                {
+                    await _forwardTCPMessageAsync(
+                        msg,
+                        udpSettings.ForwardHttpAddress).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Debug(ex, "Error while handling message. ignored.");
             }
         }
     }
@@ -132,7 +139,7 @@ public class UdpServerService : IUdpServerService, IDisposable
         
         MessageBus.Current.Listen<SettingsChanged>()
             .Where(x => x.Part == ChangedPart.UDPServer)
-            .Throttle(TimeSpan.FromMilliseconds(100)) // 防抖
+            .Throttle(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ =>
             {
                 ClassLogger.Trace("UDP settings changed!");

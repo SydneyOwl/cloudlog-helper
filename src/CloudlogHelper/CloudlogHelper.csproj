@@ -61,6 +61,7 @@
         <PackageReference Include="sqlite-net-pcl" Version="1.9.172"/>
         <PackageReference Include="System.IO.Ports" Version="8.0.0"/>
         <PackageReference Include="System.Management" Version="8.0.0"/>
+        <PackageReference Include="System.Text.Json" Version="10.0.2" />
         <PackageReference Include="WsjtxUtilsPatch.WsjtxMessages" Version="1.0.4"/>
         <PackageReference Include="WsjtxUtilsPatch.WsjtxUdpServer" Version="1.0.4"/>
         <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.1"/>
