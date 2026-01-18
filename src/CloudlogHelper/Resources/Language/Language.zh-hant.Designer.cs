@@ -1140,7 +1140,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 請檢查OmniRig是否已正確安裝，另外OmniRIg目前僅在Windows平臺上支援。.
+        ///   Looks up a localized string similar to 請檢查OmniRig是否已正確安裝。另外，OmniRig目前僅在非AOT編譯的Windows平台上支援。.
         /// </summary>
         internal static string omniinitfailed {
             get {
@@ -1673,7 +1673,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用分號分隔的地址.
+        ///   Looks up a localized string similar to 用分號分隔的地址，需指定http(s).
         /// </summary>
         internal static string spiltby {
             get {

@@ -505,7 +505,7 @@
         <value>Also upload info to</value>
     </data>
     <data name="spiltby" xml:space="preserve">
-        <value>Split by semicolon</value>
+        <value>Semicolon-separated addresses must specify http(s)</value>
     </data>
     <data name="failuploadriginfoto" xml:space="preserve">
         <value>Failed to upload rig info to {addr}. See logs for more!</value>
@@ -720,7 +720,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
         <value>Target RIG</value>
     </data>
     <data name="omniinitfailed" xml:space="preserve">
-        <value>Please check OmniRig is installed correctly. And please note that OmniRig is only supported on Windows. </value>
+        <value>Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms.</value>
     </data>
     <data name="confomnifirst" xml:space="preserve">
         <value>Please check OmniRig Settings!</value>

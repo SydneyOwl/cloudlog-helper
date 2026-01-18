@@ -380,7 +380,7 @@
         <value>この項目は必須です！</value>
     </data>
     <data name="omniinitfailed" xml:space="preserve">
-        <value>OmniRigが正しくインストールされているか確認してください。なお、OmniRigは現在Windowsプラットフォームでのみサポートされています。</value>
+        <value>OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在、AOTコンパイルされていないWindowsプラットフォームでのみサポートされています。</value>
     </data>
     <data name="onlymaindomain" xml:space="preserve">
         <value>メインドメインのみを入力してください。「/api/qso」で終わってはいけません！</value>
@@ -568,7 +568,7 @@
         <value>文字列の前後にスペースは使用できません</value>
     </data>
     <data name="spiltby" xml:space="preserve">
-        <value>セミコロン区切りのアドレス</value>
+        <value>セミコロンで区切られたアドレスには、http(s) の指定が必要です</value>
     </data>
     <data name="splithelp" xml:space="preserve">
         <value>一部の無線機は異周波数（Split）情報の読み取りをサポートしていないか、誤ったデータを返すため、この機能はデフォルトで無効になっています。</value>

@@ -1139,7 +1139,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OmniRigが正しくインストールされているか確認してください。なお、OmniRigは現在Windowsプラットフォームでのみサポートされています。.
+        ///   Looks up a localized string similar to OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在、AOTコンパイルされていないWindowsプラットフォームでのみサポートされています。.
         /// </summary>
         internal static string omniinitfailed {
             get {
@@ -1672,7 +1672,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to セミコロン区切りのアドレス.
+        ///   Looks up a localized string similar to セミコロンで区切られたアドレスには、http(s) の指定が必要です.
         /// </summary>
         internal static string spiltby {
             get {

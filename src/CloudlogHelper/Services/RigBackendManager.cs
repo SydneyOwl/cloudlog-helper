@@ -118,7 +118,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         if (_appSettings.FLRigSettings.PollAllowed)
         {
             _syncRigInfoAddr.Clear();
-            _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
+            _syncRigInfoAddr.AddRange(_appSettings.FLRigSettings.SyncRigInfoAddress.Split(";"));
         }
     }
 

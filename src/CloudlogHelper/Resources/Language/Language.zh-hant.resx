@@ -382,7 +382,7 @@
         <value>此項不能為空！</value>
     </data>
     <data name="omniinitfailed" xml:space="preserve">
-        <value>請檢查OmniRig是否已正確安裝，另外OmniRIg目前僅在Windows平臺上支援。</value>
+        <value>請檢查OmniRig是否已正確安裝。另外，OmniRig目前僅在非AOT編譯的Windows平台上支援。</value>
     </data>
     <data name="onlymaindomain" xml:space="preserve">
         <value>只需輸入主網域名稱，不允許以/api/qso結尾！</value>
@@ -570,7 +570,7 @@
         <value>字串前後不允許空格</value>
     </data>
     <data name="spiltby" xml:space="preserve">
-        <value>用分號分隔的地址</value>
+        <value>用分號分隔的地址，需指定http(s)</value>
     </data>
     <data name="splithelp" xml:space="preserve">
         <value>部分電臺不支援讀取異頻資訊或讀取的數據錯誤，因此本功能預設未開啟。</value>

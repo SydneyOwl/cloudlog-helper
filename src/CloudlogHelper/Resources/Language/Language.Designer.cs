@@ -1139,7 +1139,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please check OmniRig is installed correctly. And please note that OmniRig is only supported on Windows. .
+        ///   Looks up a localized string similar to Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms..
         /// </summary>
         public static string omniinitfailed {
             get {
@@ -1672,7 +1672,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Split by semicolon.
+        ///   Looks up a localized string similar to Semicolon-separated addresses must specify http(s).
         /// </summary>
         public static string spiltby {
             get {

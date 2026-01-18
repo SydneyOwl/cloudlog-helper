@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using CloudlogHelper.Database;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Models;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
 namespace CloudlogHelper.Resources;
 

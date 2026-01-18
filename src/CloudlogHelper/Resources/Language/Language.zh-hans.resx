@@ -505,7 +505,7 @@
         <value>同时报告电台信息到</value>
     </data>
     <data name="spiltby" xml:space="preserve">
-        <value>用分号分隔的地址</value>
+        <value>用分号分隔的地址，需指定http(s)</value>
     </data>
     <data name="failuploadriginfoto" xml:space="preserve">
         <value>无法上传到{addr}，请查看日志！</value>
@@ -720,7 +720,7 @@
         <value>目标电台</value>
     </data>
     <data name="omniinitfailed" xml:space="preserve">
-        <value>请检查OmniRig是否已正确安装，另外OmniRIg目前仅在Windows平台上支持。</value>
+        <value>请检查OmniRig是否已正确安装，另外OmniRIg目前仅在非AOT编译的Windows平台上支持。</value>
     </data>
     <data name="confomnifirst" xml:space="preserve">
         <value>请检查OmniRig配置！</value>

@@ -108,9 +108,27 @@ public class UdpServerService : IUdpServerService, IDisposable
         return int.TryParse(_applicationSettingsService.GetCurrentSettings().UDPSettings.RetryCount, out var ret) ? ret : 1;
     }
 
+    private Func<WsjtxMessage, Task> _handlerWrapper(Func<WsjtxMessage, Task> handler)
+    {
+        return Wrapped;
+
+        async Task Wrapped(WsjtxMessage msg)
+        {
+            await handler(msg).ConfigureAwait(false);
+        
+            var udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
+            if (udpSettings.ForwardMessageToHttp)
+            {
+                await _forwardTCPMessageAsync(
+                    msg,
+                    udpSettings.ForwardHttpAddress).ConfigureAwait(false);
+            }
+        }
+    }
+
     public async Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger)
     {
-        await _restartUDPServerAsync(handler, _rawHandler, logger);
+        await _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
         
         MessageBus.Current.Listen<SettingsChanged>()
             .Where(x => x.Part == ChangedPart.UDPServer)
@@ -118,26 +136,26 @@ public class UdpServerService : IUdpServerService, IDisposable
             .Subscribe(_ =>
             {
                 ClassLogger.Trace("UDP settings changed!");
-                _restartUDPServerAsync(handler, _rawHandler, logger);
+                _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
             });
     }
 
     private async Task _rawHandler(Memory<byte> message)
     {
-        // raw hander do forward works
-        var _udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
-        if (_udpSettings.ForwardMessage)
+        try
         {
-            await _forwardUDPMessageAsync(
-                message, 
-                IPEndPoint.Parse(_udpSettings.ForwardAddress)).ConfigureAwait(false);
+            // raw hander do forward works
+            var _udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
+            if (_udpSettings.ForwardMessage)
+            {
+                await _forwardUDPMessageAsync(
+                    message,
+                    IPEndPoint.Parse(_udpSettings.ForwardAddress)).ConfigureAwait(false);
+            }
         }
-
-        if (_udpSettings.ForwardMessageToHttp)
+        catch (Exception ex)
         {
-            await _forwardTCPMessageAsync(
-                message, 
-                _udpSettings.ForwardHttpAddress).ConfigureAwait(false);
+            ClassLogger.Debug(ex, "Error while forwarding message. ignored.");
         }
     }
 
@@ -162,19 +180,12 @@ public class UdpServerService : IUdpServerService, IDisposable
             TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout)).Token).ConfigureAwait(false);
     }
 
-    private async Task _forwardTCPMessageAsync(Memory<byte> message, string server)
+    private async Task _forwardTCPMessageAsync(WsjtxMessage message, string server)
     {
-        var deserializeWsjtxMessage = message.DeserializeWsjtxMessage();
-        if (deserializeWsjtxMessage is null)
-        {
-            ClassLogger.Trace("deserializeWsjtxMessage is empty so skipped");
-            return;
-        }
-
         var receiveString = await server.WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
             .WithHeader("Content-Type", "application/json")
             .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultForwardingRequestTimeout))
-            .PostStringAsync(JsonSerializer.Serialize(deserializeWsjtxMessage))
+            .PostStringAsync(WsjtxMessageUtil.SerializeWsjtxMessageToJson(message))
             .ReceiveString().ConfigureAwait(false);
 
         if (receiveString != "OK")
