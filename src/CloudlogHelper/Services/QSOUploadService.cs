@@ -326,18 +326,22 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                     var serviceName = service.GetType().Name;
                     if (!rcd.UploadedServices.GetValueOrDefault(serviceName, false))
                     {
-                        uploadTasks.Add(UploadToThirdPartyServiceAsync(service, serviceName, rcd, adif, cancellationToken));
+                        uploadTasks.Add(UploadToThirdPartyServiceAsync(service, serviceName, adif, cancellationToken));
                     }
                 }
 
                 if (uploadTasks.Any())
                 {
                     var results = await Task.WhenAll(uploadTasks).ConfigureAwait(false);
-                    result = results.All(r => r.Success);
                     
-                    foreach (var serviceResult in results)
+                    foreach (var serviceUploadResult in results)
                     {
-                        rcd.UploadedServices[serviceResult.ServiceName] = serviceResult.Success;
+                        rcd.UploadedServices[serviceUploadResult.ServiceName] = serviceUploadResult.Success;
+                        
+                        if (!serviceUploadResult.Success)
+                        {
+                            rcd.UploadedServicesErrorMessage[serviceUploadResult.ServiceName] = serviceUploadResult.ErrorMessage;
+                        }
                     }
                 }
                 else
@@ -348,6 +352,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 if (result)
                 {
                     rcd.UploadStatus = UploadStatus.Success;
+                    rcd.FailReason = "";
                     ClassLogger.Info($"QSO uploaded successfully: {rcd.DXCall}");
                     break;
                 }
@@ -356,7 +361,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                     rcd.UploadStatus = UploadStatus.Fail;
                     rcd.FailReason = string.Join(Environment.NewLine, 
                         rcd.UploadedServices.Where(kv => !kv.Value)
-                            .Select(kv => $"{kv.Key}: Upload failed"));
+                            .Select(kv => $"{kv.Key}: {rcd.UploadedServicesErrorMessage.GetValueOrDefault(kv.Key, "Failed")}"));
                     
                     if (attempt < maxRetries)
                     {
@@ -426,14 +431,13 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     private async Task<ServiceUploadResult> UploadToThirdPartyServiceAsync(
         ThirdPartyLogService service,
         string serviceName,
-        RecordedCallsignDetail rcd,
         string adif,
         CancellationToken cancellationToken)
     {
         try
         {
             await service.UploadQSOAsync(adif, cancellationToken).ConfigureAwait(false);
-            ClassLogger.Info($"QSO uploaded to {serviceName}: {rcd.DXCall}");
+            ClassLogger.Info($"QSO uploaded to {serviceName}");
             
             return new ServiceUploadResult
             {
@@ -443,7 +447,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         }
         catch (Exception ex)
         {
-            ClassLogger.Error(ex, $"QSO upload to {serviceName} failed: {rcd.DXCall}");
+            ClassLogger.Error(ex, $"QSO upload to {serviceName} failed");
             return new ServiceUploadResult
             {
                 ServiceName = serviceName,

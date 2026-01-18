@@ -112,15 +112,13 @@
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Language\Language.ja-jp.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
+          <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hant.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
-          <LastGenOutput>DXCC.zh-hant.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Language\Language.zh-hant.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>Language.zh-hant.Designer.cs</LastGenOutput>
+          <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
     </ItemGroup>
 

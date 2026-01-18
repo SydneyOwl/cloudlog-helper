@@ -18,6 +18,7 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Upload status of log services.
     /// </summary>
     public Dictionary<string, bool> UploadedServices = new();
+    public Dictionary<string, string> UploadedServicesErrorMessage = new();
     
     /// <summary>
     ///     Original country names.
