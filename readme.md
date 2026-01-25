@@ -357,9 +357,9 @@ A simple simulation of a remote FT8 operating scenario was tested on low-end har
 
 The system was running `Rustdesk` + `JTDX` + `Cloudlog helper` + `NetTime v3.14`.
 
-CPU and memory usage after 1 hour of operation are shown below. The CPU spikes correspond to decoding operations after a receive period.
+The memory usage of the AOT version of the software stabilizes at around 90MB after one hour of operation (without opening other dialog boxes), while the non-AOT version stabilizes at approximately 160MB.
 
-<img src="./md_assets/img_branchmark.png" width="30%" />
+![](./md_assets/Screenshot_20260125_162940.jpg)
 
 ## ❓ Known Issues
 
