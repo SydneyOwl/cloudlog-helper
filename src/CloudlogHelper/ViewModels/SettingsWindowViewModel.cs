@@ -175,9 +175,9 @@ public class SettingsWindowViewModel : ViewModelBase
             }).DisposeWith(disposables);
 
             // refresh hamlib lib after fully inited
-            Observable.Return(Unit.Default)
-                .InvokeCommand(RefreshPort)
-                .DisposeWith(disposables);
+            // Observable.Return(Unit.Default)
+            //     .InvokeCommand(RefreshPort)
+            //     .DisposeWith(disposables);
         });
 
         FullyInitialized = false;

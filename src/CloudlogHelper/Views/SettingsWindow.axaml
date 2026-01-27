@@ -8,6 +8,7 @@
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+        xmlns:behaviours="clr-namespace:CloudlogHelper.Behaviours"
         mc:Ignorable="d"
         d:DesignWidth="700" d:DesignHeight="700"
         x:DataType="viewModels:SettingsWindowViewModel"
@@ -311,9 +312,15 @@
                                                IsEnabled="{Binding !#externalRigctld.IsChecked}" />
                                     <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Spacing="8"
                                                 IsEnabled="{Binding !#externalRigctld.IsChecked}">
-                                        <ComboBox Classes="setting-control"
-                                                  SelectedItem="{Binding DraftSettings.HamlibSettings.SelectedPort}"
-                                                  ItemsSource="{Binding Ports}" />
+                                        <AutoCompleteBox Classes="setting-control"
+                                                     IsTextCompletionEnabled="False"
+                                                     MinWidth="200"
+                                                     Text="{Binding DraftSettings.HamlibSettings.SelectedPort}"
+                                                     ItemsSource="{Binding Ports}" >
+                                            <Interaction.Behaviors>
+                                                <behaviours:AutoCompleteZeroMinimumPrefixLengthDropdownBehaviour/>
+                                            </Interaction.Behaviors>
+                                        </AutoCompleteBox>
                                         <Button Command="{Binding RefreshPort}" CornerRadius="4"
                                                 Content="{avalonia:MaterialIconExt Kind=Refresh}"
                                                 Width="32" Height="32" />
