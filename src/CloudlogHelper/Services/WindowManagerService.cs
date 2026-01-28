@@ -37,6 +37,22 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         // TODO release managed resources here
     }
 
+    public Window? GetToplevel(Type vmType)
+    {
+        foreach (var windowData in _windows)
+        {
+            if (windowData.Window.TryGetTarget(out var window))
+            {
+                if (window.DataContext?.GetType() == vmType)
+                {
+                    return window;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     ///     Track a window and return uuid related to this window.
     /// </summary>

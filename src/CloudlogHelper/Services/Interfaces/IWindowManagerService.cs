@@ -19,9 +19,12 @@ public interface IWindowManagerService
     void CloseWindowBySeq(string seq);
 
     Task LaunchBrowser(string uri, Window? topLevel = null);
+    
     Task LaunchDir(string path, Window? topLevel = null);
 
     Task<IReadOnlyList<IStorageFile?>> OpenFilePickerAsync(FilePickerOpenOptions options, Window? topLevel = null);
 
+    Window? GetToplevel(Type vmType);
+    
     Task<IStorageFile?> OpenFileSaverAsync(FilePickerSaveOptions options, Window? topLevel = null);
 }

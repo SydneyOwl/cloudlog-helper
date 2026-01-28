@@ -442,7 +442,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             {
                 new FilePickerFileType("adi") { Patterns = new[] { "*.adi" } }
             }
-        });
+        }, _windowManagerService.GetToplevel(GetType()));
         if (file is null) return;
 
         await using var saveStream = await file.OpenWriteAsync();

@@ -130,7 +130,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         var ww = await _windowManagerService.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             AllowMultiple = true
-        });
+        }, _windowManagerService.GetToplevel(GetType()));
         foreach (var storageFile in ww)
         {
             if (Settings.QsoSyncAssistantSettings.LocalLogPath.Contains(storageFile.TryGetLocalPath()!)) continue;

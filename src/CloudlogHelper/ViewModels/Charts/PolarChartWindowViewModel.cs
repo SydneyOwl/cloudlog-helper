@@ -56,7 +56,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             {
                 SuggestedFileName = "Polar-Chart.png",
                 Title = TranslationHelper.GetString(LangKeys.savelogto)
-            });
+            }, _windowManagerService.GetToplevel(GetType()));
             if (a is null) return;
             PlotControl.Plot.GetImage(DefaultConfigs.ExportedPolarChartSize,
                 DefaultConfigs.ExportedPolarChartSize).SavePng(a.Path.AbsolutePath);

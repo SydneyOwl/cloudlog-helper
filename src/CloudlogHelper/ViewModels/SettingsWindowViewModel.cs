@@ -385,7 +385,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 {
                     new FilePickerFileType("dat") { Patterns = new[] { "*.dat" } }
                 }
-            });
+            }, _windowManagerService.GetToplevel(GetType()));
 
             if (!openFilePickerAsync.Any()) return;
             var selected = openFilePickerAsync[0];
