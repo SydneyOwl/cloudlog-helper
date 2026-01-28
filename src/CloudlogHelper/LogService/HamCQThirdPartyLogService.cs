@@ -10,7 +10,6 @@ using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("HamCQ", Description = "HamCQ Log Service")]
 public class HamCQThirdPartyLogService : ThirdPartyLogService
 {

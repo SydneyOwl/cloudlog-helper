@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace CloudlogHelper.Models;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 public class StationInfo
 {
     /// <summary>

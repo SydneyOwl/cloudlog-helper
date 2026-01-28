@@ -9,7 +9,6 @@ using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("Clublog", Description = "Clublog Log Service")]
 public class ClublogThirdPartyLogService : ThirdPartyLogService
 {

@@ -12,8 +12,6 @@ using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
-
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("HRDLOG", Description = "HRDLOG Log Service")]
 public class HRDLogThirdPartyLogService : ThirdPartyLogService
 {

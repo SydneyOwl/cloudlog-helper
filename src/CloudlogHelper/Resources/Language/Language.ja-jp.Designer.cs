@@ -21,7 +21,7 @@ namespace CloudlogHelper.Resources.Language {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Language_ja_jp {
+    public class Language_ja_jp {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -35,7 +35,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.ja-jp", typeof(Language_ja_jp).Assembly);
@@ -50,7 +50,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -62,7 +62,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to について.
         /// </summary>
-        internal static string about {
+        public static string about {
             get {
                 return ResourceManager.GetString("about", resourceCulture);
             }
@@ -71,7 +71,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 承諾.
         /// </summary>
-        internal static string accept {
+        public static string accept {
             get {
                 return ResourceManager.GetString("accept", resourceCulture);
             }
@@ -80,7 +80,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 詳細設定.
         /// </summary>
-        internal static string advancedsettings {
+        public static string advancedsettings {
             get {
                 return ResourceManager.GetString("advancedsettings", resourceCulture);
             }
@@ -89,7 +89,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 外部制御を許可.
         /// </summary>
-        internal static string allowexternalcontrol {
+        public static string allowexternalcontrol {
             get {
                 return ResourceManager.GetString("allowexternalcontrol", resourceCulture);
             }
@@ -98,7 +98,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to リクエストプロキシを許可.
         /// </summary>
-        internal static string allowproxy {
+        public static string allowproxy {
             get {
                 return ResourceManager.GetString("allowproxy", resourceCulture);
             }
@@ -107,7 +107,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 角度の重み.
         /// </summary>
-        internal static string angweight {
+        public static string angweight {
             get {
                 return ResourceManager.GetString("angweight", resourceCulture);
             }
@@ -116,7 +116,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to APIキー.
         /// </summary>
-        internal static string apikey {
+        public static string apikey {
             get {
                 return ResourceManager.GetString("apikey", resourceCulture);
             }
@@ -125,7 +125,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動的にステーション情報を更新.
         /// </summary>
-        internal static string autopollstatus {
+        public static string autopollstatus {
             get {
                 return ResourceManager.GetString("autopollstatus", resourceCulture);
             }
@@ -134,7 +134,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOを自動アップロード.
         /// </summary>
-        internal static string autoqsoupload {
+        public static string autoqsoupload {
             get {
                 return ResourceManager.GetString("autoqsoupload", resourceCulture);
             }
@@ -143,7 +143,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動選択.
         /// </summary>
-        internal static string autosel {
+        public static string autosel {
             get {
                 return ResourceManager.GetString("autosel", resourceCulture);
             }
@@ -152,7 +152,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機データの自動報告.
         /// </summary>
-        internal static string autoupdateriginfo {
+        public static string autoupdateriginfo {
             get {
                 return ResourceManager.GetString("autoupdateriginfo", resourceCulture);
             }
@@ -161,7 +161,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOを自動アップロード先.
         /// </summary>
-        internal static string autoupload2 {
+        public static string autoupload2 {
             get {
                 return ResourceManager.GetString("autoupload2", resourceCulture);
             }
@@ -170,7 +170,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 基本情報.
         /// </summary>
-        internal static string basicinfo {
+        public static string basicinfo {
             get {
                 return ResourceManager.GetString("basicinfo", resourceCulture);
             }
@@ -179,7 +179,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 基本設定.
         /// </summary>
-        internal static string basicsettings {
+        public static string basicsettings {
             get {
                 return ResourceManager.GetString("basicsettings", resourceCulture);
             }
@@ -188,7 +188,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ボーレート.
         /// </summary>
-        internal static string baudrate {
+        public static string baudrate {
             get {
                 return ResourceManager.GetString("baudrate", resourceCulture);
             }
@@ -197,7 +197,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 角度（度）.
         /// </summary>
-        internal static string bearingdeg {
+        public static string bearingdeg {
             get {
                 return ResourceManager.GetString("bearingdeg", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   Looks up a localized string similar to cty.datまたはbigcty.datをインポートするために選択できます。詳細はhttps://www.country-files.com/でご確認ください。
         ///.
         /// </summary>
-        internal static string bigctyhint {
+        public static string bigctyhint {
             get {
                 return ResourceManager.GetString("bigctyhint", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 起動に失敗しました！すべての設定をリセットしますか？.
         /// </summary>
-        internal static string bootfail {
+        public static string bootfail {
             get {
                 return ResourceManager.GetString("bootfail", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 計算中....
         /// </summary>
-        internal static string calculating {
+        public static string calculating {
             get {
                 return ResourceManager.GetString("calculating", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to コールサイン.
         /// </summary>
-        internal static string callsign {
+        public static string callsign {
             get {
                 return ResourceManager.GetString("callsign", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to チャート.
         /// </summary>
-        internal static string charts {
+        public static string charts {
             get {
                 return ResourceManager.GetString("charts", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to チャート機能は無効です。設定で有効にしてください！.
         /// </summary>
-        internal static string chartsdisabled {
+        public static string chartsdisabled {
             get {
                 return ResourceManager.GetString("chartsdisabled", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機の接続を確認してください！.
         /// </summary>
-        internal static string checkrigconn {
+        public static string checkrigconn {
             get {
                 return ResourceManager.GetString("checkrigconn", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to クリア.
         /// </summary>
-        internal static string clear {
+        public static string clear {
             get {
                 return ResourceManager.GetString("clear", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog HelperはCLH-Serverに接続でき、デコードされたデータモード情報および無線機情報をサーバーに自動報告します。特定のAndroidアプリを使用してサーバーに接続すると、サーバーからスマートフォンに情報がプッシュされます。.
         /// </summary>
-        internal static string clhhintinfo {
+        public static string clhhintinfo {
             get {
                 return ResourceManager.GetString("clhhintinfo", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLHサーバーIP.
         /// </summary>
-        internal static string clhseraddr {
+        public static string clhseraddr {
             get {
                 return ResourceManager.GetString("clhseraddr", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLHサーバーキー.
         /// </summary>
-        internal static string clhserkey {
+        public static string clhserkey {
             get {
                 return ResourceManager.GetString("clhserkey", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLHサーバーポート.
         /// </summary>
-        internal static string clhserport {
+        public static string clhserport {
             get {
                 return ResourceManager.GetString("clhserport", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLHサーバー.
         /// </summary>
-        internal static string clhserver {
+        public static string clhserver {
             get {
                 return ResourceManager.GetString("clhserver", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to TLSを使用.
         /// </summary>
-        internal static string clhusetls {
+        public static string clhusetls {
             get {
                 return ResourceManager.GetString("clhusetls", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ウィンドウを閉じる.
         /// </summary>
-        internal static string close {
+        public static string close {
             get {
                 return ResourceManager.GetString("close", resourceCulture);
             }
@@ -342,7 +342,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to トレイに最小化しますか、それともプログラムを終了しますか？.
         /// </summary>
-        internal static string closeormin {
+        public static string closeormin {
             get {
                 return ResourceManager.GetString("closeormin", resourceCulture);
             }
@@ -351,7 +351,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to APIキーを入力してください。このキーには読み取り/書き込み権限が必要です。ホームページのアカウントドロップダウンメニューから確認できます。.
         /// </summary>
-        internal static string cloudlogapihelp {
+        public static string cloudlogapihelp {
             get {
                 return ResourceManager.GetString("cloudlogapihelp", resourceCulture);
             }
@@ -360,7 +360,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ホームページのアカウントドロップダウンメニュー内の「ステーションアドレス」から確認できます。.
         /// </summary>
-        internal static string cloudlogstationid {
+        public static string cloudlogstationid {
             get {
                 return ResourceManager.GetString("cloudlogstationid", resourceCulture);
             }
@@ -369,7 +369,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ドメイン名のみを入力してください。「index.php/api/qso」などのパスは不要です。プログラムが自動的に補完します。.
         /// </summary>
-        internal static string cloudlogurlhelp {
+        public static string cloudlogurlhelp {
             get {
                 return ResourceManager.GetString("cloudlogurlhelp", resourceCulture);
             }
@@ -378,7 +378,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Clublog設定.
         /// </summary>
-        internal static string clublogsettings {
+        public static string clublogsettings {
             get {
                 return ResourceManager.GetString("clublogsettings", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このフィールドが空でない場合、ソフトウェアは入力された内容をrigctld起動時のデフォルト引数として使用し、他のすべての設定は無視されます。.
         /// </summary>
-        internal static string cmdarghelp {
+        public static string cmdarghelp {
             get {
                 return ResourceManager.GetString("cmdarghelp", resourceCulture);
             }
@@ -396,7 +396,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog設定が無効です。設定で修正してください！.
         /// </summary>
-        internal static string confcloudlogfirst {
+        public static string confcloudlogfirst {
             get {
                 return ResourceManager.GetString("confcloudlogfirst", resourceCulture);
             }
@@ -405,7 +405,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to FLRIG設定に誤りがあります。設定で修正してください！.
         /// </summary>
-        internal static string confflrigfirst {
+        public static string confflrigfirst {
             get {
                 return ResourceManager.GetString("confflrigfirst", resourceCulture);
             }
@@ -414,7 +414,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Hamlib設定が無効です。設定で修正してください！.
         /// </summary>
-        internal static string confhamlibfirst {
+        public static string confhamlibfirst {
             get {
                 return ResourceManager.GetString("confhamlibfirst", resourceCulture);
             }
@@ -423,7 +423,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to プロセス {replace01} が実行中のため、無線機データの自動報告機能に影響を与える可能性があります！.
         /// </summary>
-        internal static string conflicthamlib {
+        public static string conflicthamlib {
             get {
                 return ResourceManager.GetString("conflicthamlib", resourceCulture);
             }
@@ -432,7 +432,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to OmniRigの設定を確認してください！.
         /// </summary>
-        internal static string confomnifirst {
+        public static string confomnifirst {
             get {
                 return ResourceManager.GetString("confomnifirst", resourceCulture);
             }
@@ -441,7 +441,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to コントロールパネル.
         /// </summary>
-        internal static string controlpanel {
+        public static string controlpanel {
             get {
                 return ResourceManager.GetString("controlpanel", resourceCulture);
             }
@@ -450,7 +450,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 現在の周波数.
         /// </summary>
-        internal static string currentfreq {
+        public static string currentfreq {
             get {
                 return ResourceManager.GetString("currentfreq", resourceCulture);
             }
@@ -459,7 +459,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 現在のモード.
         /// </summary>
-        internal static string currrentmode {
+        public static string currrentmode {
             get {
                 return ResourceManager.GetString("currrentmode", resourceCulture);
             }
@@ -468,7 +468,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ダークモード.
         /// </summary>
-        internal static string dark {
+        public static string dark {
             get {
                 return ResourceManager.GetString("dark", resourceCulture);
             }
@@ -477,7 +477,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to データビット.
         /// </summary>
-        internal static string databit {
+        public static string databit {
             get {
                 return ResourceManager.GetString("databit", resourceCulture);
             }
@@ -486,7 +486,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 本日のQSO数.
         /// </summary>
-        internal static string dayqsos {
+        public static string dayqsos {
             get {
                 return ResourceManager.GetString("dayqsos", resourceCulture);
             }
@@ -495,7 +495,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 削除.
         /// </summary>
-        internal static string delsel {
+        public static string delsel {
             get {
                 return ResourceManager.GetString("delsel", resourceCulture);
             }
@@ -504,7 +504,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 拒否.
         /// </summary>
-        internal static string deny {
+        public static string deny {
             get {
                 return ResourceManager.GetString("deny", resourceCulture);
             }
@@ -513,7 +513,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to デバイスポート.
         /// </summary>
-        internal static string deviceport {
+        public static string deviceport {
             get {
                 return ResourceManager.GetString("deviceport", resourceCulture);
             }
@@ -522,7 +522,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to チャート機能を無効にする（低性能デバイス向け）.
         /// </summary>
-        internal static string disablecharts {
+        public static string disablecharts {
             get {
                 return ResourceManager.GetString("disablecharts", resourceCulture);
             }
@@ -531,7 +531,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to PTT制御を無効にする.
         /// </summary>
-        internal static string disableptt {
+        public static string disableptt {
             get {
                 return ResourceManager.GetString("disableptt", resourceCulture);
             }
@@ -540,7 +540,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 一部のLinuxディストリビューションでは、rts/dtrを無効にしないとPTTが正しく初期化されず、常にトリガー状態になることがあります。.
         /// </summary>
-        internal static string disableptthelp {
+        public static string disableptthelp {
             get {
                 return ResourceManager.GetString("disableptthelp", resourceCulture);
             }
@@ -549,7 +549,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to キャンセル.
         /// </summary>
-        internal static string discard {
+        public static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
             }
@@ -565,7 +565,7 @@ namespace CloudlogHelper.Resources.Language {
         ///
         ///継続して使用することにより、上記条項およびプロジェクトのGitHubページ（https://github.com/sydneyowl/cloudlog-helper）に記載された完全な免責事項に同意したものとみなされます。.
         /// </summary>
-        internal static string disclaimer {
+        public static string disclaimer {
             get {
                 return ResourceManager.GetString("disclaimer", resourceCulture);
             }
@@ -574,7 +574,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 距離（km）.
         /// </summary>
-        internal static string distkm {
+        public static string distkm {
             get {
                 return ResourceManager.GetString("distkm", resourceCulture);
             }
@@ -583,7 +583,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 距離の重み.
         /// </summary>
-        internal static string distweight {
+        public static string distweight {
             get {
                 return ResourceManager.GetString("distweight", resourceCulture);
             }
@@ -592,7 +592,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ダブルクリックで詳細を表示.
         /// </summary>
-        internal static string doubletap2seemore {
+        public static string doubletap2seemore {
             get {
                 return ResourceManager.GetString("doubletap2seemore", resourceCulture);
             }
@@ -601,7 +601,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to プログラムはすでに実行中です！.
         /// </summary>
-        internal static string dupeinstance {
+        public static string dupeinstance {
             get {
                 return ResourceManager.GetString("dupeinstance", resourceCulture);
             }
@@ -610,7 +610,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 2つの無線機バックエンド制御サービスを同時に有効にすることはできません！.
         /// </summary>
-        internal static string duperigservdetected {
+        public static string duperigservdetected {
             get {
                 return ResourceManager.GetString("duperigservdetected", resourceCulture);
             }
@@ -619,7 +619,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to メールアドレス.
         /// </summary>
-        internal static string email {
+        public static string email {
             get {
                 return ResourceManager.GetString("email", resourceCulture);
             }
@@ -628,7 +628,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 詳細設定.
         /// </summary>
-        internal static string enableadvanced {
+        public static string enableadvanced {
             get {
                 return ResourceManager.GetString("enableadvanced", resourceCulture);
             }
@@ -637,7 +637,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLHサーバーを有効化.
         /// </summary>
-        internal static string enableclhserver {
+        public static string enableclhserver {
             get {
                 return ResourceManager.GetString("enableclhserver", resourceCulture);
             }
@@ -646,7 +646,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 外部接続を許可.
         /// </summary>
-        internal static string enableoutsideconn {
+        public static string enableoutsideconn {
             get {
                 return ResourceManager.GetString("enableoutsideconn", resourceCulture);
             }
@@ -655,7 +655,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDPサーバーを有効化.
         /// </summary>
-        internal static string enableudpserver {
+        public static string enableudpserver {
             get {
                 return ResourceManager.GetString("enableudpserver", resourceCulture);
             }
@@ -664,7 +664,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to エラー.
         /// </summary>
-        internal static string error {
+        public static string error {
             get {
                 return ResourceManager.GetString("error", resourceCulture);
             }
@@ -673,7 +673,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to エラーが発生しました！.
         /// </summary>
-        internal static string errorccurred {
+        public static string errorccurred {
             get {
                 return ResourceManager.GetString("errorccurred", resourceCulture);
             }
@@ -682,7 +682,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 終了.
         /// </summary>
-        internal static string exit {
+        public static string exit {
             get {
                 return ResourceManager.GetString("exit", resourceCulture);
             }
@@ -691,7 +691,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to エクスポート.
         /// </summary>
-        internal static string export {
+        public static string export {
             get {
                 return ResourceManager.GetString("export", resourceCulture);
             }
@@ -700,7 +700,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ADI形式でエクスポート.
         /// </summary>
-        internal static string export2adif {
+        public static string export2adif {
             get {
                 return ResourceManager.GetString("export2adif", resourceCulture);
             }
@@ -709,7 +709,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Rigctldサービスアドレス.
         /// </summary>
-        internal static string externalrigctldhost {
+        public static string externalrigctldhost {
             get {
                 return ResourceManager.GetString("externalrigctldhost", resourceCulture);
             }
@@ -718,7 +718,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 失敗！.
         /// </summary>
-        internal static string failed {
+        public static string failed {
             get {
                 return ResourceManager.GetString("failed", resourceCulture);
             }
@@ -727,7 +727,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このQSOのアップロードに失敗しました。.
         /// </summary>
-        internal static string failedqso {
+        public static string failedqso {
             get {
                 return ResourceManager.GetString("failedqso", resourceCulture);
             }
@@ -736,7 +736,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機データを取得できません！.
         /// </summary>
-        internal static string failedriginfo {
+        public static string failedriginfo {
             get {
                 return ResourceManager.GetString("failedriginfo", resourceCulture);
             }
@@ -745,7 +745,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ステーション情報を取得できません！.
         /// </summary>
-        internal static string failedstationinfo {
+        public static string failedstationinfo {
             get {
                 return ResourceManager.GetString("failedstationinfo", resourceCulture);
             }
@@ -754,7 +754,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ステーションデータを取得できません！.
         /// </summary>
-        internal static string failedstationstat {
+        public static string failedstationstat {
             get {
                 return ResourceManager.GetString("failedstationstat", resourceCulture);
             }
@@ -763,7 +763,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO同期中にエラーが発生しました：.
         /// </summary>
-        internal static string failedsyncqso {
+        public static string failedsyncqso {
             get {
                 return ResourceManager.GetString("failedsyncqso", resourceCulture);
             }
@@ -772,7 +772,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to コマンドライン引数からポート番号を抽出できません。明示的に-tパラメータで指定してください。.
         /// </summary>
-        internal static string failextractinfo {
+        public static string failextractinfo {
             get {
                 return ResourceManager.GetString("failextractinfo", resourceCulture);
             }
@@ -781,7 +781,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機との通信に失敗しました！.
         /// </summary>
-        internal static string failrigcomm {
+        public static string failrigcomm {
             get {
                 return ResourceManager.GetString("failrigcomm", resourceCulture);
             }
@@ -790,7 +790,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to {addr}へのアップロードに失敗しました。ログを確認してください！.
         /// </summary>
-        internal static string failuploadriginfoto {
+        public static string failuploadriginfoto {
             get {
                 return ResourceManager.GetString("failuploadriginfoto", resourceCulture);
             }
@@ -799,7 +799,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to すべての情報を正しく入力してください！.
         /// </summary>
-        internal static string fillall {
+        public static string fillall {
             get {
                 return ResourceManager.GetString("fillall", resourceCulture);
             }
@@ -808,7 +808,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 重複サンプル（コールサイン）をフィルタリング.
         /// </summary>
-        internal static string filterdupebycallsign {
+        public static string filterdupebycallsign {
             get {
                 return ResourceManager.GetString("filterdupebycallsign", resourceCulture);
             }
@@ -817,7 +817,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to デコード情報をHTTPサーバーに転送.
         /// </summary>
-        internal static string forward2tcp {
+        public static string forward2tcp {
             get {
                 return ResourceManager.GetString("forward2tcp", resourceCulture);
             }
@@ -826,7 +826,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 受信したUDPパケットを転送先.
         /// </summary>
-        internal static string forwardmsg {
+        public static string forwardmsg {
             get {
                 return ResourceManager.GetString("forwardmsg", resourceCulture);
             }
@@ -835,7 +835,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 受信したUDPパケットを転送先.
         /// </summary>
-        internal static string forwardto {
+        public static string forwardto {
             get {
                 return ResourceManager.GetString("forwardto", resourceCulture);
             }
@@ -844,7 +844,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to データ取得中....
         /// </summary>
-        internal static string gettinginfo {
+        public static string gettinginfo {
             get {
                 return ResourceManager.GetString("gettinginfo", resourceCulture);
             }
@@ -853,7 +853,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 座標.
         /// </summary>
-        internal static string grid {
+        public static string grid {
             get {
                 return ResourceManager.GetString("grid", resourceCulture);
             }
@@ -862,7 +862,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to グリッド座標が空または不正です。設定を確認してください！.
         /// </summary>
-        internal static string griderror {
+        public static string griderror {
             get {
                 return ResourceManager.GetString("griderror", resourceCulture);
             }
@@ -871,7 +871,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to HamCQ設定.
         /// </summary>
-        internal static string hamcqsettings {
+        public static string hamcqsettings {
             get {
                 return ResourceManager.GetString("hamcqsettings", resourceCulture);
             }
@@ -880,7 +880,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ヘルプ.
         /// </summary>
-        internal static string help {
+        public static string help {
             get {
                 return ResourceManager.GetString("help", resourceCulture);
             }
@@ -889,7 +889,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Githubにエラー情報をフィードバックして、開発者がこのバグを修正できるようにご協力ください！.
         /// </summary>
-        internal static string helpfeedback {
+        public static string helpfeedback {
             get {
                 return ResourceManager.GetString("helpfeedback", resourceCulture);
             }
@@ -898,7 +898,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このQSOは無視されました — すべてのサードパーティログのアップロード機能がオフになっていませんか？.
         /// </summary>
-        internal static string ignoreqso {
+        public static string ignoreqso {
             get {
                 return ResourceManager.GetString("ignoreqso", resourceCulture);
             }
@@ -907,7 +907,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to この操作により、選択されたQSOは今後永久に無視され、QSOアシスタントがローカルQSOをスキャンする際にこれらの項目をスキップします。よろしいですか？.
         /// </summary>
-        internal static string ignoreqsopermanently {
+        public static string ignoreqsopermanently {
             get {
                 return ResourceManager.GetString("ignoreqsopermanently", resourceCulture);
             }
@@ -916,7 +916,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Hamlibの初期化に失敗しました！.
         /// </summary>
-        internal static string inithamlibfailed {
+        public static string inithamlibfailed {
             get {
                 return ResourceManager.GetString("inithamlibfailed", resourceCulture);
             }
@@ -925,7 +925,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to インスタンス名.
         /// </summary>
-        internal static string instancename {
+        public static string instancename {
             get {
                 return ResourceManager.GetString("instancename", resourceCulture);
             }
@@ -934,7 +934,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このフィールドは、ソフトウェアがclh-serverに登録する際に使用する名前です。この名前は一意である必要があります。.
         /// </summary>
-        internal static string instancenamehint {
+        public static string instancenamehint {
             get {
                 return ResourceManager.GetString("instancenamehint", resourceCulture);
             }
@@ -943,7 +943,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 使用中のバックエンドサービスは{replace01}のようで、Cloudlogではありません。そのため、一部の機能がサポートされない可能性があります。.
         /// </summary>
-        internal static string instanceuncompitable {
+        public static string instanceuncompitable {
             get {
                 return ResourceManager.GetString("instanceuncompitable", resourceCulture);
             }
@@ -952,7 +952,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アドレスが無効です！.
         /// </summary>
-        internal static string invalidaddr {
+        public static string invalidaddr {
             get {
                 return ResourceManager.GetString("invalidaddr", resourceCulture);
             }
@@ -961,7 +961,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ADIF形式が無効です！.
         /// </summary>
-        internal static string invalidadif {
+        public static string invalidadif {
             get {
                 return ResourceManager.GetString("invalidadif", resourceCulture);
             }
@@ -970,7 +970,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このAPIキーは無効です！.
         /// </summary>
-        internal static string invalidapikey {
+        public static string invalidapikey {
             get {
                 return ResourceManager.GetString("invalidapikey", resourceCulture);
             }
@@ -979,7 +979,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 設定が無効です！.
         /// </summary>
-        internal static string invalidconf {
+        public static string invalidconf {
             get {
                 return ResourceManager.GetString("invalidconf", resourceCulture);
             }
@@ -988,7 +988,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ポート番号が無効です.
         /// </summary>
-        internal static string invalidport {
+        public static string invalidport {
             get {
                 return ResourceManager.GetString("invalidport", resourceCulture);
             }
@@ -997,7 +997,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDPサーバー設定が無効です！.
         /// </summary>
-        internal static string invalidudpconf {
+        public static string invalidudpconf {
             get {
                 return ResourceManager.GetString("invalidudpconf", resourceCulture);
             }
@@ -1006,7 +1006,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to URLが無効です！.
         /// </summary>
-        internal static string invalidurl {
+        public static string invalidurl {
             get {
                 return ResourceManager.GetString("invalidurl", resourceCulture);
             }
@@ -1015,7 +1015,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to K値（KNN）.
         /// </summary>
-        internal static string kval {
+        public static string kval {
             get {
                 return ResourceManager.GetString("kval", resourceCulture);
             }
@@ -1024,7 +1024,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to APIキーには読み取り/書き込み権限が必要ですが、提供されたキーは読み取り専用です！.
         /// </summary>
-        internal static string lackwriteaccess {
+        public static string lackwriteaccess {
             get {
                 return ResourceManager.GetString("lackwriteaccess", resourceCulture);
             }
@@ -1033,7 +1033,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 緯度.
         /// </summary>
-        internal static string latitude {
+        public static string latitude {
             get {
                 return ResourceManager.GetString("latitude", resourceCulture);
             }
@@ -1042,7 +1042,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ライトモード.
         /// </summary>
-        internal static string light {
+        public static string light {
             get {
                 return ResourceManager.GetString("light", resourceCulture);
             }
@@ -1051,7 +1051,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 経度.
         /// </summary>
-        internal static string longitude {
+        public static string longitude {
             get {
                 return ResourceManager.GetString("longitude", resourceCulture);
             }
@@ -1060,7 +1060,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ✅️ QSOが完了しました！.
         /// </summary>
-        internal static string madeaqso {
+        public static string madeaqso {
             get {
                 return ResourceManager.GetString("madeaqso", resourceCulture);
             }
@@ -1069,7 +1069,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 最大サンプルポイント数.
         /// </summary>
-        internal static string maxsamplecount {
+        public static string maxsamplecount {
             get {
                 return ResourceManager.GetString("maxsamplecount", resourceCulture);
             }
@@ -1078,7 +1078,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 今月のQSO数.
         /// </summary>
-        internal static string monthqsos {
+        public static string monthqsos {
             get {
                 return ResourceManager.GetString("monthqsos", resourceCulture);
             }
@@ -1087,7 +1087,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to コマンドライン引数に-vvvvvを追加する必要があります！.
         /// </summary>
-        internal static string mustverbose {
+        public static string mustverbose {
             get {
                 return ResourceManager.GetString("mustverbose", resourceCulture);
             }
@@ -1096,7 +1096,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to マイグリッド.
         /// </summary>
-        internal static string mygrid {
+        public static string mygrid {
             get {
                 return ResourceManager.GetString("mygrid", resourceCulture);
             }
@@ -1105,7 +1105,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 次回報告予定時刻.
         /// </summary>
-        internal static string nextuploadtime {
+        public static string nextuploadtime {
             get {
                 return ResourceManager.GetString("nextuploadtime", resourceCulture);
             }
@@ -1114,7 +1114,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to （データなし）.
         /// </summary>
-        internal static string nodata {
+        public static string nodata {
             get {
                 return ResourceManager.GetString("nodata", resourceCulture);
             }
@@ -1123,7 +1123,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 注意.
         /// </summary>
-        internal static string notice {
+        public static string notice {
             get {
                 return ResourceManager.GetString("notice", resourceCulture);
             }
@@ -1132,7 +1132,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to この項目は必須です！.
         /// </summary>
-        internal static string notnull {
+        public static string notnull {
             get {
                 return ResourceManager.GetString("notnull", resourceCulture);
             }
@@ -1141,7 +1141,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在、AOTコンパイルされていないWindowsプラットフォームでのみサポートされています。.
         /// </summary>
-        internal static string omniinitfailed {
+        public static string omniinitfailed {
             get {
                 return ResourceManager.GetString("omniinitfailed", resourceCulture);
             }
@@ -1150,7 +1150,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to メインドメインのみを入力してください。「/api/qso」で終わってはいけません！.
         /// </summary>
-        internal static string onlymaindomain {
+        public static string onlymaindomain {
             get {
                 return ResourceManager.GetString("onlymaindomain", resourceCulture);
             }
@@ -1159,7 +1159,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to オペレーター.
         /// </summary>
-        internal static string op {
+        public static string op {
             get {
                 return ResourceManager.GetString("op", resourceCulture);
             }
@@ -1168,7 +1168,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 開く.
         /// </summary>
-        internal static string open {
+        public static string open {
             get {
                 return ResourceManager.GetString("open", resourceCulture);
             }
@@ -1177,7 +1177,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 設定ディレクトリを開く.
         /// </summary>
-        internal static string openconfpath {
+        public static string openconfpath {
             get {
                 return ResourceManager.GetString("openconfpath", resourceCulture);
             }
@@ -1186,7 +1186,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to キャッシュディレクトリを開く.
         /// </summary>
-        internal static string opentempfolder {
+        public static string opentempfolder {
             get {
                 return ResourceManager.GetString("opentempfolder", resourceCulture);
             }
@@ -1195,7 +1195,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to パスワード.
         /// </summary>
-        internal static string password {
+        public static string password {
             get {
                 return ResourceManager.GetString("password", resourceCulture);
             }
@@ -1204,7 +1204,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 一時停止.
         /// </summary>
-        internal static string pause {
+        public static string pause {
             get {
                 return ResourceManager.GetString("pause", resourceCulture);
             }
@@ -1213,7 +1213,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このQSOはアップロード待ちです。.
         /// </summary>
-        internal static string pendingqso {
+        public static string pendingqso {
             get {
                 return ResourceManager.GetString("pendingqso", resourceCulture);
             }
@@ -1222,7 +1222,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 設定で「無線機データの自動報告」を有効にしてください.
         /// </summary>
-        internal static string polldisabled {
+        public static string polldisabled {
             get {
                 return ResourceManager.GetString("polldisabled", resourceCulture);
             }
@@ -1231,7 +1231,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ポーリング間隔（秒）.
         /// </summary>
-        internal static string pollinterval {
+        public static string pollinterval {
             get {
                 return ResourceManager.GetString("pollinterval", resourceCulture);
             }
@@ -1240,7 +1240,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ポーリング間隔は1より大きい整数でなければなりません！.
         /// </summary>
-        internal static string pollintervalreq {
+        public static string pollintervalreq {
             get {
                 return ResourceManager.GetString("pollintervalreq", resourceCulture);
             }
@@ -1249,7 +1249,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ポート番号.
         /// </summary>
-        internal static string port {
+        public static string port {
             get {
                 return ResourceManager.GetString("port", resourceCulture);
             }
@@ -1258,7 +1258,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 他のアプリケーションからのリクエストをプロキシすることを許可します。これにより、rigctldへの同時リクエストによる競合を回避できます。.
         /// </summary>
-        internal static string proxyhelp {
+        public static string proxyhelp {
             get {
                 return ResourceManager.GetString("proxyhelp", resourceCulture);
             }
@@ -1267,7 +1267,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to --選択してください--.
         /// </summary>
-        internal static string psesel {
+        public static string psesel {
             get {
                 return ResourceManager.GetString("psesel", resourceCulture);
             }
@@ -1276,7 +1276,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to まずQSOをチェックしてください！.
         /// </summary>
-        internal static string pseselfirst {
+        public static string pseselfirst {
             get {
                 return ResourceManager.GetString("pseselfirst", resourceCulture);
             }
@@ -1285,7 +1285,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 以下の状況でシステム通知をプッシュ：.
         /// </summary>
-        internal static string pushnotificationon {
+        public static string pushnotificationon {
             get {
                 return ResourceManager.GetString("pushnotificationon", resourceCulture);
             }
@@ -1294,7 +1294,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOアップロードアシスタント.
         /// </summary>
-        internal static string qsoassistant {
+        public static string qsoassistant {
             get {
                 return ResourceManager.GetString("qsoassistant", resourceCulture);
             }
@@ -1303,7 +1303,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to コールサイン: {0}, 国: {1} ({8}), グリッド: {9}, 周波数: {10} ({11}), モード: {12}, 時間: {14} ～ {15}, 信号レポート: 送信 &apos;{16}&apos; / 受信 &apos;{17}&apos;.
         /// </summary>
-        internal static string qsoconcisetemplate {
+        public static string qsoconcisetemplate {
             get {
                 return ResourceManager.GetString("qsoconcisetemplate", resourceCulture);
             }
@@ -1312,7 +1312,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO完了時.
         /// </summary>
-        internal static string qsofinished {
+        public static string qsofinished {
             get {
                 return ResourceManager.GetString("qsofinished", resourceCulture);
             }
@@ -1321,7 +1321,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOレート：.
         /// </summary>
-        internal static string qsorate {
+        public static string qsorate {
             get {
                 return ResourceManager.GetString("qsorate", resourceCulture);
             }
@@ -1330,7 +1330,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOアップロード失敗時の再試行回数.
         /// </summary>
-        internal static string qsoretrycount {
+        public static string qsoretrycount {
             get {
                 return ResourceManager.GetString("qsoretrycount", resourceCulture);
             }
@@ -1339,7 +1339,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOを同期中....
         /// </summary>
-        internal static string qsosyncing {
+        public static string qsosyncing {
             get {
                 return ResourceManager.GetString("qsosyncing", resourceCulture);
             }
@@ -1348,7 +1348,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOの同期が成功しました！.
         /// </summary>
-        internal static string qsosyncsucc {
+        public static string qsosyncsucc {
             get {
                 return ResourceManager.GetString("qsosyncsucc", resourceCulture);
             }
@@ -1377,7 +1377,7 @@ namespace CloudlogHelper.Resources.Language {
         ///• アップロード状態: {28}
         ///• 失敗理由: {29}.
         /// </summary>
-        internal static string qsotemplate {
+        public static string qsotemplate {
             get {
                 return ResourceManager.GetString("qsotemplate", resourceCulture);
             }
@@ -1386,7 +1386,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO自動アップロード機能が有効になっていません。.
         /// </summary>
-        internal static string qsouploaddisabled {
+        public static string qsouploaddisabled {
             get {
                 return ResourceManager.GetString("qsouploaddisabled", resourceCulture);
             }
@@ -1395,7 +1395,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSOアップロード完了時.
         /// </summary>
-        internal static string qsouploaded {
+        public static string qsouploaded {
             get {
                 return ResourceManager.GetString("qsouploaded", resourceCulture);
             }
@@ -1404,7 +1404,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QTHエイリアス（任意）.
         /// </summary>
-        internal static string qthnick {
+        public static string qthnick {
             get {
                 return ResourceManager.GetString("qthnick", resourceCulture);
             }
@@ -1413,7 +1413,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QTHニックネーム（任意）.
         /// </summary>
-        internal static string qthnickname {
+        public static string qthnickname {
             get {
                 return ResourceManager.GetString("qthnickname", resourceCulture);
             }
@@ -1422,7 +1422,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ポーリング間隔は1秒以上にしてください！.
         /// </summary>
-        internal static string reachminiumpollinterval {
+        public static string reachminiumpollinterval {
             get {
                 return ResourceManager.GetString("reachminiumpollinterval", resourceCulture);
             }
@@ -1431,7 +1431,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 完了済みQSO情報.
         /// </summary>
-        internal static string recvqso {
+        public static string recvqso {
             get {
                 return ResourceManager.GetString("recvqso", resourceCulture);
             }
@@ -1440,7 +1440,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 更新.
         /// </summary>
-        internal static string refresh {
+        public static string refresh {
             get {
                 return ResourceManager.GetString("refresh", resourceCulture);
             }
@@ -1449,7 +1449,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 選択を記憶.
         /// </summary>
-        internal static string remembermychoice {
+        public static string remembermychoice {
             get {
                 return ResourceManager.GetString("remembermychoice", resourceCulture);
             }
@@ -1458,7 +1458,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 送信出力を報告.
         /// </summary>
-        internal static string reportpwr {
+        public static string reportpwr {
             get {
                 return ResourceManager.GetString("reportpwr", resourceCulture);
             }
@@ -1467,7 +1467,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 異周波数（Split）情報を報告.
         /// </summary>
-        internal static string reportsplit {
+        public static string reportsplit {
             get {
                 return ResourceManager.GetString("reportsplit", resourceCulture);
             }
@@ -1476,7 +1476,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 再試行回数は0より大きい整数でなければなりません！.
         /// </summary>
-        internal static string retrycountreq {
+        public static string retrycountreq {
             get {
                 return ResourceManager.GetString("retrycountreq", resourceCulture);
             }
@@ -1485,7 +1485,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロードを再試行中.
         /// </summary>
-        internal static string retryingqso {
+        public static string retryingqso {
             get {
                 return ResourceManager.GetString("retryingqso", resourceCulture);
             }
@@ -1494,7 +1494,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 再送信.
         /// </summary>
-        internal static string reuploadsel {
+        public static string reuploadsel {
             get {
                 return ResourceManager.GetString("reuploadsel", resourceCulture);
             }
@@ -1503,7 +1503,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 一部の無線機は送信出力の読み取りをサポートしていないか、誤ったデータを返すため、この機能はデフォルトで無効になっています。.
         /// </summary>
-        internal static string rfpowerhelp {
+        public static string rfpowerhelp {
             get {
                 return ResourceManager.GetString("rfpowerhelp", resourceCulture);
             }
@@ -1512,7 +1512,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機バックエンド制御システム.
         /// </summary>
-        internal static string rigbackendsystem {
+        public static string rigbackendsystem {
             get {
                 return ResourceManager.GetString("rigbackendsystem", resourceCulture);
             }
@@ -1521,7 +1521,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Rigctldコマンドライン引数.
         /// </summary>
-        internal static string rigctldcmdarg {
+        public static string rigctldcmdarg {
             get {
                 return ResourceManager.GetString("rigctldcmdarg", resourceCulture);
             }
@@ -1530,7 +1530,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Rigctldサービスが起動していません。設定を確認してください！.
         /// </summary>
-        internal static string rigctldnotstart {
+        public static string rigctldnotstart {
             get {
                 return ResourceManager.GetString("rigctldnotstart", resourceCulture);
             }
@@ -1539,16 +1539,25 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機データ.
         /// </summary>
-        internal static string rigdata {
+        public static string rigdata {
             get {
                 return ResourceManager.GetString("rigdata", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QSO を右クリックして詳細を表示.
+        /// </summary>
+        public static string rightclick2seemore {
+            get {
+                return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 無線機モデル.
         /// </summary>
-        internal static string rigmodel {
+        public static string rigmodel {
             get {
                 return ResourceManager.GetString("rigmodel", resourceCulture);
             }
@@ -1557,7 +1566,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機との通信がタイムアウトしました。接続を確認してください！.
         /// </summary>
-        internal static string rigtimeout {
+        public static string rigtimeout {
             get {
                 return ResourceManager.GetString("rigtimeout", resourceCulture);
             }
@@ -1566,7 +1575,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to サンプル数 = .
         /// </summary>
-        internal static string samplecount {
+        public static string samplecount {
             get {
                 return ResourceManager.GetString("samplecount", resourceCulture);
             }
@@ -1575,7 +1584,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 変更を適用.
         /// </summary>
-        internal static string save {
+        public static string save {
             get {
                 return ResourceManager.GetString("save", resourceCulture);
             }
@@ -1584,7 +1593,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ログを保存.
         /// </summary>
-        internal static string savelog {
+        public static string savelog {
             get {
                 return ResourceManager.GetString("savelog", resourceCulture);
             }
@@ -1593,7 +1602,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ログを保存先....
         /// </summary>
-        internal static string savelogto {
+        public static string savelogto {
             get {
                 return ResourceManager.GetString("savelogto", resourceCulture);
             }
@@ -1602,7 +1611,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to すべて選択.
         /// </summary>
-        internal static string selall {
+        public static string selall {
             get {
                 return ResourceManager.GetString("selall", resourceCulture);
             }
@@ -1611,7 +1620,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 設定.
         /// </summary>
-        internal static string settings {
+        public static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
             }
@@ -1620,7 +1629,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 密度色を表示.
         /// </summary>
-        internal static string showdensitycolor {
+        public static string showdensitycolor {
             get {
                 return ResourceManager.GetString("showdensitycolor", resourceCulture);
             }
@@ -1629,7 +1638,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロード失敗項目のみ表示.
         /// </summary>
-        internal static string showfailonly {
+        public static string showfailonly {
             get {
                 return ResourceManager.GetString("showfailonly", resourceCulture);
             }
@@ -1638,7 +1647,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to プログラムを閉じる.
         /// </summary>
-        internal static string shutdown {
+        public static string shutdown {
             get {
                 return ResourceManager.GetString("shutdown", resourceCulture);
             }
@@ -1647,7 +1656,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 信号カウント.
         /// </summary>
-        internal static string signalcount {
+        public static string signalcount {
             get {
                 return ResourceManager.GetString("signalcount", resourceCulture);
             }
@@ -1656,7 +1665,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 信号分布極座標プロット.
         /// </summary>
-        internal static string signalpolarchart {
+        public static string signalpolarchart {
             get {
                 return ResourceManager.GetString("signalpolarchart", resourceCulture);
             }
@@ -1665,7 +1674,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 文字列の前後にスペースは使用できません.
         /// </summary>
-        internal static string spacenotallowed {
+        public static string spacenotallowed {
             get {
                 return ResourceManager.GetString("spacenotallowed", resourceCulture);
             }
@@ -1674,7 +1683,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to セミコロンで区切られたアドレスには、http(s) の指定が必要です.
         /// </summary>
-        internal static string spiltby {
+        public static string spiltby {
             get {
                 return ResourceManager.GetString("spiltby", resourceCulture);
             }
@@ -1683,7 +1692,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 一部の無線機は異周波数（Split）情報の読み取りをサポートしていないか、誤ったデータを返すため、この機能はデフォルトで無効になっています。.
         /// </summary>
-        internal static string splithelp {
+        public static string splithelp {
             get {
                 return ResourceManager.GetString("splithelp", resourceCulture);
             }
@@ -1692,7 +1701,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to URLは http:// または https:// で始まる必要があります！.
         /// </summary>
-        internal static string startwithhttp {
+        public static string startwithhttp {
             get {
                 return ResourceManager.GetString("startwithhttp", resourceCulture);
             }
@@ -1701,7 +1710,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ステーション方位分布 - {0}バンド {1}.
         /// </summary>
-        internal static string stationbearing {
+        public static string stationbearing {
             get {
                 return ResourceManager.GetString("stationbearing", resourceCulture);
             }
@@ -1710,7 +1719,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ステーション距離分布 - {0}バンド {1}.
         /// </summary>
-        internal static string stationdistance {
+        public static string stationdistance {
             get {
                 return ResourceManager.GetString("stationdistance", resourceCulture);
             }
@@ -1719,7 +1728,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog ステーションID.
         /// </summary>
-        internal static string stationid {
+        public static string stationid {
             get {
                 return ResourceManager.GetString("stationid", resourceCulture);
             }
@@ -1728,7 +1737,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ステーション名.
         /// </summary>
-        internal static string stationname {
+        public static string stationname {
             get {
                 return ResourceManager.GetString("stationname", resourceCulture);
             }
@@ -1737,7 +1746,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to デコード済みステーション統計.
         /// </summary>
-        internal static string stationstatisticgraph {
+        public static string stationstatisticgraph {
             get {
                 return ResourceManager.GetString("stationstatisticgraph", resourceCulture);
             }
@@ -1746,7 +1755,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ストップビット.
         /// </summary>
-        internal static string stopbit {
+        public static string stopbit {
             get {
                 return ResourceManager.GetString("stopbit", resourceCulture);
             }
@@ -1755,7 +1764,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 成功！.
         /// </summary>
-        internal static string success {
+        public static string success {
             get {
                 return ResourceManager.GetString("success", resourceCulture);
             }
@@ -1764,7 +1773,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このQSOは正常にアップロードされました。.
         /// </summary>
-        internal static string successqso {
+        public static string successqso {
             get {
                 return ResourceManager.GetString("successqso", resourceCulture);
             }
@@ -1773,7 +1782,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 同時に無線機情報を次の宛先にも報告.
         /// </summary>
-        internal static string syncrigto {
+        public static string syncrigto {
             get {
                 return ResourceManager.GetString("syncrigto", resourceCulture);
             }
@@ -1782,7 +1791,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロード失敗.
         /// </summary>
-        internal static string t_Fail {
+        public static string t_Fail {
             get {
                 return ResourceManager.GetString("t_Fail", resourceCulture);
             }
@@ -1791,7 +1800,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロードを無視.
         /// </summary>
-        internal static string t_Ignored {
+        public static string t_Ignored {
             get {
                 return ResourceManager.GetString("t_Ignored", resourceCulture);
             }
@@ -1800,7 +1809,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 待機中....
         /// </summary>
-        internal static string t_Pending {
+        public static string t_Pending {
             get {
                 return ResourceManager.GetString("t_Pending", resourceCulture);
             }
@@ -1809,7 +1818,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 再試行中....
         /// </summary>
-        internal static string t_Retrying {
+        public static string t_Retrying {
             get {
                 return ResourceManager.GetString("t_Retrying", resourceCulture);
             }
@@ -1818,7 +1827,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロード成功.
         /// </summary>
-        internal static string t_Success {
+        public static string t_Success {
             get {
                 return ResourceManager.GetString("t_Success", resourceCulture);
             }
@@ -1827,7 +1836,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロード中...
         /// </summary>
-        internal static string t_Uploading {
+        public static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
             }
@@ -1836,7 +1845,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 対象無線機.
         /// </summary>
-        internal static string targetrig {
+        public static string targetrig {
             get {
                 return ResourceManager.GetString("targetrig", resourceCulture);
             }
@@ -1845,7 +1854,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to * 設定を変更するたびに、「テスト」をクリックして変更をテスト・適用する必要があります。.
         /// </summary>
-        internal static string testandapply {
+        public static string testandapply {
             get {
                 return ResourceManager.GetString("testandapply", resourceCulture);
             }
@@ -1854,7 +1863,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to テスト.
         /// </summary>
-        internal static string testconn {
+        public static string testconn {
             get {
                 return ResourceManager.GetString("testconn", resourceCulture);
             }
@@ -1863,7 +1872,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to テスト中....
         /// </summary>
-        internal static string testing {
+        public static string testing {
             get {
                 return ResourceManager.GetString("testing", resourceCulture);
             }
@@ -1872,7 +1881,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to テーマカラー.
         /// </summary>
-        internal static string themecolor {
+        public static string themecolor {
             get {
                 return ResourceManager.GetString("themecolor", resourceCulture);
             }
@@ -1881,7 +1890,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to サードパーティログシステム.
         /// </summary>
-        internal static string thirdpartylogsys {
+        public static string thirdpartylogsys {
             get {
                 return ResourceManager.GetString("thirdpartylogsys", resourceCulture);
             }
@@ -1890,7 +1899,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to エラー.
         /// </summary>
-        internal static string titleerror {
+        public static string titleerror {
             get {
                 return ResourceManager.GetString("titleerror", resourceCulture);
             }
@@ -1899,7 +1908,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ヒント.
         /// </summary>
-        internal static string titleinfo {
+        public static string titleinfo {
             get {
                 return ResourceManager.GetString("titleinfo", resourceCulture);
             }
@@ -1908,7 +1917,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 成功.
         /// </summary>
-        internal static string titlesuccess {
+        public static string titlesuccess {
             get {
                 return ResourceManager.GetString("titlesuccess", resourceCulture);
             }
@@ -1917,7 +1926,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 注意.
         /// </summary>
-        internal static string titlewarning {
+        public static string titlewarning {
             get {
                 return ResourceManager.GetString("titlewarning", resourceCulture);
             }
@@ -1926,7 +1935,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ツール.
         /// </summary>
-        internal static string tools {
+        public static string tools {
             get {
                 return ResourceManager.GetString("tools", resourceCulture);
             }
@@ -1935,7 +1944,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上位10 DXCC - {0}バンド {1}.
         /// </summary>
-        internal static string top10decoded {
+        public static string top10decoded {
             get {
                 return ResourceManager.GetString("top10decoded", resourceCulture);
             }
@@ -1944,7 +1953,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 総デコード数：.
         /// </summary>
-        internal static string totaldec {
+        public static string totaldec {
             get {
                 return ResourceManager.GetString("totaldec", resourceCulture);
             }
@@ -1953,7 +1962,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 総デコード数 / QSO数：.
         /// </summary>
-        internal static string totaldivqso {
+        public static string totaldivqso {
             get {
                 return ResourceManager.GetString("totaldivqso", resourceCulture);
             }
@@ -1962,7 +1971,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 記録済み数：.
         /// </summary>
-        internal static string totalrec {
+        public static string totalrec {
             get {
                 return ResourceManager.GetString("totalrec", resourceCulture);
             }
@@ -1971,7 +1980,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロード済み数：.
         /// </summary>
-        internal static string totaluploaded {
+        public static string totaluploaded {
             get {
                 return ResourceManager.GetString("totaluploaded", resourceCulture);
             }
@@ -1980,7 +1989,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to トレイに最小化.
         /// </summary>
-        internal static string totray {
+        public static string totray {
             get {
                 return ResourceManager.GetString("totray", resourceCulture);
             }
@@ -1989,7 +1998,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to TQSLパスワード.
         /// </summary>
-        internal static string tqslpassword {
+        public static string tqslpassword {
             get {
                 return ResourceManager.GetString("tqslpassword", resourceCulture);
             }
@@ -1998,7 +2007,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to TQSLパス.
         /// </summary>
-        internal static string tqslpath {
+        public static string tqslpath {
             get {
                 return ResourceManager.GetString("tqslpath", resourceCulture);
             }
@@ -2007,7 +2016,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 透明度.
         /// </summary>
-        internal static string transparency {
+        public static string transparency {
             get {
                 return ResourceManager.GetString("transparency", resourceCulture);
             }
@@ -2016,7 +2025,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 送信中....
         /// </summary>
-        internal static string txing {
+        public static string txing {
             get {
                 return ResourceManager.GetString("txing", resourceCulture);
             }
@@ -2025,7 +2034,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ポート番号はJTDX/wsjt-xの設定と一致させる必要があります。デフォルトは2237です.
         /// </summary>
-        internal static string udpporthelp {
+        public static string udpporthelp {
             get {
                 return ResourceManager.GetString("udpporthelp", resourceCulture);
             }
@@ -2034,7 +2043,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDPサーバー.
         /// </summary>
-        internal static string udpserver {
+        public static string udpserver {
             get {
                 return ResourceManager.GetString("udpserver", resourceCulture);
             }
@@ -2043,7 +2052,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDP接続がタイムアウトしました！.
         /// </summary>
-        internal static string udptimeout {
+        public static string udptimeout {
             get {
                 return ResourceManager.GetString("udptimeout", resourceCulture);
             }
@@ -2052,7 +2061,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to APIキーの有効性を確認できません。入力されたアドレスが正しいか確認してください！.
         /// </summary>
-        internal static string unable2checkapi {
+        public static string unable2checkapi {
             get {
                 return ResourceManager.GetString("unable2checkapi", resourceCulture);
             }
@@ -2061,7 +2070,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 不明.
         /// </summary>
-        internal static string unknown {
+        public static string unknown {
             get {
                 return ResourceManager.GetString("unknown", resourceCulture);
             }
@@ -2070,7 +2079,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to サポートされていない無線機周波数：.
         /// </summary>
-        internal static string unsupportedrigfreq {
+        public static string unsupportedrigfreq {
             get {
                 return ResourceManager.GetString("unsupportedrigfreq", resourceCulture);
             }
@@ -2079,7 +2088,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to サポートされていない無線機モード：.
         /// </summary>
-        internal static string unsupportedrigmode {
+        public static string unsupportedrigmode {
             get {
                 return ResourceManager.GetString("unsupportedrigmode", resourceCulture);
             }
@@ -2088,7 +2097,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 更新コールサインと国データ.
         /// </summary>
-        internal static string updatebigcty {
+        public static string updatebigcty {
             get {
                 return ResourceManager.GetString("updatebigcty", resourceCulture);
             }
@@ -2097,7 +2106,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to コールサインと国データの更新に失敗しました：{0}！.
         /// </summary>
-        internal static string updatebigctyfailed {
+        public static string updatebigctyfailed {
             get {
                 return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
             }
@@ -2107,7 +2116,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   Looks up a localized string similar to コールサインと国データの更新が成功しました！
         ///コールサイン規則を{0}件、国データを{1}件書き込みました.
         /// </summary>
-        internal static string updatebigctysuccess {
+        public static string updatebigctysuccess {
             get {
                 return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
             }
@@ -2116,7 +2125,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CloudlogにQSOを自動アップロード.
         /// </summary>
-        internal static string upload2cloudlog {
+        public static string upload2cloudlog {
             get {
                 return ResourceManager.GetString("upload2cloudlog", resourceCulture);
             }
@@ -2125,7 +2134,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ClublogにQSOを自動アップロード.
         /// </summary>
-        internal static string upload2clublog {
+        public static string upload2clublog {
             get {
                 return ResourceManager.GetString("upload2clublog", resourceCulture);
             }
@@ -2134,7 +2143,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to HamCQにQSOを自動アップロード.
         /// </summary>
-        internal static string upload2hamcq {
+        public static string upload2hamcq {
             get {
                 return ResourceManager.GetString("upload2hamcq", resourceCulture);
             }
@@ -2143,7 +2152,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ✅️ QSOのアップロードに成功しました！.
         /// </summary>
-        internal static string uploadedaqso {
+        public static string uploadedaqso {
             get {
                 return ResourceManager.GetString("uploadedaqso", resourceCulture);
             }
@@ -2152,7 +2161,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ☹️ QSOのアップロードに失敗しました！.
         /// </summary>
-        internal static string uploadfailedaqso {
+        public static string uploadfailedaqso {
             get {
                 return ResourceManager.GetString("uploadfailedaqso", resourceCulture);
             }
@@ -2161,7 +2170,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to アップロード中....
         /// </summary>
-        internal static string uploading {
+        public static string uploading {
             get {
                 return ResourceManager.GetString("uploading", resourceCulture);
             }
@@ -2170,7 +2179,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to このQSOをアップロードしています。.
         /// </summary>
-        internal static string uploadingqso {
+        public static string uploadingqso {
             get {
                 return ResourceManager.GetString("uploadingqso", resourceCulture);
             }
@@ -2179,7 +2188,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無線機情報をアップロード.
         /// </summary>
-        internal static string uploadriginfo {
+        public static string uploadriginfo {
             get {
                 return ResourceManager.GetString("uploadriginfo", resourceCulture);
             }
@@ -2188,7 +2197,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 報告ステータス.
         /// </summary>
-        internal static string uploadstatus {
+        public static string uploadstatus {
             get {
                 return ResourceManager.GetString("uploadstatus", resourceCulture);
             }
@@ -2197,7 +2206,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 例: http://cloudlog.com.
         /// </summary>
-        internal static string urlexample {
+        public static string urlexample {
             get {
                 return ResourceManager.GetString("urlexample", resourceCulture);
             }
@@ -2206,7 +2215,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to URL形式が不正です！.
         /// </summary>
-        internal static string urlformaterror {
+        public static string urlformaterror {
             get {
                 return ResourceManager.GetString("urlformaterror", resourceCulture);
             }
@@ -2215,7 +2224,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 外部Rigctldサービスを使用.
         /// </summary>
-        internal static string useexternalrigctld {
+        public static string useexternalrigctld {
             get {
                 return ResourceManager.GetString("useexternalrigctld", resourceCulture);
             }
@@ -2224,7 +2233,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ユーザー名.
         /// </summary>
-        internal static string username {
+        public static string username {
             get {
                 return ResourceManager.GetString("username", resourceCulture);
             }
@@ -2233,7 +2242,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 接続待機中...
         /// </summary>
-        internal static string waitconn {
+        public static string waitconn {
             get {
                 return ResourceManager.GetString("waitconn", resourceCulture);
             }
@@ -2242,7 +2251,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 過去5分間の1分あたり平均QSO数。.
         /// </summary>
-        internal static string within5min {
+        public static string within5min {
             get {
                 return ResourceManager.GetString("within5min", resourceCulture);
             }
@@ -2251,7 +2260,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ヒートマップ - {0}バンド {1}.
         /// </summary>
-        internal static string worldheatmap {
+        public static string worldheatmap {
             get {
                 return ResourceManager.GetString("worldheatmap", resourceCulture);
             }
@@ -2260,7 +2269,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 年間QSO数.
         /// </summary>
-        internal static string yearqsos {
+        public static string yearqsos {
             get {
                 return ResourceManager.GetString("yearqsos", resourceCulture);
             }

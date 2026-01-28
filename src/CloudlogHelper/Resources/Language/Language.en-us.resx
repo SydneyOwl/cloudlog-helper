@@ -208,7 +208,7 @@
         <value>QSOs this month</value>
     </data>
     <data name="dayqsos" xml:space="preserve">
-        <value>Qsos today</value>
+        <value>QSOs today</value>
     </data>
     <data name="failedriginfo" xml:space="preserve">
         <value>Failed to fetch RIG info!</value>
@@ -779,5 +779,8 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     </data>
     <data name="bigctyhint" xml:space="preserve">
         <value>You can choose cty.dat or bigcty.dat for import. You can find them at https://www.country-files.com/.</value>
+    </data>
+    <data name="rightclick2seemore" xml:space="preserve">
+        <value>Right click QSO to see more</value>
     </data>
 </root>

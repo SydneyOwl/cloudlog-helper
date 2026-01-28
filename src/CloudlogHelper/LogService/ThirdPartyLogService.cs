@@ -12,7 +12,6 @@ namespace CloudlogHelper.LogService;
 [JsonDerivedType(typeof(HRDLogThirdPartyLogService),   nameof(HRDLogThirdPartyLogService))]
 [JsonDerivedType(typeof(LoTWThirdPartyLogService),   nameof(LoTWThirdPartyLogService))]
 [JsonDerivedType(typeof(QRZThirdPartyLogService),    nameof(QRZThirdPartyLogService))]
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 public abstract class ThirdPartyLogService
 {
     /// <summary>

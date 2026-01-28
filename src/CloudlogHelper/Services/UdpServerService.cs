@@ -42,8 +42,6 @@ public class UdpServerService : IUdpServerService, IDisposable
     private WsjtxUdpServer? _udpServer;
 
     private IApplicationSettingsService _applicationSettingsService;
-        
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(WsjtxMessage))]
     public UdpServerService(IApplicationSettingsService applicationSettingsService)
     {
         _applicationSettingsService = applicationSettingsService;

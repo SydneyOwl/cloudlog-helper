@@ -21,7 +21,7 @@ namespace CloudlogHelper.Resources.Language {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Language_zh_hant {
+    public class Language_zh_hant {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -35,7 +35,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.zh-hant", typeof(Language_zh_hant).Assembly);
@@ -50,7 +50,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -62,7 +62,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 關於.
         /// </summary>
-        internal static string about {
+        public static string about {
             get {
                 return ResourceManager.GetString("about", resourceCulture);
             }
@@ -71,7 +71,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 接受.
         /// </summary>
-        internal static string accept {
+        public static string accept {
             get {
                 return ResourceManager.GetString("accept", resourceCulture);
             }
@@ -80,7 +80,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 進階設定.
         /// </summary>
-        internal static string advancedsettings {
+        public static string advancedsettings {
             get {
                 return ResourceManager.GetString("advancedsettings", resourceCulture);
             }
@@ -89,7 +89,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 允許外部控制.
         /// </summary>
-        internal static string allowexternalcontrol {
+        public static string allowexternalcontrol {
             get {
                 return ResourceManager.GetString("allowexternalcontrol", resourceCulture);
             }
@@ -98,7 +98,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 允許請求代理.
         /// </summary>
-        internal static string allowproxy {
+        public static string allowproxy {
             get {
                 return ResourceManager.GetString("allowproxy", resourceCulture);
             }
@@ -107,7 +107,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 角度權重.
         /// </summary>
-        internal static string angweight {
+        public static string angweight {
             get {
                 return ResourceManager.GetString("angweight", resourceCulture);
             }
@@ -116,7 +116,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to API金鑰.
         /// </summary>
-        internal static string apikey {
+        public static string apikey {
             get {
                 return ResourceManager.GetString("apikey", resourceCulture);
             }
@@ -125,7 +125,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動更新台站資訊.
         /// </summary>
-        internal static string autopollstatus {
+        public static string autopollstatus {
             get {
                 return ResourceManager.GetString("autopollstatus", resourceCulture);
             }
@@ -134,7 +134,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動上傳QSO.
         /// </summary>
-        internal static string autoqsoupload {
+        public static string autoqsoupload {
             get {
                 return ResourceManager.GetString("autoqsoupload", resourceCulture);
             }
@@ -143,7 +143,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動選擇.
         /// </summary>
-        internal static string autosel {
+        public static string autosel {
             get {
                 return ResourceManager.GetString("autosel", resourceCulture);
             }
@@ -152,7 +152,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 電臺數據自動上報.
         /// </summary>
-        internal static string autoupdateriginfo {
+        public static string autoupdateriginfo {
             get {
                 return ResourceManager.GetString("autoupdateriginfo", resourceCulture);
             }
@@ -161,7 +161,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動上傳QSO到.
         /// </summary>
-        internal static string autoupload2 {
+        public static string autoupload2 {
             get {
                 return ResourceManager.GetString("autoupload2", resourceCulture);
             }
@@ -170,7 +170,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 基本資訊.
         /// </summary>
-        internal static string basicinfo {
+        public static string basicinfo {
             get {
                 return ResourceManager.GetString("basicinfo", resourceCulture);
             }
@@ -179,7 +179,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 基礎設定.
         /// </summary>
-        internal static string basicsettings {
+        public static string basicsettings {
             get {
                 return ResourceManager.GetString("basicsettings", resourceCulture);
             }
@@ -188,7 +188,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 鮑率.
         /// </summary>
-        internal static string baudrate {
+        public static string baudrate {
             get {
                 return ResourceManager.GetString("baudrate", resourceCulture);
             }
@@ -197,7 +197,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 角度（度）.
         /// </summary>
-        internal static string bearingdeg {
+        public static string bearingdeg {
             get {
                 return ResourceManager.GetString("bearingdeg", resourceCulture);
             }
@@ -206,7 +206,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 您可以選擇cty.dat或bigcty.dat進行導入。您可以在https://www.country-files.com/找到。.
         /// </summary>
-        internal static string bigctyhint {
+        public static string bigctyhint {
             get {
                 return ResourceManager.GetString("bigctyhint", resourceCulture);
             }
@@ -215,7 +215,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 啟動失敗！是否嘗試重置所有設定？.
         /// </summary>
-        internal static string bootfail {
+        public static string bootfail {
             get {
                 return ResourceManager.GetString("bootfail", resourceCulture);
             }
@@ -224,7 +224,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 計算中....
         /// </summary>
-        internal static string calculating {
+        public static string calculating {
             get {
                 return ResourceManager.GetString("calculating", resourceCulture);
             }
@@ -233,7 +233,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 呼號.
         /// </summary>
-        internal static string callsign {
+        public static string callsign {
             get {
                 return ResourceManager.GetString("callsign", resourceCulture);
             }
@@ -242,7 +242,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 圖表.
         /// </summary>
-        internal static string charts {
+        public static string charts {
             get {
                 return ResourceManager.GetString("charts", resourceCulture);
             }
@@ -251,7 +251,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 圖表功能被禁用，請在設定中啟用！.
         /// </summary>
-        internal static string chartsdisabled {
+        public static string chartsdisabled {
             get {
                 return ResourceManager.GetString("chartsdisabled", resourceCulture);
             }
@@ -260,7 +260,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 請檢查電臺連線！.
         /// </summary>
-        internal static string checkrigconn {
+        public static string checkrigconn {
             get {
                 return ResourceManager.GetString("checkrigconn", resourceCulture);
             }
@@ -269,7 +269,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 清空.
         /// </summary>
-        internal static string clear {
+        public static string clear {
             get {
                 return ResourceManager.GetString("clear", resourceCulture);
             }
@@ -278,7 +278,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog Helper能夠連線CLH-Server，自動上報解碼的數據模式資訊和電臺資訊到伺服器。當您使用特定的安卓app連線到伺服器時，伺服器將會推送資訊到您的手機上。.
         /// </summary>
-        internal static string clhhintinfo {
+        public static string clhhintinfo {
             get {
                 return ResourceManager.GetString("clhhintinfo", resourceCulture);
             }
@@ -287,7 +287,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLH伺服器IP.
         /// </summary>
-        internal static string clhseraddr {
+        public static string clhseraddr {
             get {
                 return ResourceManager.GetString("clhseraddr", resourceCulture);
             }
@@ -296,7 +296,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLH伺服器金鑰.
         /// </summary>
-        internal static string clhserkey {
+        public static string clhserkey {
             get {
                 return ResourceManager.GetString("clhserkey", resourceCulture);
             }
@@ -305,7 +305,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLH伺服器埠.
         /// </summary>
-        internal static string clhserport {
+        public static string clhserport {
             get {
                 return ResourceManager.GetString("clhserport", resourceCulture);
             }
@@ -314,7 +314,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to CLH伺服器.
         /// </summary>
-        internal static string clhserver {
+        public static string clhserver {
             get {
                 return ResourceManager.GetString("clhserver", resourceCulture);
             }
@@ -323,7 +323,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 使用TLS.
         /// </summary>
-        internal static string clhusetls {
+        public static string clhusetls {
             get {
                 return ResourceManager.GetString("clhusetls", resourceCulture);
             }
@@ -332,7 +332,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 關閉視窗.
         /// </summary>
-        internal static string close {
+        public static string close {
             get {
                 return ResourceManager.GetString("close", resourceCulture);
             }
@@ -341,7 +341,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 您希望最小化到托盤還是關閉本程式？.
         /// </summary>
-        internal static string closeormin {
+        public static string closeormin {
             get {
                 return ResourceManager.GetString("closeormin", resourceCulture);
             }
@@ -350,7 +350,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 填寫您的apikey。這個key需要具備讀/寫許可權。可在主頁賬號的下拉方塊中找到。.
         /// </summary>
-        internal static string cloudlogapihelp {
+        public static string cloudlogapihelp {
             get {
                 return ResourceManager.GetString("cloudlogapihelp", resourceCulture);
             }
@@ -359,7 +359,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 可以在主頁賬號的下拉方塊中“站點地址”找到。.
         /// </summary>
-        internal static string cloudlogstationid {
+        public static string cloudlogstationid {
             get {
                 return ResourceManager.GetString("cloudlogstationid", resourceCulture);
             }
@@ -368,7 +368,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 只需填寫網域名稱，不需要包含index.php/api/qso，程式會自動填充。.
         /// </summary>
-        internal static string cloudlogurlhelp {
+        public static string cloudlogurlhelp {
             get {
                 return ResourceManager.GetString("cloudlogurlhelp", resourceCulture);
             }
@@ -377,7 +377,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Clublog設定.
         /// </summary>
-        internal static string clublogsettings {
+        public static string clublogsettings {
             get {
                 return ResourceManager.GetString("clublogsettings", resourceCulture);
             }
@@ -386,7 +386,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 如果此欄位不為空，軟體將使用填寫的內容作為啟動rigctld的預設引數，其他所有配置將被忽略。.
         /// </summary>
-        internal static string cmdarghelp {
+        public static string cmdarghelp {
             get {
                 return ResourceManager.GetString("cmdarghelp", resourceCulture);
             }
@@ -395,7 +395,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog配置無效，請在設定中修改！.
         /// </summary>
-        internal static string confcloudlogfirst {
+        public static string confcloudlogfirst {
             get {
                 return ResourceManager.GetString("confcloudlogfirst", resourceCulture);
             }
@@ -404,7 +404,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to FLRIG配置有誤，請在設定中修正！.
         /// </summary>
-        internal static string confflrigfirst {
+        public static string confflrigfirst {
             get {
                 return ResourceManager.GetString("confflrigfirst", resourceCulture);
             }
@@ -413,7 +413,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Hamlib配置無效，請在設定中修改！.
         /// </summary>
-        internal static string confhamlibfirst {
+        public static string confhamlibfirst {
             get {
                 return ResourceManager.GetString("confhamlibfirst", resourceCulture);
             }
@@ -422,7 +422,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 檢測到進程 {replace01} 正在執行，可能影響電臺數據自動上報功能！.
         /// </summary>
-        internal static string conflicthamlib {
+        public static string conflicthamlib {
             get {
                 return ResourceManager.GetString("conflicthamlib", resourceCulture);
             }
@@ -431,7 +431,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 請檢查OmniRig配置！.
         /// </summary>
-        internal static string confomnifirst {
+        public static string confomnifirst {
             get {
                 return ResourceManager.GetString("confomnifirst", resourceCulture);
             }
@@ -440,7 +440,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 控制面板.
         /// </summary>
-        internal static string controlpanel {
+        public static string controlpanel {
             get {
                 return ResourceManager.GetString("controlpanel", resourceCulture);
             }
@@ -449,7 +449,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 當前頻率.
         /// </summary>
-        internal static string currentfreq {
+        public static string currentfreq {
             get {
                 return ResourceManager.GetString("currentfreq", resourceCulture);
             }
@@ -458,7 +458,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 當前模式.
         /// </summary>
-        internal static string currrentmode {
+        public static string currrentmode {
             get {
                 return ResourceManager.GetString("currrentmode", resourceCulture);
             }
@@ -467,7 +467,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 深色模式.
         /// </summary>
-        internal static string dark {
+        public static string dark {
             get {
                 return ResourceManager.GetString("dark", resourceCulture);
             }
@@ -476,7 +476,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 資料位.
         /// </summary>
-        internal static string databit {
+        public static string databit {
             get {
                 return ResourceManager.GetString("databit", resourceCulture);
             }
@@ -485,7 +485,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 今日QSO數.
         /// </summary>
-        internal static string dayqsos {
+        public static string dayqsos {
             get {
                 return ResourceManager.GetString("dayqsos", resourceCulture);
             }
@@ -494,7 +494,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 刪除選中項.
         /// </summary>
-        internal static string delsel {
+        public static string delsel {
             get {
                 return ResourceManager.GetString("delsel", resourceCulture);
             }
@@ -503,7 +503,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 拒絕.
         /// </summary>
-        internal static string deny {
+        public static string deny {
             get {
                 return ResourceManager.GetString("deny", resourceCulture);
             }
@@ -512,7 +512,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 裝置埠.
         /// </summary>
-        internal static string deviceport {
+        public static string deviceport {
             get {
                 return ResourceManager.GetString("deviceport", resourceCulture);
             }
@@ -521,7 +521,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 禁用圖表功能（僅低效能裝置）.
         /// </summary>
-        internal static string disablecharts {
+        public static string disablecharts {
             get {
                 return ResourceManager.GetString("disablecharts", resourceCulture);
             }
@@ -530,7 +530,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 禁用PTT控制.
         /// </summary>
-        internal static string disableptt {
+        public static string disableptt {
             get {
                 return ResourceManager.GetString("disableptt", resourceCulture);
             }
@@ -539,7 +539,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 部分Linux發行版中如果不禁用rts/dtr可能導致PTT無法正確初始化，表現為PTT始終處於觸發狀態。.
         /// </summary>
-        internal static string disableptthelp {
+        public static string disableptthelp {
             get {
                 return ResourceManager.GetString("disableptthelp", resourceCulture);
             }
@@ -548,7 +548,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 取消.
         /// </summary>
-        internal static string discard {
+        public static string discard {
             get {
                 return ResourceManager.GetString("discard", resourceCulture);
             }
@@ -565,7 +565,7 @@ namespace CloudlogHelper.Resources.Language {
         ///繼續使用即表示您已閱讀並同意上述條款及專案主頁上的完整免責宣告 (https://github.com/sydneyowl/cloudlog-helper)。
         ///.
         /// </summary>
-        internal static string disclaimer {
+        public static string disclaimer {
             get {
                 return ResourceManager.GetString("disclaimer", resourceCulture);
             }
@@ -574,7 +574,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 距離（公里）.
         /// </summary>
-        internal static string distkm {
+        public static string distkm {
             get {
                 return ResourceManager.GetString("distkm", resourceCulture);
             }
@@ -583,7 +583,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 距離權重.
         /// </summary>
-        internal static string distweight {
+        public static string distweight {
             get {
                 return ResourceManager.GetString("distweight", resourceCulture);
             }
@@ -592,7 +592,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 雙擊查看更多.
         /// </summary>
-        internal static string doubletap2seemore {
+        public static string doubletap2seemore {
             get {
                 return ResourceManager.GetString("doubletap2seemore", resourceCulture);
             }
@@ -601,7 +601,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 程式已在執行！.
         /// </summary>
-        internal static string dupeinstance {
+        public static string dupeinstance {
             get {
                 return ResourceManager.GetString("dupeinstance", resourceCulture);
             }
@@ -610,7 +610,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 不允許同時啟用兩個電臺後端控制服務！.
         /// </summary>
-        internal static string duperigservdetected {
+        public static string duperigservdetected {
             get {
                 return ResourceManager.GetString("duperigservdetected", resourceCulture);
             }
@@ -619,7 +619,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 電子郵箱.
         /// </summary>
-        internal static string email {
+        public static string email {
             get {
                 return ResourceManager.GetString("email", resourceCulture);
             }
@@ -628,7 +628,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 進階設定.
         /// </summary>
-        internal static string enableadvanced {
+        public static string enableadvanced {
             get {
                 return ResourceManager.GetString("enableadvanced", resourceCulture);
             }
@@ -637,7 +637,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 啟用CLH伺服器.
         /// </summary>
-        internal static string enableclhserver {
+        public static string enableclhserver {
             get {
                 return ResourceManager.GetString("enableclhserver", resourceCulture);
             }
@@ -646,7 +646,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 允許外部連線.
         /// </summary>
-        internal static string enableoutsideconn {
+        public static string enableoutsideconn {
             get {
                 return ResourceManager.GetString("enableoutsideconn", resourceCulture);
             }
@@ -655,7 +655,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 啟用UDP伺服器.
         /// </summary>
-        internal static string enableudpserver {
+        public static string enableudpserver {
             get {
                 return ResourceManager.GetString("enableudpserver", resourceCulture);
             }
@@ -664,7 +664,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 錯誤.
         /// </summary>
-        internal static string error {
+        public static string error {
             get {
                 return ResourceManager.GetString("error", resourceCulture);
             }
@@ -673,7 +673,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 出錯啦！.
         /// </summary>
-        internal static string errorccurred {
+        public static string errorccurred {
             get {
                 return ResourceManager.GetString("errorccurred", resourceCulture);
             }
@@ -682,7 +682,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 退出.
         /// </summary>
-        internal static string exit {
+        public static string exit {
             get {
                 return ResourceManager.GetString("exit", resourceCulture);
             }
@@ -691,7 +691,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 匯出.
         /// </summary>
-        internal static string export {
+        public static string export {
             get {
                 return ResourceManager.GetString("export", resourceCulture);
             }
@@ -700,7 +700,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 匯出為adi.
         /// </summary>
-        internal static string export2adif {
+        public static string export2adif {
             get {
                 return ResourceManager.GetString("export2adif", resourceCulture);
             }
@@ -709,7 +709,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Rigctld服務地址.
         /// </summary>
-        internal static string externalrigctldhost {
+        public static string externalrigctldhost {
             get {
                 return ResourceManager.GetString("externalrigctldhost", resourceCulture);
             }
@@ -718,7 +718,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 失敗！.
         /// </summary>
-        internal static string failed {
+        public static string failed {
             get {
                 return ResourceManager.GetString("failed", resourceCulture);
             }
@@ -727,7 +727,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此QSO上傳失敗。.
         /// </summary>
-        internal static string failedqso {
+        public static string failedqso {
             get {
                 return ResourceManager.GetString("failedqso", resourceCulture);
             }
@@ -736,7 +736,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無法獲取電臺數據！.
         /// </summary>
-        internal static string failedriginfo {
+        public static string failedriginfo {
             get {
                 return ResourceManager.GetString("failedriginfo", resourceCulture);
             }
@@ -745,7 +745,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無法獲取站點資訊！.
         /// </summary>
-        internal static string failedstationinfo {
+        public static string failedstationinfo {
             get {
                 return ResourceManager.GetString("failedstationinfo", resourceCulture);
             }
@@ -754,7 +754,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無法獲取站點數據！.
         /// </summary>
-        internal static string failedstationstat {
+        public static string failedstationstat {
             get {
                 return ResourceManager.GetString("failedstationstat", resourceCulture);
             }
@@ -763,7 +763,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO同步出錯：.
         /// </summary>
-        internal static string failedsyncqso {
+        public static string failedsyncqso {
             get {
                 return ResourceManager.GetString("failedsyncqso", resourceCulture);
             }
@@ -772,7 +772,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無法從命令列引數中提取埠號。請顯式使用引數-t指明。.
         /// </summary>
-        internal static string failextractinfo {
+        public static string failextractinfo {
             get {
                 return ResourceManager.GetString("failextractinfo", resourceCulture);
             }
@@ -781,7 +781,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 與電臺通訊失敗！.
         /// </summary>
-        internal static string failrigcomm {
+        public static string failrigcomm {
             get {
                 return ResourceManager.GetString("failrigcomm", resourceCulture);
             }
@@ -790,7 +790,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無法上傳到{addr}，請檢視日誌！.
         /// </summary>
-        internal static string failuploadriginfoto {
+        public static string failuploadriginfoto {
             get {
                 return ResourceManager.GetString("failuploadriginfoto", resourceCulture);
             }
@@ -799,7 +799,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 請完整填寫所有資訊！.
         /// </summary>
-        internal static string fillall {
+        public static string fillall {
             get {
                 return ResourceManager.GetString("fillall", resourceCulture);
             }
@@ -808,7 +808,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 過濾重複樣本（呼號）.
         /// </summary>
-        internal static string filterdupebycallsign {
+        public static string filterdupebycallsign {
             get {
                 return ResourceManager.GetString("filterdupebycallsign", resourceCulture);
             }
@@ -817,7 +817,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 轉發解碼資訊到http伺服器.
         /// </summary>
-        internal static string forward2tcp {
+        public static string forward2tcp {
             get {
                 return ResourceManager.GetString("forward2tcp", resourceCulture);
             }
@@ -826,7 +826,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 轉發原始UDP數據包到.
         /// </summary>
-        internal static string forwardmsg {
+        public static string forwardmsg {
             get {
                 return ResourceManager.GetString("forwardmsg", resourceCulture);
             }
@@ -835,7 +835,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 轉發原始UDP數據包到.
         /// </summary>
-        internal static string forwardto {
+        public static string forwardto {
             get {
                 return ResourceManager.GetString("forwardto", resourceCulture);
             }
@@ -844,7 +844,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 獲取數據中....
         /// </summary>
-        internal static string gettinginfo {
+        public static string gettinginfo {
             get {
                 return ResourceManager.GetString("gettinginfo", resourceCulture);
             }
@@ -853,7 +853,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 座標.
         /// </summary>
-        internal static string grid {
+        public static string grid {
             get {
                 return ResourceManager.GetString("grid", resourceCulture);
             }
@@ -863,7 +863,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   Looks up a localized string similar to 網格座標為空或有誤，請檢查設定！
         ///.
         /// </summary>
-        internal static string griderror {
+        public static string griderror {
             get {
                 return ResourceManager.GetString("griderror", resourceCulture);
             }
@@ -872,7 +872,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to HamCQ設定.
         /// </summary>
-        internal static string hamcqsettings {
+        public static string hamcqsettings {
             get {
                 return ResourceManager.GetString("hamcqsettings", resourceCulture);
             }
@@ -881,7 +881,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 幫助.
         /// </summary>
-        internal static string help {
+        public static string help {
             get {
                 return ResourceManager.GetString("help", resourceCulture);
             }
@@ -890,7 +890,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 希望您能將出錯資訊反饋到Github，幫助開發者修正此BUG！.
         /// </summary>
-        internal static string helpfeedback {
+        public static string helpfeedback {
             get {
                 return ResourceManager.GetString("helpfeedback", resourceCulture);
             }
@@ -899,7 +899,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此QSO已被忽略 - 是不是把所有第三方日誌的上傳功能都關了？.
         /// </summary>
-        internal static string ignoreqso {
+        public static string ignoreqso {
             get {
                 return ResourceManager.GetString("ignoreqso", resourceCulture);
             }
@@ -908,7 +908,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此操作將永久忽略選中的QSO，後續QSO助手掃描本地QSO時將忽略這些項。是否繼續？.
         /// </summary>
-        internal static string ignoreqsopermanently {
+        public static string ignoreqsopermanently {
             get {
                 return ResourceManager.GetString("ignoreqsopermanently", resourceCulture);
             }
@@ -917,7 +917,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Hamlib初始化失敗!.
         /// </summary>
-        internal static string inithamlibfailed {
+        public static string inithamlibfailed {
             get {
                 return ResourceManager.GetString("inithamlibfailed", resourceCulture);
             }
@@ -926,7 +926,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 例項名稱.
         /// </summary>
-        internal static string instancename {
+        public static string instancename {
             get {
                 return ResourceManager.GetString("instancename", resourceCulture);
             }
@@ -935,7 +935,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此欄位為軟體註冊到clh-server時使用的名稱。此名稱應當是唯一的。.
         /// </summary>
-        internal static string instancenamehint {
+        public static string instancenamehint {
             get {
                 return ResourceManager.GetString("instancenamehint", resourceCulture);
             }
@@ -944,7 +944,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 您使用的後端服務似乎是{replace01}而不是Cloudlog，因此軟體部分功能可能不支援。.
         /// </summary>
-        internal static string instanceuncompitable {
+        public static string instanceuncompitable {
             get {
                 return ResourceManager.GetString("instanceuncompitable", resourceCulture);
             }
@@ -953,7 +953,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 地址無效！.
         /// </summary>
-        internal static string invalidaddr {
+        public static string invalidaddr {
             get {
                 return ResourceManager.GetString("invalidaddr", resourceCulture);
             }
@@ -962,7 +962,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無效的ADIF！.
         /// </summary>
-        internal static string invalidadif {
+        public static string invalidadif {
             get {
                 return ResourceManager.GetString("invalidadif", resourceCulture);
             }
@@ -971,7 +971,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此APIKEY無效！.
         /// </summary>
-        internal static string invalidapikey {
+        public static string invalidapikey {
             get {
                 return ResourceManager.GetString("invalidapikey", resourceCulture);
             }
@@ -980,7 +980,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 配置無效！.
         /// </summary>
-        internal static string invalidconf {
+        public static string invalidconf {
             get {
                 return ResourceManager.GetString("invalidconf", resourceCulture);
             }
@@ -989,7 +989,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 埠號無效.
         /// </summary>
-        internal static string invalidport {
+        public static string invalidport {
             get {
                 return ResourceManager.GetString("invalidport", resourceCulture);
             }
@@ -998,7 +998,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDP伺服器配置無效！.
         /// </summary>
-        internal static string invalidudpconf {
+        public static string invalidudpconf {
             get {
                 return ResourceManager.GetString("invalidudpconf", resourceCulture);
             }
@@ -1007,7 +1007,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to URL無效！.
         /// </summary>
-        internal static string invalidurl {
+        public static string invalidurl {
             get {
                 return ResourceManager.GetString("invalidurl", resourceCulture);
             }
@@ -1016,7 +1016,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to K值(KNN).
         /// </summary>
-        internal static string kval {
+        public static string kval {
             get {
                 return ResourceManager.GetString("kval", resourceCulture);
             }
@@ -1025,7 +1025,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to APIKEY需要讀/寫許可權但提供的apikey只有讀許可權！.
         /// </summary>
-        internal static string lackwriteaccess {
+        public static string lackwriteaccess {
             get {
                 return ResourceManager.GetString("lackwriteaccess", resourceCulture);
             }
@@ -1034,7 +1034,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 緯度.
         /// </summary>
-        internal static string latitude {
+        public static string latitude {
             get {
                 return ResourceManager.GetString("latitude", resourceCulture);
             }
@@ -1043,7 +1043,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 淺色模式.
         /// </summary>
-        internal static string light {
+        public static string light {
             get {
                 return ResourceManager.GetString("light", resourceCulture);
             }
@@ -1052,7 +1052,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 經度.
         /// </summary>
-        internal static string longitude {
+        public static string longitude {
             get {
                 return ResourceManager.GetString("longitude", resourceCulture);
             }
@@ -1061,7 +1061,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ✅️ 完成了一個QSO！.
         /// </summary>
-        internal static string madeaqso {
+        public static string madeaqso {
             get {
                 return ResourceManager.GetString("madeaqso", resourceCulture);
             }
@@ -1070,7 +1070,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 最大取樣點數量.
         /// </summary>
-        internal static string maxsamplecount {
+        public static string maxsamplecount {
             get {
                 return ResourceManager.GetString("maxsamplecount", resourceCulture);
             }
@@ -1079,7 +1079,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 本月QSO數.
         /// </summary>
-        internal static string monthqsos {
+        public static string monthqsos {
             get {
                 return ResourceManager.GetString("monthqsos", resourceCulture);
             }
@@ -1088,7 +1088,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 命令列引數必須新增-vvvvv！.
         /// </summary>
-        internal static string mustverbose {
+        public static string mustverbose {
             get {
                 return ResourceManager.GetString("mustverbose", resourceCulture);
             }
@@ -1097,7 +1097,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 我的網格座標.
         /// </summary>
-        internal static string mygrid {
+        public static string mygrid {
             get {
                 return ResourceManager.GetString("mygrid", resourceCulture);
             }
@@ -1106,7 +1106,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 下次上報時間.
         /// </summary>
-        internal static string nextuploadtime {
+        public static string nextuploadtime {
             get {
                 return ResourceManager.GetString("nextuploadtime", resourceCulture);
             }
@@ -1115,7 +1115,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to （無數據）.
         /// </summary>
-        internal static string nodata {
+        public static string nodata {
             get {
                 return ResourceManager.GetString("nodata", resourceCulture);
             }
@@ -1124,7 +1124,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 注意.
         /// </summary>
-        internal static string notice {
+        public static string notice {
             get {
                 return ResourceManager.GetString("notice", resourceCulture);
             }
@@ -1133,7 +1133,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此項不能為空！.
         /// </summary>
-        internal static string notnull {
+        public static string notnull {
             get {
                 return ResourceManager.GetString("notnull", resourceCulture);
             }
@@ -1142,7 +1142,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 請檢查OmniRig是否已正確安裝。另外，OmniRig目前僅在非AOT編譯的Windows平台上支援。.
         /// </summary>
-        internal static string omniinitfailed {
+        public static string omniinitfailed {
             get {
                 return ResourceManager.GetString("omniinitfailed", resourceCulture);
             }
@@ -1151,7 +1151,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 只需輸入主網域名稱，不允許以/api/qso結尾！.
         /// </summary>
-        internal static string onlymaindomain {
+        public static string onlymaindomain {
             get {
                 return ResourceManager.GetString("onlymaindomain", resourceCulture);
             }
@@ -1160,7 +1160,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 操作員.
         /// </summary>
-        internal static string op {
+        public static string op {
             get {
                 return ResourceManager.GetString("op", resourceCulture);
             }
@@ -1169,7 +1169,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 開啟.
         /// </summary>
-        internal static string open {
+        public static string open {
             get {
                 return ResourceManager.GetString("open", resourceCulture);
             }
@@ -1178,7 +1178,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 開啟配置目錄.
         /// </summary>
-        internal static string openconfpath {
+        public static string openconfpath {
             get {
                 return ResourceManager.GetString("openconfpath", resourceCulture);
             }
@@ -1187,7 +1187,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 開啟快取目錄.
         /// </summary>
-        internal static string opentempfolder {
+        public static string opentempfolder {
             get {
                 return ResourceManager.GetString("opentempfolder", resourceCulture);
             }
@@ -1196,7 +1196,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 密碼.
         /// </summary>
-        internal static string password {
+        public static string password {
             get {
                 return ResourceManager.GetString("password", resourceCulture);
             }
@@ -1205,7 +1205,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 暫停.
         /// </summary>
-        internal static string pause {
+        public static string pause {
             get {
                 return ResourceManager.GetString("pause", resourceCulture);
             }
@@ -1214,7 +1214,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此QSO正在等待上傳。.
         /// </summary>
-        internal static string pendingqso {
+        public static string pendingqso {
             get {
                 return ResourceManager.GetString("pendingqso", resourceCulture);
             }
@@ -1223,7 +1223,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 請在設定中開啟“電臺數據自動上報”.
         /// </summary>
-        internal static string polldisabled {
+        public static string polldisabled {
             get {
                 return ResourceManager.GetString("polldisabled", resourceCulture);
             }
@@ -1232,7 +1232,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 輪詢間隔（秒）.
         /// </summary>
-        internal static string pollinterval {
+        public static string pollinterval {
             get {
                 return ResourceManager.GetString("pollinterval", resourceCulture);
             }
@@ -1241,7 +1241,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 輪詢間隔必須為整數且大於1！.
         /// </summary>
-        internal static string pollintervalreq {
+        public static string pollintervalreq {
             get {
                 return ResourceManager.GetString("pollintervalreq", resourceCulture);
             }
@@ -1250,7 +1250,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 埠號.
         /// </summary>
-        internal static string port {
+        public static string port {
             get {
                 return ResourceManager.GetString("port", resourceCulture);
             }
@@ -1259,7 +1259,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 允許代理其他應用程式傳送的請求。用於避免同時向rigctld傳送請求時可能造成的衝突。.
         /// </summary>
-        internal static string proxyhelp {
+        public static string proxyhelp {
             get {
                 return ResourceManager.GetString("proxyhelp", resourceCulture);
             }
@@ -1268,7 +1268,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ----請選擇----.
         /// </summary>
-        internal static string psesel {
+        public static string psesel {
             get {
                 return ResourceManager.GetString("psesel", resourceCulture);
             }
@@ -1277,7 +1277,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 請先勾選QSO!.
         /// </summary>
-        internal static string pseselfirst {
+        public static string pseselfirst {
             get {
                 return ResourceManager.GetString("pseselfirst", resourceCulture);
             }
@@ -1286,7 +1286,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 出現下列情況時推送系統通知：.
         /// </summary>
-        internal static string pushnotificationon {
+        public static string pushnotificationon {
             get {
                 return ResourceManager.GetString("pushnotificationon", resourceCulture);
             }
@@ -1295,7 +1295,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO上傳助手.
         /// </summary>
-        internal static string qsoassistant {
+        public static string qsoassistant {
             get {
                 return ResourceManager.GetString("qsoassistant", resourceCulture);
             }
@@ -1304,7 +1304,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 呼號: {0}, 國家: {1} ({8}), 網格: {9},  頻率: {10} ({11}),  模式: {12}, 時間: {14} 至 {15}, 訊號報告: 傳送 &apos;{16}&apos; / 接收 &apos;{17}&apos;.
         /// </summary>
-        internal static string qsoconcisetemplate {
+        public static string qsoconcisetemplate {
             get {
                 return ResourceManager.GetString("qsoconcisetemplate", resourceCulture);
             }
@@ -1313,7 +1313,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO完成時.
         /// </summary>
-        internal static string qsofinished {
+        public static string qsofinished {
             get {
                 return ResourceManager.GetString("qsofinished", resourceCulture);
             }
@@ -1322,7 +1322,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO速率：.
         /// </summary>
-        internal static string qsorate {
+        public static string qsorate {
             get {
                 return ResourceManager.GetString("qsorate", resourceCulture);
             }
@@ -1331,7 +1331,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO上傳失敗重試次數.
         /// </summary>
-        internal static string qsoretrycount {
+        public static string qsoretrycount {
             get {
                 return ResourceManager.GetString("qsoretrycount", resourceCulture);
             }
@@ -1340,7 +1340,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 正在同步QSO....
         /// </summary>
-        internal static string qsosyncing {
+        public static string qsosyncing {
             get {
                 return ResourceManager.GetString("qsosyncing", resourceCulture);
             }
@@ -1349,7 +1349,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO同步成功！.
         /// </summary>
-        internal static string qsosyncsucc {
+        public static string qsosyncsucc {
             get {
                 return ResourceManager.GetString("qsosyncsucc", resourceCulture);
             }
@@ -1378,7 +1378,7 @@ namespace CloudlogHelper.Resources.Language {
         ///• 上傳狀態: {28}
         ///• 失敗原因: {29}.
         /// </summary>
-        internal static string qsotemplate {
+        public static string qsotemplate {
             get {
                 return ResourceManager.GetString("qsotemplate", resourceCulture);
             }
@@ -1387,7 +1387,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO自動上傳功能未啟用。.
         /// </summary>
-        internal static string qsouploaddisabled {
+        public static string qsouploaddisabled {
             get {
                 return ResourceManager.GetString("qsouploaddisabled", resourceCulture);
             }
@@ -1396,7 +1396,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QSO上傳完成時.
         /// </summary>
-        internal static string qsouploaded {
+        public static string qsouploaded {
             get {
                 return ResourceManager.GetString("qsouploaded", resourceCulture);
             }
@@ -1405,7 +1405,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QTH別名（可選）.
         /// </summary>
-        internal static string qthnick {
+        public static string qthnick {
             get {
                 return ResourceManager.GetString("qthnick", resourceCulture);
             }
@@ -1414,7 +1414,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to QTH暱稱（可選）.
         /// </summary>
-        internal static string qthnickname {
+        public static string qthnickname {
             get {
                 return ResourceManager.GetString("qthnickname", resourceCulture);
             }
@@ -1423,7 +1423,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 輪詢間隔應當大於一秒！.
         /// </summary>
-        internal static string reachminiumpollinterval {
+        public static string reachminiumpollinterval {
             get {
                 return ResourceManager.GetString("reachminiumpollinterval", resourceCulture);
             }
@@ -1432,7 +1432,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 已完成的QSO資訊.
         /// </summary>
-        internal static string recvqso {
+        public static string recvqso {
             get {
                 return ResourceManager.GetString("recvqso", resourceCulture);
             }
@@ -1441,7 +1441,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 重新整理.
         /// </summary>
-        internal static string refresh {
+        public static string refresh {
             get {
                 return ResourceManager.GetString("refresh", resourceCulture);
             }
@@ -1450,7 +1450,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 記住我的選擇.
         /// </summary>
-        internal static string remembermychoice {
+        public static string remembermychoice {
             get {
                 return ResourceManager.GetString("remembermychoice", resourceCulture);
             }
@@ -1459,7 +1459,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 報告發射功率.
         /// </summary>
-        internal static string reportpwr {
+        public static string reportpwr {
             get {
                 return ResourceManager.GetString("reportpwr", resourceCulture);
             }
@@ -1468,7 +1468,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 報告異頻資訊.
         /// </summary>
-        internal static string reportsplit {
+        public static string reportsplit {
             get {
                 return ResourceManager.GetString("reportsplit", resourceCulture);
             }
@@ -1477,7 +1477,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 重試次數應為大於0的整數！.
         /// </summary>
-        internal static string retrycountreq {
+        public static string retrycountreq {
             get {
                 return ResourceManager.GetString("retrycountreq", resourceCulture);
             }
@@ -1486,7 +1486,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 正在重試上傳.
         /// </summary>
-        internal static string retryingqso {
+        public static string retryingqso {
             get {
                 return ResourceManager.GetString("retryingqso", resourceCulture);
             }
@@ -1495,7 +1495,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 重傳選中項.
         /// </summary>
-        internal static string reuploadsel {
+        public static string reuploadsel {
             get {
                 return ResourceManager.GetString("reuploadsel", resourceCulture);
             }
@@ -1504,7 +1504,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 部分電臺不支援讀取髮射功率或讀取的數據錯誤，因此本功能預設未開啟。.
         /// </summary>
-        internal static string rfpowerhelp {
+        public static string rfpowerhelp {
             get {
                 return ResourceManager.GetString("rfpowerhelp", resourceCulture);
             }
@@ -1513,7 +1513,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 電臺後端控制系統.
         /// </summary>
-        internal static string rigbackendsystem {
+        public static string rigbackendsystem {
             get {
                 return ResourceManager.GetString("rigbackendsystem", resourceCulture);
             }
@@ -1522,7 +1522,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Rigctld命令列引數.
         /// </summary>
-        internal static string rigctldcmdarg {
+        public static string rigctldcmdarg {
             get {
                 return ResourceManager.GetString("rigctldcmdarg", resourceCulture);
             }
@@ -1531,7 +1531,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Rigctld服務未啟動，請檢查設定！.
         /// </summary>
-        internal static string rigctldnotstart {
+        public static string rigctldnotstart {
             get {
                 return ResourceManager.GetString("rigctldnotstart", resourceCulture);
             }
@@ -1540,16 +1540,25 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 電臺數據.
         /// </summary>
-        internal static string rigdata {
+        public static string rigdata {
             get {
                 return ResourceManager.GetString("rigdata", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 右鍵點擊 QSO 以查看更多.
+        /// </summary>
+        public static string rightclick2seemore {
+            get {
+                return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 電臺型號.
         /// </summary>
-        internal static string rigmodel {
+        public static string rigmodel {
             get {
                 return ResourceManager.GetString("rigmodel", resourceCulture);
             }
@@ -1558,7 +1567,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 與電臺通訊超時，請檢查連線！.
         /// </summary>
-        internal static string rigtimeout {
+        public static string rigtimeout {
             get {
                 return ResourceManager.GetString("rigtimeout", resourceCulture);
             }
@@ -1567,7 +1576,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 樣本數 = .
         /// </summary>
-        internal static string samplecount {
+        public static string samplecount {
             get {
                 return ResourceManager.GetString("samplecount", resourceCulture);
             }
@@ -1576,7 +1585,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 應用更改.
         /// </summary>
-        internal static string save {
+        public static string save {
             get {
                 return ResourceManager.GetString("save", resourceCulture);
             }
@@ -1585,7 +1594,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 儲存日誌.
         /// </summary>
-        internal static string savelog {
+        public static string savelog {
             get {
                 return ResourceManager.GetString("savelog", resourceCulture);
             }
@@ -1594,7 +1603,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 儲存日誌到...
         /// </summary>
-        internal static string savelogto {
+        public static string savelogto {
             get {
                 return ResourceManager.GetString("savelogto", resourceCulture);
             }
@@ -1603,7 +1612,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 全選.
         /// </summary>
-        internal static string selall {
+        public static string selall {
             get {
                 return ResourceManager.GetString("selall", resourceCulture);
             }
@@ -1612,7 +1621,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 設定.
         /// </summary>
-        internal static string settings {
+        public static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
             }
@@ -1621,7 +1630,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 展示密度顏色.
         /// </summary>
-        internal static string showdensitycolor {
+        public static string showdensitycolor {
             get {
                 return ResourceManager.GetString("showdensitycolor", resourceCulture);
             }
@@ -1630,7 +1639,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 僅顯示上傳失敗項.
         /// </summary>
-        internal static string showfailonly {
+        public static string showfailonly {
             get {
                 return ResourceManager.GetString("showfailonly", resourceCulture);
             }
@@ -1639,7 +1648,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 關閉程式.
         /// </summary>
-        internal static string shutdown {
+        public static string shutdown {
             get {
                 return ResourceManager.GetString("shutdown", resourceCulture);
             }
@@ -1648,7 +1657,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 訊號計數.
         /// </summary>
-        internal static string signalcount {
+        public static string signalcount {
             get {
                 return ResourceManager.GetString("signalcount", resourceCulture);
             }
@@ -1657,7 +1666,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 訊號分佈極座標圖.
         /// </summary>
-        internal static string signalpolarchart {
+        public static string signalpolarchart {
             get {
                 return ResourceManager.GetString("signalpolarchart", resourceCulture);
             }
@@ -1666,7 +1675,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 字串前後不允許空格.
         /// </summary>
-        internal static string spacenotallowed {
+        public static string spacenotallowed {
             get {
                 return ResourceManager.GetString("spacenotallowed", resourceCulture);
             }
@@ -1675,7 +1684,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 用分號分隔的地址，需指定http(s).
         /// </summary>
-        internal static string spiltby {
+        public static string spiltby {
             get {
                 return ResourceManager.GetString("spiltby", resourceCulture);
             }
@@ -1684,7 +1693,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 部分電臺不支援讀取異頻資訊或讀取的數據錯誤，因此本功能預設未開啟。.
         /// </summary>
-        internal static string splithelp {
+        public static string splithelp {
             get {
                 return ResourceManager.GetString("splithelp", resourceCulture);
             }
@@ -1693,7 +1702,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to URL 必須以 http:// 或 https:// 開頭！.
         /// </summary>
-        internal static string startwithhttp {
+        public static string startwithhttp {
             get {
                 return ResourceManager.GetString("startwithhttp", resourceCulture);
             }
@@ -1702,7 +1711,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 站點方位分佈 - {0}波段 {1}.
         /// </summary>
-        internal static string stationbearing {
+        public static string stationbearing {
             get {
                 return ResourceManager.GetString("stationbearing", resourceCulture);
             }
@@ -1711,7 +1720,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 站點距離分佈 - {0}波段 {1}.
         /// </summary>
-        internal static string stationdistance {
+        public static string stationdistance {
             get {
                 return ResourceManager.GetString("stationdistance", resourceCulture);
             }
@@ -1720,7 +1729,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog 站點ID.
         /// </summary>
-        internal static string stationid {
+        public static string stationid {
             get {
                 return ResourceManager.GetString("stationid", resourceCulture);
             }
@@ -1729,7 +1738,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 站點名稱.
         /// </summary>
-        internal static string stationname {
+        public static string stationname {
             get {
                 return ResourceManager.GetString("stationname", resourceCulture);
             }
@@ -1738,7 +1747,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 解碼站點統計.
         /// </summary>
-        internal static string stationstatisticgraph {
+        public static string stationstatisticgraph {
             get {
                 return ResourceManager.GetString("stationstatisticgraph", resourceCulture);
             }
@@ -1747,7 +1756,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 停止位.
         /// </summary>
-        internal static string stopbit {
+        public static string stopbit {
             get {
                 return ResourceManager.GetString("stopbit", resourceCulture);
             }
@@ -1756,7 +1765,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 成功！.
         /// </summary>
-        internal static string success {
+        public static string success {
             get {
                 return ResourceManager.GetString("success", resourceCulture);
             }
@@ -1765,7 +1774,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 此QSO上傳成功。.
         /// </summary>
-        internal static string successqso {
+        public static string successqso {
             get {
                 return ResourceManager.GetString("successqso", resourceCulture);
             }
@@ -1774,7 +1783,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 同時報告電臺資訊到.
         /// </summary>
-        internal static string syncrigto {
+        public static string syncrigto {
             get {
                 return ResourceManager.GetString("syncrigto", resourceCulture);
             }
@@ -1783,7 +1792,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上傳失敗.
         /// </summary>
-        internal static string t_Fail {
+        public static string t_Fail {
             get {
                 return ResourceManager.GetString("t_Fail", resourceCulture);
             }
@@ -1792,7 +1801,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 忽略上傳.
         /// </summary>
-        internal static string t_Ignored {
+        public static string t_Ignored {
             get {
                 return ResourceManager.GetString("t_Ignored", resourceCulture);
             }
@@ -1801,7 +1810,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 等待中....
         /// </summary>
-        internal static string t_Pending {
+        public static string t_Pending {
             get {
                 return ResourceManager.GetString("t_Pending", resourceCulture);
             }
@@ -1810,7 +1819,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 重試中....
         /// </summary>
-        internal static string t_Retrying {
+        public static string t_Retrying {
             get {
                 return ResourceManager.GetString("t_Retrying", resourceCulture);
             }
@@ -1819,7 +1828,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上傳成功.
         /// </summary>
-        internal static string t_Success {
+        public static string t_Success {
             get {
                 return ResourceManager.GetString("t_Success", resourceCulture);
             }
@@ -1828,7 +1837,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上傳中...
         /// </summary>
-        internal static string t_Uploading {
+        public static string t_Uploading {
             get {
                 return ResourceManager.GetString("t_Uploading", resourceCulture);
             }
@@ -1837,7 +1846,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 目標電臺.
         /// </summary>
-        internal static string targetrig {
+        public static string targetrig {
             get {
                 return ResourceManager.GetString("targetrig", resourceCulture);
             }
@@ -1846,7 +1855,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to * 每次修改配置後，您必須點選“測試”來測試並應用本次更改。.
         /// </summary>
-        internal static string testandapply {
+        public static string testandapply {
             get {
                 return ResourceManager.GetString("testandapply", resourceCulture);
             }
@@ -1855,7 +1864,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 測試.
         /// </summary>
-        internal static string testconn {
+        public static string testconn {
             get {
                 return ResourceManager.GetString("testconn", resourceCulture);
             }
@@ -1864,7 +1873,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 測試中....
         /// </summary>
-        internal static string testing {
+        public static string testing {
             get {
                 return ResourceManager.GetString("testing", resourceCulture);
             }
@@ -1873,7 +1882,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 主題色.
         /// </summary>
-        internal static string themecolor {
+        public static string themecolor {
             get {
                 return ResourceManager.GetString("themecolor", resourceCulture);
             }
@@ -1882,7 +1891,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 第三方日誌系統.
         /// </summary>
-        internal static string thirdpartylogsys {
+        public static string thirdpartylogsys {
             get {
                 return ResourceManager.GetString("thirdpartylogsys", resourceCulture);
             }
@@ -1891,7 +1900,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 錯誤.
         /// </summary>
-        internal static string titleerror {
+        public static string titleerror {
             get {
                 return ResourceManager.GetString("titleerror", resourceCulture);
             }
@@ -1900,7 +1909,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 提示.
         /// </summary>
-        internal static string titleinfo {
+        public static string titleinfo {
             get {
                 return ResourceManager.GetString("titleinfo", resourceCulture);
             }
@@ -1909,7 +1918,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 成功.
         /// </summary>
-        internal static string titlesuccess {
+        public static string titlesuccess {
             get {
                 return ResourceManager.GetString("titlesuccess", resourceCulture);
             }
@@ -1918,7 +1927,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 注意.
         /// </summary>
-        internal static string titlewarning {
+        public static string titlewarning {
             get {
                 return ResourceManager.GetString("titlewarning", resourceCulture);
             }
@@ -1927,7 +1936,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 工具.
         /// </summary>
-        internal static string tools {
+        public static string tools {
             get {
                 return ResourceManager.GetString("tools", resourceCulture);
             }
@@ -1936,7 +1945,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 前10 DXCC - {0}波段 {1}.
         /// </summary>
-        internal static string top10decoded {
+        public static string top10decoded {
             get {
                 return ResourceManager.GetString("top10decoded", resourceCulture);
             }
@@ -1945,7 +1954,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 總解碼數：.
         /// </summary>
-        internal static string totaldec {
+        public static string totaldec {
             get {
                 return ResourceManager.GetString("totaldec", resourceCulture);
             }
@@ -1954,7 +1963,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 總解碼數 / QSO數：.
         /// </summary>
-        internal static string totaldivqso {
+        public static string totaldivqso {
             get {
                 return ResourceManager.GetString("totaldivqso", resourceCulture);
             }
@@ -1963,7 +1972,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 已記錄數：.
         /// </summary>
-        internal static string totalrec {
+        public static string totalrec {
             get {
                 return ResourceManager.GetString("totalrec", resourceCulture);
             }
@@ -1972,7 +1981,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 已上傳數：.
         /// </summary>
-        internal static string totaluploaded {
+        public static string totaluploaded {
             get {
                 return ResourceManager.GetString("totaluploaded", resourceCulture);
             }
@@ -1981,7 +1990,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 最小化到托盤.
         /// </summary>
-        internal static string totray {
+        public static string totray {
             get {
                 return ResourceManager.GetString("totray", resourceCulture);
             }
@@ -1990,7 +1999,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to TQSL密碼.
         /// </summary>
-        internal static string tqslpassword {
+        public static string tqslpassword {
             get {
                 return ResourceManager.GetString("tqslpassword", resourceCulture);
             }
@@ -1999,7 +2008,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to TQSL路徑.
         /// </summary>
-        internal static string tqslpath {
+        public static string tqslpath {
             get {
                 return ResourceManager.GetString("tqslpath", resourceCulture);
             }
@@ -2008,7 +2017,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 透明度.
         /// </summary>
-        internal static string transparency {
+        public static string transparency {
             get {
                 return ResourceManager.GetString("transparency", resourceCulture);
             }
@@ -2017,7 +2026,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 發射中....
         /// </summary>
-        internal static string txing {
+        public static string txing {
             get {
                 return ResourceManager.GetString("txing", resourceCulture);
             }
@@ -2026,7 +2035,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 埠號應與JTDX/wsjt-x中設定的一致.預設為2237.
         /// </summary>
-        internal static string udpporthelp {
+        public static string udpporthelp {
             get {
                 return ResourceManager.GetString("udpporthelp", resourceCulture);
             }
@@ -2035,7 +2044,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDP伺服器.
         /// </summary>
-        internal static string udpserver {
+        public static string udpserver {
             get {
                 return ResourceManager.GetString("udpserver", resourceCulture);
             }
@@ -2044,7 +2053,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to UDP連線超時！.
         /// </summary>
-        internal static string udptimeout {
+        public static string udptimeout {
             get {
                 return ResourceManager.GetString("udptimeout", resourceCulture);
             }
@@ -2053,7 +2062,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 無法檢查apikey的可用性；請檢查輸入的地址是否正確！.
         /// </summary>
-        internal static string unable2checkapi {
+        public static string unable2checkapi {
             get {
                 return ResourceManager.GetString("unable2checkapi", resourceCulture);
             }
@@ -2062,7 +2071,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 未知.
         /// </summary>
-        internal static string unknown {
+        public static string unknown {
             get {
                 return ResourceManager.GetString("unknown", resourceCulture);
             }
@@ -2071,7 +2080,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 不支援的電臺頻率：.
         /// </summary>
-        internal static string unsupportedrigfreq {
+        public static string unsupportedrigfreq {
             get {
                 return ResourceManager.GetString("unsupportedrigfreq", resourceCulture);
             }
@@ -2080,7 +2089,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 不支援的電臺模式:.
         /// </summary>
-        internal static string unsupportedrigmode {
+        public static string unsupportedrigmode {
             get {
                 return ResourceManager.GetString("unsupportedrigmode", resourceCulture);
             }
@@ -2089,7 +2098,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 更新呼號和國家數據.
         /// </summary>
-        internal static string updatebigcty {
+        public static string updatebigcty {
             get {
                 return ResourceManager.GetString("updatebigcty", resourceCulture);
             }
@@ -2098,7 +2107,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 更新呼號和國家數據失敗：{0}！.
         /// </summary>
-        internal static string updatebigctyfailed {
+        public static string updatebigctyfailed {
             get {
                 return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
             }
@@ -2108,7 +2117,7 @@ namespace CloudlogHelper.Resources.Language {
         ///   Looks up a localized string similar to 更新呼號和國家數據成功！
         ///寫入呼號規則{0}個，國家數據{1}個.
         /// </summary>
-        internal static string updatebigctysuccess {
+        public static string updatebigctysuccess {
             get {
                 return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
             }
@@ -2117,7 +2126,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動上傳QSO到Cloudlog.
         /// </summary>
-        internal static string upload2cloudlog {
+        public static string upload2cloudlog {
             get {
                 return ResourceManager.GetString("upload2cloudlog", resourceCulture);
             }
@@ -2126,7 +2135,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動上傳QSO到Clublog.
         /// </summary>
-        internal static string upload2clublog {
+        public static string upload2clublog {
             get {
                 return ResourceManager.GetString("upload2clublog", resourceCulture);
             }
@@ -2135,7 +2144,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 自動上傳QSO到HamCQ.
         /// </summary>
-        internal static string upload2hamcq {
+        public static string upload2hamcq {
             get {
                 return ResourceManager.GetString("upload2hamcq", resourceCulture);
             }
@@ -2144,7 +2153,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ✅️ QSO上傳成功！.
         /// </summary>
-        internal static string uploadedaqso {
+        public static string uploadedaqso {
             get {
                 return ResourceManager.GetString("uploadedaqso", resourceCulture);
             }
@@ -2153,7 +2162,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to ☹️ QSO 上傳失敗！.
         /// </summary>
-        internal static string uploadfailedaqso {
+        public static string uploadfailedaqso {
             get {
                 return ResourceManager.GetString("uploadfailedaqso", resourceCulture);
             }
@@ -2162,7 +2171,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上傳中....
         /// </summary>
-        internal static string uploading {
+        public static string uploading {
             get {
                 return ResourceManager.GetString("uploading", resourceCulture);
             }
@@ -2171,7 +2180,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 正在上傳此QSO。.
         /// </summary>
-        internal static string uploadingqso {
+        public static string uploadingqso {
             get {
                 return ResourceManager.GetString("uploadingqso", resourceCulture);
             }
@@ -2180,7 +2189,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上傳電臺資訊.
         /// </summary>
-        internal static string uploadriginfo {
+        public static string uploadriginfo {
             get {
                 return ResourceManager.GetString("uploadriginfo", resourceCulture);
             }
@@ -2189,7 +2198,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 上報狀態.
         /// </summary>
-        internal static string uploadstatus {
+        public static string uploadstatus {
             get {
                 return ResourceManager.GetString("uploadstatus", resourceCulture);
             }
@@ -2198,7 +2207,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 示例: http://cloudlog.com.
         /// </summary>
-        internal static string urlexample {
+        public static string urlexample {
             get {
                 return ResourceManager.GetString("urlexample", resourceCulture);
             }
@@ -2207,7 +2216,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to URL格式有誤！.
         /// </summary>
-        internal static string urlformaterror {
+        public static string urlformaterror {
             get {
                 return ResourceManager.GetString("urlformaterror", resourceCulture);
             }
@@ -2216,7 +2225,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 使用外部rigctld服務.
         /// </summary>
-        internal static string useexternalrigctld {
+        public static string useexternalrigctld {
             get {
                 return ResourceManager.GetString("useexternalrigctld", resourceCulture);
             }
@@ -2225,7 +2234,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 使用者名稱.
         /// </summary>
-        internal static string username {
+        public static string username {
             get {
                 return ResourceManager.GetString("username", resourceCulture);
             }
@@ -2234,7 +2243,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 等待連線...
         /// </summary>
-        internal static string waitconn {
+        public static string waitconn {
             get {
                 return ResourceManager.GetString("waitconn", resourceCulture);
             }
@@ -2243,7 +2252,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 5分鐘內取得的每分鐘QSO平均值。.
         /// </summary>
-        internal static string within5min {
+        public static string within5min {
             get {
                 return ResourceManager.GetString("within5min", resourceCulture);
             }
@@ -2252,7 +2261,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 熱力圖 - {0}波段 {1}.
         /// </summary>
-        internal static string worldheatmap {
+        public static string worldheatmap {
             get {
                 return ResourceManager.GetString("worldheatmap", resourceCulture);
             }
@@ -2261,7 +2270,7 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to 年度QSO數.
         /// </summary>
-        internal static string yearqsos {
+        public static string yearqsos {
             get {
                 return ResourceManager.GetString("yearqsos", resourceCulture);
             }

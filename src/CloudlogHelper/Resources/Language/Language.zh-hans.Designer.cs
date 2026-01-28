@@ -1547,6 +1547,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 右键点击 QSO 查看更多.
+        /// </summary>
+        public static string rightclick2seemore {
+            get {
+                return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 电台型号.
         /// </summary>
         public static string rigmodel {

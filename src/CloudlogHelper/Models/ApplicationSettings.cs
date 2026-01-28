@@ -14,7 +14,6 @@ namespace CloudlogHelper.Models;
 ///     Application-wide settings
 /// </summary>
 [FastClonerClonable]
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]
 public class ApplicationSettings : ReactiveValidationObject
 {
     /// <summary>

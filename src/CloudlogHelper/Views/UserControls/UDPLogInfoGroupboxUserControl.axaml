@@ -9,6 +9,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
              x:Class="CloudlogHelper.Views.UserControls.UDPLogInfoGroupboxUserControl"
+             x:Name="ThisControl"
              x:DataType="userControls:UDPLogInfoGroupboxUserControlViewModel">
     <Design.DataContext>
         <userControls:UDPLogInfoGroupboxUserControlViewModel />
@@ -78,16 +79,25 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True"
-                                           ToolTip.Tip="{I18N {x:Static resources:LangKeys.doubletap2seemore}}"
+                                           ToolTip.Tip="{I18N {x:Static resources:LangKeys.rightclick2seemore}}"
                                            Cursor="Hand"
                                            Background="Transparent">
+                                    
+                                    <!-- fallback option for aot -->
+                                    <DockPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Show Detail"
+                                                      Command="{Binding ElementName=ThisControl, Path=DataContext.ShowQSODetailCommand}"
+                                                      CommandParameter="{Binding}" />
+                                        </ContextMenu>
+                                    </DockPanel.ContextMenu>
+                                    
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
                                             <!-- This binding is a bit weird however it does works... -->
                                             <InvokeCommandAction
-                                                Command="{Binding ((userControls:UDPLogInfoGroupboxUserControlViewModel)DataContext).ShowQSODetailCommand,
-                                                RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                CommandParameter="{Binding}" />
+                                                Command="{Binding ElementName=ThisControl, Path=DataContext.ShowQSODetailCommand}"
+                                                CommandParameter="{Binding}"  />
                                         </EventTriggerBehavior>
                                     </Interaction.Behaviors>
 

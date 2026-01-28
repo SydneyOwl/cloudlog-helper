@@ -12,7 +12,6 @@ using HtmlAgilityPack;
 
 namespace CloudlogHelper.LogService;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("eqsl.cc", Description = "eqsl Log Service")]
 public class EqslThirdPartyLogService : ThirdPartyLogService
 {

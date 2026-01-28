@@ -8,8 +8,6 @@ using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
-
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("QRZ.com", Description = "QRZ Log Service")]
 public class QRZThirdPartyLogService : ThirdPartyLogService
 {

@@ -19,8 +19,6 @@ namespace CloudlogHelper.LogService;
 
 // https://lotw.arrl.org/lotw-help/cmdline/
 
-
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 [LogService("LoTW", Description = "LoTW Log Service")]
 public class LoTWThirdPartyLogService : ThirdPartyLogService
 {

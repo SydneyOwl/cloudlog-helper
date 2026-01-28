@@ -483,7 +483,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Qsos today.
+        ///   Looks up a localized string similar to QSOs today.
         /// </summary>
         public static string dayqsos {
             get {
@@ -1542,6 +1542,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string rigdata {
             get {
                 return ResourceManager.GetString("rigdata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right click QSO to see more.
+        /// </summary>
+        public static string rightclick2seemore {
+            get {
+                return ResourceManager.GetString("rightclick2seemore", resourceCulture);
             }
         }
         

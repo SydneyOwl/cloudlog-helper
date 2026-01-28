@@ -781,4 +781,7 @@
     <data name="bigctyhint" xml:space="preserve">
         <value>您可以选择cty.dat或bigcty.dat进行导入。您可以在https://www.country-files.com/找到。</value>
     </data>
+    <data name="rightclick2seemore" xml:space="preserve">
+        <value>右键点击 QSO 查看更多</value>
+    </data>
 </root>

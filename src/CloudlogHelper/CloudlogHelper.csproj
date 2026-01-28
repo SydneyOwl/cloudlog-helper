@@ -24,6 +24,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <TrimmerRootDescriptor Include="TrimmerRoots.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
         <AvaloniaResource Remove="Hamlib\**"/>
     </ItemGroup>
@@ -31,16 +35,16 @@
     <ItemGroup>
         <PackageReference Include="Antelcat.I18N.Avalonia" Version="1.1.2"/>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
-        <PackageReference Include="Avalonia" Version="11.3.1"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.3.1"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.1"/>
+        <PackageReference Include="Avalonia" Version="11.3.7"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.7"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.7"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.7"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.1">
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.7">
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.1"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.7"/>
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
         <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.10"/>
         <PackageReference Include="DesktopNotifications.Avalonia" Version="1.3.1"/>
@@ -64,8 +68,8 @@
         <PackageReference Include="System.Text.Json" Version="10.0.2" />
         <PackageReference Include="WsjtxUtilsPatch.WsjtxMessages" Version="1.0.4"/>
         <PackageReference Include="WsjtxUtilsPatch.WsjtxUdpServer" Version="1.0.4"/>
-        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.1"/>
-        <PackageReference Include="Xaml.Behaviors.Interactivity" Version="11.3.1"/>
+        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.6.6"/>
+        <PackageReference Include="Xaml.Behaviors.Interactivity" Version="11.3.6.6"/>
     </ItemGroup>
 
     <Choose>
@@ -152,16 +156,6 @@
 
     <ItemGroup>
         <Compile Remove="Hamlib\**" />
-        <Compile Update="Resources\DXCC\DXCC.zh-hant.Designer.cs">
-          <DesignTime>True</DesignTime>
-          <AutoGen>True</AutoGen>
-          <DependentUpon>DXCC.zh-hant.resx</DependentUpon>
-        </Compile>
-        <Compile Update="Resources\Language\Language.zh-hant.Designer.cs">
-          <DesignTime>True</DesignTime>
-          <AutoGen>True</AutoGen>
-          <DependentUpon>Language.zh-hant.resx</DependentUpon>
-        </Compile>
     </ItemGroup>
 
     <ItemGroup>

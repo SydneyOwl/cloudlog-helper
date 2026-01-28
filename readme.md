@@ -329,6 +329,7 @@ The program automatically discovers classes marked with `LogServiceAttribute`, a
 + Create a class inheriting from `ThirdPartyLogService` and mark it with `[LogService("Service Name")]`.
 + Add properties for each user-configurable field (e.g., API key, username) and mark them with `[UserInput("Display Name")]`.
 + Implement two methods: one to test the connection to the service backend and another to upload QSO data to the log service. You do not need to handle potential exceptions within these methods.
++ Add attribute `[JsonDerivedType(typeof(YOURSERVICE), nameof(YOURSERVICE))]` to ThirdPartyLogService to ensure log service settings are correctly recognized and persisted in AOT environments.
 
 ### 📡 Custom Backend Support
 

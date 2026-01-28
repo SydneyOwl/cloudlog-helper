@@ -312,7 +312,8 @@
                                     <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Spacing="8"
                                                 IsEnabled="{Binding !#externalRigctld.IsChecked}">
                                         <ComboBox Classes="setting-control"
-                                                  SelectedItem="{Binding DraftSettings.HamlibSettings.SelectedPort}"
+                                                  IsEditable="True"
+                                                  Text="{Binding DraftSettings.HamlibSettings.SelectedPort}"
                                                   ItemsSource="{Binding Ports}" />
                                         <Button Command="{Binding RefreshPort}" CornerRadius="4"
                                                 Content="{avalonia:MaterialIconExt Kind=Refresh}"

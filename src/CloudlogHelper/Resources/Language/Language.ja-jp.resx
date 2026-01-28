@@ -773,4 +773,7 @@
         <value>cty.datまたはbigcty.datをインポートするために選択できます。詳細はhttps://www.country-files.com/でご確認ください。
 </value>
     </data>
+    <data name="rightclick2seemore" xml:space="preserve">
+        <value>QSO を右クリックして詳細を表示</value>
+    </data>
 </root>

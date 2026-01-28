@@ -56,26 +56,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
-    public UDPLogInfoGroupboxUserControlViewModel()
+    private void _appendTestData()
     {
-        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
-        SelectAllCommand = ReactiveCommand.Create(() => { });
-        ShowQSODetailCommand = ReactiveCommand.Create<RecordedCallsignDetail, Unit>(_ => Unit.Default);
-        ReuploadSelectedCommand = ReactiveCommand.Create(() => { });
-        ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
-        IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
-        DeleteSelectedCommand = ReactiveCommand.Create(() => { });
-
-        I18NExtension.Culture = new CultureInfo("ja-JP");
-
-        // Task.Run(async () =>
-        // {
-        //     await Task.Delay(3000);
-        //     I18NExtension.Culture = new CultureInfo("en-US");
-        //     await Task.Delay(3000);
-        //     I18NExtension.Culture = new CultureInfo("zh-CN");
-        // });
-        
         var testQso = new RecordedCallsignDetail
         {
             OriginalCountryName = "Juan de Nova, Europa",
@@ -119,13 +101,21 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         };
 
         for (var i = 0; i < 10; i++) FilteredQsos.Add(testQso);
+    }
 
-        // TxStatus = true;
-        // MsgSending = "Hello sending...";
+    public UDPLogInfoGroupboxUserControlViewModel()
+    {
+        if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
+        SelectAllCommand = ReactiveCommand.Create(() => { });
+        ShowQSODetailCommand = ReactiveCommand.Create<RecordedCallsignDetail, Unit>(_ => Unit.Default);
+        ReuploadSelectedCommand = ReactiveCommand.Create(() => { });
+        ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
+        IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
+        DeleteSelectedCommand = ReactiveCommand.Create(() => { });
 
-        // TimeoutStatus = true;
+        I18NExtension.Culture = new CultureInfo("ja-JP");
 
-        // WaitFirstConn = true;
+        _appendTestData();
     }
 
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollectionExtended<RecordedCallsignDetail>))]

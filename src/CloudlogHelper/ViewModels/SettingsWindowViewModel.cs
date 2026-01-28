@@ -340,15 +340,14 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _refreshPort()
     {
-        // return;
         Ports = SerialPort.GetPortNames().ToList();
-        var tmp = DraftSettings.HamlibSettings.SelectedPort;
-        if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
+        // var tmp = DraftSettings.HamlibSettings.SelectedPort;
+        // if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
         // if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.SelectedPort))
         //     DraftSettings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
         // reset port name
-        DraftSettings.HamlibSettings.SelectedPort = "";
-        DraftSettings.HamlibSettings.SelectedPort = tmp;
+        // DraftSettings.HamlibSettings.SelectedPort = "";
+        // DraftSettings.HamlibSettings.SelectedPort = tmp;
     }
 
     private void _discardConf()
