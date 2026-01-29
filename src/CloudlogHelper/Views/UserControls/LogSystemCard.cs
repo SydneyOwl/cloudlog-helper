@@ -292,7 +292,6 @@ public class LogSystemCard : UserControl
         catch (Exception ex)
         {
             await HandleTestConnectionException(ex);
-            throw;
         }
     }
 
@@ -354,5 +353,7 @@ public class LogSystemCard : UserControl
         {
             await viewModel.Notification.SendErrorNotificationAsync(actualEx.Message);
         }
+        
+        throw ex;
     }
 }

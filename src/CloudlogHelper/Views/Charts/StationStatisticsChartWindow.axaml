@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:charts="clr-namespace:CloudlogHelper.ViewModels.Charts"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
         Width="1000" Height="700" CanResize="False"
         x:Class="CloudlogHelper.Views.Charts.StationStatisticsChartWindow"
@@ -55,23 +56,34 @@
                     Spacing="10"
                     Margin="10"
                     Height="40">
+            
+            <Button Content="{avalonia:MaterialIconExt Kind=SwapCalls}" HorizontalAlignment="Stretch"
+                    Command="{Binding ChangeSingleChart}"
+                    Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+            
+            <ToggleButton Content="{avalonia:MaterialIconExt Kind=LocationOn}" HorizontalAlignment="Stretch"
+                    IsVisible="{Binding ShouldShowLocation}"
+                    Command="{Binding ChangeSingleChart}"
+                    Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+            
 
-            <Button Content="{I18N {x:Static resources:LangKeys.refresh}}"
-                    HorizontalAlignment="Stretch"
+            <Button Content="{avalonia:MaterialIconExt Kind=Refresh}" HorizontalAlignment="Stretch"
                     Command="{Binding RefreshChart}"
                     Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-            <ToggleButton Content="{I18N {x:Static resources:LangKeys.pause}}"
+            <ToggleButton Content="{avalonia:MaterialIconExt Kind=Pause}"
                           HorizontalAlignment="Stretch"
                           IsChecked="{Binding UpdatePaused}"
                           Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                           BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-            <Button Content="{I18N {x:Static resources:LangKeys.clear}}"
+            <Button Content="{avalonia:MaterialIconExt Kind=RestartAlert}"
                     HorizontalAlignment="Stretch"
                     Command="{Binding ClearChart}"
-                    Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                    Background="DarkOrange"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
             <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}" IsChecked="{Binding AutoSwitchEnabled}"

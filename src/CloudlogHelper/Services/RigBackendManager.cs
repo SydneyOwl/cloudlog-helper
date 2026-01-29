@@ -438,7 +438,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                 }
 
                 _ = await service.GetAllRigInfo(draftSettings.HamlibSettings.ReportRFPower,
-                    draftSettings.HamlibSettings.ReportSplitInfo, CancellationToken.None, ip, port);
+                    draftSettings.HamlibSettings.ReportSplitInfo, token, ip, port);
 
                 if (!_appSettings.HamlibSettings.PollAllowed)
                     // stop if polling is not enabled
@@ -448,7 +448,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
             if (backendServiceEnum == RigBackendServiceEnum.FLRig)
             {
-                await service.GetAllRigInfo(false, false, CancellationToken.None,
+                await service.GetAllRigInfo(false, false, token,
                     draftSettings.FLRigSettings.FLRigHost, draftSettings.FLRigSettings.FLRigPort);
                 return;
             }
@@ -456,13 +456,14 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             if (backendServiceEnum == RigBackendServiceEnum.OmniRig)
             {
                 await service.StartService(_getNewCancellationProcessToken(), draftSettings.OmniRigSettings.SelectedRig);
-                await service.GetAllRigInfo(false, false, CancellationToken.None);
+                await service.GetAllRigInfo(false, false, token);
                 return;
             }
         }
         catch
         {
             if (!token.IsCancellationRequested) throw;
+            ClassLogger.Trace("Rig test is cancelled. Ignoring exceptions");
         }
     }
 

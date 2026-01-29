@@ -24,12 +24,22 @@ using ScottPlot.TickGenerators;
 
 namespace CloudlogHelper.ViewModels.Charts;
 
+internal enum PlotType
+{
+    TopDXCC,
+    StationDistance,
+    StationBearing,
+    WorldHeatmap
+}
+
 public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 {
     /// <summary>
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+
+    private Dictionary<PlotType, Plot> _plotCache = new();
 
     private readonly Color[] colors =
     {
@@ -62,11 +72,16 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         RefreshChart = ReactiveCommand.Create(UpdateChart);
         ClearChart = ReactiveCommand.Create(ClearData);
+        ChangeSingleChart = ReactiveCommand.Create(_changeSinglePlot);
 
         PlotControl = new AvaPlot();
         PlotControl.Multiplot.AddPlots(4);
         PlotControl.Multiplot.Layout = new Grid(2, 2);
-        // PlotControl.UserInputProcessor.Disable();
+
+        _plotCache[PlotType.TopDXCC] = PlotControl.Multiplot.GetPlot(0);
+        _plotCache[PlotType.StationDistance] = PlotControl.Multiplot.GetPlot(1);
+        _plotCache[PlotType.StationBearing] = PlotControl.Multiplot.GetPlot(2);
+        _plotCache[PlotType.WorldHeatmap] = PlotControl.Multiplot.GetPlot(3);
 
         _chartDataCacheService.GetItemAddedObservable()
             .Do(item => SampleCount += 1)
@@ -76,6 +91,11 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         this.WhenActivated(disposable =>
         {
+            this.WhenAnyValue(x => x.SelectedChart)
+                .Select(selected => false)
+                // .Select(selected => selected == 4 || selected == 0)
+                .BindTo(this, x => x.ShouldShowLocation);
+            
             this.WhenAnyValue(x => x.SelectedBand,
                     x => x.SelectedClient,
                     x => x.SelectedMode,
@@ -94,13 +114,57 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
     public ReactiveCommand<Unit, Unit> RefreshChart { get; }
     public ReactiveCommand<Unit, Unit> ClearChart { get; }
+    
+    public ReactiveCommand<Unit, Unit> ChangeSingleChart { get; }
     [Reactive] public int SampleCount { get; set; }
+    
+    [Reactive] public int SelectedChart  {get; set; }
+    
+    [Reactive] public bool ShouldShowLocation {get; set; }
+
+    private void _changeSinglePlot()
+    {
+        switch (++SelectedChart % 5)
+        {
+            case 0:
+                PlotControl.Multiplot.Layout = new Grid(2, 2);
+                foreach (var keyValuePair in _plotCache)
+                {
+                    PlotControl.Multiplot.RemovePlot(keyValuePair.Value);
+                }
+                
+                foreach (var keyValuePair in _plotCache)
+                {
+                    PlotControl.Multiplot.AddPlot(keyValuePair.Value);
+                }
+                
+                break;
+            case 1:
+                PlotControl.Multiplot.Layout = new Grid(1, 1);
+                PlotControl.Multiplot.Reset(_plotCache[PlotType.TopDXCC]);
+                break;
+            case 2:
+                PlotControl.Multiplot.Layout = new Grid(1, 1);
+                PlotControl.Multiplot.Reset(_plotCache[PlotType.StationDistance]);
+                break;
+            case 3:
+                PlotControl.Multiplot.Layout = new Grid(1, 1);
+                PlotControl.Multiplot.Reset(_plotCache[PlotType.StationBearing]);
+                break;
+            case 4:
+                PlotControl.Multiplot.Layout = new Grid(1, 1);
+                PlotControl.Multiplot.Reset(_plotCache[PlotType.WorldHeatmap]);
+                break;
+        }
+        PlotControl.Refresh();
+        if (SelectedChart == 5) SelectedChart = 0;
+    }
 
     private void _updatePlot_top10decoded()
     {
         ClassLogger.Trace("Updating bar1.");
 
-        var plot1 = PlotControl.Multiplot.GetPlot(0);
+        var plot1 = _plotCache[PlotType.TopDXCC];
         plot1.Clear();
 
         var bandData = _chartDataCacheService.GetStationCountByBand(SelectedBand);
@@ -161,7 +225,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ? Color.FromHex("#64B5F6")
             : Color.FromHex("#4DB6AC");
 
-        var plot2 = PlotControl.Multiplot.GetPlot(1);
+        var plot2 = _plotCache[PlotType.StationDistance];
         plot2.Clear();
 
         var bandData = _chartDataCacheService.GetDistanceHistogramByBand(SelectedBand);
@@ -196,7 +260,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ? Color.FromHex("#FFB74D")
             : Color.FromHex("#FF9800");
 
-        var plot3 = PlotControl.Multiplot.GetPlot(2);
+        var plot3 = _plotCache[PlotType.StationBearing];
         plot3.Clear();
 
         var bandData = _chartDataCacheService.GetBearingHistogramByBand(SelectedBand);
@@ -250,7 +314,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     {
         ClassLogger.Trace("Updating heatmap plot.");
 
-        var plot4 = PlotControl.Multiplot.GetPlot(3);
+        var plot4 = _plotCache[PlotType.WorldHeatmap];
         plot4.Clear();
 
         plot4.Title($"World Heatmap - {SelectedBand} Band");

@@ -254,6 +254,7 @@ public class App : Application
         TaskScheduler.UnobservedTaskException += (sender, e) =>
         {
             ClassLogger.Error($"Unobserved Task Exception occurred! Ignoring it sliently: {e.Exception.Message} - {e.Exception.StackTrace}");   
+            e.SetObserved();
         };
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
