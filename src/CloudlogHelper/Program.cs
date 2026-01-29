@@ -38,7 +38,7 @@ internal sealed class Program
             var tmp = Path.GetTempFileName();
             File.WriteAllText(tmp,
                 $@"App version: {VersionInfo.Version} @ {VersionInfo.Commit}
-Environment: {RuntimeInformation.RuntimeIdentifier}, {RuntimeInformation.OSDescription}
+Environment: {RuntimeInformation.RuntimeIdentifier}, {RuntimeInformation.OSDescription}, {VersionInfo.BuildType}
 Type：{ex.Message}
 Stack：{ex.StackTrace}
 
