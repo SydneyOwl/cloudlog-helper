@@ -56,6 +56,7 @@
         <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1"/>
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
         <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
+        <PackageReference Include="Nager.Country" Version="4.3.5" />
         <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
         <PackageReference Include="NLog" Version="5.4.0"/>
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41"/>
@@ -124,6 +125,8 @@
         <EmbeddedResource Update="Resources\Language\Language.zh-hant.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
+        <None Remove="Resources\dxcc-info.dat" />
+        <EmbeddedResource Include="Resources\dxcc-info.dat" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">

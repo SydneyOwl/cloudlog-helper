@@ -1173,4 +1173,7 @@
     <data name="Zimbabwe" xml:space="preserve">
         <value>Zimbabwe</value>
     </data>
+    <data name="Taiwan" xml:space="preserve">
+        <value>Taiwan</value>
+    </data>
 </root>
