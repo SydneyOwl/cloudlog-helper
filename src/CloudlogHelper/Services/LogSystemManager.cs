@@ -30,8 +30,7 @@ public class LogSystemManager : ILogSystemManager, IDisposable
 
     public async Task PreInitLogSystem(IEnumerable<ThirdPartyLogService> ls)
     {
-        var preinitToken = new CancellationTokenSource();
-        preinitToken.CancelAfter(TimeSpan.FromSeconds(DefaultConfigs.LogServicePreinitTimeoutSec));
+        using var preinitToken = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.LogServicePreinitTimeoutSec));
         
         ClassLogger.Debug("Pre-initing log services");
         // initialize services at background

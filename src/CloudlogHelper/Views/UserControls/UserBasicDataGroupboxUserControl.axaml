@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="300"
+             mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="300"
              x:Class="CloudlogHelper.Views.UserControls.UserBasicDataGroupboxUserControl"
              x:DataType="userControls:UserBasicDataGroupboxUserControlViewModel">
 
@@ -13,80 +14,100 @@
         <userControls:UserBasicDataGroupboxUserControlViewModel />
     </Design.DataContext>
 
-    <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}" Margin="10"
-                            MaxWidth="450"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+    <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}" 
+                            Margin="10"
+                            MaxWidth="480"
+                            HorizontalAlignment="Stretch" 
+                            HorizontalContentAlignment="Stretch">
         <Border CornerRadius="12"
-                Padding="16" BorderThickness="1"
+                Padding="16" 
+                BorderThickness="1"
                 BorderBrush="{DynamicResource ThemeBorderMidBrush}"
-                HorizontalAlignment="Stretch">
+                Background="{DynamicResource ThemeControlLowBrush}">
 
             <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" 
-                  ColumnDefinitions="2*,3*,*"
-                  ColumnSpacing="10"
-                  VerticalAlignment="Center" HorizontalAlignment="Center">
+                  ColumnDefinitions="Auto,*,Auto,Auto"
+                  RowSpacing="6"
+                  VerticalAlignment="Center">
 
-                <!-- op -->
-                <TextBlock Grid.Row="0" Grid.Column="0"
+                <!-- OP -->
+                <avalonia:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="Account" 
+                                        Foreground="{DynamicResource ThemeForegroundBrush}" 
+                                        Width="20" Height="20" Margin="0,0,12,0"/>
+                <TextBlock Grid.Row="0" Grid.Column="1"
                            Text="{I18N {x:Static resources:LangKeys.op}}"
-                           FontSize="15"
-                           VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <Border Grid.Row="0" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch">
-                    <TextBlock Text="{Binding OP}" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Left"
-                               TextWrapping="Wrap" 
-                               MaxWidth="250" /> 
+                           FontSize="14" VerticalAlignment="Center" />
+                <Border Grid.Row="0" Grid.Column="2" CornerRadius="8" Padding="10,6"
+                        Background="{DynamicResource ThemeAccentBrush}" 
+                        HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding OP}" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource ThemeForegroundOnAccentBrush}"
+                               HorizontalAlignment="Right" TextWrapping="Wrap" MaxWidth="180"/>
                 </Border>
 
-                <!-- grid -->
-                <TextBlock Grid.Row="1" Grid.Column="0"
+                <!-- Grid -->
+                <avalonia:MaterialIcon Grid.Row="1" Grid.Column="0" Kind="MapMarker" 
+                                        Foreground="{DynamicResource ThemeForegroundBrush}" 
+                                        Width="20" Height="20" Margin="0,0,12,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="1"
                            Text="{I18N {x:Static resources:LangKeys.grid}}"
-                           FontSize="15"
-                           VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <Border Grid.Row="1" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch">
-                    <TextBlock Text="{Binding GridSquare}" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                           FontSize="14" VerticalAlignment="Center" />
+                <Border Grid.Row="1" Grid.Column="2" CornerRadius="8" Padding="10,6"
+                        Background="{DynamicResource ThemeControlMidBrush}">
+                    <TextBlock Text="{Binding GridSquare}" FontSize="14" FontWeight="SemiBold"
+                               HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
                 </Border>
 
-                <!-- today -->
-                <TextBlock Grid.Row="2" Grid.Column="0"
+                <!-- Today QSOs -->
+                <avalonia:MaterialIcon Grid.Row="2" Grid.Column="0" Kind="CalendarToday" 
+                                        Foreground="{DynamicResource ThemeForegroundBrush}" 
+                                        Width="20" Height="20" Margin="0,0,12,0"/>
+                <TextBlock Grid.Row="2" Grid.Column="1"
                            Text="{I18N {x:Static resources:LangKeys.dayqsos}}"
-                           FontSize="15"
-                           VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <Border Grid.Row="2" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch">
-                    <TextBlock Text="{Binding QsToday}" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                           FontSize="14" VerticalAlignment="Center" />
+                <Border Grid.Row="2" Grid.Column="2" CornerRadius="8" Padding="10,6"
+                        Background="{DynamicResource ThemeControlMidBrush}">
+                    <TextBlock Text="{Binding QsToday}" FontSize="14" FontWeight="SemiBold"
+                               HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
                 </Border>
 
-                <!-- month -->
-                <TextBlock Grid.Row="3" Grid.Column="0"
+                <!-- Month QSOs -->
+                <avalonia:MaterialIcon Grid.Row="3" Grid.Column="0" Kind="CalendarMonth" 
+                                        Foreground="{DynamicResource ThemeForegroundBrush}" 
+                                        Width="20" Height="20" Margin="0,0,12,0"/>
+                <TextBlock Grid.Row="3" Grid.Column="1"
                            Text="{I18N {x:Static resources:LangKeys.monthqsos}}"
-                           FontSize="15"
-                           VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <Border Grid.Row="3" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch">
-                    <TextBlock Text="{Binding QsMonth}" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                           FontSize="14" VerticalAlignment="Center" />
+                <Border Grid.Row="3" Grid.Column="2" CornerRadius="8" Padding="10,6"
+                        Background="{DynamicResource ThemeControlMidBrush}">
+                    <TextBlock Text="{Binding QsMonth}" FontSize="14" FontWeight="SemiBold"
+                               HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
                 </Border>
 
-                <!-- Year QSO -->
-                <TextBlock Grid.Row="4" Grid.Column="0"
+                <!-- Year QSOs -->
+                <avalonia:MaterialIcon Grid.Row="4" Grid.Column="0" Kind="CalendarRange" 
+                                        Foreground="{DynamicResource ThemeForegroundBrush}" 
+                                        Width="20" Height="20" Margin="0,0,12,0"/>
+                <TextBlock Grid.Row="4" Grid.Column="1"
                            Text="{I18N {x:Static resources:LangKeys.yearqsos}}"
-                           FontSize="15"
-                           VerticalAlignment="Center" HorizontalAlignment="Left" />
-                <Border Grid.Row="4" Grid.Column="1" CornerRadius="6" Padding="8,4" Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch">
-                    <TextBlock Text="{Binding QsYear}" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                           FontSize="14" VerticalAlignment="Center" />
+                <Border Grid.Row="4" Grid.Column="2" CornerRadius="8" Padding="10,6"
+                        Background="{DynamicResource ThemeControlMidBrush}">
+                    <TextBlock Text="{Binding QsYear}" FontSize="14" FontWeight="SemiBold"
+                               HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
                 </Border>
 
-                <userControls1:WindowSplitToggleButtonUserControl Grid.RowSpan="5" Grid.Row="0" Grid.Column="2"
-                                                                  HorizontalAlignment="Right"
-                                                                  DataContext="{Binding SplitUserControlViewModel}"
-                                                                  Margin="20,0,0,10" />
+                <StackPanel Grid.Row="0" Grid.Column="3"
+                    Grid.RowSpan="6" Margin="10,0,0,0" 
+                    VerticalAlignment="Center" Spacing="10">
+                    
+                    <avalonia:MaterialIcon Kind="{Binding BackendType}" 
+                                           Width="12" HorizontalAlignment="Center"/>
+                    
+                    <userControls1:WindowSplitToggleButtonUserControl
+                        DataContext="{Binding SplitUserControlViewModel}"
+                        Width="30" Height="30" />
+                </StackPanel>
             </Grid>
         </Border>
     </HeaderedContentControl>

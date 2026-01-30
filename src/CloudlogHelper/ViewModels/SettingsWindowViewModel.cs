@@ -282,7 +282,6 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         try
         {
-            CloudlogInfoPanelUserControl.InfoMessage = string.Empty;
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
 
@@ -306,10 +305,7 @@ public class SettingsWindowViewModel : ViewModelBase
             var instType =
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                     _source.Token);
-            // instanceuncompitable
-            if (instType != ServerInstanceType.Cloudlog)
-                CloudlogInfoPanelUserControl.InfoMessage = TranslationHelper.GetString(LangKeys.instanceuncompitable)
-                    .Replace("{replace01}", instType.ToString());
+            ClassLogger.Info($"Detected instance {instType}");
         }
         catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException &&
                                             _source.IsCancellationRequested)
@@ -435,8 +431,6 @@ public class SettingsWindowViewModel : ViewModelBase
     public ObservableCollection<SupportedLanguageInfo> LanguageInfos { get; } = new();
     
     #region CloudlogAPI
-
-    public FixedInfoPanelUserControlViewModel CloudlogInfoPanelUserControl { get; } = new();
     public TestButtonUserControlViewModel CloudlogTestButtonUserControl { get; }
     [Reactive] public bool ShowCloudlogStationIdCombobox { get; set; }
 

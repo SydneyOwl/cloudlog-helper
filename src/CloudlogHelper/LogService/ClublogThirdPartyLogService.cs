@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Utils;
 using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
@@ -49,6 +51,10 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
+        // https://clublog.org/software.php
+        var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
+        adifWithHeader.AppendLine(adif);
+        
         var result = await ClublogQsoUploadEndpoint
             .AllowHttpStatus(200, 400, 500, 403)
             .PostUrlEncodedAsync(new
@@ -56,7 +62,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
                 email = Email,
                 password = Password,
                 callsign = Callsign,
-                adif,
+                adif = adifWithHeader.ToString(),
                 api = DefaultConfigs.Clkk
             }, cancellationToken: token).ConfigureAwait(false);
 

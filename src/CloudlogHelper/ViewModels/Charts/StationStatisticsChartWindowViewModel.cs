@@ -85,22 +85,22 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         _chartDataCacheService.GetItemAddedObservable()
             .Do(item => SampleCount += 1)
-            .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleTime))
+            .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleSec))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ => { UpdateChart(); });
 
         this.WhenActivated(disposable =>
         {
             this.WhenAnyValue(x => x.SelectedChart)
-                .Select(selected => false)
-                // .Select(selected => selected == 4 || selected == 0)
-                .BindTo(this, x => x.ShouldShowLocation);
+                .Select(selected => selected == 4 || selected == 0)
+                .BindTo(this, x => x.ShouldShowLocationButton);
             
             this.WhenAnyValue(x => x.SelectedBand,
                     x => x.SelectedClient,
                     x => x.SelectedMode,
-                    x => x.UpdatePaused)
-                .Throttle(TimeSpan.FromMilliseconds(352))
+                    x => x.UpdatePaused,
+                    x => x.ShowLocation)
+                .Throttle(TimeSpan.FromMilliseconds(200))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ => UpdateChart())
                 .DisposeWith(disposable);
@@ -120,7 +120,8 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     
     [Reactive] public int SelectedChart  {get; set; }
     
-    [Reactive] public bool ShouldShowLocation {get; set; }
+    [Reactive] public bool ShouldShowLocationButton {get; set; }
+    [Reactive] public bool ShowLocation {get; set; }
 
     private void _changeSinglePlot()
     {
@@ -347,6 +348,17 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         CoordinateRect worldRect = new(-180, 180, -90, 90);
         plot4.Add.ImageRect(img, worldRect);
+        
+        if (ShowLocation)
+        {
+            var latLng = MaidenheadGridUtil.GridToLatLng(_basicSettings.MyMaidenheadGrid);
+            if (latLng is null) return;
+            var marker = plot4.Add.Marker(latLng.Longitude, latLng.Latitude);
+            
+            marker.Color = Colors.Red;
+            marker.Size = 10;
+            marker.Shape = MarkerShape.HashTag;
+        }
 
         var gridStationCountByBand = _chartDataCacheService.GetGridStationCountByBand(SelectedBand);
         // gridStationCountByBand = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];

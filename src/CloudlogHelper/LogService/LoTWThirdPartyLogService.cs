@@ -46,10 +46,10 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
     {
         if (string.IsNullOrWhiteSpace(StationName)) throw new ArgumentException("Please select station name first!");
 
-        var generateHeader = new StringBuilder(AdifUtil.GenerateHeader());
-        generateHeader.AppendLine(adif);
+        var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
+        adifWithHeader.AppendLine(adif);
         var tempFileName = Path.Join(DefaultConfigs.DefaultTempFilePath, Guid.NewGuid().ToString().Replace("-", ""));
-        await File.WriteAllTextAsync(tempFileName, generateHeader.ToString(), token).ConfigureAwait(false);
+        await File.WriteAllTextAsync(tempFileName, adifWithHeader.ToString(), token).ConfigureAwait(false);
 
         var args = new List<string>();
         args.Add("-a");

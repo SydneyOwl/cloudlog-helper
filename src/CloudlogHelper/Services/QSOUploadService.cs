@@ -199,25 +199,25 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     private async Task ProcessUploadQueueAsync(CancellationToken cancellationToken)
     {
         ClassLogger.Info("Started processing upload queue.");
-        
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
-            cancellationToken, 
-            _serviceCts.Token);
-        
-        var linkedToken = linkedCts.Token;
 
         try
         {
-            foreach (var uploadItem in _uploadQueue.GetConsumingEnumerable(linkedToken))
+            foreach (var uploadItem in _uploadQueue.GetConsumingEnumerable(cancellationToken))
             {
-                if (linkedToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                 {
                     break;
                 }
 
-                await ProcessUploadItemAsync(uploadItem, linkedToken).ConfigureAwait(false);
+                using var uploadTimeoutSrc = new CancellationTokenSource(DefaultConfigs.QSOUploadTimeoutSec);
+                
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+                    cancellationToken, 
+                    uploadTimeoutSrc.Token);
+
+                await ProcessUploadItemAsync(uploadItem, cancellationToken).ConfigureAwait(false);
                 uploadItem.RecordedCallsignDetail.IsInUploadQueue = false;
-                await Task.Delay(1000, linkedToken);
+                await Task.Delay(1000, cancellationToken);
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

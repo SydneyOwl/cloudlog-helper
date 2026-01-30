@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Utils;
 using Flurl;
 using Flurl.Http;
 using HtmlAgilityPack;
@@ -60,15 +61,11 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
-        // optional;
-        var header = new StringBuilder()
-            .Append("<PROGRAMID:14>CloudlogHelper\r\n")
-            .Append($"<PROGRAMVERSION:{VersionInfo.Version.Length}>{VersionInfo.Version}\r\n")
-            .Append("<EOH>\r\n")
-            .ToString();
-
+        var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
+        adifWithHeader.AppendLine(adif);
+        
         var param =
-            $"ADIFData={Uri.EscapeDataString(adif)}&EQSL_USER={Uri.EscapeDataString(Username)}&EQSL_PSWD={Uri.EscapeDataString(Password)}";
+            $"ADIFData={Uri.EscapeDataString(adifWithHeader.ToString())}&EQSL_USER={Uri.EscapeDataString(Username)}&EQSL_PSWD={Uri.EscapeDataString(Password)}";
         var results = await EqslQsoUploadEndpoint
             .AppendQueryParam(param)
             .GetAsync(cancellationToken: token).ConfigureAwait(false);
