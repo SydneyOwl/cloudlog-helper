@@ -26,8 +26,7 @@
         <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
         <converters:NullableStringToVisibilityConverter x:Key="StringToVisibility" />
         <converters:StringToColorConverter x:Key="StringToColor" />
-        <converters:RigUploadStatusToColorConverter x:Key="RigUploadStatusToColor" />
-        <converters:RigUploadStatusToAnimationConverter x:Key="RigUploadStatusToAni" />
+        <converters:StatusToColorConverter x:Key="RigUploadStatusToColor" />
         <converters:StatusToVisibilityConverter x:Key="StatusToVisibility" />
     </UserControl.Resources>
 
@@ -74,13 +73,18 @@
                             <TextBlock Text="{Binding CurrentRxMode}"
                                        FontSize="11" FontWeight="Bold" Foreground="White" />
                         </Border>
-                        
+                        <avalonia:MaterialIcon Kind="Radio"
+                                               Foreground="{Binding CommStatus, Converter={StaticResource RigUploadStatusToColor}}"
+                                               Width="20"
+                                               Height="20"
+                                               IsVisible="{Binding CommStatus, Converter={StaticResource StatusToVisibility}}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right" />
                         <avalonia:MaterialIcon Kind="CloudUpload"
                                                Foreground="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToColor}}"
                                                Width="20"
                                                Height="20"
                                                IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
-                                               Animation="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToAni}}"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Right" />
                     </StackPanel>

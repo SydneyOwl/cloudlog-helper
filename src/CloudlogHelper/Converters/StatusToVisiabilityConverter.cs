@@ -29,6 +29,15 @@ public class StatusToVisibilityConverter : IValueConverter
             };
         }
 
+        if (value is RigCommStatus cstatus)
+        {
+            return cstatus switch
+            {
+                RigCommStatus.Unknown => false,
+                _ => true,
+            };
+        }
+        
         return false;
     }
 

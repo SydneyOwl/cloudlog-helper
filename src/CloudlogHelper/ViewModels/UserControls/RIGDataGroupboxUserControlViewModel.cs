@@ -115,6 +115,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     [Reactive] public bool IsSplit { get; set; }
     [Reactive] public RigUploadStatus? UploadStatus { get; set; } = RigUploadStatus.Unknown;
+    [Reactive] public RigCommStatus? CommStatus { get; set; } = RigCommStatus.Unknown;
 
     private void Initialize()
     {
@@ -168,7 +169,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         try
         {
+            CommStatus = RigCommStatus.FetchingData;
+            
             var allInfo = await _rigBackendManager.GetAllRigInfo();
+
+            CommStatus = RigCommStatus.Success;
             
             UpdateDisplayInfo(allInfo);
 
@@ -178,12 +183,14 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         }
         catch (Exception ex) when (ex is InvalidPollException or InvalidConfigurationException)
         {
+            CommStatus = RigCommStatus.Error;
             // expected exceptions - reset the counter!
             Interlocked.Exchange(ref _rigConnFailedTimes, 0);
             throw;
         }
         catch (Exception ex)
         {
+            CommStatus = RigCommStatus.Error;
             ClassLogger.Error(ex, "An error occurred while fetching rig data.");
             Interlocked.Increment(ref _rigConnFailedTimes);
             throw;
@@ -408,6 +415,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         IsSplit = false;
         UploadStatus = RigUploadStatus.Unknown;
+        CommStatus = RigCommStatus.Unknown;
     }
     
     private IDisposable _createNewTimer()
