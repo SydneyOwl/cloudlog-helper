@@ -141,6 +141,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RIG情報の自動アップロード.
+        /// </summary>
+        public static string autorigupload {
+            get {
+                return ResourceManager.GetString("autorigupload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自動選択.
         /// </summary>
         public static string autosel {

@@ -784,4 +784,7 @@
     <data name="rightclick2seemore" xml:space="preserve">
         <value>右键点击 QSO 查看更多</value>
     </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>自动上传电台信息</value>
+    </data>
 </root>

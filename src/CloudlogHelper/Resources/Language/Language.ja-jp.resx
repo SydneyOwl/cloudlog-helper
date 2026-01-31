@@ -776,4 +776,7 @@
     <data name="rightclick2seemore" xml:space="preserve">
         <value>QSO を右クリックして詳細を表示</value>
     </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>RIG情報の自動アップロード</value>
+    </data>
 </root>

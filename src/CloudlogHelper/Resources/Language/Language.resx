@@ -349,7 +349,7 @@
         <value>Invalid host address!</value>
     </data>
     <data name="autoqsoupload" xml:space="preserve">
-        <value>Auto upload qso</value>
+        <value>Auto QSO upload</value>
     </data>
     <data name="qsoretrycount" xml:space="preserve">
         <value>QSO upload failed retry count</value>
@@ -782,5 +782,8 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     </data>
     <data name="rightclick2seemore" xml:space="preserve">
         <value>Right click QSO to see more</value>
+    </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>Auto RIG info upload</value>
     </data>
 </root>

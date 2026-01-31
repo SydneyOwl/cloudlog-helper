@@ -226,6 +226,8 @@
                                                 Grid.ColumnSpan="2" Spacing="20">
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.autoqsoupload}}"
                                                   IsChecked="{Binding DraftSettings.CloudlogSettings.AutoQSOUploadEnabled}" />
+                                        <CheckBox Content="{I18N {x:Static resources:LangKeys.autorigupload}}"
+                                                  IsChecked="{Binding DraftSettings.CloudlogSettings.AutoRigUploadEnabled}" />
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.autopollstatus}}"
                                                   IsChecked="{Binding DraftSettings.CloudlogSettings.AutoPollStationStatus}" />
                                     </StackPanel>

@@ -777,4 +777,7 @@
     <data name="rightclick2seemore" xml:space="preserve">
         <value>右鍵點擊 QSO 以查看更多</value>
     </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>自動上傳电台資訊</value>
+    </data>
 </root>

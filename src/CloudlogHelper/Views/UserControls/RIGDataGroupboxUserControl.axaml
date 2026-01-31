@@ -41,10 +41,17 @@
               Margin="20,0,20,0"
               VerticalAlignment="Center" HorizontalAlignment="Center">
 
-            <userControls1:WindowSplitToggleButtonUserControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"
-                                                              Width="32" Height="32" Margin="0,0,20,0"
-                                                              DataContext="{Binding SplitUserControlViewModel}" />
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20" Orientation="Horizontal">
+                <userControls1:WindowSplitToggleButtonUserControl  HorizontalAlignment="Left"
+                                                                  Width="32" Height="32" Margin="0,0,0,0"
+                                                                  DataContext="{Binding SplitUserControlViewModel}" />
 
+                <Button Content="{avalonia:MaterialIconExt Kind=Refresh}" 
+                        IsVisible="{Binding UploadStatus, 
+                            Converter={StaticResource StatusToVisibility}}"
+                        Command="{Binding RefreshRigInfo}" />
+            </StackPanel>
+            
             <Border Classes="FreqBlock" Grid.Row="1" Grid.Column="0"
                     Grid.ColumnSpan="2" MinWidth="240"
                     Padding="20,10,20,10">
