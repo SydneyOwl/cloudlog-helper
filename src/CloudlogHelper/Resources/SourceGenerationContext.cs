@@ -14,6 +14,7 @@ namespace CloudlogHelper.Resources;
 [JsonSerializable(typeof(RadioApiCallV2))]
 [JsonSerializable(typeof(List<AdifModesDatabase>))]
 [JsonSerializable(typeof(List<StationInfo>))]
+[JsonSerializable(typeof(Dictionary<string, DXCCCountryInfo>))]
 [JsonSerializable(typeof(ApplicationSettings))]
 
 [JsonSerializable(typeof(List<ThirdPartyLogService>))]

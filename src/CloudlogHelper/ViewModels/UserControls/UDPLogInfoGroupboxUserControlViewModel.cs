@@ -15,6 +15,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
@@ -53,6 +55,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IUdpServerService _udpServerService;
     private readonly ICLHServerService _clhServerService;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly ICountryService _countryDxccService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
@@ -97,7 +100,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             UploadStatus = UploadStatus.Success,
             Checked = true,
             ForcedUpload = false,
-            FailReason = null
+            FailReason = null,
+            CountryFlagAvares = new Bitmap(AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/Flags/un.png")))
         };
 
         for (var i = 0; i < 10; i++) FilteredQsos.Add(testQso);
@@ -130,8 +134,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IQSOUploadService qu,
         INotificationManager nativeNotificationManager,
         IDecodedDataProcessorService decodedDataProcessorService,
+        ICountryService cs,
         ICLHServerService clhServerService)
     {
+        _countryDxccService = cs;
         _applicationSettingsService = ss;
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
@@ -318,6 +324,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     try
                     {
+                        rcd.CountryFlagAvares = _countryDxccService.GetFlagResourceByDXCC("__log");
                         await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
                     }
                     catch (Exception ex)
@@ -493,10 +500,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _qsoTimestamps.Enqueue(DateTime.UtcNow);
 
         var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall).ConfigureAwait(false);
+        
         var rcd = RecordedCallsignDetail.GenerateCallsignDetail(
             cty, 
             message,
             _applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
+        
+        rcd.CountryFlagAvares = _countryDxccService.GetFlagResourceByDXCC(cty.Dxcc);
             
         rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
 

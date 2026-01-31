@@ -370,7 +370,7 @@
         <value>我的網格座標</value>
     </data>
     <data name="nextuploadtime" xml:space="preserve">
-        <value>下次上報時間</value>
+        <value>下次上報</value>
     </data>
     <data name="nodata" xml:space="preserve">
         <value>（無數據）</value>

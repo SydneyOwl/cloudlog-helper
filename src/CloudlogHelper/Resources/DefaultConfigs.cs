@@ -360,7 +360,11 @@ public class DefaultConfigs
     public static string ExecutableRigctldPath => Path.Join(
         HamlibFilePath,
         OperatingSystem.IsWindows() ? "rigctld.exe" : "rigctld");
+
+    public const string DefaultDxccInfoFile = "dxcc_info.dat";
     
+    public const string AvaresFlagTemplate = "avares://CloudlogHelper/Assets/Flags/";
+
     /// <summary>
     ///     The default expiration time for the cached return values of the rigctld In seconds.
     ///     This is calculated dynamically when jtdx sending requests.

@@ -256,7 +256,7 @@
         <value>Upload Status</value>
     </data>
     <data name="nextuploadtime" xml:space="preserve">
-        <value>Next Upload Time</value>
+        <value>Next Upload</value>
     </data>
     <data name="invalidport" xml:space="preserve">
         <value>Invalid port number.</value>

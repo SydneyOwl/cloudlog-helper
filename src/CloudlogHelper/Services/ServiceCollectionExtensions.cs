@@ -39,6 +39,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         services.AddSingleton<ICLHServerService, CLHServerService>();
         services.AddSingleton<ILogSystemManager, LogSystemManager>();
+        services.AddSingleton<ICountryService, CountryService>();
         return Task.CompletedTask;
     }
 

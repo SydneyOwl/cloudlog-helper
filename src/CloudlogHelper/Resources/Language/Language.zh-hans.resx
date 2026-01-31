@@ -256,7 +256,7 @@
         <value>上报状态</value>
     </data>
     <data name="nextuploadtime" xml:space="preserve">
-        <value>下次上报时间</value>
+        <value>下次上报</value>
     </data>
     <data name="invalidport" xml:space="preserve">
         <value>端口号无效</value>

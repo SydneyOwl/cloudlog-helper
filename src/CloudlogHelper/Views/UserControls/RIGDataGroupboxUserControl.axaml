@@ -6,6 +6,7 @@
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
              xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
              x:Class="CloudlogHelper.Views.UserControls.RIGDataGroupboxUserControl"
              x:DataType="userControls:RIGDataGroupboxUserControlViewModel">
@@ -25,6 +26,9 @@
         <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
         <converters:NullableStringToVisibilityConverter x:Key="StringToVisibility" />
         <converters:StringToColorConverter x:Key="StringToColor" />
+        <converters:RigUploadStatusToColorConverter x:Key="RigUploadStatusToColor" />
+        <converters:RigUploadStatusToAnimationConverter x:Key="RigUploadStatusToAni" />
+        <converters:StatusToVisibilityConverter x:Key="StatusToVisibility" />
     </UserControl.Resources>
 
     <HeaderedContentControl HorizontalAlignment="Stretch"
@@ -70,6 +74,15 @@
                             <TextBlock Text="{Binding CurrentRxMode}"
                                        FontSize="11" FontWeight="Bold" Foreground="White" />
                         </Border>
+                        
+                        <avalonia:MaterialIcon Kind="CloudUpload"
+                                               Foreground="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToColor}}"
+                                               Width="20"
+                                               Height="20"
+                                               IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
+                                               Animation="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToAni}}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="30"
@@ -124,14 +137,14 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-
-            <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5"
-                       Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" />
-            <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" />
-
-            <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5"
-                       Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" />
-            <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" />
+            
+            <!-- <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5" -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" /> -->
+            <!-- <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" /> -->
+            <!-- -->
+            <!-- <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5" -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" /> -->
+            <!-- <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" /> -->
         </Grid>
     </HeaderedContentControl>
 </UserControl>

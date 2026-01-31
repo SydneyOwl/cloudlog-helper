@@ -72,6 +72,10 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     public RIGDataGroupboxUserControlViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
+        CurrentRxFrequency = "21.0742";
+        CurrentRxFrequencyInMeters = "15m";
+        CurrentRxMode = "USB";
+        UploadStatus = RigUploadStatus.Uploading;
     }
 
     public RIGDataGroupboxUserControlViewModel(CommandLineOptions cmd,
@@ -110,8 +114,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
 
     [Reactive] public bool IsSplit { get; set; }
-    [Reactive] public string? UploadStatus { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-    [Reactive] public string? NextUploadTime { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
+    [Reactive] public RigUploadStatus? UploadStatus { get; set; } = RigUploadStatus.Unknown;
 
     private void Initialize()
     {
@@ -266,7 +269,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     {
         if (_cloudlogSettings.IsCloudlogHasErrors())
         {
-            UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+            UploadStatus = RigUploadStatus.Failed;
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
             return;
         }
@@ -280,8 +283,8 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 CancellationToken.None);
 
             UploadStatus = result.Status == "success" 
-                ? TranslationHelper.GetString(LangKeys.success)
-                : TranslationHelper.GetString(LangKeys.failed);
+                ? RigUploadStatus.Success
+                : RigUploadStatus.Failed;
 
             if (result.Status != "success")
             {
@@ -290,7 +293,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         }
         catch (Exception ex)
         {
-            UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+            UploadStatus = RigUploadStatus.Failed;
             ClassLogger.Warn(ex, "Failed to upload rig info to Cloudlog");
             await _inAppNotification.SendWarningNotificationAsync(ex.Message);
         }
@@ -347,7 +350,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task UpdateErrorDisplayAsync()
     {
-        UploadStatus = TranslationHelper.GetString(LangKeys.failed);
+        UploadStatus = RigUploadStatus.Failed;
         CurrentRxFrequency = "ERROR";
         CurrentRxFrequencyInMeters = string.Empty;
         IsSplit = false;
@@ -404,8 +407,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         CurrentTxMode = string.Empty;
 
         IsSplit = false;
-        UploadStatus = TranslationHelper.GetString(LangKeys.unknown);
-        NextUploadTime = TranslationHelper.GetString(LangKeys.unknown);
+        UploadStatus = RigUploadStatus.Unknown;
     }
     
     private IDisposable _createNewTimer()
@@ -426,7 +428,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                         {
                             try
                             {
-                                NextUploadTime = TranslationHelper.GetString(LangKeys.gettinginfo);
+                                UploadStatus = RigUploadStatus.Uploading;
                                 await _refreshRigInfoSafe();
                             }
                             catch (Exception ex)
@@ -459,15 +461,21 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 for (var remaining = interval - 1; remaining >= 0; remaining--)
                                 {
                                     if (innerCancellationToken.IsCancellationRequested) break;
+
+                                    // if (remaining <= 0)
+                                    // {
+                                    //     UploadStatus = RigUploadStatus.Uploading;
+                                    // }
                                     
-                                    NextUploadTime = remaining > 0 
-                                        ? remaining.ToString()
-                                        : TranslationHelper.GetString(LangKeys.gettinginfo);
+                                    // NextUploadTime = remaining > 0 
+                                    //     ? remaining.ToString()
+                                    //     : TranslationHelper.GetString(LangKeys.gettinginfo);
                                     
                                     if (remaining == 0)
                                     {
                                         try
                                         {
+                                            UploadStatus = RigUploadStatus.Uploading;
                                             await _refreshRigInfoSafe();
                                         }
                                         catch (Exception ex)
