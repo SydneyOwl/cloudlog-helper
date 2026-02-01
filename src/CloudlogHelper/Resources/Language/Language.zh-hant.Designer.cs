@@ -1412,6 +1412,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QSO上傳端點.
+        /// </summary>
+        public static string qsouploadendpoint {
+            get {
+                return ResourceManager.GetString("qsouploadendpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QTH別名（可選）.
         /// </summary>
         public static string qthnick {
@@ -1561,6 +1570,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string rightclick2seemore {
             get {
                 return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 電台資訊上傳端點.
+        /// </summary>
+        public static string riginfouploadendpoint {
+            get {
+                return ResourceManager.GetString("riginfouploadendpoint", resourceCulture);
             }
         }
         

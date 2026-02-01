@@ -572,7 +572,7 @@ namespace CloudlogHelper.Resources.Language {
         ///
         ///The developers assume no responsibility for any data loss, device damage, or other losses that may result from the use of this software.
         ///
-        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudl [rest of string was truncated]&quot;;.
+        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/ [rest of string was truncated]&quot;;.
         /// </summary>
         public static string disclaimer {
             get {
@@ -1411,6 +1411,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QSO Upload Endpoint.
+        /// </summary>
+        public static string qsouploadendpoint {
+            get {
+                return ResourceManager.GetString("qsouploadendpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QTH Nickname(optional).
         /// </summary>
         public static string qthnick {
@@ -1560,6 +1569,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string rightclick2seemore {
             get {
                 return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIG Info upload endpoint.
+        /// </summary>
+        public static string riginfouploadendpoint {
+            get {
+                return ResourceManager.GetString("riginfouploadendpoint", resourceCulture);
             }
         }
         

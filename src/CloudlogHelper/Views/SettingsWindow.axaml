@@ -334,15 +334,6 @@
                                               Grid.Row="5"
                                               Grid.Column="0" Grid.ColumnSpan="3">
                                         <StackPanel Spacing="12" Margin="0 12 0 0">
-                                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 0">
-                                                <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
-                                                           Classes="setting-label" />
-                                                <TextBox Classes="setting-control" Grid.Column="1"
-                                                         Text="{Binding DraftSettings.HamlibSettings.SyncRigInfoAddress}"
-                                                         Watermark="e.g. http://a.com/b;https://b.com/c" />
-                                                <userControls1:TipIconUserControl Grid.Column="2" TooltipText="{I18N {x:Static resources:LangKeys.spiltby}}" />
-                                            </Grid>
-
                                             <CheckBox Content="{I18N {x:Static resources:LangKeys.enableadvanced}}"
                                                       x:Name="advancedRig"
                                                       IsChecked="{Binding DraftSettings.HamlibSettings.UseRigAdvanced}" />
@@ -441,16 +432,6 @@
                                                   IsChecked="{Binding DraftSettings.FLRigSettings.ReportRFPower}" />
                                     </StackPanel>
 
-                                    <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*,Auto"
-                                          Margin="0 0 0 0" ColumnSpacing="10">
-                                        <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
-                                                   Classes="setting-label" />
-                                        <TextBox Classes="setting-control" Grid.Column="1"
-                                                 Text="{Binding DraftSettings.FLRigSettings.SyncRigInfoAddress}"
-                                                 Watermark="e.g. http://a.com/b;https://b.com/c" />
-                                        <userControls1:TipIconUserControl Grid.Column="2" TooltipText="{I18N {x:Static resources:LangKeys.spiltby}}" />
-                                    </Grid>
-
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding FLRigTestButtonUserControl}" />
                                 </Grid>
@@ -503,20 +484,6 @@
                                     <ComboBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
                                               SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}"
                                               ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}" />
-                                    
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.syncrigto}}"
-                                               Grid.Row="3" Grid.Column="0"
-                                               Classes="setting-label" />
-                                    
-                                    <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="12">
-                                        <TextBox Classes="setting-control"
-                                                 HorizontalAlignment="Left"
-                                                 Width="200"
-                                                 Text="{Binding DraftSettings.OmniRigSettings.SyncRigInfoAddress}"
-                                                 Watermark="e.g. http://a.com/b;https://b.com/c" />
-                                        
-                                        <userControls1:TipIconUserControl TooltipText="{I18N {x:Static resources:LangKeys.spiltby}}" />
-                                    </StackPanel>
                                     
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding OmniRigTestButtonUserControl}" />

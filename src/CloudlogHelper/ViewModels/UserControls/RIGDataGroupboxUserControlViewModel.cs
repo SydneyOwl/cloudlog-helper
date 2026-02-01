@@ -278,14 +278,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         try
         {
-            // Report to CLH server
-            await ReportToClhServerAsync(allInfo);
-
-            // Report to third-party services
-            await ReportToThirdPartyServicesAsync(allInfo);
-
-            // Report to Cloudlog
-            await ReportToCloudlogAsync(allInfo);
+            await Task.WhenAll(
+                ReportToClhServerAsync(allInfo),
+                ReportToThirdPartyServicesAsync(allInfo),
+                ReportToCloudlogAsync(allInfo)
+            );
 
             await Dispatcher.UIThread.InvokeAsync(() => UploadStatus = RigUploadStatus.Success);
         }

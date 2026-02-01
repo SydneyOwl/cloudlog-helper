@@ -26,8 +26,6 @@ public class FLRigSettings : ReactiveValidationObject
 
     [Reactive] public string FLRigPort { get; set; } = DefaultConfigs.FLRigDefaultPort;
 
-    [Reactive] public string SyncRigInfoAddress { get; set; } = string.Empty;
-
     [JsonIgnore]
     public IObservable<bool> IsFLRigValid => this.WhenAnyValue(
         x => x.PollInterval,
@@ -73,8 +71,7 @@ public class FLRigSettings : ReactiveValidationObject
                ReportRFPower == other.ReportRFPower &&
                ReportSplitInfo == other.ReportSplitInfo &&
                FLRigHost == other.FLRigHost &&
-               FLRigPort == other.FLRigPort &&
-               SyncRigInfoAddress == other.SyncRigInfoAddress;
+               FLRigPort == other.FLRigPort;
     }
 
     public override bool Equals(object? obj)
@@ -87,7 +84,6 @@ public class FLRigSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(PollInterval, PollAllowed, ReportRFPower, ReportSplitInfo, FLRigHost, FLRigPort,
-            SyncRigInfoAddress);
+        return HashCode.Combine(PollInterval, PollAllowed, ReportRFPower, ReportSplitInfo, FLRigHost, FLRigPort);
     }
 }

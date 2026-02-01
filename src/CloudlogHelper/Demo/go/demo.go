@@ -8,6 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type QSOUploadRequest struct {
+	ADIF      string `json:"adif" binding:"required"`
+	Timestamp int64  `json:"timestamp" binding:"required"`
+}
+
 type RadioRequest struct {
 	Key         *string  `json:"key"`
 	Radio       string   `json:"radio"`
@@ -20,6 +25,17 @@ type RadioRequest struct {
 
 func main() {
 	r := gin.Default()
+
+	r.POST("/adif", func(c *gin.Context) {
+		var request QSOUploadRequest
+		if err := c.ShouldBindJSON(&request); err != nil {
+			fmt.Printf("Error while processing json: %s\n", err.Error())
+			c.String(http.StatusBadRequest, "Invalid JSON: ")
+			return
+		}
+		fmt.Printf("ADIF: %v\n", request)
+		c.String(http.StatusOK, "OK")
+	})
 
 	r.POST("/decode", func(ctx *gin.Context) {
 		res, err := io.ReadAll(ctx.Request.Body)
@@ -41,28 +57,7 @@ func main() {
 			return
 		}
 
-		fmt.Printf("Radio name: %s\n", request.Radio)
-		fmt.Printf("Radio tx freq: %d\n", request.Frequency)
-		fmt.Printf("Radio tx mode: %s\n", request.Mode)
-
-		if request.FrequencyRx != nil {
-			fmt.Printf("Radio rx freq: %d\n", *request.FrequencyRx)
-		} else {
-			fmt.Println("Radio rx freq: null")
-		}
-
-		if request.ModeRx != nil {
-			fmt.Printf("Radio rx mode: %s\n", *request.ModeRx)
-		} else {
-			fmt.Println("Radio rx mode: null")
-		}
-
-		if request.Power != nil {
-			fmt.Printf("Radio tx power: %f\n", *request.Power)
-		} else {
-			fmt.Println("Radio tx power: null")
-		}
-
+		fmt.Printf("Radio name: %v\n", request)
 		c.String(http.StatusOK, "OK")
 	})
 

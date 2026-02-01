@@ -787,4 +787,10 @@
     <data name="autorigupload" xml:space="preserve">
         <value>自动上传电台信息</value>
     </data>
+    <data name="qsouploadendpoint" xml:space="preserve">
+        <value>QSO上传端点</value>
+    </data>
+    <data name="riginfouploadendpoint" xml:space="preserve">
+        <value>电台信息上传端点</value>
+    </data>
 </root>
