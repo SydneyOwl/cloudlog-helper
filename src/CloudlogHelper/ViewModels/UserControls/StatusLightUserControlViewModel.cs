@@ -90,8 +90,8 @@ public class StatusLightUserControlViewModel : ViewModelBase
     [Reactive] public bool InitSkipped { get; set; }
     [Reactive] public string BackendService { get; set; }
 
-    [Reactive] public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
-    [Reactive] public ReactiveCommand<Unit, Unit>? StartStopRigBackendCommand { get; set; }
+    public ReactiveCommand<Unit, Unit>? StartStopUdpCommand { get; set; }
+    public ReactiveCommand<Unit, Unit>? StartStopRigBackendCommand { get; set; }
     
     private ReactiveCommand<Unit,Unit> StatusUpdateCommand { get; set; }
 

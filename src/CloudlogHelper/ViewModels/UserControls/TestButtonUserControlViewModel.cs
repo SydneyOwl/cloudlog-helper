@@ -45,6 +45,6 @@ public class TestButtonUserControlViewModel : ViewModelBase
     }
 
     [Reactive] public bool CheckPassed { get; set; }
-    [Reactive] public ReactiveCommand<Unit, Unit>? TestCommand { get; set; }
+    public ReactiveCommand<Unit, Unit>? TestCommand { get; set; }
     public bool CheckExecuting => _checkExecuting.Value;
 }

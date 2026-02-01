@@ -131,7 +131,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public RigCommStatus? CommStatus { get; set; } = RigCommStatus.Unknown;
     [Reactive] public string? RefreshAfter { get; set; } = "...";
 
-    [Reactive] public ReactiveCommand<Unit, Unit> RefreshRigInfo { get; set; }
+    public ReactiveCommand<Unit, Unit> RefreshRigInfo { get; set; }
     
     private ObservableAsPropertyHelper<MaterialIconAnimation> _refreshAnimation;
     public MaterialIconAnimation RefreshAnimation => _refreshAnimation.Value;
