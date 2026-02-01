@@ -85,7 +85,7 @@ Enter your call sign/password or other configuration information in the correspo
 
 > [!WARNING]
 >
-> You can only choose either Hamlib or FLRig as the radio backend control system. Both cannot be enabled simultaneously.
+> Multiple rig backends cannot be enabled simultaneously.
 
 This software supports `Hamlib` / `FLRig` / `OmniRig` as control backends for radios, allowing periodic uploads of radio information
 (frequency, mode, etc.) to your Cloudlog server, HRDLog, or other specified backends. When you need to record QSO information, 
@@ -114,7 +114,7 @@ and other information in real-time for reference during operation.
 
   <img src="./md_assets/image-20250510221120607.png" alt="image-20250510221120607" width="50%" />
 
-### 📌 UDP Server  Configuration
+### 📌 UDP Server Configuration
 
 This part works similarly to `GridTracker`. `JTDX` broadcasts information about currently decoded call signs, frequencies, signal reports, etc., via UDP protocol, and `CloudlogHelper` receives and decodes this information, uploading the communication results to your Cloudlog server in real-time.
 
@@ -217,7 +217,6 @@ Here are the specific steps (using Windows 7 as an example):
 | Advanced - Allow External Control| Allows interaction with the Rigctld backend from devices other than localhost (adds parameter `-T 0.0.0.0`).                                                                                                                             |
 | ~~Advanced - Enable Request Proxy~~ | ~~Starts a proxy server that can forward external requests into the software, which then automatically sends them to Rigctld based on priority.~~ (Deprecated/Removed)                                                                       |
 | Use External Rigctld Service     | Use an external Rigctld instance as the software's Rigctld backend. For example, if you manually started a Rigctld instance, check this option and configure the software to use your specified Rigctld backend.                         |
-| Simultaneously Report Radio Info | Also reports the retrieved radio information to the specified URL(s). Multiple URLs can be entered, separated by semicolons, e.g., `"http://a.com/api;http://b.com/rig;http://c.cn/a"`. See `Advanced` -> `Report Radio Info` for details. |
 
 #### ⚙️ UDP Server Configuration
 
@@ -333,8 +332,14 @@ The program automatically discovers classes marked with `LogServiceAttribute`, a
 
 ### 📡 Custom Backend Support
 
-Besides reporting to Cloudlog, you can also push real-time radio data (frequency, mode, etc.) to your own server or API, enabling further development.
-The data format is as follows (JSON):
+Besides reporting to Cloudlog, you can also push real-time radio data (frequency, mode, etc.) or QSO ADIF info to your own server or API, enabling further development.
+![img.png](./md_assets/api.png)
+
+In the "Third-Party Logging System" section of Settings, you will find the "Custom API" option where you can input your custom backend endpoint. After completing a QSO or retrieving radio information,
+the application will automatically push relevant data to the address you provided. Please note that the entered address must begin with either **http** or **https**, e.g. https://a.com/radio. 
+The relevant data structure is defined below:
+
+#### Radio Info
 
 ```json5
 {
@@ -345,6 +350,15 @@ The data format is as follows (JSON):
   "frequencyRx": 14020000, // Receive frequency (only if 'Report Split' is enabled, otherwise null)
   "modeRx": "CW",      // Receive mode (only if 'Report Split' is enabled, otherwise null)
   "power": 10.0        // Transmit power (only if 'Report Power' is enabled, otherwise null)
+}
+```
+
+#### ADIF Info
+
+```json5
+{
+  "adif": "<call:5>XXXXX <gridsquare:4>XXXX <mode:3>FT8 <rst_sent:3>-15 <rst_rcvd:3>-15 <qso_date:8>20260201 <time_on:6>080025 <qso_date_off:8>20260201 <time_off:6>080108 <band:3>20m <freq:9>14.075500 <station_callsign:6>XXXXXX <my_gridsquare:4>XXXX <eor>",
+  "timestamp": 1769932856
 }
 ```
 
@@ -373,6 +387,8 @@ The memory usage of the AOT version of the software stabilizes at around 90MB af
 + [ADIFLib](https://github.com/kv9y/ADIFLib): A C# library for reading, parsing, and writing ADIF (version 3.1.0) files. (MIT)
 + [FT8CN](https://github.com/N0BOY/FT8CN): Run FT8 on Android. This software's callsign attribution parsing logic and corresponding DXCC Chinese translations were extracted from this project. (MIT)
 + [Cloudlog](https://github.com/magicbug/Cloudlog): Web-based amateur radio logging application. The icons in this software are modified from the icons of this project. (MIT)
++ [GridTracker](https://gridtracker.org/): GridTracker is a warehouse of amateur radio information presented in an easy to use interface. The logic for mapping DXCC entities to their respective countries is derived from this application.
++ [country-flags](https://github.com/hampusborgos/country-flags): This repository contains accurate renders of all the worlds flags in SVG and PNG format.
 
 ## 📝 License
 
