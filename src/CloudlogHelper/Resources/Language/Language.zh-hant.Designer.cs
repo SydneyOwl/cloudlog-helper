@@ -141,6 +141,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 自動上傳电台資訊.
+        /// </summary>
+        public static string autorigupload {
+            get {
+                return ResourceManager.GetString("autorigupload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自動選擇.
         /// </summary>
         public static string autosel {
@@ -1104,7 +1113,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 下次上報時間.
+        ///   Looks up a localized string similar to 下次上報.
         /// </summary>
         public static string nextuploadtime {
             get {
@@ -1403,6 +1412,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QSO上傳端點.
+        /// </summary>
+        public static string qsouploadendpoint {
+            get {
+                return ResourceManager.GetString("qsouploadendpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QTH別名（可選）.
         /// </summary>
         public static string qthnick {
@@ -1552,6 +1570,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string rightclick2seemore {
             get {
                 return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 電台資訊上傳端點.
+        /// </summary>
+        public static string riginfouploadendpoint {
+            get {
+                return ResourceManager.GetString("riginfouploadendpoint", resourceCulture);
             }
         }
         

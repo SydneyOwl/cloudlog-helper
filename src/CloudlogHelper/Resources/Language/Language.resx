@@ -256,7 +256,7 @@
         <value>Upload Status</value>
     </data>
     <data name="nextuploadtime" xml:space="preserve">
-        <value>Next Upload Time</value>
+        <value>Next Upload</value>
     </data>
     <data name="invalidport" xml:space="preserve">
         <value>Invalid port number.</value>
@@ -349,7 +349,7 @@
         <value>Invalid host address!</value>
     </data>
     <data name="autoqsoupload" xml:space="preserve">
-        <value>Auto upload qso</value>
+        <value>Auto QSO upload</value>
     </data>
     <data name="qsoretrycount" xml:space="preserve">
         <value>QSO upload failed retry count</value>
@@ -782,5 +782,14 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     </data>
     <data name="rightclick2seemore" xml:space="preserve">
         <value>Right click QSO to see more</value>
+    </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>Auto RIG info upload</value>
+    </data>
+    <data name="qsouploadendpoint" xml:space="preserve">
+        <value>QSO Upload Endpoint</value>
+    </data>
+    <data name="riginfouploadendpoint" xml:space="preserve">
+        <value>RIG Info upload endpoint</value>
     </data>
 </root>

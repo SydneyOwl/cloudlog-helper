@@ -70,7 +70,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             SaveChart.ThrownExceptions.Subscribe().DisposeWith(disposable);
 
             _chartDataCacheService.GetItemAddedObservable()
-                .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleTime))
+                .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleSec))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ => { UpdatePolar(); })
                 .DisposeWith(disposable);

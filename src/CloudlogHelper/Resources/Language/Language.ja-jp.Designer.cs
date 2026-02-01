@@ -141,6 +141,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RIG情報の自動アップロード.
+        /// </summary>
+        public static string autorigupload {
+            get {
+                return ResourceManager.GetString("autorigupload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 自動選択.
         /// </summary>
         public static string autosel {
@@ -1402,6 +1411,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QSOアップロードエンドポイント.
+        /// </summary>
+        public static string qsouploadendpoint {
+            get {
+                return ResourceManager.GetString("qsouploadendpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QTHエイリアス（任意）.
         /// </summary>
         public static string qthnick {
@@ -1551,6 +1569,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string rightclick2seemore {
             get {
                 return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 無線機情報アップロードエンドポイント.
+        /// </summary>
+        public static string riginfouploadendpoint {
+            get {
+                return ResourceManager.GetString("riginfouploadendpoint", resourceCulture);
             }
         }
         

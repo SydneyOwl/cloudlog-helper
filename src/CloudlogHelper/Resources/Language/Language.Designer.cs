@@ -132,11 +132,20 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto upload qso.
+        ///   Looks up a localized string similar to Auto QSO upload.
         /// </summary>
         public static string autoqsoupload {
             get {
                 return ResourceManager.GetString("autoqsoupload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto RIG info upload.
+        /// </summary>
+        public static string autorigupload {
+            get {
+                return ResourceManager.GetString("autorigupload", resourceCulture);
             }
         }
         
@@ -1103,7 +1112,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Next Upload Time.
+        ///   Looks up a localized string similar to Next Upload.
         /// </summary>
         public static string nextuploadtime {
             get {
@@ -1402,6 +1411,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QSO Upload Endpoint.
+        /// </summary>
+        public static string qsouploadendpoint {
+            get {
+                return ResourceManager.GetString("qsouploadendpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to QTH Nickname(optional).
         /// </summary>
         public static string qthnick {
@@ -1551,6 +1569,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string rightclick2seemore {
             get {
                 return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIG Info upload endpoint.
+        /// </summary>
+        public static string riginfouploadendpoint {
+            get {
+                return ResourceManager.GetString("riginfouploadendpoint", resourceCulture);
             }
         }
         

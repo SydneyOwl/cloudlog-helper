@@ -112,7 +112,7 @@
                 Grid.RowSpan="2"
                 Height="{Binding #LeftPanel.Bounds.Height, Mode=OneWay}"
                 MaxHeight="{Binding #LeftPanel.Bounds.Height, Mode=OneWay}"
-                MinHeight="300"
+                MinHeight="150"
                 IsVisible="{Binding ((viewModels:MainWindowViewModel)DataContext).UDPLogBoxEnabled,
                                                             RelativeSource={RelativeSource AncestorType=Grid}}"
                 DataContext="{Binding UDPLogInfoGroupboxUserControlVm}"

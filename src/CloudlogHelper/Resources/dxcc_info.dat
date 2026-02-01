@@ -1,0 +1,1749 @@
+﻿{
+  "0": {
+    "version": 20250825,
+    "attribution": "Maidenhead(mh) data copyright 2018 Stephen Loomis (N0TTL) and Henry Forte (N2VFL), use is granted for others provided this attribution remains in the data",
+    "dxcc": "0",
+    "cc": "-",
+    "ccc": "-",
+    "name": "None",
+    "continent": "-",
+    "ituzone": null,
+    "cqzone": null,
+    "timezone": "1",
+    "ccode": "-",
+    "aname": "None",
+    "mh": [],
+    "prefix": [],
+    "worked": false,
+    "confirmed": false,
+    "flag": "un.png",
+    "pp": "-",
+    "lat": 0,
+    "lon": 0,
+    "geo": "deleted",
+    "worked_bands": {},
+    "confirmed_bands": {},
+    "worked_modes": {},
+    "confirmed_modes": {},
+    "direct": [],
+    "prefixITU": {},
+    "prefixCQ": {},
+    "directITU": {},
+    "directCQ": {}
+  },
+  "-": {
+    "cc": "-",
+    "ccc": "-",
+    "flag": "un.png"
+  },
+  "VE": {
+    "cc": "CA",
+    "ccc": "CAN",
+    "flag": "ca.png"
+  },
+  "": {
+    "cc": "JP",
+    "ccc": "JPN",
+    "flag": "xx.png"
+  },
+  "YA": {
+    "cc": "AF",
+    "ccc": "AFG",
+    "flag": "af.png"
+  },
+  "3B6": {
+    "cc": "MP",
+    "ccc": "MNP",
+    "flag": "mp.png"
+  },
+  "OH0": {
+    "cc": "AX",
+    "ccc": "ALA",
+    "flag": "ax.png"
+  },
+  "KL": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "ZA": {
+    "cc": "AL",
+    "ccc": "ALB",
+    "flag": "al.png"
+  },
+  "KH8": {
+    "cc": "AS",
+    "ccc": "ASM",
+    "flag": "as.png"
+  },
+  "FT/z": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "VU4": {
+    "cc": "IN",
+    "ccc": "IND",
+    "flag": "in.png"
+  },
+  "VP2E": {
+    "cc": "AI",
+    "ccc": "AIA",
+    "flag": "ai.png"
+  },
+  "CE9": {
+    "cc": "AQ",
+    "ccc": "ATA",
+    "flag": "aq.png"
+  },
+  "EK": {
+    "cc": "AM",
+    "ccc": "ARM",
+    "flag": "am.png"
+  },
+  "UA9": {
+    "cc": "RX",
+    "ccc": "RUS",
+    "flag": "ru.png"
+  },
+  "ZL9": {
+    "cc": "NZ",
+    "ccc": "NZL",
+    "flag": "nz.png"
+  },
+  "YV0": {
+    "cc": "VE",
+    "ccc": "VEN",
+    "flag": "ve.png"
+  },
+  "4J": {
+    "cc": "AZ",
+    "ccc": "AZE",
+    "flag": "az.png"
+  },
+  "KH1": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "EA6": {
+    "cc": "ES",
+    "ccc": "ESP",
+    "flag": "es.png"
+  },
+  "T8": {
+    "cc": "PW",
+    "ccc": "PLW",
+    "flag": "pw.png"
+  },
+  "3Y/b": {
+    "cc": "BV",
+    "ccc": "BVT",
+    "flag": "no.png"
+  },
+  "EW": {
+    "cc": "BY",
+    "ccc": "BLR",
+    "flag": "by.png"
+  },
+  "EA8": {
+    "cc": "ES",
+    "ccc": "ESP",
+    "flag": "es.png"
+  },
+  "T31": {
+    "cc": "KI",
+    "ccc": "KIR",
+    "flag": "ki.png"
+  },
+  "EA9": {
+    "cc": "ES",
+    "ccc": "ESP",
+    "flag": "es.png"
+  },
+  "VQ9": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "gb.png"
+  },
+  "ZL7": {
+    "cc": "NZ",
+    "ccc": "NZL",
+    "flag": "nz.png"
+  },
+  "VK9X": {
+    "cc": "CX",
+    "ccc": "CXR",
+    "flag": "cx.png"
+  },
+  "FO/c": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "TI9": {
+    "cc": "CR",
+    "ccc": "CRI",
+    "flag": "cr.png"
+  },
+  "VK9C": {
+    "cc": "CC",
+    "ccc": "CCK",
+    "flag": "cc.png"
+  },
+  "SV9": {
+    "cc": "GR",
+    "ccc": "GRC",
+    "flag": "gr.png"
+  },
+  "FT/w": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "KP5": {
+    "cc": "PR",
+    "ccc": "PRI",
+    "flag": "pr.png"
+  },
+  "SV5": {
+    "cc": "GR",
+    "ccc": "GRC",
+    "flag": "gr.png"
+  },
+  "9M6": {
+    "cc": "MY",
+    "ccc": "MYS",
+    "flag": "my.png"
+  },
+  "CE0Y": {
+    "cc": "CL",
+    "ccc": "CHL",
+    "flag": "cl.png"
+  },
+  "T32": {
+    "cc": "KI",
+    "ccc": "KIR",
+    "flag": "ki.png"
+  },
+  "3C": {
+    "cc": "GQ",
+    "ccc": "GNQ",
+    "flag": "gq.png"
+  },
+  "XE": {
+    "cc": "MX",
+    "ccc": "MEX",
+    "flag": "mx.png"
+  },
+  "E3": {
+    "cc": "ER",
+    "ccc": "ERI",
+    "flag": "er.png"
+  },
+  "ES": {
+    "cc": "EE",
+    "ccc": "EST",
+    "flag": "ee.png"
+  },
+  "ET": {
+    "cc": "ET",
+    "ccc": "ETH",
+    "flag": "et.png"
+  },
+  "UA": {
+    "cc": "RU",
+    "ccc": "RUS",
+    "flag": "ru.png"
+  },
+  "PY0F": {
+    "cc": "BR",
+    "ccc": "BRA",
+    "flag": "br.png"
+  },
+  "C6": {
+    "cc": "BS",
+    "ccc": "BHS",
+    "flag": "bs.png"
+  },
+  "R1FJ": {
+    "cc": "RU",
+    "ccc": "RUS",
+    "flag": "ru.png"
+  },
+  "8P": {
+    "cc": "BB",
+    "ccc": "BRB",
+    "flag": "bb.png"
+  },
+  "FY": {
+    "cc": "GF",
+    "ccc": "GUF",
+    "flag": "gf.png"
+  },
+  "VP9": {
+    "cc": "BM",
+    "ccc": "BMU",
+    "flag": "bm.png"
+  },
+  "VP2V": {
+    "cc": "VG",
+    "ccc": "VGB",
+    "flag": "vg.png"
+  },
+  "V3": {
+    "cc": "BZ",
+    "ccc": "BLZ",
+    "flag": "bz.png"
+  },
+  "ZF": {
+    "cc": "KY",
+    "ccc": "CYM",
+    "flag": "ky.png"
+  },
+  "CM": {
+    "cc": "CU",
+    "ccc": "CUB",
+    "flag": "cu.png"
+  },
+  "HC8": {
+    "cc": "EC",
+    "ccc": "ECU",
+    "flag": "ec.png"
+  },
+  "HI": {
+    "cc": "DO",
+    "ccc": "DOM",
+    "flag": "do.png"
+  },
+  "YS": {
+    "cc": "SV",
+    "ccc": "SLV",
+    "flag": "sv.png"
+  },
+  "4L": {
+    "cc": "GE",
+    "ccc": "GEO",
+    "flag": "ge.png"
+  },
+  "TG": {
+    "cc": "GT",
+    "ccc": "GTM",
+    "flag": "gt.png"
+  },
+  "J3": {
+    "cc": "GD",
+    "ccc": "GRD",
+    "flag": "gd.png"
+  },
+  "HH": {
+    "cc": "HT",
+    "ccc": "HTI",
+    "flag": "ht.png"
+  },
+  "FG": {
+    "cc": "GP",
+    "ccc": "GLP",
+    "flag": "gp.png"
+  },
+  "HR": {
+    "cc": "HN",
+    "ccc": "HND",
+    "flag": "hn.png"
+  },
+  "6Y": {
+    "cc": "JM",
+    "ccc": "JAM",
+    "flag": "jm.png"
+  },
+  "FM": {
+    "cc": "MQ",
+    "ccc": "MTQ",
+    "flag": "mq.png"
+  },
+  "YN": {
+    "cc": "NI",
+    "ccc": "NIC",
+    "flag": "ni.png"
+  },
+  "HP": {
+    "cc": "PA",
+    "ccc": "PAN",
+    "flag": "pa.png"
+  },
+  "VP5": {
+    "cc": "TC",
+    "ccc": "TCA",
+    "flag": "tc.png"
+  },
+  "9Y": {
+    "cc": "TT",
+    "ccc": "TTO",
+    "flag": "tt.png"
+  },
+  "P4": {
+    "cc": "AW",
+    "ccc": "ABW",
+    "flag": "aw.png"
+  },
+  "V2": {
+    "cc": "AG",
+    "ccc": "ATG",
+    "flag": "ag.png"
+  },
+  "J7": {
+    "cc": "DM",
+    "ccc": "DMA",
+    "flag": "dm.png"
+  },
+  "VP2M": {
+    "cc": "MS",
+    "ccc": "MSR",
+    "flag": "ms.png"
+  },
+  "J6": {
+    "cc": "LC",
+    "ccc": "LCA",
+    "flag": "lc.png"
+  },
+  "J8": {
+    "cc": "VC",
+    "ccc": "VCT",
+    "flag": "vc.png"
+  },
+  "FT/g": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "LU": {
+    "cc": "AR",
+    "ccc": "ARG",
+    "flag": "ar.png"
+  },
+  "KH2": {
+    "cc": "GU",
+    "ccc": "GUM",
+    "flag": "gu.png"
+  },
+  "CP": {
+    "cc": "BO",
+    "ccc": "BOL",
+    "flag": "bo.png"
+  },
+  "KG4*2": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "GU": {
+    "cc": "GG",
+    "ccc": "GGY",
+    "flag": "gg.png"
+  },
+  "3X": {
+    "cc": "GN",
+    "ccc": "GIN",
+    "flag": "gn.png"
+  },
+  "PY": {
+    "cc": "BR",
+    "ccc": "BRA",
+    "flag": "br.png"
+  },
+  "J5": {
+    "cc": "GW",
+    "ccc": "GNB",
+    "flag": "gw.png"
+  },
+  "KH6": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "VK0H": {
+    "cc": "HM",
+    "ccc": "HMD",
+    "flag": "hm.png"
+  },
+  "CE": {
+    "cc": "CL",
+    "ccc": "CHL",
+    "flag": "cl.png"
+  },
+  "GD": {
+    "cc": "IM",
+    "ccc": "IMN",
+    "flag": "im.png"
+  },
+  "HK": {
+    "cc": "CO",
+    "ccc": "COL",
+    "flag": "co.png"
+  },
+  "4U1I": {
+    "cc": "IG",
+    "ccc": "CHE",
+    "flag": "ch.png"
+  },
+  "JX": {
+    "cc": "SJ",
+    "ccc": "SJM",
+    "flag": "no.png"
+  },
+  "HC": {
+    "cc": "EC",
+    "ccc": "ECU",
+    "flag": "ec.png"
+  },
+  "GJ": {
+    "cc": "JE",
+    "ccc": "JEY",
+    "flag": "je.png"
+  },
+  "KH3": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "FT/j": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "CE0Z": {
+    "cc": "CL",
+    "ccc": "CHL",
+    "flag": "cl.png"
+  },
+  "UA2": {
+    "cc": "RU",
+    "ccc": "RUS",
+    "flag": "ru.png"
+  },
+  "8R": {
+    "cc": "GY",
+    "ccc": "GUY",
+    "flag": "gy.png"
+  },
+  "UN": {
+    "cc": "KZ",
+    "ccc": "KAZ",
+    "flag": "kz.png"
+  },
+  "FT/x": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "ZP": {
+    "cc": "PY",
+    "ccc": "PRY",
+    "flag": "py.png"
+  },
+  "ZL8": {
+    "cc": "NZ",
+    "ccc": "NZL",
+    "flag": "nz.png"
+  },
+  "EX": {
+    "cc": "KG",
+    "ccc": "KGZ",
+    "flag": "kg.png"
+  },
+  "OA": {
+    "cc": "PE",
+    "ccc": "PER",
+    "flag": "pe.png"
+  },
+  "HL": {
+    "cc": "KR",
+    "ccc": "KOR",
+    "flag": "kr.png"
+  },
+  "KH7K": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "PZ": {
+    "cc": "SR",
+    "ccc": "SUR",
+    "flag": "sr.png"
+  },
+  "VP8": {
+    "cc": "FK",
+    "ccc": "FLK",
+    "flag": "fk.png"
+  },
+  "VU7": {
+    "cc": "IN",
+    "ccc": "IND",
+    "flag": "in.png"
+  },
+  "XW": {
+    "cc": "LA",
+    "ccc": "LAO",
+    "flag": "la.png"
+  },
+  "CX": {
+    "cc": "UY",
+    "ccc": "URY",
+    "flag": "uy.png"
+  },
+  "YL": {
+    "cc": "LV",
+    "ccc": "LVA",
+    "flag": "lv.png"
+  },
+  "LY": {
+    "cc": "LT",
+    "ccc": "LTU",
+    "flag": "lt.png"
+  },
+  "VK9L": {
+    "cc": "AU",
+    "ccc": "AUS",
+    "flag": "au.png"
+  },
+  "YV": {
+    "cc": "VE",
+    "ccc": "VEN",
+    "flag": "ve.png"
+  },
+  "CU": {
+    "cc": "PT",
+    "ccc": "PRT",
+    "flag": "pt.png"
+  },
+  "VK": {
+    "cc": "AU",
+    "ccc": "AUS",
+    "flag": "au.png"
+  },
+  "XX9": {
+    "cc": "MO",
+    "ccc": "MAC",
+    "flag": "mo.png"
+  },
+  "VK0M": {
+    "cc": "AU",
+    "ccc": "AUS",
+    "flag": "au.png"
+  },
+  "C2": {
+    "cc": "NR",
+    "ccc": "NRU",
+    "flag": "nr.png"
+  },
+  "YJ": {
+    "cc": "VU",
+    "ccc": "VUT",
+    "flag": "vu.png"
+  },
+  "8Q": {
+    "cc": "MV",
+    "ccc": "MDV",
+    "flag": "mv.png"
+  },
+  "A3": {
+    "cc": "TO",
+    "ccc": "TON",
+    "flag": "to.png"
+  },
+  "HK0/m": {
+    "cc": "CO",
+    "ccc": "COL",
+    "flag": "co.png"
+  },
+  "FK": {
+    "cc": "NC",
+    "ccc": "NCL",
+    "flag": "nc.png"
+  },
+  "P2": {
+    "cc": "PG",
+    "ccc": "PNG",
+    "flag": "pg.png"
+  },
+  "3B8": {
+    "cc": "MU",
+    "ccc": "MUS",
+    "flag": "mu.png"
+  },
+  "KH0": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "OJ0": {
+    "cc": "SE",
+    "ccc": "SWE",
+    "flag": "ax.png"
+  },
+  "V7": {
+    "cc": "MH",
+    "ccc": "MHL",
+    "flag": "mh.png"
+  },
+  "FH": {
+    "cc": "YT",
+    "ccc": "MYT",
+    "flag": "yt.png"
+  },
+  "ZL": {
+    "cc": "NZ",
+    "ccc": "NZL",
+    "flag": "nz.png"
+  },
+  "VK9M": {
+    "cc": "AU",
+    "ccc": "AUS",
+    "flag": "au.png"
+  },
+  "VP6": {
+    "cc": "PN",
+    "ccc": "PCN",
+    "flag": "pn.png"
+  },
+  "V6": {
+    "cc": "FM",
+    "ccc": "FSM",
+    "flag": "fm.png"
+  },
+  "KH4": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "FO": {
+    "cc": "PF",
+    "ccc": "PYF",
+    "flag": "pf.png"
+  },
+  "3D2": {
+    "cc": "FJ",
+    "ccc": "FJI",
+    "flag": "fj.png"
+  },
+  "JD/m": {
+    "cc": "JP",
+    "ccc": "JPN",
+    "flag": "jp.png"
+  },
+  "ER": {
+    "cc": "MD",
+    "ccc": "MDA",
+    "flag": "md.png"
+  },
+  "SV/a": {
+    "cc": "GR",
+    "ccc": "GRC",
+    "flag": "gr.png"
+  },
+  "C9": {
+    "cc": "MZ",
+    "ccc": "MOZ",
+    "flag": "mz.png"
+  },
+  "KP1": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "H4": {
+    "cc": "SB",
+    "ccc": "SLB",
+    "flag": "sb.png"
+  },
+  "5U": {
+    "cc": "NE",
+    "ccc": "NER",
+    "flag": "ne.png"
+  },
+  "E6": {
+    "cc": "NU",
+    "ccc": "NIU",
+    "flag": "nu.png"
+  },
+  "VK9N": {
+    "cc": "NF",
+    "ccc": "NFK",
+    "flag": "nf.png"
+  },
+  "5W": {
+    "cc": "WS",
+    "ccc": "WSM",
+    "flag": "ws.png"
+  },
+  "E5/n": {
+    "cc": "NZ",
+    "ccc": "NZL",
+    "flag": "nz.png"
+  },
+  "JD/o": {
+    "cc": "JP",
+    "ccc": "JPN",
+    "flag": "jp.png"
+  },
+  "3C0": {
+    "cc": "GQ",
+    "ccc": "GNQ",
+    "flag": "gq.png"
+  },
+  "KH5": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "3Y/p": {
+    "cc": "NO",
+    "ccc": "NOR",
+    "flag": "no.png"
+  },
+  "ZS8": {
+    "cc": "ZA",
+    "ccc": "ZAF",
+    "flag": "za.png"
+  },
+  "KP4": {
+    "cc": "PR",
+    "ccc": "PRI",
+    "flag": "pr.png"
+  },
+  "C3": {
+    "cc": "AD",
+    "ccc": "AND",
+    "flag": "ad.png"
+  },
+  "XF4": {
+    "cc": "MX",
+    "ccc": "MEX",
+    "flag": "mx.png"
+  },
+  "ZD8": {
+    "cc": "AC",
+    "ccc": "ASC",
+    "flag": "ky.png"
+  },
+  "OE": {
+    "cc": "AT",
+    "ccc": "AUT",
+    "flag": "at.png"
+  },
+  "3B9": {
+    "cc": "MU",
+    "ccc": "MUS",
+    "flag": "mu.png"
+  },
+  "ON": {
+    "cc": "BE",
+    "ccc": "BEL",
+    "flag": "be.png"
+  },
+  "CY0": {
+    "cc": "CA",
+    "ccc": "CAN",
+    "flag": "ca.png"
+  },
+  "LZ": {
+    "cc": "BG",
+    "ccc": "BGR",
+    "flag": "bg.png"
+  },
+  "FS": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "TK": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "5B": {
+    "cc": "CY",
+    "ccc": "CYP",
+    "flag": "cy.png"
+  },
+  "HK0/a": {
+    "cc": "NI",
+    "ccc": "NIC",
+    "flag": "co.png"
+  },
+  "CE0X": {
+    "cc": "CL",
+    "ccc": "CHL",
+    "flag": "cl.png"
+  },
+  "S9": {
+    "cc": "ST",
+    "ccc": "STP",
+    "flag": "st.png"
+  },
+  "OZ": {
+    "cc": "DK",
+    "ccc": "DNK",
+    "flag": "dk.png"
+  },
+  "OY": {
+    "cc": "FO",
+    "ccc": "FRO",
+    "flag": "fo.png"
+  },
+  "G": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "en.png"
+  },
+  "OH": {
+    "cc": "FI",
+    "ccc": "FIN",
+    "flag": "fi.png"
+  },
+  "IS": {
+    "cc": "IT",
+    "ccc": "ITA",
+    "flag": "it.png"
+  },
+  "F": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "DL": {
+    "cc": "DE",
+    "ccc": "DEU",
+    "flag": "de.png"
+  },
+  "T5": {
+    "cc": "SO",
+    "ccc": "SOM",
+    "flag": "so.png"
+  },
+  "ZB": {
+    "cc": "GI",
+    "ccc": "GIB",
+    "flag": "gi.png"
+  },
+  "E5/s": {
+    "cc": "GS",
+    "ccc": "SGS",
+    "flag": "gs.png"
+  },
+  "VP8/g": {
+    "cc": "GS",
+    "ccc": "SGS",
+    "flag": "gs.png"
+  },
+  "SV": {
+    "cc": "GR",
+    "ccc": "GRC",
+    "flag": "gr.png"
+  },
+  "OX": {
+    "cc": "GL",
+    "ccc": "GRL",
+    "flag": "gl.png"
+  },
+  "VP8/o": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "gb.png"
+  },
+  "HA": {
+    "cc": "HU",
+    "ccc": "HUN",
+    "flag": "hu.png"
+  },
+  "VP8/s": {
+    "cc": "GS",
+    "ccc": "SGS",
+    "flag": "gs.png"
+  },
+  "VP8/h": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "gb.png"
+  },
+  "TF": {
+    "cc": "IS",
+    "ccc": "ISL",
+    "flag": "is.png"
+  },
+  "EI": {
+    "cc": "IE",
+    "ccc": "IRL",
+    "flag": "ie.png"
+  },
+  "1A": {
+    "cc": "MT",
+    "ccc": "MLT",
+    "flag": "mt.png"
+  },
+  "1S": {
+    "cc": "PH",
+    "ccc": "PHL",
+    "flag": "ph.png"
+  },
+  "I": {
+    "cc": "IT",
+    "ccc": "ITA",
+    "flag": "it.png"
+  },
+  "V4": {
+    "cc": "KN",
+    "ccc": "KNA",
+    "flag": "kn.png"
+  },
+  "ZD7": {
+    "cc": "SH",
+    "ccc": "SHN",
+    "flag": "sh.png"
+  },
+  "HB0": {
+    "cc": "LI",
+    "ccc": "LIE",
+    "flag": "li.png"
+  },
+  "CY9": {
+    "cc": "CA",
+    "ccc": "CAN",
+    "flag": "ca.png"
+  },
+  "PY0S": {
+    "cc": "BR",
+    "ccc": "BRA",
+    "flag": "br.png"
+  },
+  "LX": {
+    "cc": "LU",
+    "ccc": "LUX",
+    "flag": "lu.png"
+  },
+  "CT3": {
+    "cc": "PT",
+    "ccc": "PRT",
+    "flag": "pt.png"
+  },
+  "9H": {
+    "cc": "MT",
+    "ccc": "MLT",
+    "flag": "mt.png"
+  },
+  "JW": {
+    "cc": "SJ",
+    "ccc": "SJM",
+    "flag": "no.png"
+  },
+  "3A": {
+    "cc": "MC",
+    "ccc": "MCO",
+    "flag": "mc.png"
+  },
+  "EY": {
+    "cc": "TJ",
+    "ccc": "TJK",
+    "flag": "tj.png"
+  },
+  "PA": {
+    "cc": "NL",
+    "ccc": "NLD",
+    "flag": "nl.png"
+  },
+  "GI": {
+    "cc": "IE",
+    "ccc": "IRL",
+    "flag": "ni2.png"
+  },
+  "LA": {
+    "cc": "NO",
+    "ccc": "NOR",
+    "flag": "no.png"
+  },
+  "SP": {
+    "cc": "PL",
+    "ccc": "POL",
+    "flag": "pl.png"
+  },
+  "ZK3": {
+    "cc": "TK",
+    "ccc": "TKL",
+    "flag": "tk.png"
+  },
+  "CT": {
+    "cc": "PT",
+    "ccc": "PRT",
+    "flag": "pt.png"
+  },
+  "PY0T": {
+    "cc": "BR",
+    "ccc": "BRA",
+    "flag": "br.png"
+  },
+  "ZD9": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "gb.png"
+  },
+  "YO": {
+    "cc": "RO",
+    "ccc": "ROU",
+    "flag": "ro.png"
+  },
+  "FT/t": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "FP": {
+    "cc": "CA",
+    "ccc": "CAN",
+    "flag": "pm.png"
+  },
+  "T7": {
+    "cc": "SM",
+    "ccc": "SMR",
+    "flag": "sm.png"
+  },
+  "GM": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "sc2.png"
+  },
+  "EZ": {
+    "cc": "TM",
+    "ccc": "TKM",
+    "flag": "tm.png"
+  },
+  "EA": {
+    "cc": "ES",
+    "ccc": "ESP",
+    "flag": "es.png"
+  },
+  "T2": {
+    "cc": "TV",
+    "ccc": "TUV",
+    "flag": "tv.png"
+  },
+  "ZC4": {
+    "cc": "CY",
+    "ccc": "CYP",
+    "flag": "cy.png"
+  },
+  "SM": {
+    "cc": "SE",
+    "ccc": "SWE",
+    "flag": "se.png"
+  },
+  "KP2": {
+    "cc": "VI",
+    "ccc": "VIR",
+    "flag": "vi.png"
+  },
+  "5X": {
+    "cc": "UG",
+    "ccc": "UGA",
+    "flag": "ug.png"
+  },
+  "HB": {
+    "cc": "CH",
+    "ccc": "CHE",
+    "flag": "ch.png"
+  },
+  "UR": {
+    "cc": "UA",
+    "ccc": "UKR",
+    "flag": "ua.png"
+  },
+  "4U1U": {
+    "cc": "UN",
+    "ccc": "UNS",
+    "flag": "un.png"
+  },
+  "K": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "UK": {
+    "cc": "UZ",
+    "ccc": "UZB",
+    "flag": "uz.png"
+  },
+  "3W": {
+    "cc": "VN",
+    "ccc": "VNM",
+    "flag": "vn.png"
+  },
+  "GW": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "wa.png"
+  },
+  "HV": {
+    "cc": "VA",
+    "ccc": "VAT",
+    "flag": "va.png"
+  },
+  "YU": {
+    "cc": "RS",
+    "ccc": "SRB",
+    "flag": "rs.png"
+  },
+  "KH9": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "FW": {
+    "cc": "WF",
+    "ccc": "WLF",
+    "flag": "wf.png"
+  },
+  "9M2": {
+    "cc": "MY",
+    "ccc": "MYS",
+    "flag": "my.png"
+  },
+  "T30": {
+    "cc": "KI",
+    "ccc": "KIR",
+    "flag": "ki.png"
+  },
+  "S0": {
+    "cc": "EH",
+    "ccc": "ESH",
+    "flag": "eh.png"
+  },
+  "VK9W": {
+    "cc": "AU",
+    "ccc": "AUS",
+    "flag": "au.png"
+  },
+  "A9": {
+    "cc": "BH",
+    "ccc": "BHR",
+    "flag": "bh.png"
+  },
+  "S2": {
+    "cc": "BD",
+    "ccc": "BGD",
+    "flag": "bd.png"
+  },
+  "A5": {
+    "cc": "BT",
+    "ccc": "BTN",
+    "flag": "bt.png"
+  },
+  "TI": {
+    "cc": "CR",
+    "ccc": "CRI",
+    "flag": "cr.png"
+  },
+  "XZ": {
+    "cc": "MM",
+    "ccc": "MMR",
+    "flag": "mm.png"
+  },
+  "XU": {
+    "cc": "KH",
+    "ccc": "KHM",
+    "flag": "kh.png"
+  },
+  "4S": {
+    "cc": "LK",
+    "ccc": "LKA",
+    "flag": "lk.png"
+  },
+  "BY": {
+    "cc": "CN",
+    "ccc": "CHN",
+    "flag": "cn.png"
+  },
+  "VR": {
+    "cc": "HK",
+    "ccc": "HKG",
+    "flag": "hk.png"
+  },
+  "VU": {
+    "cc": "IN",
+    "ccc": "IND",
+    "flag": "in.png"
+  },
+  "YB": {
+    "cc": "ID",
+    "ccc": "IDN",
+    "flag": "id.png"
+  },
+  "EP": {
+    "cc": "IR",
+    "ccc": "IRN",
+    "flag": "ir.png"
+  },
+  "YI": {
+    "cc": "IQ",
+    "ccc": "IRQ",
+    "flag": "iq.png"
+  },
+  "4X": {
+    "cc": "IL",
+    "ccc": "ISR",
+    "flag": "il.png"
+  },
+  "JA": {
+    "cc": "JP",
+    "ccc": "JPN",
+    "flag": "jp.png"
+  },
+  "JY": {
+    "cc": "JO",
+    "ccc": "JOR",
+    "flag": "jo.png"
+  },
+  "P5": {
+    "cc": "KP",
+    "ccc": "PRK",
+    "flag": "kp.png"
+  },
+  "V8": {
+    "cc": "BN",
+    "ccc": "BRN",
+    "flag": "bn.png"
+  },
+  "9K": {
+    "cc": "KW",
+    "ccc": "KWT",
+    "flag": "kw.png"
+  },
+  "OD": {
+    "cc": "LB",
+    "ccc": "LBN",
+    "flag": "lb.png"
+  },
+  "JT": {
+    "cc": "MN",
+    "ccc": "MNG",
+    "flag": "mn.png"
+  },
+  "9N": {
+    "cc": "NP",
+    "ccc": "NPL",
+    "flag": "np.png"
+  },
+  "A4": {
+    "cc": "OM",
+    "ccc": "OMN",
+    "flag": "om.png"
+  },
+  "AP": {
+    "cc": "PK",
+    "ccc": "PAK",
+    "flag": "pk.png"
+  },
+  "DU": {
+    "cc": "PH",
+    "ccc": "PHL",
+    "flag": "ph.png"
+  },
+  "A7": {
+    "cc": "QA",
+    "ccc": "QAT",
+    "flag": "qa.png"
+  },
+  "HZ": {
+    "cc": "SA",
+    "ccc": "SAU",
+    "flag": "sa.png"
+  },
+  "S7": {
+    "cc": "SC",
+    "ccc": "SYC",
+    "flag": "sc.png"
+  },
+  "9V": {
+    "cc": "SG",
+    "ccc": "SGP",
+    "flag": "sg.png"
+  },
+  "J2": {
+    "cc": "DJ",
+    "ccc": "DJI",
+    "flag": "dj.png"
+  },
+  "YK": {
+    "cc": "SY",
+    "ccc": "SYR",
+    "flag": "sy.png"
+  },
+  "BV": {
+    "cc": "TW",
+    "ccc": "TWN",
+    "flag": "tw.png"
+  },
+  "HS": {
+    "cc": "TH",
+    "ccc": "THA",
+    "flag": "th.png"
+  },
+  "TA": {
+    "cc": "TR",
+    "ccc": "TUR",
+    "flag": "tr.png"
+  },
+  "A6": {
+    "cc": "AE",
+    "ccc": "ARE",
+    "flag": "ae.png"
+  },
+  "7X": {
+    "cc": "DZ",
+    "ccc": "DZA",
+    "flag": "dz.png"
+  },
+  "D2": {
+    "cc": "AO",
+    "ccc": "AGO",
+    "flag": "ao.png"
+  },
+  "A2": {
+    "cc": "BW",
+    "ccc": "BWA",
+    "flag": "bw.png"
+  },
+  "9U": {
+    "cc": "BI",
+    "ccc": "BDI",
+    "flag": "bi.png"
+  },
+  "TJ": {
+    "cc": "CM",
+    "ccc": "CMR",
+    "flag": "cm.png"
+  },
+  "TL": {
+    "cc": "CF",
+    "ccc": "CAF",
+    "flag": "cf.png"
+  },
+  "D4": {
+    "cc": "CV",
+    "ccc": "CPV",
+    "flag": "cv.png"
+  },
+  "TT": {
+    "cc": "TD",
+    "ccc": "TCD",
+    "flag": "td.png"
+  },
+  "D6": {
+    "cc": "KM",
+    "ccc": "COM",
+    "flag": "km.png"
+  },
+  "TN": {
+    "cc": "CG",
+    "ccc": "COG",
+    "flag": "cg.png"
+  },
+  "9Q": {
+    "cc": "CD",
+    "ccc": "COD",
+    "flag": "cd.png"
+  },
+  "TY": {
+    "cc": "BJ",
+    "ccc": "BEN",
+    "flag": "bj.png"
+  },
+  "TR": {
+    "cc": "GA",
+    "ccc": "GAB",
+    "flag": "ga.png"
+  },
+  "C5": {
+    "cc": "GM",
+    "ccc": "GMB",
+    "flag": "gm.png"
+  },
+  "9G": {
+    "cc": "GH",
+    "ccc": "GHA",
+    "flag": "gh.png"
+  },
+  "TU": {
+    "cc": "CI",
+    "ccc": "CIV",
+    "flag": "ci.png"
+  },
+  "5Z": {
+    "cc": "KE",
+    "ccc": "KEN",
+    "flag": "ke.png"
+  },
+  "7P": {
+    "cc": "LS",
+    "ccc": "LSO",
+    "flag": "ls.png"
+  },
+  "EL": {
+    "cc": "LR",
+    "ccc": "LBR",
+    "flag": "lr.png"
+  },
+  "5A": {
+    "cc": "LY",
+    "ccc": "LBY",
+    "flag": "ly.png"
+  },
+  "5R": {
+    "cc": "MG",
+    "ccc": "MDG",
+    "flag": "mg.png"
+  },
+  "7Q": {
+    "cc": "MW",
+    "ccc": "MWI",
+    "flag": "mw.png"
+  },
+  "TZ": {
+    "cc": "ML",
+    "ccc": "MLI",
+    "flag": "ml.png"
+  },
+  "5T": {
+    "cc": "MR",
+    "ccc": "MRT",
+    "flag": "mr.png"
+  },
+  "CN": {
+    "cc": "MA",
+    "ccc": "MAR",
+    "flag": "ma.png"
+  },
+  "5N": {
+    "cc": "NG",
+    "ccc": "NGA",
+    "flag": "ng.png"
+  },
+  "Z2": {
+    "cc": "ZW",
+    "ccc": "ZWE",
+    "flag": "zw.png"
+  },
+  "FR": {
+    "cc": "RE",
+    "ccc": "REU",
+    "flag": "re.png"
+  },
+  "9X": {
+    "cc": "RW",
+    "ccc": "RWA",
+    "flag": "rw.png"
+  },
+  "6W": {
+    "cc": "SN",
+    "ccc": "SEN",
+    "flag": "sn.png"
+  },
+  "9L": {
+    "cc": "SL",
+    "ccc": "SLE",
+    "flag": "sl.png"
+  },
+  "3D2/r": {
+    "cc": "FJ",
+    "ccc": "FJI",
+    "flag": "fj.png"
+  },
+  "ZS": {
+    "cc": "ZA",
+    "ccc": "ZAF",
+    "flag": "za.png"
+  },
+  "V5": {
+    "cc": "NA",
+    "ccc": "NAM",
+    "flag": "na.png"
+  },
+  "ST": {
+    "cc": "SD",
+    "ccc": "SDN",
+    "flag": "sd.png"
+  },
+  "3DA": {
+    "cc": "SZ",
+    "ccc": "SWZ",
+    "flag": "sz.png"
+  },
+  "5H": {
+    "cc": "TZ",
+    "ccc": "TZA",
+    "flag": "tz.png"
+  },
+  "3V": {
+    "cc": "TN",
+    "ccc": "TUN",
+    "flag": "tn.png"
+  },
+  "SU": {
+    "cc": "EG",
+    "ccc": "EGY",
+    "flag": "eg.png"
+  },
+  "XT": {
+    "cc": "BF",
+    "ccc": "BFA",
+    "flag": "bf.png"
+  },
+  "9J": {
+    "cc": "ZM",
+    "ccc": "ZMB",
+    "flag": "zm.png"
+  },
+  "5V": {
+    "cc": "TG",
+    "ccc": "TGO",
+    "flag": "tg.png"
+  },
+  "3D2/c": {
+    "cc": "FJ",
+    "ccc": "FJI",
+    "flag": "fj.png"
+  },
+  "T33": {
+    "cc": "KI",
+    "ccc": "KIR",
+    "flag": "ki.png"
+  },
+  "7O": {
+    "cc": "YE",
+    "ccc": "YEM",
+    "flag": "ye.png"
+  },
+  "9A": {
+    "cc": "HR",
+    "ccc": "HRV",
+    "flag": "hr.png"
+  },
+  "S5": {
+    "cc": "SI",
+    "ccc": "SVN",
+    "flag": "si.png"
+  },
+  "E7": {
+    "cc": "BA",
+    "ccc": "BIH",
+    "flag": "ba.png"
+  },
+  "Z3": {
+    "cc": "MK",
+    "ccc": "MKD",
+    "flag": "mk.png"
+  },
+  "OK": {
+    "cc": "CZ",
+    "ccc": "CZE",
+    "flag": "cz.png"
+  },
+  "OM": {
+    "cc": "SK",
+    "ccc": "SVK",
+    "flag": "sk.png"
+  },
+  "BV9P": {
+    "cc": "TW",
+    "ccc": "TWN",
+    "flag": "tw.png"
+  },
+  "BS7": {
+    "cc": "PH",
+    "ccc": "PHL",
+    "flag": "ph.png"
+  },
+  "H40": {
+    "cc": "SB",
+    "ccc": "SLB",
+    "flag": "sb.png"
+  },
+  "FO/a": {
+    "cc": "PF",
+    "ccc": "PYF",
+    "flag": "pf.png"
+  },
+  "FO/m": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "E4": {
+    "cc": "PS",
+    "ccc": "PSE",
+    "flag": "ps.png"
+  },
+  "4W": {
+    "cc": "TL",
+    "ccc": "TLS",
+    "flag": "tl.png"
+  },
+  "FK/c": {
+    "cc": "GB",
+    "ccc": "GBR",
+    "flag": "gb.png"
+  },
+  "VP6/d": {
+    "cc": "PN",
+    "ccc": "PCN",
+    "flag": "pn.png"
+  },
+  "4O": {
+    "cc": "ME",
+    "ccc": "MNE",
+    "flag": "me.png"
+  },
+  "KH8/s": {
+    "cc": "US",
+    "ccc": "USA",
+    "flag": "us.png"
+  },
+  "FJ": {
+    "cc": "FR",
+    "ccc": "FRA",
+    "flag": "fr.png"
+  },
+  "PJ2": {
+    "cc": "AN",
+    "ccc": "ANT",
+    "flag": "cw.png"
+  },
+  "PJ7": {
+    "cc": "SX",
+    "ccc": "SXM",
+    "flag": "sx.png"
+  },
+  "PJ5": {
+    "cc": "AN",
+    "ccc": "ANT",
+    "flag": "an.png"
+  },
+  "PJ4": {
+    "cc": "BQ",
+    "ccc": "BES",
+    "flag": "nl.png"
+  },
+  "Z8": {
+    "cc": "SS",
+    "ccc": "SSD",
+    "flag": "ss.png"
+  },
+  "Z6": {
+    "cc": "XK",
+    "ccc": "XKX",
+    "flag": "xk.png"
+  },
+  "?": {
+    "cc": "-",
+    "ccc": "-",
+    "flag": "xx.png"
+  }
+}

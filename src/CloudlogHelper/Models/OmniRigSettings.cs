@@ -21,9 +21,6 @@ public class OmniRigSettings : ReactiveValidationObject
     [Reactive] public bool PollAllowed { get; set; }
 
     [Reactive] public string SelectedRig { get; set; } = DefaultConfigs.OmniRigAvailableRig.First();
-
-    [Reactive] public string SyncRigInfoAddress { get; set; } = string.Empty;
-    
     
     private bool _isConfChanged;
 
@@ -56,8 +53,7 @@ public class OmniRigSettings : ReactiveValidationObject
         this.WhenAnyValue(    
             x => x.SelectedRig,
             x => x.PollAllowed,
-             x=> x.PollInterval,
-            x => x.SyncRigInfoAddress
+             x=> x.PollInterval
         )
         .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
         .Subscribe(_ =>
@@ -80,7 +76,7 @@ public class OmniRigSettings : ReactiveValidationObject
 
     protected bool Equals(OmniRigSettings other)
     {
-        return PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && SelectedRig == other.SelectedRig && SyncRigInfoAddress == other.SyncRigInfoAddress;
+        return PollInterval == other.PollInterval && PollAllowed == other.PollAllowed && SelectedRig == other.SelectedRig;
     }
 
     public override bool Equals(object? obj)
@@ -93,6 +89,6 @@ public class OmniRigSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(PollInterval, PollAllowed, SelectedRig, SyncRigInfoAddress);
+        return HashCode.Combine(PollInterval, PollAllowed, SelectedRig);
     }
 }

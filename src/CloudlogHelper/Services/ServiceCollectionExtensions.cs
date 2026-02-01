@@ -37,8 +37,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
-        services.AddSingleton<ICLHServerService, CLHServerService>();
+        services.AddSingleton<ICLHServerService, DummyCLHServerService>();
         services.AddSingleton<ILogSystemManager, LogSystemManager>();
+        services.AddSingleton<ICountryService, CountryService>();
         return Task.CompletedTask;
     }
 

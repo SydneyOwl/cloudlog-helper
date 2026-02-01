@@ -256,7 +256,7 @@
         <value>上报状态</value>
     </data>
     <data name="nextuploadtime" xml:space="preserve">
-        <value>下次上报时间</value>
+        <value>下次上报</value>
     </data>
     <data name="invalidport" xml:space="preserve">
         <value>端口号无效</value>
@@ -783,5 +783,14 @@
     </data>
     <data name="rightclick2seemore" xml:space="preserve">
         <value>右键点击 QSO 查看更多</value>
+    </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>自动上传电台信息</value>
+    </data>
+    <data name="qsouploadendpoint" xml:space="preserve">
+        <value>QSO上传端点</value>
+    </data>
+    <data name="riginfouploadendpoint" xml:space="preserve">
+        <value>电台信息上传端点</value>
     </data>
 </root>

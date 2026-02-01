@@ -106,8 +106,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
         if (_appSettings.HamlibSettings.PollAllowed)
         {
-            _syncRigInfoAddr.Clear();
-            _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
             await _startRigctld();
         }
     }
@@ -115,11 +113,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     private async Task HandleFLRigSettings()
     {
         ClassLogger.Info("FLRig service started.");
-        if (_appSettings.FLRigSettings.PollAllowed)
-        {
-            _syncRigInfoAddr.Clear();
-            _syncRigInfoAddr.AddRange(_appSettings.FLRigSettings.SyncRigInfoAddress.Split(";"));
-        }
     }
 
     private async Task HandleOmniRigSettings()
@@ -127,8 +120,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         ClassLogger.Info("omnirig service started.");
         if (_appSettings.OmniRigSettings.PollAllowed)
         {
-            _syncRigInfoAddr.Clear();
-            _syncRigInfoAddr.AddRange(_appSettings.OmniRigSettings.SyncRigInfoAddress.Split(";"));
             await _currentService.StartService(_getNewCancellationProcessToken(), _appSettings.OmniRigSettings.SelectedRig);
         }
     }
@@ -162,20 +153,17 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         {
             if (_appSettings.HamlibSettings.PollAllowed)
             {
-                _syncRigInfoAddr.AddRange(_appSettings.HamlibSettings.SyncRigInfoAddress.Split(";"));
                 await _startRigctld();
                 return;
             }
 
             if (_appSettings.FLRigSettings.PollAllowed)
             {
-                _syncRigInfoAddr.AddRange(_appSettings.FLRigSettings.SyncRigInfoAddress.Split(";"));
                 _currentService = _services[RigBackendServiceEnum.FLRig];
             }
             
             if (_appSettings.OmniRigSettings.PollAllowed)
             {
-                _syncRigInfoAddr.AddRange(_appSettings.OmniRigSettings.SyncRigInfoAddress.Split(";"));
                 _currentService = _services[RigBackendServiceEnum.OmniRig];
                 await _currentService.StartService(_getNewCancellationProcessToken(), _appSettings.OmniRigSettings.SelectedRig);
             }
@@ -288,28 +276,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         try
         {
             data = await GetRigDataForService(settingsSnapshot, cancellationToken);
-            
-            // Fire-and-forget for sync operations with error handling
-            if (!cancellationToken.IsCancellationRequested && _syncRigInfoAddr.Any())
-            {
-                _ = Task.Run(async () =>
-                {
-                    foreach (var address in _syncRigInfoAddr.Where(addr => !string.IsNullOrWhiteSpace(addr)))
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                            break;
-                            
-                        try
-                        {
-                            await _uploadRigInfoToUserSpecifiedAddressAsync(address, data, cancellationToken);
-                        }
-                        catch (Exception ex)
-                        {
-                            ClassLogger.Warn(ex, $"Failed to sync rig info to {address}");
-                        }
-                    }
-                }, cancellationToken);
-            }
             
             return data;
         }
@@ -535,28 +501,6 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         }
 
         return (ip, port);
-    }
-
-    private async Task _uploadRigInfoToUserSpecifiedAddressAsync(string url,
-        RadioData data, CancellationToken token)
-    {
-        var payload = new RadioApiCallV2
-        {
-            Radio = data.RigName ?? "Unknown",
-            Frequency = data.FrequencyTx,
-            Mode = data.ModeTx,
-            FrequencyRx = data.FrequencyRx,
-            ModeRx = data.ModeRx,
-            Power = data.Power
-        };
-
-        var results = await url
-            .WithHeader("Content-Type", "application/json")
-            .PostStringAsync(JsonSerializer.Serialize(payload, SourceGenerationContext.Default.RadioApiCallV2), cancellationToken: token)
-            .ReceiveString();
-        
-        if (results != "OK")
-            throw new Exception($"Expected 'OK' but got: {results}");
     }
 
     private PollingSettingsCache GetSettingsCache()

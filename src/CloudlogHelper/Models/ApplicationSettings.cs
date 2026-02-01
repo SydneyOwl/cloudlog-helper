@@ -38,8 +38,7 @@ public class ApplicationSettings : ReactiveValidationObject
     ///     Cloudlog settings.
     /// </summary>
     public CloudlogSettings CloudlogSettings { get; set; } = new();
-
-
+    
     /// <summary>
     ///     Log services like qrz and eqsl.cc
     /// </summary>

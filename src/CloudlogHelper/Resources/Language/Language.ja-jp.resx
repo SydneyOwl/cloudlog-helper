@@ -776,4 +776,13 @@
     <data name="rightclick2seemore" xml:space="preserve">
         <value>QSO を右クリックして詳細を表示</value>
     </data>
+    <data name="autorigupload" xml:space="preserve">
+        <value>RIG情報の自動アップロード</value>
+    </data>
+    <data name="qsouploadendpoint" xml:space="preserve">
+        <value>QSOアップロードエンドポイント</value>
+    </data>
+    <data name="riginfouploadendpoint" xml:space="preserve">
+        <value>無線機情報アップロードエンドポイント</value>
+    </data>
 </root>

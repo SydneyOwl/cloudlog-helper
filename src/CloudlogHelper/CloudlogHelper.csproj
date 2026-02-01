@@ -124,6 +124,8 @@
         <EmbeddedResource Update="Resources\Language\Language.zh-hant.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
+        <None Remove="Resources\dxcc_info.dat" />
+        <EmbeddedResource Include="Resources\dxcc_info.dat" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">

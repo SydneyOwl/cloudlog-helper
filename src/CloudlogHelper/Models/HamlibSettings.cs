@@ -41,8 +41,6 @@ public class HamlibSettings : ReactiveValidationObject
     [Reactive]
     public string ExternalRigctldHostAddress { get; set; } = DefaultConfigs.RigctldExternalHost;
 
-    [Reactive]  public string SyncRigInfoAddress { get; set; } = string.Empty;
-
     private bool _isConfChanged;
 
     private CompositeDisposable _disposable = new();
@@ -112,8 +110,7 @@ public class HamlibSettings : ReactiveValidationObject
             x => x.AllowExternalControl,
             x => x.OverrideCommandlineArg,
             x => x.UseExternalRigctld,
-            x => x.ExternalRigctldHostAddress,
-            x => x.SyncRigInfoAddress
+            x => x.ExternalRigctldHostAddress
         )// fixme some trickly solutions...
         .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
         .Subscribe(_ =>
@@ -154,8 +151,7 @@ public class HamlibSettings : ReactiveValidationObject
                AllowExternalControl == other.AllowExternalControl &&
                OverrideCommandlineArg == other.OverrideCommandlineArg &&
                UseExternalRigctld == other.UseExternalRigctld &&
-               ExternalRigctldHostAddress == other.ExternalRigctldHostAddress &&
-               SyncRigInfoAddress == other.SyncRigInfoAddress;
+               ExternalRigctldHostAddress == other.ExternalRigctldHostAddress;
     }
 
     public override bool Equals(object? obj)
@@ -181,7 +177,6 @@ public class HamlibSettings : ReactiveValidationObject
         hashCode.Add(OverrideCommandlineArg);
         hashCode.Add(UseExternalRigctld);
         hashCode.Add(ExternalRigctldHostAddress);
-        hashCode.Add(SyncRigInfoAddress);
         return hashCode.ToHashCode();
     }
 }

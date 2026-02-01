@@ -63,8 +63,8 @@
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
             
             <ToggleButton Content="{avalonia:MaterialIconExt Kind=LocationOn}" HorizontalAlignment="Stretch"
-                    IsVisible="{Binding ShouldShowLocation}"
-                    Command="{Binding ChangeSingleChart}"
+                    IsVisible="{Binding ShouldShowLocationButton}"
+                    IsChecked="{Binding ShowLocation}"
                     Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
             

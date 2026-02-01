@@ -11,6 +11,8 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Material.Icons;
+using Material.Icons.Avalonia;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -52,15 +54,14 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
     [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-
     [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString(LangKeys.unknown);
-
-
+    [Reactive] public MaterialIconKind? BackendType { get; set; } = MaterialIconKind.QuestionMark;
+    
     private void Initialize()
     {
         // poll it!
         _pollCommand = ReactiveCommand.CreateFromTask(_refreshUserBasicData);
-        var interval = TimeSpan.FromSeconds(DefaultConfigs.CloudlogInfoPollRequestTimeout);
+        var interval = TimeSpan.FromSeconds(DefaultConfigs.CloudlogInfoPollInterval);
 
         this.WhenActivated(disposables =>
         {
@@ -69,10 +70,12 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 .Where(x => x.Part == ChangedPart.Cloudlog)
                 .Subscribe(x =>
                 {
-                    Observable.Return(Unit.Default) // 触发信号
+                    Observable.Return(Unit.Default)
                         .Delay(TimeSpan.FromMilliseconds(500))
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
+                    
+                    _ = _refreshBackendType();
                 })
                 .DisposeWith(disposables);
 
@@ -80,7 +83,6 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     _setStatusToUnknown();
                     await _inAppNotification.SendErrorNotificationAsync(err.Message);
-                    // Console.WriteLine(err.Message + " Sent to parent vm");
                 })
                 .DisposeWith(disposables);
 
@@ -88,13 +90,36 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 .Select(_ => Unit.Default)
                 .InvokeCommand(this, x => x._pollCommand)
                 .DisposeWith(disposables);
+            
+            _ = _refreshBackendType();
         });
     }
-    // [Reactive] public string? QsAvgMin { get; set; } = LangKeys.calculating;
-    // [Reactive] public string? QsAvgHour { get; set; } = LangKeys.calculating;
+
+    private async Task _refreshBackendType()
+    {
+        if (!_settings.AutoPollStationStatus)
+        {
+            BackendType = MaterialIconKind.QuestionMark;
+            return;
+        }
+        
+        using var source = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.CloudlogInfoPollTimeout));
+        var info = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(_settings.CloudlogUrl, source.Token);
+        
+        ClassLogger.Trace($"Detected {info}");
+
+        BackendType = info switch
+        {
+            ServerInstanceType.Cloudlog => MaterialIconKind.Cloud,
+            ServerInstanceType.Wavelog => MaterialIconKind.Wifi,
+            _ => MaterialIconKind.QuestionMark
+        };
+    }
 
     private async Task _refreshUserBasicData()
     {
+        using var source = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.CloudlogInfoPollTimeout));
+        
         // await Task.Delay(500); //dirty... Validation part in Settings(init) is not ready yet so wait for 500ms
         if (!_settings.AutoPollStationStatus)
         {
@@ -106,7 +131,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
             throw new Exception(TranslationHelper.GetString(LangKeys.confcloudlogfirst));
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
-            _settings.CloudlogStationInfo?.StationId!, CancellationToken.None);
+            _settings.CloudlogStationInfo?.StationId!, source.Token);
         if (info is null) throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
 
         OP = info.StationCallsign;
@@ -114,7 +139,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         // polling statstics
         var statistic = await CloudlogUtil.GetStationStatisticsAsync(_settings.CloudlogUrl,
-            _settings.CloudlogApiKey, CancellationToken.None);
+            _settings.CloudlogApiKey, source.Token);
         if (statistic is null)
         {
             throw new Exception(TranslationHelper.GetString(LangKeys.failedstationstat));

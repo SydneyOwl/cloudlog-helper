@@ -17,7 +17,7 @@
     <UserControl.Resources>
         <converters:StringToColorConverter x:Key="StatusToColor" />
         <converters:UploadStatusToLangKeyConverter x:Key="StatusToLanguageKey" />
-        <converters:UploadStatusToVisibilityConverter x:Key="StatusToVisibility" />
+        <converters:StatusToVisibilityConverter x:Key="StatusToVisibility" />
         <converters:FailReasonToTooltipConverter x:Key="FailReasonToTooltip" />
         <converters:StringToColorConverter x:Key="StringToColor" />
         <converters:OriginNameToDXCCKeyConverter x:Key="NameToKey" />
@@ -108,16 +108,20 @@
                                         <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0,0,10,0">
                                             <TextBlock FontWeight="Bold" Text="{Binding DXCall}" FontSize="17"
                                                        MinWidth="80" VerticalAlignment="Center" Margin="0,0,15,0" />
-                                            <TextBlock FontSize="12" MaxWidth="150" HorizontalAlignment="Left" TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" >
-                                                <TextBlock.Text>
-                                                    <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
-                                                        <LanguageBinding Key="{x:Static resources:DXCCKeys.empty}"/>
-                                                        <Binding Path="OriginalCountryName" Converter="{StaticResource NameToKey}"/>
-                                                    </I18N>
-                                                </TextBlock.Text>
-                                            </TextBlock>
+                                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                                 <Image Source="{Binding CountryFlagAvares}" Height="15"
+                                                                VerticalAlignment="Center"/>
+                                                <TextBlock FontSize="12" MaxWidth="150" HorizontalAlignment="Left" TextWrapping="NoWrap"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" >
+                                                    <TextBlock.Text>
+                                                        <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
+                                                            <LanguageBinding Key="{x:Static resources:DXCCKeys.empty}"/>
+                                                            <Binding Path="OriginalCountryName" Converter="{StaticResource NameToKey}"/>
+                                                        </I18N>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </StackPanel>
                                         </StackPanel>
                                         <Grid Grid.Column="2"
                                               Margin="0,0,24,0"

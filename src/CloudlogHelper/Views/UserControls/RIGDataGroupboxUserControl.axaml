@@ -6,6 +6,7 @@
              xmlns:resources="clr-namespace:CloudlogHelper.Resources"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
              xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
              x:Class="CloudlogHelper.Views.UserControls.RIGDataGroupboxUserControl"
              x:DataType="userControls:RIGDataGroupboxUserControlViewModel">
@@ -25,6 +26,8 @@
         <FontFamily x:Key="SevenSegmentFont">avares://CloudlogHelper/Assets/Fonts#Digital Numbers</FontFamily>
         <converters:NullableStringToVisibilityConverter x:Key="StringToVisibility" />
         <converters:StringToColorConverter x:Key="StringToColor" />
+        <converters:StatusToColorConverter x:Key="RigUploadStatusToColor" />
+        <converters:StatusToVisibilityConverter x:Key="StatusToVisibility" />
     </UserControl.Resources>
 
     <HeaderedContentControl HorizontalAlignment="Stretch"
@@ -35,13 +38,54 @@
         <Grid ColumnDefinitions="Auto,Auto"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
               ShowGridLines="False" RowSpacing="5" 
-              Margin="20,0,20,0"
+              Margin="20,10,20,0"
               VerticalAlignment="Center" HorizontalAlignment="Center">
 
-            <userControls1:WindowSplitToggleButtonUserControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"
-                                                              Width="32" Height="32" Margin="0,0,20,0"
-                                                              DataContext="{Binding SplitUserControlViewModel}" />
-
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+              ColumnDefinitions="*,Auto">
+            
+            <!-- 左侧控件 -->
+            <StackPanel Orientation="Horizontal" Spacing="10" Grid.Column="0"
+                        HorizontalAlignment="Left">
+                <userControls1:WindowSplitToggleButtonUserControl  
+                    HorizontalAlignment="Left"
+                    Width="35" Height="30" Margin="0,0,0,0"
+                    DataContext="{Binding SplitUserControlViewModel}" />
+                
+                <Button Height="30"
+                        HorizontalAlignment="Left"
+                        IsVisible="{Binding CommStatus, 
+                            Converter={StaticResource StatusToVisibility}}"
+                        Command="{Binding RefreshRigInfo}" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <avalonia:MaterialIcon Kind="Refresh" HorizontalAlignment="Center" 
+                                               Animation="{Binding RefreshAnimation}"
+                                               VerticalAlignment="Center" />
+                        <Label Content="{Binding RefreshAfter}" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="10"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            
+            <!-- 右侧图标 -->
+            <StackPanel Orientation="Horizontal" Spacing="10" Grid.Column="1"
+                        HorizontalAlignment="Right" Margin="0,0,10,0">
+                <avalonia:MaterialIcon Kind="Radio"
+                                       Foreground="{Binding CommStatus, Converter={StaticResource RigUploadStatusToColor}}"
+                                       Width="20"
+                                       Height="20"
+                                       IsVisible="{Binding CommStatus, Converter={StaticResource StatusToVisibility}}"
+                                       VerticalAlignment="Center" />
+                <avalonia:MaterialIcon Kind="CloudUpload"
+                                       Foreground="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToColor}}"
+                                       Width="20"
+                                       Height="20"
+                                       IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
+                                       VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+            
             <Border Classes="FreqBlock" Grid.Row="1" Grid.Column="0"
                     Grid.ColumnSpan="2" MinWidth="240"
                     Padding="20,10,20,10">
@@ -124,14 +168,14 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-
-            <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5"
-                       Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" />
-            <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" />
-
-            <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5"
-                       Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" />
-            <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" />
+            
+            <!-- <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5" -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" /> -->
+            <!-- <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" /> -->
+            <!-- -->
+            <!-- <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5" -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" /> -->
+            <!-- <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" /> -->
         </Grid>
     </HeaderedContentControl>
 </UserControl>

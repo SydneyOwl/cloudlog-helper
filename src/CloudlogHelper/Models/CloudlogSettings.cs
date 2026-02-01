@@ -30,6 +30,7 @@ public class CloudlogSettings : ReactiveValidationObject
     }
 
     [Reactive] public bool AutoQSOUploadEnabled { get; set; } = true;
+    [Reactive] public bool AutoRigUploadEnabled { get; set; } = true;
     [Reactive] public bool AutoPollStationStatus { get; set; } = true;
 
     [Reactive]
@@ -118,6 +119,7 @@ public class CloudlogSettings : ReactiveValidationObject
         return CloudlogUrl == other.CloudlogUrl && CloudlogApiKey == other.CloudlogApiKey &&
                CloudlogStationInfo?.StationId == other.CloudlogStationInfo?.StationId &&
                AutoQSOUploadEnabled == other.AutoQSOUploadEnabled &&
+               AutoRigUploadEnabled == other.AutoRigUploadEnabled &&
                AutoPollStationStatus == other.AutoPollStationStatus;
     }
 
@@ -131,7 +133,7 @@ public class CloudlogSettings : ReactiveValidationObject
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled,
+        return HashCode.Combine(CloudlogUrl, CloudlogApiKey, CloudlogStationInfo, AutoQSOUploadEnabled, AutoRigUploadEnabled,
             AutoPollStationStatus);
     }
 }

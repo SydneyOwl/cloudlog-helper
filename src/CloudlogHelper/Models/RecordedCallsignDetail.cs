@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using ADIFLib;
+using Avalonia.Media;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
@@ -159,6 +160,12 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Client ID sent by client, e.g. `JTDX` `WSJT-X`
     /// </summary>
     public string ClientId { get; set; }
+
+    /// <summary>
+    ///     Flag of dxcall
+    /// </summary>
+    [Reactive] 
+    public IImage? CountryFlagAvares { get; set; }
     
     /// <summary>
     ///     Original adif data.
