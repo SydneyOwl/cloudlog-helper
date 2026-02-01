@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,7 +32,14 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
 
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        var result = await ClublogTestEndpoint
+        var handler = new HttpClientHandler {
+            SslProtocols = SslProtocols.Tls12
+        };
+        
+        var client = new FlurlClient(new HttpClient(handler));
+        
+        // using tls11 will fail here - seems like clublog server has dropped support of tls1.1?
+        var result = await client.Request(ClublogTestEndpoint)
             .AllowHttpStatus(200, 400, 500, 403)
             .PostUrlEncodedAsync(new
             {
@@ -55,7 +64,14 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
         var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
         adifWithHeader.AppendLine(adif);
         
-        var result = await ClublogQsoUploadEndpoint
+        // using tls11 will fail here - seems like clublog server has dropped support of tls1.1?
+        var handler = new HttpClientHandler {
+            SslProtocols = SslProtocols.Tls12
+        };
+        
+        var client = new FlurlClient(new HttpClient(handler));
+        
+        var result = await client.Request(ClublogQsoUploadEndpoint)
             .AllowHttpStatus(200, 400, 500, 403)
             .PostUrlEncodedAsync(new
             {

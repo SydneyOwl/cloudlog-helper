@@ -36,6 +36,14 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 + Debian 9+ / Ubuntu 18.04+ / Other distributions (glibc >= 2.24)
 + macOS support in progress...
 
+> [!WARNING]
+> For **win7** users: ClubLog's API appears to only support TLS 1.2 and higher protocols. 
+> Therefore, to use the ClubLog upload feature, you need to first install [Patch `KB3140245`](https://support.microsoft.com/en-us/topic/update-to-enable-tls-1-1-and-tls-1-2-as-default-secure-protocols-in-winhttp-in-windows-c4bd73d2-31d7-761e-0178-11268bb10392) 
+> to enable TLS 1.2 support on your system.
+> 
+> In short: Install `KB3140245` from [here](https://catalog.update.microsoft.com/search.aspx?q=kb3140245) then [easyfix](https://download.microsoft.com/download/0/6/5/0658B1A7-6D2E-474F-BC2C-D69E5B9E9A68/MicrosoftEasyFix51044.msi) from here.
+
+
 ## ⚡️ Quick Start!
 
 > [!TIP]
