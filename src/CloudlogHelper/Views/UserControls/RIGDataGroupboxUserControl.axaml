@@ -41,17 +41,25 @@
               Margin="20,10,20,0"
               VerticalAlignment="Center" HorizontalAlignment="Center">
 
-            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="10" Orientation="Horizontal">
-                <userControls1:WindowSplitToggleButtonUserControl  HorizontalAlignment="Left"
-                                                                  Width="35" Height="30" Margin="0,0,0,0"
-                                                                  DataContext="{Binding SplitUserControlViewModel}" />
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+              ColumnDefinitions="*,Auto">
+            
+            <!-- 左侧控件 -->
+            <StackPanel Orientation="Horizontal" Spacing="10" Grid.Column="0"
+                        HorizontalAlignment="Left">
+                <userControls1:WindowSplitToggleButtonUserControl  
+                    HorizontalAlignment="Left"
+                    Width="35" Height="30" Margin="0,0,0,0"
+                    DataContext="{Binding SplitUserControlViewModel}" />
                 
                 <Button Height="30"
+                        HorizontalAlignment="Left"
                         IsVisible="{Binding CommStatus, 
                             Converter={StaticResource StatusToVisibility}}"
                         Command="{Binding RefreshRigInfo}" >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <avalonia:MaterialIcon Kind="Refresh" HorizontalAlignment="Center" Animation="{Binding RefreshAnimation}"
+                        <avalonia:MaterialIcon Kind="Refresh" HorizontalAlignment="Center" 
+                                               Animation="{Binding RefreshAnimation}"
                                                VerticalAlignment="Center" />
                         <Label Content="{Binding RefreshAfter}" 
                                HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -59,6 +67,24 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
+            
+            <!-- 右侧图标 -->
+            <StackPanel Orientation="Horizontal" Spacing="10" Grid.Column="1"
+                        HorizontalAlignment="Right" Margin="0,0,10,0">
+                <avalonia:MaterialIcon Kind="Radio"
+                                       Foreground="{Binding CommStatus, Converter={StaticResource RigUploadStatusToColor}}"
+                                       Width="20"
+                                       Height="20"
+                                       IsVisible="{Binding CommStatus, Converter={StaticResource StatusToVisibility}}"
+                                       VerticalAlignment="Center" />
+                <avalonia:MaterialIcon Kind="CloudUpload"
+                                       Foreground="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToColor}}"
+                                       Width="20"
+                                       Height="20"
+                                       IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
+                                       VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
             
             <Border Classes="FreqBlock" Grid.Row="1" Grid.Column="0"
                     Grid.ColumnSpan="2" MinWidth="240"
@@ -88,20 +114,6 @@
                             <TextBlock Text="{Binding CurrentRxMode}"
                                        FontSize="11" FontWeight="Bold" Foreground="White" />
                         </Border>
-                        <avalonia:MaterialIcon Kind="Radio"
-                                               Foreground="{Binding CommStatus, Converter={StaticResource RigUploadStatusToColor}}"
-                                               Width="20"
-                                               Height="20"
-                                               IsVisible="{Binding CommStatus, Converter={StaticResource StatusToVisibility}}"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Right" />
-                        <avalonia:MaterialIcon Kind="CloudUpload"
-                                               Foreground="{Binding UploadStatus, Converter={StaticResource RigUploadStatusToColor}}"
-                                               Width="20"
-                                               Height="20"
-                                               IsVisible="{Binding UploadStatus, Converter={StaticResource StatusToVisibility}}"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Right" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="30"
