@@ -100,15 +100,10 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             x => x.CommStatus,
             (uploadStatus, commStatus) =>
             {
-                var isUploadValid = uploadStatus != null && 
-                                    uploadStatus != RigUploadStatus.Uploading && 
-                                    uploadStatus != RigUploadStatus.Unknown;
-                
-                var isCommValid = commStatus != null && 
-                                  commStatus != RigCommStatus.FetchingData && 
-                                  commStatus != RigCommStatus.Unknown;
-                
-                return isUploadValid && isCommValid;
+                if (commStatus is RigCommStatus.Error && uploadStatus is RigUploadStatus.Unknown) return true;
+                if (uploadStatus is RigUploadStatus.Uploading or RigUploadStatus.Unknown) return false;
+                if (commStatus is RigCommStatus.FetchingData or RigCommStatus.Unknown) return false;
+                return true;
             }
         ));
         _ = rs.InitializeAsync();
@@ -136,17 +131,27 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task _refreshRigDataManually()
     {
-        _disposeAllTimers();
+        if (!await _pollLock.WaitAsync(0))
+        {
+            ClassLogger.Trace("Polling already in progress, skipping...");
+            return;
+        }
+        
         try
         {
-            await _refreshRigInfoSafe();
-        }
+            _disposeAllTimers();
+            await _refreshRigInfo();
+        } 
         catch (Exception ex)
         {
             // handler by global handler
             await HandlePollExceptionAsync(ex);
         }
-
+        finally
+        {
+            _pollLock.Release();
+        }
+        
         _createNewTimer(false);
     }
 
@@ -460,15 +465,18 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                     
                     async Task RunTimerAsync()
                     {
-                        if (_rigBackendManager.GetPollingAllowed() && withInitialPoll)
+                        if (_rigBackendManager.GetPollingAllowed())
                         {
-                            try
+                            if (withInitialPoll)
                             {
-                                await _refreshRigInfoSafe();
-                            }
-                            catch (Exception ex)
-                            {
-                                await HandlePollExceptionAsync(ex);
+                                try
+                                {
+                                    await _refreshRigInfoSafe();
+                                }
+                                catch (Exception ex)
+                                {
+                                    await HandlePollExceptionAsync(ex);
+                                }
                             }
                         }
                         else

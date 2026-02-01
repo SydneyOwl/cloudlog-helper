@@ -602,7 +602,7 @@
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
-                                <Grid ColumnDefinitions="*,2*,*"
+                                <Grid ColumnDefinitions="*,2*,*" IsEnabled="False"
                                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                                     
                                     <CheckBox Grid.Row="0" Grid.Column="0"

@@ -47,7 +47,7 @@
                                                                   DataContext="{Binding SplitUserControlViewModel}" />
 
                 <Button Content="{avalonia:MaterialIconExt Kind=Refresh}" 
-                        IsVisible="{Binding UploadStatus, 
+                        IsVisible="{Binding CommStatus, 
                             Converter={StaticResource StatusToVisibility}}"
                         Command="{Binding RefreshRigInfo}" />
             </StackPanel>
