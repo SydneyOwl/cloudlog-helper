@@ -101,8 +101,8 @@
                     Grid.RowSpan="6" Margin="10,0,0,0" 
                     VerticalAlignment="Center" Spacing="10">
                     
-                    <avalonia:MaterialIcon Kind="{Binding BackendType}" 
-                                           Width="12" HorizontalAlignment="Center"/>
+                    <avalonia:MaterialIcon Foreground="CornflowerBlue" Kind="{Binding BackendType}" 
+                                           Width="16" HorizontalAlignment="Center"/>
                     
                     <userControls1:WindowSplitToggleButtonUserControl
                         DataContext="{Binding SplitUserControlViewModel}"
