@@ -38,18 +38,26 @@
         <Grid ColumnDefinitions="Auto,Auto"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
               ShowGridLines="False" RowSpacing="5" 
-              Margin="20,0,20,0"
+              Margin="20,10,20,0"
               VerticalAlignment="Center" HorizontalAlignment="Center">
 
-            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="20" Orientation="Horizontal">
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="10" Orientation="Horizontal">
                 <userControls1:WindowSplitToggleButtonUserControl  HorizontalAlignment="Left"
-                                                                  Width="32" Height="32" Margin="0,0,0,0"
+                                                                  Width="35" Height="30" Margin="0,0,0,0"
                                                                   DataContext="{Binding SplitUserControlViewModel}" />
-
-                <Button Content="{avalonia:MaterialIconExt Kind=Refresh}" 
+                
+                <Button Height="30"
                         IsVisible="{Binding CommStatus, 
                             Converter={StaticResource StatusToVisibility}}"
-                        Command="{Binding RefreshRigInfo}" />
+                        Command="{Binding RefreshRigInfo}" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <avalonia:MaterialIcon Kind="Refresh" HorizontalAlignment="Center" Animation="{Binding RefreshAnimation}"
+                                               VerticalAlignment="Center" />
+                        <Label Content="{Binding RefreshAfter}" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="10"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
             
             <Border Classes="FreqBlock" Grid.Row="1" Grid.Column="0"

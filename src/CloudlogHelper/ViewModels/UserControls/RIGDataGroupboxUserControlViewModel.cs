@@ -17,6 +17,7 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Material.Icons;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
 using NLog;
@@ -33,42 +34,45 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
+    ///     observable sequence. Whether to cancel the timer or not.
+    /// </summary>
+    private readonly Subject<Unit> _cancelSubject = new();
+
+    private readonly ICLHServerService _clhServerService;
+
+    /// <summary>
     ///     Settings for cloudlog
     /// </summary>
     private readonly CloudlogSettings _cloudlogSettings;
 
     private readonly IInAppNotificationService _inAppNotification;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
+
+    /// <summary>
+    ///     Semaphore to prevent re-entrant polling
+    /// </summary>
+    private readonly SemaphoreSlim _pollLock = new(1, 1);
+
+    /// <summary>
+    ///     Semaphore to prevent repeated timer (polling)
+    /// </summary>
+    private readonly SemaphoreSlim _pollTimerLock = new(1, 1);
+
     private readonly IRigBackendManager _rigBackendManager;
-    private readonly List<ThirdPartyLogService> _tpService;
-    private readonly IWindowManagerService _windowManagerService;
-    private readonly ICLHServerService _clhServerService;
-
-    /// <summary>
-    ///     observable sequence. Whether to cancel the timer or not.
-    /// </summary>
-    private readonly Subject<Unit> _cancelSubject = new();
-
-    /// <summary>
-    ///     Accumulative rig connection failed times.
-    /// </summary>
-    private volatile int _rigConnFailedTimes;
 
     /// <summary>
     ///     Composite disposable for managing timer disposables
     /// </summary>
     private readonly CompositeDisposable _timerDisposables = new();
 
+    private readonly List<ThirdPartyLogService> _tpService;
+    private readonly IWindowManagerService _windowManagerService;
+
     /// <summary>
-    ///     Semaphore to prevent re-entrant polling
+    ///     Accumulative rig connection failed times.
     /// </summary>
-    private readonly SemaphoreSlim _pollLock = new(1, 1);
-    
-    /// <summary>
-    ///     Semaphore to prevent repeated timer (polling)
-    /// </summary>
-    private readonly SemaphoreSlim _pollTimerLock = new(1, 1);
-    
+    private volatile int _rigConnFailedTimes;
+
 
     public RIGDataGroupboxUserControlViewModel()
     {
@@ -95,7 +99,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _clhServerService = clh;
         _tpService = ss.GetCurrentSettings().LogServices;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
-        RefreshRigInfo = ReactiveCommand.CreateFromTask(_refreshRigDataManually,this.WhenAnyValue(
+        RefreshRigInfo = ReactiveCommand.CreateFromTask(_refreshRigDataManually, this.WhenAnyValue(
             x => x.UploadStatus,
             x => x.CommStatus,
             (uploadStatus, commStatus) =>
@@ -125,9 +129,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public bool IsSplit { get; set; }
     [Reactive] public RigUploadStatus? UploadStatus { get; set; } = RigUploadStatus.Unknown;
     [Reactive] public RigCommStatus? CommStatus { get; set; } = RigCommStatus.Unknown;
-    
-    
+    [Reactive] public string? RefreshAfter { get; set; } = "...";
+
     [Reactive] public ReactiveCommand<Unit, Unit> RefreshRigInfo { get; set; }
+    
+    private ObservableAsPropertyHelper<MaterialIconAnimation> _refreshAnimation;
+    public MaterialIconAnimation RefreshAnimation => _refreshAnimation.Value;
 
     private async Task _refreshRigDataManually()
     {
@@ -136,12 +143,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             ClassLogger.Trace("Polling already in progress, skipping...");
             return;
         }
-        
+
         try
         {
             _disposeAllTimers();
             await _refreshRigInfo();
-        } 
+        }
         catch (Exception ex)
         {
             // handler by global handler
@@ -151,7 +158,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         {
             _pollLock.Release();
         }
-        
+
         _createNewTimer(false);
     }
 
@@ -159,15 +166,27 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     {
         this.WhenActivated(disposables =>
         {
+            _refreshAnimation = this.WhenAnyValue(x => x.RefreshAfter)
+                .Select(msg =>
+                {
+                    return msg switch
+                    {
+                        "..." => MaterialIconAnimation.Spin,
+                        _ => MaterialIconAnimation.None
+                    };
+                })
+                .ToProperty(this, x => x.RefreshAnimation)
+                .DisposeWith(disposables);
+            
             _cancelSubject.DisposeWith(disposables);
 
             MessageBus.Current.Listen<SettingsChanged>()
                 .Where(x => x.Part == ChangedPart.RigService)
                 .Delay(TimeSpan.FromMilliseconds(500))
-                .Subscribe( x =>
+                .Subscribe(x =>
                 {
                     _createNewTimer().DisposeWith(disposables);
-                    Interlocked.Exchange(ref  _rigConnFailedTimes, 0);
+                    Interlocked.Exchange(ref _rigConnFailedTimes, 0);
                 })
                 .DisposeWith(disposables);
 
@@ -183,7 +202,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             ClassLogger.Trace("Polling already in progress, skipping...");
             return;
         }
-        
+
         try
         {
             await _refreshRigInfo();
@@ -207,16 +226,18 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         try
         {
+            await Dispatcher.UIThread.InvokeAsync(() => RefreshAfter = "...");
+
             await Dispatcher.UIThread.InvokeAsync(() => CommStatus = RigCommStatus.FetchingData);
-            
+
             var allInfo = await _rigBackendManager.GetAllRigInfo();
 
             await Dispatcher.UIThread.InvokeAsync(() => CommStatus = RigCommStatus.Success);
-            
+
             UpdateDisplayInfo(allInfo);
 
             Interlocked.Exchange(ref _rigConnFailedTimes, 0);
-            
+
             await ReportToServicesAsync(allInfo);
         }
         catch (Exception ex) when (ex is InvalidPollException or InvalidConfigurationException)
@@ -249,7 +270,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
             IsSplit = allInfo.IsSplit;
         });
-
     }
 
     private async Task ReportToServicesAsync(RadioData allInfo)
@@ -266,7 +286,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
             // Report to Cloudlog
             await ReportToCloudlogAsync(allInfo);
-            
+
             await Dispatcher.UIThread.InvokeAsync(() => UploadStatus = RigUploadStatus.Success);
         }
         catch (Exception ex)
@@ -279,61 +299,52 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task ReportToClhServerAsync(RadioData allInfo)
     {
-            var rigData = new RigData
-            {
-                Provider = _rigBackendManager.GetServiceType().ToString(),
-                RigName = allInfo.RigName,
-                Frequency = SafeConvertToUlong(allInfo.FrequencyTx),
-                Mode = allInfo.ModeTx,
-                FrequencyRx = SafeConvertToUlong(allInfo.FrequencyRx),
-                ModeRx = allInfo.ModeRx,
-                Split = allInfo.IsSplit,
-                Power = SafeConvertToUint(allInfo.Power ?? 0),
-            };
+        var rigData = new RigData
+        {
+            Provider = _rigBackendManager.GetServiceType().ToString(),
+            RigName = allInfo.RigName,
+            Frequency = SafeConvertToUlong(allInfo.FrequencyTx),
+            Mode = allInfo.ModeTx,
+            FrequencyRx = SafeConvertToUlong(allInfo.FrequencyRx),
+            ModeRx = allInfo.ModeRx,
+            Split = allInfo.IsSplit,
+            Power = SafeConvertToUint(allInfo.Power ?? 0)
+        };
 
-            await _clhServerService.SendDataNoException(rigData);
-        
+        await _clhServerService.SendDataNoException(rigData);
     }
 
     private async Task ReportToThirdPartyServicesAsync(RadioData allInfo)
     {
         var uploadTasks = new List<Task>();
-        
+
         foreach (var service in _tpService.ToArray())
-        {
             uploadTasks.Add(Task.Run(async () =>
             {
                 await service.UploadRigInfoAsync(allInfo, CancellationToken.None);
             }));
-        }
 
-        if (uploadTasks.Count > 0)
-        {
-            await Task.WhenAll(uploadTasks);
-        }
+        if (uploadTasks.Count > 0) await Task.WhenAll(uploadTasks);
     }
 
     private async Task ReportToCloudlogAsync(RadioData allInfo)
     {
         if (!_cloudlogSettings.AutoRigUploadEnabled) return;
-        
+
         if (_cloudlogSettings.IsCloudlogHasErrors())
         {
             ClassLogger.Trace("Errors in cloudlog so ignored upload hamlib data!");
             return;
         }
 
-            var result = await CloudlogUtil.UploadRigInfoAsync(
-                _cloudlogSettings.CloudlogUrl,
-                _cloudlogSettings.CloudlogApiKey,
-                allInfo,
-                CancellationToken.None);
+        var result = await CloudlogUtil.UploadRigInfoAsync(
+            _cloudlogSettings.CloudlogUrl,
+            _cloudlogSettings.CloudlogApiKey,
+            allInfo,
+            CancellationToken.None);
 
 
-            if (result.Status != "success")
-            {
-                throw new Exception($"Cloudlog upload failed: {result.Reason}");
-            }
+        if (result.Status != "success") throw new Exception($"Cloudlog upload failed: {result.Reason}");
     }
 
     private static ulong SafeConvertToUlong(double value)
@@ -353,9 +364,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     private async Task HandlePollExceptionAsync(Exception exception)
     {
         if (exception is InvalidPollException) // or InvalidConfigurationException)
-        {
             return;
-        }
 
         try
         {
@@ -368,10 +377,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 // I don't like locks - they're everywhere!
                 var original = Interlocked.CompareExchange(ref _rigConnFailedTimes, int.MinValue, currentFailCount);
 
-                if (original == currentFailCount)
-                {
-                    await ShowErrorDialogAndHandleChoiceAsync();
-                }
+                if (original == currentFailCount) await ShowErrorDialogAndHandleChoiceAsync();
             }
             else
             {
@@ -410,9 +416,9 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 new() { Name = "Retry", IsDefault = true },
                 new() { Name = "Open Settings" },
                 new() { Name = "Cancel" }
-            }, 
-            Icon.Warning, 
-            "Warning", 
+            },
+            Icon.Warning,
+            "Warning",
             TranslationHelper.GetString(LangKeys.failrigcomm));
 
         switch (choice)
@@ -422,11 +428,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 await _rigBackendManager.RestartService();
                 _createNewTimer();
                 break;
-                
+
             case "Open Settings":
                 await _windowManagerService.CreateAndShowWindowByVm(typeof(SettingsWindowViewModel));
                 break;
-                
+
             case "Cancel":
                 // Do nothing
                 break;
@@ -450,7 +456,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             CommStatus = RigCommStatus.Unknown;
         });
     }
-    
+
     private IDisposable _createNewTimer(bool withInitialPoll = true)
     {
         _disposeAllTimers();
@@ -462,13 +468,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     var innerCancellation = new CancellationTokenSource();
                     var innerCancellationToken = innerCancellation.Token;
-                    
+
                     async Task RunTimerAsync()
                     {
                         if (_rigBackendManager.GetPollingAllowed())
                         {
                             if (withInitialPoll)
-                            {
                                 try
                                 {
                                     await _refreshRigInfoSafe();
@@ -477,7 +482,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 {
                                     await HandlePollExceptionAsync(ex);
                                 }
-                            }
                         }
                         else
                         {
@@ -488,7 +492,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                         }
 
                         while (!innerCancellationToken.IsCancellationRequested)
-                        {
                             try
                             {
                                 if (!_rigBackendManager.GetPollingAllowed())
@@ -500,7 +503,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 }
 
                                 var interval = _rigBackendManager.GetPollingInterval();
-                                
+
                                 for (var remaining = interval - 1; remaining >= 0; remaining--)
                                 {
                                     if (innerCancellationToken.IsCancellationRequested) break;
@@ -509,10 +512,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                     // {
                                     //     UploadStatus = RigUploadStatus.Uploading;
                                     // }
-                                    
                                     // NextUploadTime = remaining > 0 
                                     //     ? remaining.ToString()
                                     //     : TranslationHelper.GetString(LangKeys.gettinginfo);
+
+                                    RefreshAfter = $"{remaining}s";
                                     
                                     if (remaining == 0)
                                     {
@@ -525,13 +529,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                             // handler by global handler
                                             await HandlePollExceptionAsync(ex);
                                         }
-                                        
+
                                         break;
                                     }
-                                    else
-                                    {
-                                        await Task.Delay(1000, innerCancellationToken);
-                                    }
+
+                                    await Task.Delay(1000, innerCancellationToken);
                                 }
                             }
                             catch (OperationCanceledException)
@@ -543,13 +545,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 ClassLogger.Error(ex, "Error in timer loop");
                                 await Task.Delay(5000, innerCancellationToken);
                             }
-                        }
-                        
+
                         observer.OnCompleted();
                     }
 
                     var timerTask = RunTimerAsync();
-                    
+
                     return Disposable.Create(() =>
                     {
                         ClassLogger.Trace("Calling dispose.");
@@ -566,9 +567,12 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 ClassLogger.Trace("Cancelled radio timer.");
             })
             .Subscribe(
-                onNext: _ => { /* Timer tick handled in the observable */ },
-                onError: ex => ClassLogger.Error(ex, "Error in rig polling timer"),
-                onCompleted: () => ClassLogger.Trace("Rig polling timer completed")
+                _ =>
+                {
+                    /* Timer tick handled in the observable */
+                },
+                ex => ClassLogger.Error(ex, "Error in rig polling timer"),
+                () => ClassLogger.Trace("Rig polling timer completed")
             );
 
         _timerDisposables.Add(timerDisposable);
