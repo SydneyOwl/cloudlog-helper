@@ -15,10 +15,10 @@ namespace CloudlogHelper.LogService;
 [LogService("Custom API", Description = "Custom API Log Service")]
 public class CustomAPIThirdPartyLogService : ThirdPartyLogService
 {
-    [UserInput("qsouploadendpoint", InputType = FieldType.Text, Description = "Endpoints for uploading QSO info. Spilt by Semicolon. See readme for more.")]
+    [UserInput("qsouploadendpoint", InputType = FieldType.Text, IsRequired = false, Description = "Endpoints for uploading QSO info. Spilt by Semicolon. See readme for more.")]
     public string QSOEndpoint { get; set; }
     
-    [UserInput("riginfouploadendpoint", InputType = FieldType.Text, Description = "Endpoints for uploading RIG info. Spilt by Semicolon. See readme for more.")]
+    [UserInput("riginfouploadendpoint", InputType = FieldType.Text, IsRequired = false, Description = "Endpoints for uploading RIG info. Spilt by Semicolon. See readme for more.")]
     public string RIGEndpoint { get; set; }
     
     [UserInput("uploadriginfo", InputType = FieldType.CheckBox)]

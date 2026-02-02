@@ -31,7 +31,7 @@
                   VerticalAlignment="Center">
 
                 <!-- OP -->
-                <avalonia:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="Account" 
+                <avalonia:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="{Binding BackendType}" 
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="0" Grid.Column="1"
@@ -100,10 +100,6 @@
                 <StackPanel Grid.Row="0" Grid.Column="3"
                     Grid.RowSpan="6" Margin="10,0,0,0" 
                     VerticalAlignment="Center" Spacing="10">
-                    
-                    <avalonia:MaterialIcon Foreground="CornflowerBlue" Kind="{Binding BackendType}" 
-                                           Width="16" HorizontalAlignment="Center"/>
-                    
                     <userControls1:WindowSplitToggleButtonUserControl
                         DataContext="{Binding SplitUserControlViewModel}"
                         Width="30" Height="30" />
