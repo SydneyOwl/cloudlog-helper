@@ -146,6 +146,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         try
         {
+            Interlocked.Exchange(ref _rigConnFailedTimes, 0);
             _disposeAllTimers();
             await _refreshRigInfo();
         }
