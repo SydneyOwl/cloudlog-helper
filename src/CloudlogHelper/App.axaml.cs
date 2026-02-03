@@ -69,7 +69,6 @@ public class App : Application
 
     private void _preInit()
     {
-        if (_cmdOptions.Verbose) DefaultConfigs.MaxRigctldErrorCount = 100;
         var verboseLevel = _cmdOptions.Verbose ? LogLevel.Trace : LogLevel.Info;
         _initializeLogger(verboseLevel, _cmdOptions.LogToFile);
 

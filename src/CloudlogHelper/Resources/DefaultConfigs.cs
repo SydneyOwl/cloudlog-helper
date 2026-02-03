@@ -197,7 +197,7 @@ public class DefaultConfigs
     /// <summary>
     ///     Duration (in minutes) for which QSO data is collected to calculate average QSO metrics.
     /// </summary>
-    public static int InitialQsoCalcWindowDuration = 5;
+    public const int InitialQsoCalcWindowDuration = 5;
 
     /// <summary>
     ///     Default ua for our application.
@@ -288,12 +288,12 @@ public class DefaultConfigs
     /// <summary>
     ///     Maximum error count of rigctld communication. A msgbox will popup If exceeded.
     /// </summary>
-    public static int MaxRigctldErrorCount = 3;
+    public const int MaxRigctldErrorCount = 3;
 
     /// <summary>
     ///     Width and height of exported polar chart.
     /// </summary>
-    public static int ExportedPolarChartSize = 600;
+    public const int ExportedPolarChartSize = 600;
 
     /// <summary>
     ///     Default Hamlib files for windows, https://github.com/Hamlib/Hamlib/blob/master/scripts/build-w64.sh
@@ -332,12 +332,12 @@ public class DefaultConfigs
     /// <summary>
     ///     Default WorldHeatmapWidth(lon)
     /// </summary>
-    public static int WorldHeatmapWidth = 360;
+    public const int WorldHeatmapWidth = 360;
 
     /// <summary>
     ///     Default WorldHeatmapHeight(lat)
     /// </summary>
-    public static int WorldHeatmapHeight = 180;
+    public const int WorldHeatmapHeight = 180;
 
     /// <summary>
     ///     Default temp file path. Used for LoTW Upload.

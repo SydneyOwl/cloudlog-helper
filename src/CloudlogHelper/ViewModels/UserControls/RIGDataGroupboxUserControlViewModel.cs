@@ -104,6 +104,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             x => x.CommStatus,
             (uploadStatus, commStatus) =>
             {
+                if (_rigConnFailedTimes < 0) return true;
                 if (commStatus is RigCommStatus.Error && uploadStatus is RigUploadStatus.Unknown) return true;
                 if (uploadStatus is RigUploadStatus.Uploading or RigUploadStatus.Unknown) return false;
                 if (commStatus is RigCommStatus.FetchingData or RigCommStatus.Unknown) return false;
@@ -239,6 +240,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
             Interlocked.Exchange(ref _rigConnFailedTimes, 0);
 
+            // this does not throw exception!
             await ReportToServicesAsync(allInfo);
         }
         catch (Exception ex) when (ex is InvalidPollException or InvalidConfigurationException)
@@ -452,6 +454,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             IsSplit = false;
             UploadStatus = RigUploadStatus.Unknown;
             CommStatus = RigCommStatus.Unknown;
+            RefreshAfter = "STBY";
         });
     }
 

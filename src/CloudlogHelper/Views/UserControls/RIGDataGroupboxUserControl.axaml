@@ -53,8 +53,6 @@
                 
                 <Button Height="30"
                         HorizontalAlignment="Left"
-                        IsVisible="{Binding CommStatus, 
-                            Converter={StaticResource StatusToVisibility}}"
                         Command="{Binding RefreshRigInfo}" >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <avalonia:MaterialIcon Kind="Refresh" HorizontalAlignment="Center" 
