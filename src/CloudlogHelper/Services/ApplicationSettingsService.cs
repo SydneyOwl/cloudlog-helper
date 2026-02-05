@@ -34,15 +34,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private readonly object _draftLock = new();
+    private readonly SemaphoreSlim _draftSemaphore = new(1, 1);
     
-    private object? _currentLockThreadOwner;
+    private object? _draftOwner;
 
     private ApplicationSettings? _currentSettings;
 
     private ApplicationSettings? _draftSettings;
-    
-    private bool _isDraftLocked;
 
     private IMapper _mapper;
 
@@ -58,13 +56,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     public void ApplySettings(object owner, List<LogSystemConfig>? rawConfigs = null)
     {
-        lock (_draftLock)
+        if (!ReferenceEquals(_draftOwner, owner))
+            throw new SynchronizationLockException("Draft setting is not locked by the caller.");
+
+        try
         {
-            if (!_isDraftLocked) throw new SynchronizationLockException("Draft setting is not locked!");
-
-            if (!ReferenceEquals(_currentLockThreadOwner, owner))
-                throw new SynchronizationLockException("Draft setting is locked by another instance!");
-
             ClassLogger.Trace($"Settings applied by {owner.GetType().FullName}");
 
             _oldSettings = _currentSettings.FastDeepClone();
@@ -73,8 +69,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
             // apply changes for log services here
             _writeCurrentSettingsToFile(_draftSettings!);
-            
-            _isDraftLocked = false;
 
             if (IsCloudlogConfChanged())
             {
@@ -95,7 +89,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.UDPServer });
             }
-            
+
             if (IsCLHServerConfChanged())
             {
                 ClassLogger.Trace("clh server settings changed");
@@ -103,17 +97,27 @@ public class ApplicationSettingsService : IApplicationSettingsService
                     { Part = ChangedPart.CLHServer });
             }
         }
+        finally
+        {
+            _draftOwner = null;
+            try
+            {
+                _draftSemaphore.Release();
+            }
+            catch
+            {
+                // ignored
+            }
+        }
     }
 
     public void RestoreSettings(object owner)
     {
-        lock (_draftLock)
-        {
-            if (!_isDraftLocked) throw new SynchronizationLockException("Draft setting is not locked!");
+        if (!ReferenceEquals(_draftOwner, owner))
+            throw new SynchronizationLockException("Draft setting is not locked by the caller.");
 
-            if (!ReferenceEquals(_currentLockThreadOwner, owner))
-                throw new SynchronizationLockException("Draft setting is locked by another instance!");
-            
+        try
+        {
             // make sure rig settings is not dirty
             if (IsHamlibConfChanged() || IsOmniRigConfChanged() || IsFlrigConfChanged())
             {
@@ -122,8 +126,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
                     { Part = ChangedPart.RigService });
             }
 
-            _isDraftLocked = false;
             _draftSettings = _currentSettings!.FastDeepClone();
+        }
+        finally
+        {
+            _draftOwner = null;
+            try { _draftSemaphore.Release(); } catch { /* ignore */ }
         }
     }
 
@@ -140,12 +148,14 @@ public class ApplicationSettingsService : IApplicationSettingsService
     public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings)
     {
         draftSettings = null;
-        lock (_draftLock)
+
+        if (!_draftSemaphore.Wait(0))
         {
-            if (_isDraftLocked) return false;
-            _isDraftLocked = true;
-            _currentLockThreadOwner = owner;
+            return false;
         }
+
+        // We own the draft now
+        _draftOwner = owner;
 
         _draftSettings!.CloudlogSettings.ReinitRules();
         _draftSettings!.HamlibSettings.ReinitRules();

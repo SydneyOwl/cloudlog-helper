@@ -375,19 +375,6 @@ The relevant data structure is defined below:
 
 You can find examples in the `Demo` folder.
 
-### 🐆 Performance Analysis
-
-A simple simulation of a remote FT8 operating scenario was tested on low-end hardware: 64-bit Windows 7 SP1, Intel i5-3337U CPU, 8GB RAM.
-
-The system was running `Rustdesk` + `JTDX` + `Cloudlog helper` + `NetTime v3.14`.
-
-The memory usage of the AOT version of the software stabilizes at around 90MB after one hour of operation (without opening other dialog boxes), while the non-AOT version stabilizes at approximately 160MB.
-
-![](./md_assets/Screenshot_20260125_162940.jpg)
-
-## ❓ Known Issues
-
-+ (FIXED) Double-clicking on QSO to view details does not work on Windows 7 and Linux.
 
 ## 🙏 Acknowledgments
 
