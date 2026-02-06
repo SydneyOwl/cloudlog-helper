@@ -50,6 +50,8 @@ public class CustomAPIThirdPartyLogService : ThirdPartyLogService
     {
         if (!AllowUploadRigInfo)return;
         
+        if (string.IsNullOrWhiteSpace(RIGEndpoint)) return;
+        
         var payload = new RadioApiCallV2
         {
             Radio = rigData.RigName ?? "Unknown",
