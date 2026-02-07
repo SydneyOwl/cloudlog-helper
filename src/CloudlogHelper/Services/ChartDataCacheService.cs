@@ -60,7 +60,7 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
 
                 _accumulatedStationCount[item.Band]![item.DXCC] += 1;
 
-                if (item.IsAccurate || true)
+                if (item.IsAccurate)
                 {
                     // acc dist
                     if (!_accumulatedStationDistance.TryGetValue(item.Band, out _))

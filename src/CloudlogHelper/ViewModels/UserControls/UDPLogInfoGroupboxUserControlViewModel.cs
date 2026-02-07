@@ -500,11 +500,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _qsoTimestamps.Enqueue(DateTime.UtcNow);
 
         var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall).ConfigureAwait(false);
-        
-        var rcd = RecordedCallsignDetail.GenerateCallsignDetail(
-            cty, 
-            message,
-            _applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
+        var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, message);
         
         rcd.CountryFlagAvares = _countryDxccService.GetFlagResourceByDXCC(cty.Dxcc);
             

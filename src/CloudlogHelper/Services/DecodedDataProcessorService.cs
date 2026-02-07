@@ -160,7 +160,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
                 if (gridByCallsign is not null)
                 {
                     iGrid = gridByCallsign;
-                    isAccurate = false;
+                    isAccurate = true; // consider data from database is accurate
                     ClassLogger.Trace($"Calculating {callsign} from grid - database cache...");
                 }
                 else

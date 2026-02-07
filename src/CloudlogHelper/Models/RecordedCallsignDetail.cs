@@ -206,8 +206,7 @@ public class RecordedCallsignDetail : ReactiveObject
     /// <param name="cdb"></param>
     /// <param name="qlo"></param>
     /// <returns></returns>
-    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo,
-        SupportedLanguage lan)
+    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo)
     {
         var latLonByDxGrid = MaidenheadGridUtil.GridToLatLng(qlo.DXGrid);
         var lat = cdb.Latitude;

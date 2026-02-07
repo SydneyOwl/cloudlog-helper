@@ -371,8 +371,6 @@ The relevant data structure is defined below:
 }
 ```
 
-**Upon receiving the data, your server should respond with the string "OK"; otherwise, the software will consider the data push failed and notify the user.**
-
 You can find examples in the `Demo` folder.
 
 

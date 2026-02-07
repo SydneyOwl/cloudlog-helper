@@ -33,13 +33,16 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        var defaultParam =
-            $"UserName={Uri.EscapeDataString(Username)}&Password={Uri.EscapeDataString(Password)}&LimitDateHi={Uri.EscapeDataString("01/01/1990")}";
-        if (!string.IsNullOrEmpty(QTHNickname)) defaultParam += $"&QTHNickname={Uri.EscapeDataString(QTHNickname)}";
-        var result = await EqslTestEndpoint
-            .AppendQueryParam(defaultParam)
-            .GetAsync(cancellationToken: token).ConfigureAwait(false);
-        var responseText = await result.GetStringAsync().ConfigureAwait(false);
+        var result = EqslTestEndpoint
+            .AppendQueryParam("UserName", Username, isEncoded: false)
+            .AppendQueryParam("Password", Password, isEncoded: false)
+            .AppendQueryParam("LimitDateHi", "01/01/1990", isEncoded: false);
+
+        if (!string.IsNullOrEmpty(QTHNickname))
+            result.AppendQueryParam("QTHNickname", QTHNickname, isEncoded: false);
+
+        await result.GetAsync(cancellationToken: token).ConfigureAwait(false);
+        var responseText = await result.GetStringAsync(cancellationToken: token).ConfigureAwait(false);
         if (!string.IsNullOrEmpty(responseText) && (responseText.Contains("Your ADIF log file has been built") ||
                                                     responseText.Contains("You have no log entries")))
             return;
@@ -61,15 +64,15 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
-        var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
-        adifWithHeader.AppendLine(adif);
-        
-        var param =
-            $"ADIFData={Uri.EscapeDataString(adifWithHeader.ToString())}&EQSL_USER={Uri.EscapeDataString(Username)}&EQSL_PSWD={Uri.EscapeDataString(Password)}";
         var results = await EqslQsoUploadEndpoint
-            .AppendQueryParam(param)
-            .GetAsync(cancellationToken: token).ConfigureAwait(false);
+            .SetQueryParam("ADIFData", adif, isEncoded:false)
+            .PostUrlEncodedAsync(new
+            {
+                EQSL_USER = Username,
+                EQSL_PSWD = Password
+            },cancellationToken: token).ConfigureAwait(false);
         var responseText = await results.GetStringAsync().ConfigureAwait(false);
+        
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(responseText);
         var bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");
@@ -84,6 +87,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
             }
 
             if (bodyText.Contains("Error:")) throw new Exception(bodyText);
+            throw new Exception($"Fail log eQSL.cc due to unknown reason, please check adif: {bodyText}");
         }
 
         throw new Exception("Fail log eQSL.cc due to unknown reason.");

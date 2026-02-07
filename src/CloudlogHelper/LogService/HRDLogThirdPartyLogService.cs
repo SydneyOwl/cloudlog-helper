@@ -15,8 +15,8 @@ namespace CloudlogHelper.LogService;
 [LogService("HRDLOG", Description = "HRDLOG Log Service")]
 public class HRDLogThirdPartyLogService : ThirdPartyLogService
 {
-    private const string HRDLOGUploadEndpoint = "http://robot.hrdlog.net/NewEntry.aspx";
-    private const string HRDLOGOnAirEndpoint = "http://robot.hrdlog.net/OnAir.aspx";
+    private const string HRDLOGUploadEndpoint = "https://robot.hrdlog.net/NewEntry.aspx";
+    private const string HRDLOGOnAirEndpoint = "https://robot.hrdlog.net/OnAir.aspx";
 
     [UserInput("callsign")] public string Callsign { get; set; }
 

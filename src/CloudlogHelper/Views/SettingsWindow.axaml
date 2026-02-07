@@ -120,7 +120,7 @@
                             <TextBox HorizontalAlignment="Left"
                                      Text="{Binding DraftSettings.InstanceName}"
                                      Classes="setting-control"/>
-                            <userControls1:TipIconUserControl 
+                            <userControls1:TipIconUserControl IsVisible="False"
                                 Margin="10,0,0,0" TooltipText="{I18N {x:Static resources:LangKeys.instancenamehint}}"/>
                         </StackPanel>
                         <StackPanel Spacing="10">
