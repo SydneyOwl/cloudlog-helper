@@ -16,12 +16,14 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Google.Protobuf.WellKnownTypes;
 using Material.Icons;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SydneyOwl.CLHProto.Plugin;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
@@ -44,6 +46,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private readonly IInAppNotificationService _inAppNotification;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
+    private readonly IPluginService _pluginService;
 
     /// <summary>
     ///     Semaphore to prevent re-entrant polling
@@ -85,9 +88,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IInAppNotificationService ws,
         IWindowManagerService wm,
         IMessageBoxManagerService mm,
+        IPluginService ps,
         IApplicationSettingsService ss)
     {
         _cloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
+        _pluginService = ps;
         _messageBoxManagerService = mm;
         _windowManagerService = wm;
         _rigBackendManager = rs;
@@ -278,7 +283,8 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         {
             await Task.WhenAll(
                 ReportToThirdPartyServicesAsync(allInfo),
-                ReportToCloudlogAsync(allInfo)
+                ReportToCloudlogAsync(allInfo),
+                ReportToPluginsAsync(allInfo)
             );
 
             await Dispatcher.UIThread.InvokeAsync(() => UploadStatus = RigUploadStatus.Success);
@@ -289,6 +295,11 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             await _inAppNotification.SendWarningNotificationAsync(ex.Message);
             await Dispatcher.UIThread.InvokeAsync(() => UploadStatus = RigUploadStatus.Failed);
         }
+    }
+
+    private async Task ReportToPluginsAsync(RadioData allInfo)
+    {
+        await _pluginService.BroadcastMessageAsync(PbMsgConverter.ToPbRigData(_rigBackendManager.GetServiceType().ToString(), allInfo), CancellationToken.None);
     }
 
     private async Task ReportToThirdPartyServicesAsync(RadioData allInfo)

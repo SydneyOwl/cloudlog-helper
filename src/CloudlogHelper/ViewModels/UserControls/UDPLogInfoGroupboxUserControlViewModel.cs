@@ -54,6 +54,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IUdpServerService _udpServerService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ICountryService _countryDxccService;
+    private readonly IPluginService _pluginService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
@@ -132,9 +133,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IQSOUploadService qu,
         INotificationManager nativeNotificationManager,
         IDecodedDataProcessorService decodedDataProcessorService,
+        IPluginService ps,
         ICountryService cs)
     {
         _countryDxccService = cs;
+        _pluginService = ps;
         _applicationSettingsService = ss;
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
@@ -481,6 +484,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             _heartbeatSubject.OnNext(Unit.Default);
             TimeoutStatus = false;
             WaitFirstConn = false;
+            
+            // send to plugin
+            await _pluginService.BroadcastMessageAsync(PbMsgConverter.ToPbWsjtxMessage(message), CancellationToken.None);
         }
         catch (Exception e)
         {

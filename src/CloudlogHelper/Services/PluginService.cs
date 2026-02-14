@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
+using DynamicData.Binding;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Nito.AsyncEx;
 using NLog;
+using ReactiveUI;
 using SydneyOwl.CLHProto.Plugin;
 
 namespace CloudlogHelper.Services;
@@ -138,6 +143,31 @@ internal class PluginInfo : IDisposable
         return pg;
     }
 
+    public Task SendMessage<T>(T msg) where T: IMessage
+    {
+        switch (msg)
+        {
+            case PackedWsjtxMessage:
+            case WsjtxMessage:
+                if (!Capabilities.Contains(Capability.WsjtxMessage))return Task.CompletedTask;
+                break;
+            case RigData:
+                if (!Capabilities.Contains(Capability.RigData))return Task.CompletedTask;
+                break;
+            default:
+                return Task.CompletedTask;
+        }
+
+        var any = Any.Pack(msg);
+        
+        lock (_clientLock)
+        {
+            if (_client is null || !_client.IsConnected) return Task.CompletedTask;
+            any.WriteDelimitedTo(_client);
+            return Task.CompletedTask;
+        }
+    }
+
     public void Dispose()
     {
         StopAll();
@@ -153,11 +183,37 @@ public class PluginService: IPluginService, IDisposable
 
     private CancellationTokenSource _source;
     private Task? _pluginTask;
-
+    
+    private readonly ObservableCollection<WsjtxMessage> _wsjtxDecodeCache = new();
+    private bool _initialized;
+    
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<WsjtxMessage>))]
     public PluginService(IApplicationSettingsService service)
     {
         _source = new CancellationTokenSource();
         _instanceId = service.GetCurrentSettings().InstanceName;
+        
+        _wsjtxDecodeCache.ObserveCollectionChanges()
+            .Throttle(TimeSpan.FromSeconds(2))
+            .ObserveOn(RxApp.TaskpoolScheduler)
+            .Subscribe(async void (a) =>
+            {
+                try
+                {
+                    ClassLogger.Trace("Sending throttled decoded message.");
+                    var decodes = _wsjtxDecodeCache.ToArray();
+                    if (decodes.Length == 0) return;
+                    _wsjtxDecodeCache.Clear();
+                    var packedMessage = new PackedWsjtxMessage();
+                    packedMessage.Messages.AddRange(decodes);
+                    packedMessage.Timestamp = Timestamp.FromDateTime(DateTime.UtcNow);
+                    await BroadcastMessageAsync(packedMessage, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Error while packing and sending packed wsjtx message...");
+                }
+            });
     }
 
     private async Task _startService(CancellationToken token)
@@ -228,6 +284,7 @@ public class PluginService: IPluginService, IDisposable
             var dupePlugin = _plugins.Where(x => x.Uuid == pluginInfo.Uuid).ToList();
             foreach (var info in dupePlugin)
             {
+                ClassLogger.Debug("removing repeated plugin : " + info.Name);
                 _plugins.Remove(info);
                 info.Dispose();
             }
@@ -339,6 +396,31 @@ public class PluginService: IPluginService, IDisposable
     public Task InitPluginServicesAsync(CancellationToken token)
     {
         _pluginTask = _startService(_source.Token);
+        _initialized = true;
         return Task.CompletedTask;
     }
+
+    public async Task BroadcastMessageAsync(IMessage? message, CancellationToken token)
+    {
+        if (message is null) return;
+        
+        if (!_initialized) return;
+
+        // throttle decode; will be sent later.
+        if (message is WsjtxMessage { PayloadCase: WsjtxMessage.PayloadOneofCase.Decode } wmsg)
+        {
+            _wsjtxDecodeCache.Add(wmsg);
+            return;
+        }
+        
+        var tasks = new List<Task>();
+
+        using (var readerLock = await _pluginLock.ReaderLockAsync(token))
+        {
+            tasks.AddRange(_plugins.Select(pluginInfo => pluginInfo.SendMessage(message)));
+        }
+
+        await Task.WhenAll(tasks);
+    }
+
 }
