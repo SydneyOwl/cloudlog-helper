@@ -365,7 +365,7 @@ public class DefaultConfigs
     
     public const string PluginRegisterNamingPipeWindows = "clh.plugin";
     public const string PluginRegisterNamingPipeUnix = "/tmp/clh.plugin";
-    public const int PluginKeepaliveTimeoutSec = 30;
+    public const int PluginKeepaliveTimeoutSec = 11;
     
     public const string AvaresFlagTemplate = "avares://CloudlogHelper/Assets/Flags/";
 
