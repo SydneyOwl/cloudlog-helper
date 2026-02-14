@@ -4,16 +4,33 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace CloudlogHelper.Utils;
 
 public class ApplicationStartUpUtil
-{
+{    
+    private const string AllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
     public static void ResetApplication()
     {
         RestartApplicationWithArgs("--reinit-db --reinit-settings --reinit-hamlib");
     }
+    
+    public static string GenerateRandomInstanceName(int length)
+    {
+        var random = new Random();
+        var result = new StringBuilder(length);
 
+        for (var i = 0; i < length; i++)
+        {
+            var index = random.Next(AllowedChars.Length);
+            result.Append(AllowedChars[index]);
+        }
+
+        return $"CLH-{result}";
+    }
+    
     public static void RestartApplicationWithArgs(params string[] args)
     {
         var executablePath = Process.GetCurrentProcess().MainModule!.FileName;

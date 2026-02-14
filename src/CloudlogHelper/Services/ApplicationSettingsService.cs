@@ -89,13 +89,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.UDPServer });
             }
-
-            if (IsCLHServerConfChanged())
-            {
-                ClassLogger.Trace("clh server settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.CLHServer });
-            }
         }
         finally
         {
@@ -162,7 +155,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings!.FLRigSettings.ReinitRules();
         _draftSettings!.OmniRigSettings.ReinitRules();
         _draftSettings!.UDPSettings.ReinitRules();
-        _draftSettings!.CLHServerSettings.ReinitRules();
         _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
         draftSettings = _draftSettings;
         return true;
@@ -172,7 +164,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
         _draftSettings = new ApplicationSettings();
-        _draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
+        _draftSettings.InstanceName = ApplicationStartUpUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
         _currentSettings = _draftSettings.FastDeepClone();
@@ -225,7 +217,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             // instance
             if (string.IsNullOrEmpty(applicationSettingsService._draftSettings.InstanceName))
             {
-                applicationSettingsService._draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
+                applicationSettingsService._draftSettings.InstanceName = ApplicationStartUpUtil.GenerateRandomInstanceName(10);
             }
 
             var tps = applicationSettingsService._draftSettings
@@ -310,18 +302,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
         if (_oldSettings is null) return false;
         var oldI = _oldSettings.UDPSettings;
         var newI = _currentSettings!.UDPSettings;
-        return !oldI.Equals(newI);
-    }
-    
-    /// <summary>
-    ///     Check if clh server configs has been changed.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsCLHServerConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.CLHServerSettings;
-        var newI = _currentSettings!.CLHServerSettings;
         return !oldI.Equals(newI);
     }
 

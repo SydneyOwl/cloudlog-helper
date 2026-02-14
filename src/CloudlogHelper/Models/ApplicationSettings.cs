@@ -63,11 +63,6 @@ public class ApplicationSettings : ReactiveValidationObject
     ///     UDP Settings.
     /// </summary>
     public UDPServerSettings UDPSettings { get; set; } = new();
-    
-    /// <summary>
-    ///     CLH Server Settings.
-    /// </summary>
-    public CLHServerSettings CLHServerSettings { get; set; } = new();
 
     /// <summary>
     ///     QSA Settings

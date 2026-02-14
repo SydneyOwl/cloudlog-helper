@@ -562,67 +562,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-           
-            <!-- CLH Server Tab -->
-            <TabItem Header="{I18N {x:Static resources:LangKeys.clhserver}}" IsVisible="False">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Spacing="8" Margin="0 8 0 0">
-                        <Border Classes="setting-card">
-                            <StackPanel Spacing="12">
-                                <Grid ColumnDefinitions="*,2*,*"
-                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
-                                    
-                                    <CheckBox Grid.Row="0" Grid.Column="0"
-                                              IsChecked="{Binding DraftSettings.CLHServerSettings.CLHServerEnabled}"
-                                              Content="{I18N {x:Static resources:LangKeys.enableclhserver}}"/> 
-
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhseraddr}}" Classes="setting-label"
-                                               Grid.Row="1" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="1" Grid.Column="1" 
-                                             Text="{Binding DraftSettings.CLHServerSettings.ServerHost}"/>
-                                    
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserport}}" Classes="setting-label"
-                                               Grid.Row="2" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
-                                             Text="{Binding DraftSettings.CLHServerSettings.ServerPort}"/>
-                                    
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.clhserkey}}" Classes="setting-label"
-                                               Grid.Row="3" Grid.Column="0" />
-                                    <TextBox Classes="setting-control" Grid.Row="3" Grid.Column="1"
-                                             Text="{Binding DraftSettings.CLHServerSettings.ServerKey}"/>
-                                    
-                                    <CheckBox Classes="setting-control" 
-                                              Content="{I18N {x:Static resources:LangKeys.clhusetls}}" 
-                                              IsChecked="{Binding DraftSettings.CLHServerSettings.UseTLS}"
-                                              Grid.Row="5" Grid.Column="0" />
-                                    
-                                    <userControls1:TestButtonUserControl Grid.Row="2" Grid.RowSpan="2" Grid.Column="2"
-                                                                         DataContext="{Binding CLHServerTestButtonUserControl}" />
-                                    
-                                    <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Classes="setting-card"
-                                            MaxWidth="500"
-                                            Background="{DynamicResource WarningBackground}">
-                                        <Grid Margin="8" VerticalAlignment="Center" ColumnDefinitions="Auto,*">
-
-                                            <avalonia:MaterialIcon Kind="InfoBox" 
-                                                                   Width="20" Height="20"
-                                                                   VerticalAlignment="Center"
-                                                                   HorizontalAlignment="Center"
-                                                                   Margin="0,0,8,0" />
-        
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{I18N {x:Static resources:LangKeys.clhhintinfo}}"
-                                                       Classes="setting-label"
-                                                       VerticalAlignment="Center"
-                                                       TextWrapping="Wrap" />
-                                        </Grid>
-                                    </Border>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
         </TabControl>
 
         <!-- Footer Buttons -->

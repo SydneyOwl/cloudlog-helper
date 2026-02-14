@@ -47,7 +47,6 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly IApplicationSettingsService _settingsService;
     private readonly CancellationTokenSource _source;
     private readonly IWindowManagerService _windowManagerService;
-    private readonly ICLHServerService _clhServerService;
     private readonly IDatabaseService _databaseService;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
     private readonly ILogSystemManager _logSystemManager;
@@ -73,7 +72,6 @@ public class SettingsWindowViewModel : ViewModelBase
         IWindowManagerService windowManager,
         IApplicationSettingsService ss,
         IRigBackendManager rs,
-        ICLHServerService cs,
         IMessageBoxManagerService mm,
         ILogSystemManager lm,
         IDatabaseService ds)
@@ -81,7 +79,6 @@ public class SettingsWindowViewModel : ViewModelBase
         _windowManagerService = windowManager;
         _settingsService = ss;
         _rigBackendManager = rs;
-        _clhServerService = cs;
         _databaseService = ds;
         _messageBoxManagerService = mm;
         _logSystemManager = lm;
@@ -98,9 +95,6 @@ public class SettingsWindowViewModel : ViewModelBase
 
         var omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
         OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
-        
-        var clhCmd = ReactiveCommand.CreateFromTask(_testClhServer, DraftSettings.CLHServerSettings.IsCLHServerValid);
-        CLHServerTestButtonUserControl = new TestButtonUserControlViewModel(clhCmd);
 
         var cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
@@ -154,7 +148,6 @@ public class SettingsWindowViewModel : ViewModelBase
                 flrigCmd,
                 omniCmd,
                 cloudCmd,
-                clhCmd,
             };
             
             foreach (var reactiveCommand in cmds)
@@ -329,11 +322,6 @@ public class SettingsWindowViewModel : ViewModelBase
         await _rigBackendManager.ExecuteTest(RigBackendServiceEnum.FLRig, DraftSettings, _source.Token);
     }
 
-    private async Task _testClhServer()
-    {
-        await _clhServerService.TestConnectionAsync(DraftSettings, true);
-    }
-
     private async Task _refreshPort()
     {
         Ports = SerialPort.GetPortNames().ToList();
@@ -462,11 +450,5 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public TestButtonUserControlViewModel FLRigTestButtonUserControl { get; }
 
-    #endregion
-
-    #region CLHServer
-    
-    public TestButtonUserControlViewModel CLHServerTestButtonUserControl { get; }
-    
     #endregion
 }

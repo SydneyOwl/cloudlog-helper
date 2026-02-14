@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -8,6 +9,7 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
+using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.ViewModels.UserControls;
@@ -47,6 +49,7 @@ public class MainWindowViewModel : ViewModelBase
         StatusLightUserControlViewModel statusLightUserControlViewModel,
         PolarChartWindowViewModel ignored1, // force init - DO NOT REMOVE IT!
         StationStatisticsChartWindowViewModel ignored2, // force init - DO NOT REMOVE IT!
+        IPluginService ps, // force init - DO NOT REMOVE IT!
         CommandLineOptions cmd,
         IWindowManagerService wm,
         IInAppNotificationService inAppNotificationService
@@ -58,6 +61,7 @@ public class MainWindowViewModel : ViewModelBase
             RigDataBoxEnabled = false;
         }
 
+        _ = ps.InitPluginServicesAsync(CancellationToken.None);
         _inAppNotificationService = inAppNotificationService;
         _windowManager = wm;
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel), true));

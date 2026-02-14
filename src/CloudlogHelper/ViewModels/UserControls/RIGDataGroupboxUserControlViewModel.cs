@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using CloudlogHelper.CLHProto;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.LogService;
@@ -37,8 +36,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     ///     observable sequence. Whether to cancel the timer or not.
     /// </summary>
     private readonly Subject<Unit> _cancelSubject = new();
-
-    private readonly ICLHServerService _clhServerService;
 
     /// <summary>
     ///     Settings for cloudlog
@@ -88,7 +85,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IInAppNotificationService ws,
         IWindowManagerService wm,
         IMessageBoxManagerService mm,
-        ICLHServerService clh,
         IApplicationSettingsService ss)
     {
         _cloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
@@ -96,7 +92,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _windowManagerService = wm;
         _rigBackendManager = rs;
         _inAppNotification = ws;
-        _clhServerService = clh;
         _tpService = ss.GetCurrentSettings().LogServices;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         RefreshRigInfo = ReactiveCommand.CreateFromTask(_refreshRigDataManually, this.WhenAnyValue(
@@ -282,7 +277,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         try
         {
             await Task.WhenAll(
-                ReportToClhServerAsync(allInfo),
                 ReportToThirdPartyServicesAsync(allInfo),
                 ReportToCloudlogAsync(allInfo)
             );
@@ -295,23 +289,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             await _inAppNotification.SendWarningNotificationAsync(ex.Message);
             await Dispatcher.UIThread.InvokeAsync(() => UploadStatus = RigUploadStatus.Failed);
         }
-    }
-
-    private async Task ReportToClhServerAsync(RadioData allInfo)
-    {
-        var rigData = new RigData
-        {
-            Provider = _rigBackendManager.GetServiceType().ToString(),
-            RigName = allInfo.RigName,
-            Frequency = SafeConvertToUlong(allInfo.FrequencyTx),
-            Mode = allInfo.ModeTx,
-            FrequencyRx = SafeConvertToUlong(allInfo.FrequencyRx),
-            ModeRx = allInfo.ModeRx,
-            Split = allInfo.IsSplit,
-            Power = SafeConvertToUint(allInfo.Power ?? 0)
-        };
-
-        await _clhServerService.SendDataNoException(rigData);
     }
 
     private async Task ReportToThirdPartyServicesAsync(RadioData allInfo)
