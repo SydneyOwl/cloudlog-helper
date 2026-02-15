@@ -82,6 +82,7 @@ internal class PluginInfo : IDisposable
         }
         finally
         {
+            ClassLogger.Debug($"Plugin {Name} left");
             StopAll();
         }
     }
@@ -253,7 +254,7 @@ public class PluginService: IPluginService, IDisposable
             catch (Exception e)
             {
                 ClassLogger.Error(e, "Plugin registration server error");
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
         }
     }
