@@ -118,7 +118,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{I18N {x:Static resources:LangKeys.instancename}}" Classes="setting-label" />
                             <TextBox HorizontalAlignment="Left"
-                                     Text="{Binding DraftSettings.InstanceName}"
+                                     Text="{Binding DraftSettings.BasicSettings.InstanceName}"
                                      Classes="setting-control"/>
                             <userControls1:TipIconUserControl IsVisible="False"
                                 Margin="10,0,0,0" TooltipText="{I18N {x:Static resources:LangKeys.instancenamehint}}"/>
@@ -144,10 +144,14 @@
                                          Classes="setting-control"
                                          Watermark="e.g. OM89" />
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <StackPanel Margin="0,0,0,0">
                                 <CheckBox HorizontalAlignment="Left" Height="20"
                                           Content="{I18N {x:Static resources:LangKeys.disablecharts}}"
                                           IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}" />
+                                
+                                <CheckBox HorizontalAlignment="Left" Height="20"
+                                          Content="{I18N {x:Static resources:LangKeys.enableplugin}}"
+                                          IsChecked="{Binding DraftSettings.BasicSettings.EnablePlugin}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <Button Content="{I18N {x:Static resources:LangKeys.openconfpath}}"

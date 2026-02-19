@@ -49,7 +49,7 @@ public class MainWindowViewModel : ViewModelBase
         StatusLightUserControlViewModel statusLightUserControlViewModel,
         PolarChartWindowViewModel ignored1, // force init - DO NOT REMOVE IT!
         StationStatisticsChartWindowViewModel ignored2, // force init - DO NOT REMOVE IT!
-        IPluginService ps, // force init - DO NOT REMOVE IT!
+        IPluginService _, // force init - DO NOT REMOVE IT!
         CommandLineOptions cmd,
         IWindowManagerService wm,
         IInAppNotificationService inAppNotificationService
@@ -60,8 +60,7 @@ public class MainWindowViewModel : ViewModelBase
             UserBasicBoxEnabled = false;
             RigDataBoxEnabled = false;
         }
-
-        _ = ps.InitPluginServicesAsync(CancellationToken.None);
+        
         _inAppNotificationService = inAppNotificationService;
         _windowManager = wm;
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel), true));

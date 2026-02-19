@@ -7,7 +7,5 @@ namespace CloudlogHelper.Services.Interfaces;
 
 public interface IPluginService
 {
-    Task InitPluginServicesAsync(CancellationToken token);
-    
     Task BroadcastMessageAsync(IMessage? message, CancellationToken token);
 }

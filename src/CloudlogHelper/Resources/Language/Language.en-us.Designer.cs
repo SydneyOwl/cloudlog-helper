@@ -662,6 +662,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable plugins.
+        /// </summary>
+        public static string enableplugin {
+            get {
+                return ResourceManager.GetString("enableplugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable udp server.
         /// </summary>
         public static string enableudpserver {

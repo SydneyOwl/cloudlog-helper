@@ -5,9 +5,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CloudlogHelper.Enums;
+using CloudlogHelper.Messages;
+using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using DynamicData.Binding;
@@ -20,7 +24,7 @@ using SydneyOwl.CLHProto.Plugin;
 
 namespace CloudlogHelper.Services;
 
-internal class PluginInfo : IDisposable
+public class PluginInfo : IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     
@@ -179,44 +183,214 @@ public class PluginService: IPluginService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private List<PluginInfo> _plugins = new();
-    private string _instanceId;
     private readonly AsyncReaderWriterLock _pluginLock = new();
 
-    private CancellationTokenSource _source;
+    private CancellationTokenSource? _source;
     private Task? _pluginTask;
+    private readonly object _serviceLock = new();
+    private bool _isRunning;
     
     private readonly ObservableCollection<WsjtxMessage> _wsjtxDecodeCache = new();
-    private bool _initialized;
+    
+    private readonly BasicSettings _basicSettings;
+    private readonly CompositeDisposable _settingsSubscription = new();
     
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<WsjtxMessage>))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(List<PluginInfo>))]
     public PluginService(IApplicationSettingsService service)
     {
-        _source = new CancellationTokenSource();
-        _instanceId = service.GetCurrentSettings().InstanceName;
+        _basicSettings = service.GetCurrentSettings().BasicSettings;
         
-        _wsjtxDecodeCache.ObserveCollectionChanges()
-            .Throttle(TimeSpan.FromSeconds(2))
-            .ObserveOn(RxApp.TaskpoolScheduler)
-            .Subscribe(async void (a) =>
-            {
-                try
+        _settingsSubscription.Add(
+            _wsjtxDecodeCache.ObserveCollectionChanges()
+                .Throttle(TimeSpan.FromSeconds(2))
+                .ObserveOn(RxApp.TaskpoolScheduler)
+                .Subscribe(async void (a) =>
                 {
-                    ClassLogger.Trace("Sending throttled decoded message.");
-                    var decodes = _wsjtxDecodeCache.ToArray();
-                    if (decodes.Length == 0) return;
-                    _wsjtxDecodeCache.Clear();
-                    var packedMessage = new PackedWsjtxMessage();
-                    packedMessage.Messages.AddRange(decodes);
-                    packedMessage.Timestamp = Timestamp.FromDateTime(DateTime.UtcNow);
-                    await BroadcastMessageAsync(packedMessage, CancellationToken.None);
-                }
-                catch (Exception ex)
+                    try
+                    {
+                        if (!_isRunning) return;
+                        
+                        ClassLogger.Trace("Sending throttled decoded message.");
+                        var decodes = _wsjtxDecodeCache.ToArray();
+                        if (decodes.Length == 0) return;
+                        _wsjtxDecodeCache.Clear();
+                        var packedMessage = new PackedWsjtxMessage();
+                        packedMessage.Messages.AddRange(decodes);
+                        packedMessage.Timestamp = Timestamp.FromDateTime(DateTime.UtcNow);
+                        await BroadcastMessageAsync(packedMessage, CancellationToken.None);
+                    }
+                    catch (Exception ex)
+                    {
+                        ClassLogger.Error(ex, "Error while packing and sending packed wsjtx message...");
+                    }
+                })
+        );
+        
+        _settingsSubscription.Add(
+            MessageBus.Current
+                .Listen<SettingsChanged>()
+                .Where(x => x.Part == ChangedPart.BasicSettings)
+                .Subscribe(async _ =>
                 {
-                    ClassLogger.Error(ex, "Error while packing and sending packed wsjtx message...");
-                }
-            });
+                    await HandleSettingsChange();
+                })); 
+            
+        if (_basicSettings.EnablePlugin)
+        {
+            _ = StartPluginServiceAsync();
+        }
     }
 
+    private async Task HandleSettingsChange()
+    {
+        try
+        {
+            if (_basicSettings.EnablePlugin && !_isRunning)
+            {
+                ClassLogger.Info("Plugin service enabled via settings change");
+                _ = StartPluginServiceAsync();
+            }
+            else if (!_basicSettings.EnablePlugin && _isRunning)
+            {
+                ClassLogger.Info("Plugin service disabled via settings change");
+                await StopPluginServiceAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Error handling plugin service settings change");
+        }
+    }
+
+    private async Task StartPluginServiceAsync()
+    {
+        lock (_serviceLock)
+        {
+            if (_isRunning) return;
+            
+            try
+            {
+                _source = new CancellationTokenSource();
+                _pluginTask = _startService(_source.Token);
+                _isRunning = true;
+                ClassLogger.Info("Plugin service started");
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, "Failed to start plugin service");
+                _source?.Dispose();
+                _source = null;
+            }
+        }
+    }
+
+    private async Task StopPluginServiceAsync()
+    {
+        List<PluginInfo> pluginsToDispose;
+        
+        lock (_serviceLock)
+        {
+            if (!_isRunning) return;
+            
+            _isRunning = false;
+            
+            // Stop the main service
+            _source?.Cancel();
+            _source?.Dispose();
+            _source = null;
+        }
+        
+        // Wait for the plugin task to complete with timeout
+        if (_pluginTask != null)
+        {
+            try
+            {
+                await _pluginTask.WaitAsync(TimeSpan.FromSeconds(5));
+                _pluginTask.Dispose();
+                _pluginTask = null;
+            }
+            catch (TimeoutException)
+            {
+                ClassLogger.Warn("Plugin service task did not stop gracefully within timeout");
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, "Error stopping plugin service task");
+            }
+        }
+        
+        // Clean up all registered plugins
+        using (var writerLock = await _pluginLock.WriterLockAsync(CancellationToken.None))
+        {
+            pluginsToDispose = new List<PluginInfo>(_plugins);
+            _plugins.Clear();
+        }
+        
+        // Dispose plugins outside the lock
+        foreach (var plugin in pluginsToDispose)
+        {
+            try
+            {
+                plugin.Dispose();
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, $"Error disposing plugin {plugin.Name}");
+            }
+        }
+        
+        // Clear decode cache
+        _wsjtxDecodeCache.Clear();
+        
+        ClassLogger.Info("Plugin service stopped");
+    }
+
+    public void Dispose()
+    {
+        _settingsSubscription?.Dispose();
+        
+        if (_isRunning)
+        {
+            StopPluginServiceAsync().GetAwaiter().GetResult();
+        }
+        
+        _source?.Dispose();
+        _pluginTask?.Dispose();
+    }
+
+    public async Task BroadcastMessageAsync(IMessage? message, CancellationToken token)
+    {
+        if (message is null) return;
+        
+        if (!_isRunning) return; // Check if service is running
+
+        // throttle decode; will be sent later.
+        if (message is WsjtxMessage { PayloadCase: WsjtxMessage.PayloadOneofCase.Decode } wmsg)
+        {
+            _wsjtxDecodeCache.Add(wmsg);
+            return;
+        }
+        
+        var tasks = new List<Task>();
+
+        using (var readerLock = await _pluginLock.ReaderLockAsync(token))
+        {
+            tasks.AddRange(_plugins.Select(pluginInfo => pluginInfo.SendMessage(message)));
+        }
+
+        await Task.WhenAll(tasks);
+    }
+
+    
+    public async Task<IReadOnlyList<PluginInfo>> GetConnectedPluginsAsync()
+    {
+        using (var readerLock = await _pluginLock.ReaderLockAsync())
+        {
+            return _plugins.ToList().AsReadOnly();
+        }
+    }
+    
     private async Task _startService(CancellationToken token)
     {
         var scanTask = _scanAndRegisterPlugins(token);
@@ -234,9 +408,10 @@ public class PluginService: IPluginService, IDisposable
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            NamedPipeServerStream pipeServer = null;
             try
             {
-                var server = new NamedPipeServerStream(
+                pipeServer = new NamedPipeServerStream(
                     pipePath,
                     PipeDirection.InOut,
                     NamedPipeServerStream.MaxAllowedServerInstances,
@@ -244,15 +419,24 @@ public class PluginService: IPluginService, IDisposable
                     PipeOptions.Asynchronous,
                     4096, 4096);
 
-                await server.WaitForConnectionAsync(cancellationToken);
-                await ProcessPluginRegistration(server, cancellationToken);
+                await pipeServer.WaitForConnectionAsync(cancellationToken);
+                await ProcessPluginRegistration(pipeServer, cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
+                if (pipeServer is not null)
+                {
+                    await pipeServer.DisposeAsync();
+                }
+                ClassLogger.Info("Plugin scanning service stopped");
                 break;
             }
             catch (Exception e)
             {
+                if (pipeServer is not null)
+                {
+                    await pipeServer.DisposeAsync();
+                }
                 ClassLogger.Error(e, "Plugin registration server error");
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
@@ -294,6 +478,11 @@ public class PluginService: IPluginService, IDisposable
         }
         catch (Exception e)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                ClassLogger.Info("Plugin reg service stopped");
+                return;
+            }
             ClassLogger.Error(e, "Parsing plugin register info failed");
             await _sendResponse(server, false, e.Message, cancellationToken);
         }
@@ -321,7 +510,7 @@ public class PluginService: IPluginService, IDisposable
             var response = new PipeRegisterPluginResp
             {
                 Success = success,
-                ClhInstanceId = _instanceId,
+                ClhInstanceId = _basicSettings.InstanceName,
                 Message = message ?? string.Empty,
                 Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
             };
@@ -384,44 +573,4 @@ public class PluginService: IPluginService, IDisposable
             }
         }
     }
-
-    public void Dispose()
-    {
-        _source.Cancel();
-        _pluginTask?.Wait(TimeSpan.FromSeconds(1));
-        
-        _source.Dispose();
-        _pluginTask?.Dispose();
-    }
-
-    public Task InitPluginServicesAsync(CancellationToken token)
-    {
-        _pluginTask = _startService(_source.Token);
-        _initialized = true;
-        return Task.CompletedTask;
-    }
-
-    public async Task BroadcastMessageAsync(IMessage? message, CancellationToken token)
-    {
-        if (message is null) return;
-        
-        if (!_initialized) return;
-
-        // throttle decode; will be sent later.
-        if (message is WsjtxMessage { PayloadCase: WsjtxMessage.PayloadOneofCase.Decode } wmsg)
-        {
-            _wsjtxDecodeCache.Add(wmsg);
-            return;
-        }
-        
-        var tasks = new List<Task>();
-
-        using (var readerLock = await _pluginLock.ReaderLockAsync(token))
-        {
-            tasks.AddRange(_plugins.Select(pluginInfo => pluginInfo.SendMessage(message)));
-        }
-
-        await Task.WhenAll(tasks);
-    }
-
 }

@@ -662,6 +662,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 啟用插件功能.
+        /// </summary>
+        public static string enableplugin {
+            get {
+                return ResourceManager.GetString("enableplugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 啟用UDP伺服器.
         /// </summary>
         public static string enableudpserver {
