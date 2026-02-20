@@ -14,6 +14,7 @@ using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
 using DynamicData.Binding;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
@@ -37,7 +38,8 @@ public class PluginInfo : IDisposable
     public DateTime LastHeartbeat { get; private set; }
 
     private NamedPipeServerStream? _client;
-    private readonly object _clientLock = new();
+    
+    private readonly SemaphoreSlim _sendSemaphore = new(1, 1);
 
     private Task? _heartbeatTask;
     private CancellationTokenSource? _heartbeatCts;
@@ -49,18 +51,14 @@ public class PluginInfo : IDisposable
         {
             while (!token.IsCancellationRequested)
             {
-                NamedPipeServerStream? client;
-                lock (_clientLock)
-                {
-                    if (_client == null || !_client.IsConnected)
-                        break;
-                    client = _client;
-                }
+                await _sendSemaphore.WaitAsync(token);
+                if (_client == null || !_client.IsConnected)
+                    break;
+                _sendSemaphore.Release();
 
                 try
                 {
-                    var hb = await Task.Run(() =>
-                        PipeHeartbeat.Parser.ParseDelimitedFrom(client), token);
+                    var hb = await PipeHeartbeat.Parser.ParseDelimitedFromAsync(_client, token);
 
                     if (hb?.Uuid == Uuid)
                     {
@@ -94,39 +92,47 @@ public class PluginInfo : IDisposable
     private void StartHeartbeat(CancellationToken token)
     {
         if (_disposed) return;
-        lock (_clientLock)
+
+        _sendSemaphore.Wait(token);
+        try
         {
             if (_heartbeatTask != null || _client == null) return;
             _heartbeatCts = CancellationTokenSource.CreateLinkedTokenSource(token);
             _heartbeatTask = Task.Run(() => ReceiveHeartbeatAsync(_heartbeatCts.Token), token);
+        }
+        finally
+        {
+            _sendSemaphore.Release();
         }
     }
 
     private void StopAll()
     {
         if (_disposed) return;
-        _disposed = true;
-
+        
         _heartbeatCts?.Cancel();
         _heartbeatCts?.Dispose();
         _heartbeatCts = null;
-
-        lock (_clientLock)
+        _heartbeatTask = null;
+        
+        _sendSemaphore.Wait();
+        if (_client != null)
         {
-            if (_client != null)
+            try
             {
-                try
-                {
-                    _client.Close();
-                    _client.Dispose();
-                    _client = null;
-                }
-                catch (Exception ex)
-                {
-                    ClassLogger.Error(ex, $"Error closing pipe for {Name}");
-                }
+                _client.Close();
+                _client.Dispose();
+                _client = null;
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, $"Error closing pipe for {Name}");
             }
         }
+
+        _sendSemaphore.Release();
+        
+        _disposed = true;
     }
 
     public static PluginInfo Create(PipeRegisterPluginReq rpcRegisterPluginReq,
@@ -148,34 +154,39 @@ public class PluginInfo : IDisposable
         return pg;
     }
 
-    public Task SendMessage<T>(T msg) where T: IMessage
+    public async Task SendMessage<T>(T msg, CancellationToken token) where T: IMessage
     {
         switch (msg)
         {
             case PackedWsjtxMessage:
             case WsjtxMessage:
-                if (!Capabilities.Contains(Capability.WsjtxMessage))return Task.CompletedTask;
+                if (!Capabilities.Contains(Capability.WsjtxMessage)) return;
                 break;
             case RigData:
-                if (!Capabilities.Contains(Capability.RigData))return Task.CompletedTask;
+                if (!Capabilities.Contains(Capability.RigData)) return;
                 break;
             default:
-                return Task.CompletedTask;
+                return;
         }
 
         var any = Any.Pack(msg);
         
-        lock (_clientLock)
+        await _sendSemaphore.WaitAsync(token);
+        try
         {
-            if (_client is null || !_client.IsConnected) return Task.CompletedTask;
-            any.WriteDelimitedTo(_client);
-            return Task.CompletedTask;
+            if (_client == null || !_client.IsConnected) return;
+            await any.WriteDelimitedToAsync(_client, token);
+        }
+        finally
+        {
+            _sendSemaphore.Release();
         }
     }
 
     public void Dispose()
     {
         StopAll();
+        _sendSemaphore?.Dispose();
     }
 }
 
@@ -205,24 +216,15 @@ public class PluginService: IPluginService, IDisposable
             _wsjtxDecodeCache.ObserveCollectionChanges()
                 .Throttle(TimeSpan.FromSeconds(2))
                 .ObserveOn(RxApp.TaskpoolScheduler)
-                .Subscribe(async void (a) =>
+                .Subscribe(async changes => 
                 {
                     try
                     {
-                        if (!_isRunning) return;
-                        
-                        ClassLogger.Trace("Sending throttled decoded message.");
-                        var decodes = _wsjtxDecodeCache.ToArray();
-                        if (decodes.Length == 0) return;
-                        _wsjtxDecodeCache.Clear();
-                        var packedMessage = new PackedWsjtxMessage();
-                        packedMessage.Messages.AddRange(decodes);
-                        packedMessage.Timestamp = Timestamp.FromDateTime(DateTime.UtcNow);
-                        await BroadcastMessageAsync(packedMessage, CancellationToken.None);
+                        await HandleDecodeCacheChanged();
                     }
                     catch (Exception ex)
                     {
-                        ClassLogger.Error(ex, "Error while packing and sending packed wsjtx message...");
+                        ClassLogger.Error(ex, "Error handling decode cache changes");
                     }
                 })
         );
@@ -242,6 +244,21 @@ public class PluginService: IPluginService, IDisposable
         }
     }
 
+    private async Task HandleDecodeCacheChanged()
+    {
+        if (!_isRunning) return;
+        
+        ClassLogger.Trace("Sending throttled decoded message.");
+        var decodes = _wsjtxDecodeCache.ToArray();
+        if (decodes.Length == 0) return;
+        
+        _wsjtxDecodeCache.Clear();
+        var packedMessage = new PackedWsjtxMessage();
+        packedMessage.Messages.AddRange(decodes);
+        packedMessage.Timestamp = Timestamp.FromDateTime(DateTime.UtcNow);
+        await BroadcastMessageAsync(packedMessage, CancellationToken.None);
+    }
+
     private async Task HandleSettingsChange()
     {
         try
@@ -249,7 +266,7 @@ public class PluginService: IPluginService, IDisposable
             if (_basicSettings.EnablePlugin && !_isRunning)
             {
                 ClassLogger.Info("Plugin service enabled via settings change");
-                _ = StartPluginServiceAsync();
+                await StartPluginServiceAsync();
             }
             else if (!_basicSettings.EnablePlugin && _isRunning)
             {
@@ -272,7 +289,8 @@ public class PluginService: IPluginService, IDisposable
             try
             {
                 _source = new CancellationTokenSource();
-                _pluginTask = _startService(_source.Token);
+                var tk = _source.Token;
+                _pluginTask = Task.Run(()=>_startService(tk), tk);
                 _isRunning = true;
                 ClassLogger.Info("Plugin service started");
             }
@@ -352,11 +370,8 @@ public class PluginService: IPluginService, IDisposable
         
         if (_isRunning)
         {
-            StopPluginServiceAsync().GetAwaiter().GetResult();
+            Task.Run(StopPluginServiceAsync).GetAwaiter().GetResult();
         }
-        
-        _source?.Dispose();
-        _pluginTask?.Dispose();
     }
 
     public async Task BroadcastMessageAsync(IMessage? message, CancellationToken token)
@@ -376,7 +391,10 @@ public class PluginService: IPluginService, IDisposable
 
         using (var readerLock = await _pluginLock.ReaderLockAsync(token))
         {
-            tasks.AddRange(_plugins.Select(pluginInfo => pluginInfo.SendMessage(message)));
+            foreach (var pluginInfo in _plugins)
+            {
+                tasks.Add(pluginInfo.SendMessage(message, token));
+            }
         }
 
         await Task.WhenAll(tasks);
@@ -408,7 +426,7 @@ public class PluginService: IPluginService, IDisposable
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            NamedPipeServerStream pipeServer = null;
+            NamedPipeServerStream? pipeServer = null;
             try
             {
                 pipeServer = new NamedPipeServerStream(
@@ -428,7 +446,7 @@ public class PluginService: IPluginService, IDisposable
                 {
                     await pipeServer.DisposeAsync();
                 }
-                ClassLogger.Info("Plugin scanning service stopped");
+                ClassLogger.Info("Plugin reg service stopped");
                 break;
             }
             catch (Exception e)
@@ -458,7 +476,11 @@ public class PluginService: IPluginService, IDisposable
                 if (!transferred) server.Dispose();
             });
 
-            var pluginRegisterInfo = PipeRegisterPluginReq.Parser.ParseDelimitedFrom(server);
+            var pluginRegisterInfo = await PipeRegisterPluginReq.Parser.ParseDelimitedFromAsync(server, link.Token);
+            if (pluginRegisterInfo is null)
+            {
+                throw new Exception("Plugin register info is null");
+            }
             ClassLogger.Trace($"Got plugin: {pluginRegisterInfo.Name}");
             await _sendResponse(server, true, null, link.Token);
 
@@ -480,7 +502,7 @@ public class PluginService: IPluginService, IDisposable
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                ClassLogger.Info("Plugin reg service stopped");
+                ClassLogger.Info("ProcessPluginRegistration stopped");
                 return;
             }
             ClassLogger.Error(e, "Parsing plugin register info failed");
@@ -515,7 +537,7 @@ public class PluginService: IPluginService, IDisposable
                 Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
             };
 
-            response.WriteDelimitedTo(server);
+            await response.WriteDelimitedToAsync(server, cancellationToken);
             await server.FlushAsync(cancellationToken);
         }
         catch (Exception e)
@@ -555,7 +577,7 @@ public class PluginService: IPluginService, IDisposable
                 }
 
                 using var writerLock = await _pluginLock.WriterLockAsync(cancellationToken);
-                ClassLogger.Debug($"Removing {string.Join(",", toRemove)}");
+                ClassLogger.Debug($"Removing {string.Join(",", toRemove.Select(p => p.Name))}");
                 foreach (var plugin in toRemove)
                 {
                     _plugins.Remove(plugin);
@@ -564,6 +586,7 @@ public class PluginService: IPluginService, IDisposable
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
+                ClassLogger.Info("Plugin heartbeat service stopped");
                 break;
             }
             catch (Exception e)
