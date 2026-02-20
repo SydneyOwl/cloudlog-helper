@@ -25,6 +25,7 @@ using SydneyOwl.CLHProto.Plugin;
 
 namespace CloudlogHelper.Services;
 
+
 public class PluginInfo : IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
@@ -38,8 +39,7 @@ public class PluginInfo : IDisposable
     public DateTime LastHeartbeat { get; private set; }
 
     private NamedPipeServerStream? _client;
-    
-    private readonly SemaphoreSlim _sendSemaphore = new(1, 1);
+    private SemaphoreSlim _cliLock = new(1,1);
 
     private Task? _heartbeatTask;
     private CancellationTokenSource? _heartbeatCts;
@@ -51,14 +51,20 @@ public class PluginInfo : IDisposable
         {
             while (!token.IsCancellationRequested)
             {
-                await _sendSemaphore.WaitAsync(token);
-                if (_client == null || !_client.IsConnected)
-                    break;
-                _sendSemaphore.Release();
+                NamedPipeServerStream? client;
+
+                await _cliLock.WaitAsync(token);
+                {
+                    if (_client == null || !_client.IsConnected)
+                        break;
+                    client = _client;
+                }
+                _cliLock.Release();
 
                 try
                 {
-                    var hb = await PipeHeartbeat.Parser.ParseDelimitedFromAsync(_client, token);
+                    var hb = await Task.Run(() =>
+                        PipeHeartbeat.Parser.ParseDelimitedFrom(client), token);
 
                     if (hb?.Uuid == Uuid)
                     {
@@ -93,46 +99,41 @@ public class PluginInfo : IDisposable
     {
         if (_disposed) return;
 
-        _sendSemaphore.Wait(token);
-        try
+        _cliLock.Wait();
         {
             if (_heartbeatTask != null || _client == null) return;
             _heartbeatCts = CancellationTokenSource.CreateLinkedTokenSource(token);
             _heartbeatTask = Task.Run(() => ReceiveHeartbeatAsync(_heartbeatCts.Token), token);
         }
-        finally
-        {
-            _sendSemaphore.Release();
-        }
+        _cliLock.Release();
     }
 
     private void StopAll()
     {
         if (_disposed) return;
-        
+        _disposed = true;
+
         _heartbeatCts?.Cancel();
         _heartbeatCts?.Dispose();
         _heartbeatCts = null;
-        _heartbeatTask = null;
-        
-        _sendSemaphore.Wait();
-        if (_client != null)
+
+        _cliLock.Wait();
         {
-            try
+            if (_client != null)
             {
-                _client.Close();
-                _client.Dispose();
-                _client = null;
-            }
-            catch (Exception ex)
-            {
-                ClassLogger.Error(ex, $"Error closing pipe for {Name}");
+                try
+                {
+                    _client.Close();
+                    _client.Dispose();
+                    _client = null;
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, $"Error closing pipe for {Name}");
+                }
             }
         }
-
-        _sendSemaphore.Release();
-        
-        _disposed = true;
+        _cliLock.Release();
     }
 
     public static PluginInfo Create(PipeRegisterPluginReq rpcRegisterPluginReq,
@@ -160,33 +161,33 @@ public class PluginInfo : IDisposable
         {
             case PackedWsjtxMessage:
             case WsjtxMessage:
-                if (!Capabilities.Contains(Capability.WsjtxMessage)) return;
+                if (!Capabilities.Contains(Capability.WsjtxMessage))return ;
                 break;
             case RigData:
-                if (!Capabilities.Contains(Capability.RigData)) return;
+                if (!Capabilities.Contains(Capability.RigData))return ;
                 break;
             default:
-                return;
+                return ;
         }
 
         var any = Any.Pack(msg);
-        
-        await _sendSemaphore.WaitAsync(token);
+
+        await _cliLock.WaitAsync(token);
         try
         {
-            if (_client == null || !_client.IsConnected) return;
+            if (_client is null || !_client.IsConnected) return;
             await any.WriteDelimitedToAsync(_client, token);
         }
         finally
         {
-            _sendSemaphore.Release();
+            
+            _cliLock.Release();
         }
     }
 
     public void Dispose()
     {
         StopAll();
-        _sendSemaphore?.Dispose();
     }
 }
 
@@ -500,12 +501,12 @@ public class PluginService: IPluginService, IDisposable
         }
         catch (Exception e)
         {
+            ClassLogger.Error(e, "Parsing plugin register info failed");
             if (cancellationToken.IsCancellationRequested)
             {
                 ClassLogger.Info("ProcessPluginRegistration stopped");
                 return;
             }
-            ClassLogger.Error(e, "Parsing plugin register info failed");
             await _sendResponse(server, false, e.Message, cancellationToken);
         }
         finally
