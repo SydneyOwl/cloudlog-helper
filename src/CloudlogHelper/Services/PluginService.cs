@@ -111,6 +111,22 @@ public class PluginInfo : IDisposable
     private void StopAll()
     {
         if (_disposed) return;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await SendMessage(new PipeConnectionClosed()
+                {
+                    Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
+                }, CancellationToken.None);
+            }
+            catch (Exception e)
+            {
+                //ignored
+            }
+        });
+        
         _disposed = true;
 
         _heartbeatCts?.Cancel();
