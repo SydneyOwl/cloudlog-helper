@@ -272,4 +272,86 @@ public class PbMsgConverter
             _ => ClearWindow.ClearBandActivity
         };
     }
+
+    /// <summary>
+    /// Convert CloudlogHelper RecordedCallsignDetail to protobuf RecordedCallsignDetail message.
+    /// </summary>
+    /// <param name="detail">The C# model to convert</param>
+    /// <returns>A protobuf RecordedCallsignDetail message</returns>
+    public static ClhInternalMessage ToPbRecordedCallsignDetail(RecordedCallsignDetail detail)
+    {
+        var pbDetail = new ClhQSOUploadStatusChanged()
+        {
+            OriginalCountryName = detail.OriginalCountryName ?? "",
+            CqZone = detail.CqZone,
+            ItuZone = detail.ItuZone,
+            Continent = detail.Continent ?? "",
+            Latitude = detail.Latitude,
+            Longitude = detail.Longitude,
+            GmtOffset = detail.GmtOffset,
+            Dxcc = detail.Dxcc ?? "",
+            DateTimeOff = Timestamp.FromDateTime(detail.DateTimeOff),
+            DxCall = detail.DXCall ?? "",
+            DxGrid = detail.DXGrid ?? "",
+            TxFrequencyInHz = detail.TXFrequencyInHz,
+            TxFrequencyInMeters = detail.TXFrequencyInMeters ?? "",
+            Mode = detail.Mode ?? "",
+            ParentMode = detail.ParentMode ?? "",
+            ReportSent = detail.ReportSent ?? "",
+            ReportReceived = detail.ReportReceived ?? "",
+            TxPower = detail.TXPower ?? "",
+            Comments = detail.Comments ?? "",
+            Name = detail.Name ?? "",
+            DateTimeOn = Timestamp.FromDateTime(detail.DateTimeOn),
+            OperatorCall = detail.OperatorCall ?? "",
+            MyCall = detail.MyCall ?? "",
+            MyGrid = detail.MyGrid ?? "",
+            ExchangeSent = detail.ExchangeSent ?? "",
+            ExchangeReceived = detail.ExchangeReceived ?? "",
+            AdifPropagationMode = detail.AdifPropagationMode ?? "",
+            ClientId = detail.ClientId ?? "",
+            RawData = detail.RawData?.ToString() ?? "",
+            FailReason = detail.FailReason ?? "",
+            UploadStatus = MapUploadStatus(detail.UploadStatus),
+            ForcedUpload = detail.ForcedUpload
+        };
+
+        // Copy uploaded services map
+        foreach (var kvp in detail.UploadedServices)
+        {
+            pbDetail.UploadedServices[kvp.Key] = kvp.Value;
+        }
+
+        // Copy uploaded services error message map
+        foreach (var kvp in detail.UploadedServicesErrorMessage)
+        {
+            pbDetail.UploadedServicesErrorMessage[kvp.Key] = kvp.Value;
+        }
+
+        var tmp = new ClhInternalMessage
+        {
+            Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
+            QsoUploadStatus = pbDetail
+        };
+
+        return tmp;
+    }
+
+    /// <summary>
+    /// Map CloudlogHelper UploadStatus enum to protobuf UploadStatus enum.
+    /// </summary>
+    /// <param name="status">The upload status to convert</param>
+    /// <returns>Converted protobuf UploadStatus</returns>
+    private static UploadStatus MapUploadStatus(Enums.UploadStatus status)
+    {
+        return status switch
+        {
+            Enums.UploadStatus.Pending => UploadStatus.Pending,
+            Enums.UploadStatus.Uploading => UploadStatus.Uploading,
+            Enums.UploadStatus.Success => UploadStatus.Success,
+            Enums.UploadStatus.Fail => UploadStatus.Fail,
+            Enums.UploadStatus.Ignored => UploadStatus.Ignored,
+            _ => UploadStatus.Unspecified
+        };
+    }
 }

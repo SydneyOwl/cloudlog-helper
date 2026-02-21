@@ -195,6 +195,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 .DisposeWith(compositeDisposable);
 
             SetupQsoRateCalculation(compositeDisposable);
+            SetupQsoList(compositeDisposable);
             SetupFilteringAndSorting(compositeDisposable);
 
             this.WhenAnyValue(
@@ -251,15 +252,44 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     
                 QsAvgMin = $"{rate:F2} Q's/m";
             }).DisposeWith(disposables);
-            
+    }
 
+    private void SetupQsoList(CompositeDisposable disposables)
+    {
         _allQsos.Connect()
             .WhenPropertyChanged(p => p.UploadStatus)
-            .Where(x => x.Value == UploadStatus.Success)
-            .Subscribe(x =>
+            .Subscribe(async void (x) =>
             {
-                UploadedQsosCount += 1;
+                try
+                {
+                    await _pluginService.BroadcastMessageAsync(
+                        PbMsgConverter.ToPbRecordedCallsignDetail(x.Sender),
+                        CancellationToken.None);
+                    
+                    if (x.Value == UploadStatus.Success) UploadedQsosCount += 1;
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Error occurred. Ignored.");
+                }
             })
+            .DisposeWith(disposables);
+
+        _allQsos.Connect()
+            .OnItemAdded(async void (x) =>
+            {
+                try
+                {
+                    await _pluginService.BroadcastMessageAsync(
+                        PbMsgConverter.ToPbRecordedCallsignDetail(x),
+                        CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Error occurred. Ignored.");
+                }
+            })
+            .Subscribe()
             .DisposeWith(disposables);
     }
 

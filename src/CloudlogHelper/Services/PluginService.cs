@@ -166,6 +166,9 @@ public class PluginInfo : IDisposable
             case RigData:
                 if (!Capabilities.Contains(Capability.RigData))return ;
                 break;
+            case ClhInternalMessage:
+                if (!Capabilities.Contains(Capability.ClhInternalData))return ;
+                break;
             default:
                 return ;
         }
@@ -180,7 +183,6 @@ public class PluginInfo : IDisposable
         }
         finally
         {
-            
             _cliLock.Release();
         }
     }
