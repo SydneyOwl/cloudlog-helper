@@ -113,7 +113,7 @@ public class PbMsgConverter
             case WsjtxUtilsPatch.WsjtxMessages.Messages.QsoLogged qsoLogged:
                 pbMsg.QsoLogged = new QSOLogged
                 {
-                    DatetimeOff = Timestamp.FromDateTime(qsoLogged.DateTimeOff),
+                    DatetimeOff = Timestamp.FromDateTime(qsoLogged.DateTimeOff.ToUniversalTime()),
                     DxCall = qsoLogged.DXCall ?? string.Empty,
                     DxGrid = qsoLogged.DXGrid ?? string.Empty,
                     TxFrequency = qsoLogged.TXFrequencyInHz,
@@ -122,7 +122,7 @@ public class PbMsgConverter
                     ReportReceived = qsoLogged.ReportReceived ?? string.Empty,
                     TxPower = qsoLogged.TXPower ?? string.Empty,
                     Comments = qsoLogged.Comments ?? string.Empty,
-                    DatetimeOn = Timestamp.FromDateTime(qsoLogged.DateTimeOn),
+                    DatetimeOn = Timestamp.FromDateTime(qsoLogged.DateTimeOn.ToUniversalTime()),
                     OperatorCall = qsoLogged.OperatorCall ?? string.Empty,
                     MyCall = qsoLogged.MyCall ?? string.Empty,
                     MyGrid = qsoLogged.MyGrid ?? string.Empty,
@@ -290,7 +290,7 @@ public class PbMsgConverter
             Longitude = detail.Longitude,
             GmtOffset = detail.GmtOffset,
             Dxcc = detail.Dxcc ?? "",
-            DateTimeOff = Timestamp.FromDateTime(detail.DateTimeOff),
+            DateTimeOff = Timestamp.FromDateTime(detail.DateTimeOff.ToUniversalTime()),
             DxCall = detail.DXCall ?? "",
             DxGrid = detail.DXGrid ?? "",
             TxFrequencyInHz = detail.TXFrequencyInHz,
@@ -302,7 +302,7 @@ public class PbMsgConverter
             TxPower = detail.TXPower ?? "",
             Comments = detail.Comments ?? "",
             Name = detail.Name ?? "",
-            DateTimeOn = Timestamp.FromDateTime(detail.DateTimeOn),
+            DateTimeOn = Timestamp.FromDateTime(detail.DateTimeOn.ToUniversalTime()),
             OperatorCall = detail.OperatorCall ?? "",
             MyCall = detail.MyCall ?? "",
             MyGrid = detail.MyGrid ?? "",

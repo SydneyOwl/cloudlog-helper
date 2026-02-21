@@ -47,51 +47,42 @@ public class PluginInfo : IDisposable
 
     private async Task ReceiveHeartbeatAsync(CancellationToken token)
     {
-        try
+        while (!token.IsCancellationRequested)
         {
-            while (!token.IsCancellationRequested)
+            NamedPipeServerStream? client;
+
+            await _cliLock.WaitAsync(token);
+            try
             {
-                NamedPipeServerStream? client;
-
-                await _cliLock.WaitAsync(token);
-                {
-                    if (_client == null || !_client.IsConnected)
-                        break;
-                    client = _client;
-                }
-                _cliLock.Release();
-
-                try
-                {
-                    var hb = await Task.Run(() =>
-                        PipeHeartbeat.Parser.ParseDelimitedFrom(client), token);
-
-                    if (hb?.Uuid == Uuid)
-                    {
-                        ClassLogger.Debug($"Heartbeat received for {Name}");
-                        LastHeartbeat = DateTime.UtcNow;
-                    }
-                }
-                catch (IOException) when (!token.IsCancellationRequested)
-                {
-                    ClassLogger.Info($"{Name} exited due to IO exception");
+                if (_client == null || !_client.IsConnected)
                     break;
-                }
-                catch (OperationCanceledException)
+                client = _client;
+            }finally{_cliLock.Release();}
+
+            try
+            {
+                var hb = await PipeHeartbeat.Parser.ParseDelimitedFromAsync(client, token);
+
+                if (hb?.Uuid == Uuid)
                 {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    ClassLogger.Error(ex, $"Error receiving heartbeat from {Name}");
-                    await Task.Delay(1000, token);
+                    ClassLogger.Debug($"Heartbeat received for {Name}");
+                    LastHeartbeat = DateTime.UtcNow;
                 }
             }
-        }
-        finally
-        {
-            ClassLogger.Debug($"Plugin {Name} left");
-            StopAll();
+            catch (IOException) when (!token.IsCancellationRequested)
+            {
+                ClassLogger.Info($"{Name} exited due to IO exception");
+                break;
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, $"Error receiving heartbeat from {Name}");
+                await Task.Delay(1000, token);
+            }
         }
     }
 
@@ -99,36 +90,37 @@ public class PluginInfo : IDisposable
     {
         if (_disposed) return;
 
-        _cliLock.Wait();
+        _cliLock.Wait(token);
+        try
         {
             if (_heartbeatTask != null || _client == null) return;
             _heartbeatCts = CancellationTokenSource.CreateLinkedTokenSource(token);
             _heartbeatTask = Task.Run(() => ReceiveHeartbeatAsync(_heartbeatCts.Token), token);
         }
-        _cliLock.Release();
+        finally
+        {
+            _cliLock.Release();
+        }
     }
 
     private void StopAll()
     {
         if (_disposed) return;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await SendMessage(new PipeConnectionClosed()
-                {
-                    Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
-                }, CancellationToken.None);
-            }
-            catch (Exception e)
-            {
-                //ignored
-            }
-        });
         
         _disposed = true;
 
+        try
+        {
+            SendMessage(new PipeConnectionClosed()
+            {
+                Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
+            }, CancellationToken.None).GetAwaiter().GetResult();
+        }
+        catch
+        {
+            // ignored
+        }
+        
         _heartbeatCts?.Cancel();
         _heartbeatCts?.Dispose();
         _heartbeatCts = null;
@@ -175,7 +167,7 @@ public class PluginInfo : IDisposable
     {
         switch (msg)
         {
-            case PackedWsjtxMessage:
+            case PackedDecodeMessage:
             case WsjtxMessage:
                 if (!Capabilities.Contains(Capability.WsjtxMessage))return ;
                 break;
@@ -184,6 +176,8 @@ public class PluginInfo : IDisposable
                 break;
             case ClhInternalMessage:
                 if (!Capabilities.Contains(Capability.ClhInternalData))return ;
+                break;
+            case PipeConnectionClosed:
                 break;
             default:
                 return ;
@@ -220,7 +214,7 @@ public class PluginService: IPluginService, IDisposable
     private readonly object _serviceLock = new();
     private bool _isRunning;
     
-    private readonly ObservableCollection<WsjtxMessage> _wsjtxDecodeCache = new();
+    private readonly ObservableCollection<Decode> _wsjtxDecodeCache = new();
     
     private readonly BasicSettings _basicSettings;
     private readonly CompositeDisposable _settingsSubscription = new();
@@ -272,7 +266,7 @@ public class PluginService: IPluginService, IDisposable
         if (decodes.Length == 0) return;
         
         _wsjtxDecodeCache.Clear();
-        var packedMessage = new PackedWsjtxMessage();
+        var packedMessage = new PackedDecodeMessage();
         packedMessage.Messages.AddRange(decodes);
         packedMessage.Timestamp = Timestamp.FromDateTime(DateTime.UtcNow);
         await BroadcastMessageAsync(packedMessage, CancellationToken.None);
@@ -402,7 +396,7 @@ public class PluginService: IPluginService, IDisposable
         // throttle decode; will be sent later.
         if (message is WsjtxMessage { PayloadCase: WsjtxMessage.PayloadOneofCase.Decode } wmsg)
         {
-            _wsjtxDecodeCache.Add(wmsg);
+            _wsjtxDecodeCache.Add(wmsg.Decode);
             return;
         }
         
