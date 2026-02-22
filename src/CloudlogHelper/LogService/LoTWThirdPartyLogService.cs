@@ -144,6 +144,29 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
                 if (File.Exists("/usr/bin/tqsl")) LotwFilePath = "/usr/bin/tqsl";
                 if (File.Exists("/usr/local/bin/tqsl")) LotwFilePath = "/usr/local/bin/tqsl";
             }
+
+            if (OperatingSystem.IsMacOS())
+            {
+                var home =  Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+                // from gridtracker
+                var testPath = new string[]
+                {
+                    "/Applications/TrustedQSL/tqsl.app/Contents/MacOS/tqsl",
+                    "/Applications/tqsl.app/Contents/MacOS/tqsl",
+                    Path.Join(home, "/Applications/TrustedQSL/tqsl.app/Contents/MacOS/tqsl"),
+                    Path.Join(home, "/Applications/tqsl.app/Contents/MacOS/tqsl"),
+                    Path.Join(home, "/Desktop/TrustedQSL/tqsl.app/Contents/MacOS/tqsl"),
+                    Path.Join(home, "/Desktop/tqsl.app/Contents/MacOS/tqsl"),
+                    Path.Join(home, "/Applications/Ham Radio/TrustedQSL/tqsl.app/Contents/MacOS/tqsl"),
+                    Path.Join(home, "/Applications/Ham Radio/tqsl.app/Contents/MacOS/tqsl"),
+                };
+                
+                foreach (var se in testPath)
+                {
+                    if (File.Exists(se)) LotwFilePath = se;
+                }
+            }
         }
     }
 }

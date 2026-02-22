@@ -1,6 +1,6 @@
 ﻿param(
     [string]$Version = "dev_build",
-    [string[]]$Platforms = @("win-x64", "win-x86", "win-arm64", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64"),
+    [string[]]$Platforms = @("win-x64", "win-x86", "win-arm64", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64", "osx-x64", "osx-arm64"),
     [switch]$aot = $false
 )
 
@@ -42,7 +42,7 @@ mkdir "Resources/Dependencies" -Force | Out-Null
 mkdir "Resources/Dependencies/hamlib" -Force | Out-Null
 
 @(
-    "win-x86", "win-x64", "linux-x64", "linux-armhf", "linux-arm64"
+    "win-x86", "win-x64", "linux-x64", "linux-armhf", "linux-arm64", "osx-x64", "osx-arm64"
 ) | ForEach-Object {
     mkdir "Resources/Dependencies/hamlib/$_" -Force | Out-Null
 }
@@ -142,6 +142,66 @@ if (Need "linux-arm64")
                        -CopyFrom "./tmp/linux-arm64/bin/rigctld" `
                        -CopyTo "./Resources/Dependencies/hamlib/linux-arm64"
 }
+
+### macos x64
+if (Need "osx-x64")
+{
+    $url = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-macos-x86_64-$latestHamlibLinuxVersion.zip"
+    Invoke-WebRequest -Uri $url -OutFile "./tmp/osx-x64.zip"
+    Safe-ExpandAndCopy -Zip "./tmp/osx-x64.zip" `
+                       -Dest "./tmp/osx-x64" `
+                       -CopyFrom  @(
+        "./tmp/osx-x64/bin/rigctld",
+        "./tmp/osx-x64/bin/libusb-1.0.0.dylib"
+    ) `
+                       -CopyTo "./Resources/Dependencies/hamlib/osx-x64"
+}
+
+### macos arm64
+if (Need "osx-arm64")
+{
+    $url = "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$latestHamlibLinuxVersion/Hamlib-macos-arm64-$latestHamlibLinuxVersion.zip"
+    Invoke-WebRequest -Uri $url -OutFile "./tmp/osx-arm64.zip"
+    Safe-ExpandAndCopy -Zip "./tmp/osx-arm64.zip" `
+                       -Dest "./tmp/osx-arm64" `
+                       -CopyFrom  @(
+        "./tmp/osx-arm64/bin/rigctld",
+        "./tmp/osx-arm64/bin/libusb-1.0.0.dylib"
+    ) `
+                       -CopyTo "./Resources/Dependencies/hamlib/osx-arm64"
+}
+
+function Build-And-Package-MacOS
+{
+    param(
+        [string]$runtime,
+        [string]$archName,
+        [string]$frameworkName,
+        [string]$exeName,
+        [bool]$doaot = $false
+    )
+
+    Write-Host "Building for $runtime ..." -ForegroundColor Cyan
+
+    if ($doaot) {
+        Write-Host "macos aot build is not supported by powershell!" -ForegroundColor Red
+        return
+    } else {
+        dotnet publish -c Release -r $runtime `
+        -f $frameworkName `
+        -t:BundleApp `
+        -p:UseAppHost=true
+    }
+    
+    $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
+
+    $publish_path = "bin/Release/$frameworkName/$runtime/publish"
+
+    Copy-Item Assets/icon.icns $publish_path/CloudlogHelper.app/Contents/Resources
+    Compress-Archive -Path $publish_path/CloudlogHelper.app -DestinationPath $zipName -Force
+    Write-Host "Created: $zipName"
+}
+
 function Build-And-Package
 {
     param(
@@ -151,6 +211,15 @@ function Build-And-Package
         [string]$exeName,
         [bool]$doaot = $false
     )
+    
+    if ($runtime -like "osx-*") {
+        Build-And-Package-MacOS -runtime $runtime `
+                          -archName $archName `
+                          -frameworkName $frameworkName `
+                          -exeName $exeName `
+                          -doaot $doaot
+        return
+    }
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
@@ -217,6 +286,8 @@ $PlatformMap = @{
     "linux-musl-x64" = @{ arch = "linux-musl-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
     "linux-arm" = @{ arch = "linux-arm"; exe = "CloudlogHelper"; fw = "net6.0" }
     "linux-arm64" = @{ arch = "linux-arm64"; exe = "CloudlogHelper"; fw = "net6.0" }
+    "osx-x64" = @{ arch = "osx-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
+    "osx-arm64" = @{ arch = "osx-arm64"; exe = "CloudlogHelper"; fw = "net6.0" }
 }
 
 foreach ($p in $Platforms)

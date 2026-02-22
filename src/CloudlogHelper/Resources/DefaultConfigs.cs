@@ -310,11 +310,20 @@ public class DefaultConfigs
     };
 
     /// <summary>
-    ///     Default Hamlib files for windows
+    ///     Default Hamlib files for linux
     /// </summary>
     public static List<string> DefaultLinuxHamlibFiles = new()
     {
         "rigctld"
+    };
+    
+    /// <summary>
+    ///     Default Hamlib files for macos
+    /// </summary>
+    public static List<string> DefaultOSXHamlibFiles = new()
+    {
+        "rigctld",
+        "libusb-1.0.0.dylib"
     };
 
     /// <summary>

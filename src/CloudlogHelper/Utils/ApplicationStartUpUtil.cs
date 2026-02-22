@@ -52,12 +52,12 @@ public class ApplicationStartUpUtil
             return Path.Combine(winPath, "CloudlogHelper");
         }
 
-        if (OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
         {
-            var linuxPath = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ??
+            var unixPath = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ??
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
 
-            return Path.Combine(linuxPath, "CloudlogHelper");
+            return Path.Combine(unixPath, "CloudlogHelper");
         }
 
         if (OperatingSystem.IsMacOS())

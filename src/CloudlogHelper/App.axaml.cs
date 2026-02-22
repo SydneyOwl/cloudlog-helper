@@ -355,6 +355,7 @@ public class App : Application
         Directory.CreateDirectory(DefaultConfigs.HamlibFilePath);
         var hamlibRelease = DefaultConfigs.DefaultWindowsHamlibFiles;
         if (OperatingSystem.IsLinux()) hamlibRelease = DefaultConfigs.DefaultLinuxHamlibFiles;
+        if (OperatingSystem.IsMacOS()) hamlibRelease = DefaultConfigs.DefaultOSXHamlibFiles;
         foreach (var defaultHamlibFile in hamlibRelease)
         {
             var tPath = Path.Join(DefaultConfigs.HamlibFilePath, defaultHamlibFile);
@@ -388,14 +389,21 @@ public class App : Application
                 continue;
             }
 
-            // make it executable on linux
-            if (OperatingSystem.IsLinux())
+            // make it executable on unix
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
             {
-                var fileInfo = new UnixFileInfo(tPath);
-                fileInfo.FileAccessPermissions |=
-                    FileAccessPermissions.UserExecute |
-                    FileAccessPermissions.GroupExecute |
-                    FileAccessPermissions.OtherExecute;
+                try
+                {
+                    var fileInfo = new UnixFileInfo(tPath);
+                    fileInfo.FileAccessPermissions |=
+                        FileAccessPermissions.UserExecute |
+                        FileAccessPermissions.GroupExecute |
+                        FileAccessPermissions.OtherExecute;
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Unable to set permissions to ham binaries. ignored");
+                }
             }
         }
     }

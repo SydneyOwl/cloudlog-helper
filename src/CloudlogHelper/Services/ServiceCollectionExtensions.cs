@@ -84,6 +84,11 @@ public static class ServiceCollectionExtensions
                 await freeDesktopNotificationManager.Initialize();
                 services.AddSingleton<INotificationManager>(freeDesktopNotificationManager);
             }
+            else if (OperatingSystem.IsMacOS())
+            {
+                ClassLogger.Info("Using fallback notification for macOS.");
+                services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
+            }
             else
             {
                 ClassLogger.Info("Using fallback notification.");

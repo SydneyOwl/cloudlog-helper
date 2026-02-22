@@ -47,7 +47,7 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 > [!TIP]
 > You can also choose to compile it yourself. Please refer to the `Compilation` section below.
 
-+ Download the software version for your system from `Releases`. If you're using Linux and **need to use the hamlib backend** for radio data reporting, please start the software with sudo.
++ Download the software version for your system from `Releases`. If you're using Linux and **need to use the hamlib backend** for radio data reporting, you may need to start the software with sudo.
 
 + Open the software, click `Settings` -> `Basic Settings` to open the settings page.
 

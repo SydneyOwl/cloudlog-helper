@@ -13,6 +13,20 @@
         <LinuxAppIcon>Assets/icon.png</LinuxAppIcon>
     </PropertyGroup>
 
+    <!-- For macOS -->
+    <PropertyGroup>
+        <CFBundleName>CloudlogHelper</CFBundleName>
+        <CFBundleDisplayName>CloudlogHelper</CFBundleDisplayName>
+        <CFBundleIdentifier>com.sydneyowl</CFBundleIdentifier>
+        <CFBundleVersion>0.0.1</CFBundleVersion>
+        <CFBundlePackageType>APPL</CFBundlePackageType>
+        <CFBundleExecutable>CloudlogHelper</CFBundleExecutable>
+        <CFBundleShortVersionString>0.0.1.23</CFBundleShortVersionString>
+        <CFBundleIconFile>icon.icns</CFBundleIconFile>
+        <NSPrincipalClass>NSApplication</NSPrincipalClass>
+        <NSHighResolutionCapable>true</NSHighResolutionCapable>
+    </PropertyGroup>
+
     <PropertyGroup Condition="$([MSBuild]::ValueOrDefault('$(TargetFramework)', '').Contains('net10.0'))">
         <PublishAot>true</PublishAot>
         <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
@@ -70,6 +84,7 @@
         <PackageReference Include="WsjtxUtilsPatch.WsjtxUdpServer" Version="1.0.4"/>
         <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.6.6"/>
         <PackageReference Include="Xaml.Behaviors.Interactivity" Version="11.3.6.6"/>
+        <PackageReference Include="Dotnet.Bundle" Version="0.9.13"/>
     </ItemGroup>
 
     <Choose>
@@ -152,6 +167,14 @@
         <EmbeddedResource Include="Resources\Dependencies\hamlib\linux-arm64\*" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\osx-x64\*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+        <EmbeddedResource Include="Resources\Dependencies\hamlib\osx-arm64\*" />
+    </ItemGroup>
+    
     <ItemGroup>
         <AvaloniaXaml Remove="Hamlib\**" />
     </ItemGroup>
