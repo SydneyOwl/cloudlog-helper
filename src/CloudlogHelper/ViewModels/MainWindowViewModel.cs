@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -8,6 +9,7 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
+using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.ViewModels.UserControls;
@@ -57,7 +59,7 @@ public class MainWindowViewModel : ViewModelBase
             UserBasicBoxEnabled = false;
             RigDataBoxEnabled = false;
         }
-
+        
         _inAppNotificationService = inAppNotificationService;
         _windowManager = wm;
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel), true));

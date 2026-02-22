@@ -158,6 +158,8 @@
 
     <ItemGroup>
         <Compile Remove="Hamlib\**" />
+        <Compile Remove="Models\CLHServerSettings.cs" />
+        <Compile Remove="Services\CLHServerService.cs" />
     </ItemGroup>
 
     <ItemGroup>

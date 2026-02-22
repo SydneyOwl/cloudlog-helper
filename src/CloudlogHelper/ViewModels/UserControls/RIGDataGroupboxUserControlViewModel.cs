@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using CloudlogHelper.CLHProto;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.LogService;
@@ -17,12 +16,14 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
+using Google.Protobuf.WellKnownTypes;
 using Material.Icons;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
 using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SydneyOwl.CLHProto.Plugin;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
@@ -38,8 +39,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
     /// </summary>
     private readonly Subject<Unit> _cancelSubject = new();
 
-    private readonly ICLHServerService _clhServerService;
-
     /// <summary>
     ///     Settings for cloudlog
     /// </summary>
@@ -47,6 +46,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private readonly IInAppNotificationService _inAppNotification;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
+    private readonly IPluginService _pluginService;
 
     /// <summary>
     ///     Semaphore to prevent re-entrant polling
@@ -88,15 +88,15 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         IInAppNotificationService ws,
         IWindowManagerService wm,
         IMessageBoxManagerService mm,
-        ICLHServerService clh,
+        IPluginService ps,
         IApplicationSettingsService ss)
     {
         _cloudlogSettings = ss.GetCurrentSettings().CloudlogSettings;
+        _pluginService = ps;
         _messageBoxManagerService = mm;
         _windowManagerService = wm;
         _rigBackendManager = rs;
         _inAppNotification = ws;
-        _clhServerService = clh;
         _tpService = ss.GetCurrentSettings().LogServices;
         InitSkipped = cmd.AutoUdpLogUploadOnly;
         RefreshRigInfo = ReactiveCommand.CreateFromTask(_refreshRigDataManually, this.WhenAnyValue(
@@ -282,9 +282,9 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         try
         {
             await Task.WhenAll(
-                ReportToClhServerAsync(allInfo),
                 ReportToThirdPartyServicesAsync(allInfo),
-                ReportToCloudlogAsync(allInfo)
+                ReportToCloudlogAsync(allInfo),
+                ReportToPluginsAsync(allInfo)
             );
 
             await Dispatcher.UIThread.InvokeAsync(() => UploadStatus = RigUploadStatus.Success);
@@ -297,21 +297,9 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         }
     }
 
-    private async Task ReportToClhServerAsync(RadioData allInfo)
+    private async Task ReportToPluginsAsync(RadioData allInfo)
     {
-        var rigData = new RigData
-        {
-            Provider = _rigBackendManager.GetServiceType().ToString(),
-            RigName = allInfo.RigName,
-            Frequency = SafeConvertToUlong(allInfo.FrequencyTx),
-            Mode = allInfo.ModeTx,
-            FrequencyRx = SafeConvertToUlong(allInfo.FrequencyRx),
-            ModeRx = allInfo.ModeRx,
-            Split = allInfo.IsSplit,
-            Power = SafeConvertToUint(allInfo.Power ?? 0)
-        };
-
-        await _clhServerService.SendDataNoException(rigData);
+        await _pluginService.BroadcastMessageAsync(PbMsgConverter.ToPbRigData(_rigBackendManager.GetServiceType().ToString(), allInfo), CancellationToken.None);
     }
 
     private async Task ReportToThirdPartyServicesAsync(RadioData allInfo)

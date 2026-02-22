@@ -25,4 +25,9 @@
         <ProjectReference Include="..\..\src\CloudlogHelper\CloudlogHelper.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="CLHServerServiceTests.cs" />
+      <Compile Remove="CLHServerUtilTests.cs" />
+    </ItemGroup>
+
 </Project>

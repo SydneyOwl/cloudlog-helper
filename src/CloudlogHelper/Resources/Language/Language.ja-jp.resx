@@ -785,4 +785,7 @@
     <data name="riginfouploadendpoint" xml:space="preserve">
         <value>無線機情報アップロードエンドポイント</value>
     </data>
+    <data name="enableplugin" xml:space="preserve">
+        <value>プラグイン機能を有効にする</value>
+    </data>
 </root>

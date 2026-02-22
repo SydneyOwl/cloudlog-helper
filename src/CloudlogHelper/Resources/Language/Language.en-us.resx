@@ -792,4 +792,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="riginfouploadendpoint" xml:space="preserve">
         <value>RIG Info upload endpoint</value>
     </data>
+    <data name="enableplugin" xml:space="preserve">
+        <value>Enable plugins</value>
+    </data>
 </root>

@@ -37,9 +37,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
-        services.AddSingleton<ICLHServerService, DummyCLHServerService>();
         services.AddSingleton<ILogSystemManager, LogSystemManager>();
         services.AddSingleton<ICountryService, CountryService>();
+        services.AddSingleton<IPluginService, PluginService>();
         return Task.CompletedTask;
     }
 
@@ -104,7 +104,6 @@ public static class ServiceCollectionExtensions
             cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
-            cfg.CreateMap<CLHServerSettings, CLHServerSettings>();
             cfg.CreateMap<BasicSettings, BasicSettings>();
             cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
         });

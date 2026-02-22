@@ -70,6 +70,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
             // apply changes for log services here
             _writeCurrentSettingsToFile(_draftSettings!);
 
+            if (IsBasicConfChanged())
+            {
+                ClassLogger.Trace("Basic settings changed");
+                MessageBus.Current.SendMessage(new SettingsChanged(){Part = ChangedPart.BasicSettings});
+            }
+
             if (IsCloudlogConfChanged())
             {
                 ClassLogger.Trace("Cloudlog settings changed");
@@ -88,13 +94,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 ClassLogger.Trace("udp settings changed");
                 MessageBus.Current.SendMessage(new SettingsChanged
                     { Part = ChangedPart.UDPServer });
-            }
-
-            if (IsCLHServerConfChanged())
-            {
-                ClassLogger.Trace("clh server settings changed");
-                MessageBus.Current.SendMessage(new SettingsChanged
-                    { Part = ChangedPart.CLHServer });
             }
         }
         finally
@@ -162,7 +161,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings!.FLRigSettings.ReinitRules();
         _draftSettings!.OmniRigSettings.ReinitRules();
         _draftSettings!.UDPSettings.ReinitRules();
-        _draftSettings!.CLHServerSettings.ReinitRules();
         _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
         draftSettings = _draftSettings;
         return true;
@@ -172,7 +170,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
         _draftSettings = new ApplicationSettings();
-        _draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
+        _draftSettings.BasicSettings.InstanceName = ApplicationStartUpUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
         _currentSettings = _draftSettings.FastDeepClone();
@@ -223,9 +221,9 @@ public class ApplicationSettingsService : IApplicationSettingsService
                     TranslationHelper.DetectDefaultLanguage();
 
             // instance
-            if (string.IsNullOrEmpty(applicationSettingsService._draftSettings.InstanceName))
+            if (string.IsNullOrEmpty(applicationSettingsService._draftSettings.BasicSettings.InstanceName))
             {
-                applicationSettingsService._draftSettings.InstanceName = CLHServerUtil.GenerateRandomInstanceName(10);
+                applicationSettingsService._draftSettings.BasicSettings.InstanceName = ApplicationStartUpUtil.GenerateRandomInstanceName(10);
             }
 
             var tps = applicationSettingsService._draftSettings
@@ -255,6 +253,18 @@ public class ApplicationSettingsService : IApplicationSettingsService
         }
 
         return applicationSettingsService;
+    }
+    
+    /// <summary>
+    ///     Check if basic configs has been changed.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsBasicConfChanged()
+    {
+        if (_oldSettings is null) return false;
+        var oldI = _oldSettings.BasicSettings;
+        var newI = _currentSettings!.BasicSettings;
+        return !oldI.Equals(newI);
     }
 
     /// <summary>
@@ -310,18 +320,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
         if (_oldSettings is null) return false;
         var oldI = _oldSettings.UDPSettings;
         var newI = _currentSettings!.UDPSettings;
-        return !oldI.Equals(newI);
-    }
-    
-    /// <summary>
-    ///     Check if clh server configs has been changed.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsCLHServerConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.CLHServerSettings;
-        var newI = _currentSettings!.CLHServerSettings;
         return !oldI.Equals(newI);
     }
 

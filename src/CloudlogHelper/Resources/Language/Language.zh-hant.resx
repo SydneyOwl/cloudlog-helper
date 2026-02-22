@@ -786,4 +786,7 @@
     <data name="riginfouploadendpoint" xml:space="preserve">
         <value>電台資訊上傳端點</value>
     </data>
+    <data name="enableplugin" xml:space="preserve">
+        <value>啟用插件功能</value>
+    </data>
 </root>

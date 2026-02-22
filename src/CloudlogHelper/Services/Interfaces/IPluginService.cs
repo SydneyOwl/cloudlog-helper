@@ -1,0 +1,11 @@
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Google.Protobuf;
+using SydneyOwl.CLHProto.Plugin;
+
+namespace CloudlogHelper.Services.Interfaces;
+
+public interface IPluginService
+{
+    Task BroadcastMessageAsync(IMessage? message, CancellationToken token);
+}
