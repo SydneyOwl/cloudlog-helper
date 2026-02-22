@@ -9,7 +9,7 @@ public class BasicSettings : ReactiveValidationObject
 {
     [Reactive] public string? MyMaidenheadGrid { get; set; }
     [Reactive] public bool DisableAllCharts { get; set; }
-    [Reactive] public bool EnablePlugin { get; set; } = true;
+    [Reactive] public bool EnablePlugin { get; set; } = false;
 
     /// <summary>
     ///     Default language of this application.
