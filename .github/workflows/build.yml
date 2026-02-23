@@ -54,13 +54,44 @@ jobs:
             $tagName = $tagName -replace '^[vV]', ''
           }
           ./ci.ps1 -Version "$tagName"
+          
+      - name: Upload all artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs
+          path: src/CloudlogHelper/bin/*.zip
+          
+  do-chmod:
+    needs: build-non-AOT
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-outputs
+          path: ./downloaded-builds
+          
+      - name: unzip and repack
+        shell: bash
+        run: |
+          for zip_file in downloaded-builds/*.zip; do
+           [ -f "$zip_file" ] || continue
+           if [[ $(basename "$zip_file") =~ [Ll]inux|[Oo][Ss][Xx] ]]; then
+             temp_dir=$(mktemp -d)
+             unzip -q "$zip_file" -d "$temp_dir"
+             find "$temp_dir" -type f -name "CloudlogHelper" -exec chmod +x {} \;
+             rm -f "$zip_file"
+             (cd "$temp_dir" && zip -q -r "$OLDPWD/$zip_file" .)
+             rm -rf "$temp_dir"
+           fi
+          done
 
       - name: Release it
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            src/CloudlogHelper/bin/*.zip
+            downloaded-builds/*.zip
 
   build-windows_x86_64-AOT:
     needs: exec-tests
