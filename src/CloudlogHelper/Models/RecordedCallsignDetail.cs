@@ -21,6 +21,8 @@ public class RecordedCallsignDetail : ReactiveObject
     public Dictionary<string, bool> UploadedServices = new();
     public Dictionary<string, string> UploadedServicesErrorMessage = new();
     
+    public string Uuid { get; set; }
+    
     /// <summary>
     ///     Original country names.
     /// </summary>
@@ -219,6 +221,7 @@ public class RecordedCallsignDetail : ReactiveObject
 
         return new RecordedCallsignDetail
         {
+            Uuid = Guid.NewGuid().ToString(),
             OriginalCountryName = cdb.CountryName,
             CqZone = cdb.CqZone,
             ItuZone = cdb.ItuZone,
@@ -258,6 +261,7 @@ public class RecordedCallsignDetail : ReactiveObject
         if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
+            Uuid = Guid.NewGuid().ToString(),
             OriginalCountryName = DXCCKeys.locallog,
             DXCall = info.Call!,
             MyCall = info.StationCallsign,

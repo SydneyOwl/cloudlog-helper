@@ -265,13 +265,6 @@ function Build-And-Package
         }
     }
     
-    # if cygwin installed
-    if (Get-Command chmod -ErrorAction SilentlyContinue)
-    {
-        Write-Host "Cygwin env found here!"
-        chmod +x "$publish_path/CloudlogHelper"
-    }
-
 
     $files_to_compress = Get-ChildItem -Path $publish_path
     Compress-Archive -Path $files_to_compress.FullName -DestinationPath $zipName -Force

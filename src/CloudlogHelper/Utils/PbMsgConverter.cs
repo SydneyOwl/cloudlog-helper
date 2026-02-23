@@ -282,6 +282,7 @@ public class PbMsgConverter
     {
         var pbDetail = new ClhQSOUploadStatusChanged()
         {
+            Uuid = detail.Uuid,
             OriginalCountryName = detail.OriginalCountryName ?? "",
             CqZone = detail.CqZone,
             ItuZone = detail.ItuZone,
