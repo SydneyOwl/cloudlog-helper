@@ -6,4 +6,7 @@
 **/*.exe
 **/*.dll
 **/rigctld
+**/*.dylib
+**/*.bak
+distpack/*
 tmp

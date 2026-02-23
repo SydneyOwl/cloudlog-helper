@@ -35,12 +35,11 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 ### non-AOT version (recommended)
 + Windows 7 SP1+
 + Debian 9+ / Ubuntu 18.04+ / Other distributions
-+ macOS support in progress...
++ -> (**experimental**) macOS 10.14+ (Mojave)
 
-### AOT version (experimental)
+### AOT version
 + Windows 7 SP1+
 + Debian 11+ / Ubuntu 22.04+ / Other distributions (glibc >= 2.34)
-+ macOS support in progress...
 
 ## ⚡️ Quick Start!
 
