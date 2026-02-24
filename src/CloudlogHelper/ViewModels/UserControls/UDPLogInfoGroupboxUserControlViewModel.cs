@@ -591,6 +591,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private void _wsjtxMsgLogger(LogLevel level, string message)
     {
         if (level < LogLevel.Error) return;
-        _inAppNotification.SendWarningNotificationSync(message);
+        ClassLogger.Error(message);
+        // _inAppNotification.SendWarningNotificationSync(message);
     }
 }
