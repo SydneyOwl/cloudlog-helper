@@ -15,7 +15,7 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 + Supports both `Hamlib`/`FLRig`/`OmniRig` for radio control and seamlessly working with `JTDX`, `WSJT-X` or other compatible software.
 + Includes a rich set of charts and utilities - polar signal map, distance distribution map, global heatmap, QSO comparison assistant, etc.,
 + Portable and installation-free — ready to run right out of the box.
-+ Native support for Windows and Linux, with macOS currently in development.
++ Native support for Windows / Linux / macOS.
 + Easily integrates with new logging systems and custom backends, with support for pushing radio and decoded QSO data to user-defined APIs.
 + Optimized for resource-constrained environments — runs reliably on low-end hardware.
 
@@ -35,7 +35,7 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 ### non-AOT version (recommended)
 + Windows 7 SP1+
 + Debian 9+ / Ubuntu 18.04+ / Other distributions
-+ -> (**experimental**) macOS 10.14+ (Mojave)
++ macOS 10.14+ (Mojave)
 
 ### AOT version
 + Windows 7 SP1+
@@ -378,6 +378,11 @@ The relevant data structure is defined below:
 
 You can find examples in the `Demo` folder.
 
+### 🧩 Plugins
+CLH has a built-in plugin system that supports interaction with third-party plugins. You can freely develop plugins using the provided SDK. 
+Currently, CLH can actively push internal information/station information/decoding information to plugins, but it does not support plugins issuing commands to CLH.
+
+Golang SDK: [clh-plugin-go-sdk](https://github.com/SydneyOwl/clh-plugin-go-sdk)
 
 ## 🙏 Acknowledgments
 
