@@ -35,9 +35,15 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 ### non-AOT version (recommended)
 + Windows 7 SP1+
 + Debian 9+ / Ubuntu 18.04+ / Other distributions
-+ macOS 10.14+ (Mojave)
++ macOS 10.14+
 
 ### AOT version
+
+> [!TIP]
+> AOT version is still experimental. It can improve startup speed and reduce memory/CPU usage, 
+> but some functionalities have incomplete support (Known items include system native notifications, OmniRig, and multi-language). 
+> Unless your device has limited resources and you do not require the features mentioned above, it is recommended to download the non-AOT version.
+
 + Windows 7 SP1+
 + Debian 11+ / Ubuntu 22.04+ / Other distributions (glibc >= 2.34)
 
@@ -265,7 +271,6 @@ Here are the specific steps (using Windows 7 as an example):
 
 ### 🛠️ Compile on windows
 You can directly use the script intended for CI to perform compilation. 
-This script will compile for all target platforms supported by this software (win-x86, win-x64, linux-x64, linux-arm, linux-arm64).
 
 By default, this script will compile for all target platforms supported by this software (win-x86, win-x64, linux-x64, linux-arm, linux-arm64).
 You can specify command-line parameters to compile only the platforms you need.
@@ -281,7 +286,6 @@ After compilation, you can find the compiled software in `src/CloudlogHelper/bin
 > [!NOTE]
 >
 > Linux does not support cross-compilation to Windows-specific frameworks (net6.0-windows10.0.17763.0). 
-> The script will use the fallback framework (net6.0) for compilation. The compiled artifacts will not support system native notifications and OmniRig.
 
 Please ensure your build environment has following tools installed:
 + .net6
