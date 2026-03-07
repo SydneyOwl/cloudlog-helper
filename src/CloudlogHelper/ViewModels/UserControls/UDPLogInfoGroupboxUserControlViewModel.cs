@@ -346,6 +346,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 _allQsos.Edit(innerList =>
                 {
                     innerList.AddRange(x.QsoData);
+                    TrimQsoListIfNeeded(innerList);
                 });
                 
                 foreach (var rcd in x.QsoData)
@@ -537,7 +538,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             
         rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
 
-        _allQsos.Add(rcd);
+        _allQsos.Edit(innerList =>
+        {
+            innerList.Add(rcd);
+            TrimQsoListIfNeeded(innerList);
+        });
         try
         {
             await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
@@ -593,5 +598,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         if (level < LogLevel.Error) return;
         ClassLogger.Error(message);
         // _inAppNotification.SendWarningNotificationSync(message);
+    }
+
+    private static void TrimQsoListIfNeeded(IExtendedList<RecordedCallsignDetail> qsoList)
+    {
+        var overflow = qsoList.Count - DefaultConfigs.MaxRealtimeQsoItems;
+        if (overflow <= 0) return;
+
+        for (var i = 0; i < overflow; i++)
+        {
+            qsoList.RemoveAt(0);
+        }
     }
 }

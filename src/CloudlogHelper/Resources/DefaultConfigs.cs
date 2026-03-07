@@ -170,6 +170,11 @@ public class DefaultConfigs
     public const int DefaultChartDataCacheNumber = 15000;
 
     /// <summary>
+    ///     Maximum number of real-time QSO rows kept in memory for the UDP panel.
+    /// </summary>
+    public const int MaxRealtimeQsoItems = 2000;
+
+    /// <summary>
     ///     Charts update throttle secs.
     /// </summary>
     public const int UpdateChartsThrottleSec = 3;

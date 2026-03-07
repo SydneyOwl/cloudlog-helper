@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -17,8 +18,12 @@ namespace CloudlogHelper.Services;
 public class CountryService : ICountryService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+    private const string LogFlagKey = "__log";
+    private const string FallbackFlagUri = $"{DefaultConfigs.AvaresFlagTemplate}fallback.png";
     
     private readonly Dictionary<string, DXCCCountryInfo> _dxccCountryInfo = new();
+    private readonly ConcurrentDictionary<string, Bitmap> _flagCache = new();
+    private bool _disposed;
 
     public CountryService()
     {
@@ -36,28 +41,37 @@ public class CountryService : ICountryService, IDisposable
 
     public IImage GetFlagResourceByDXCC(string? dxcc)
     {
-        // special 
-        if (dxcc == "__log")
-        {
-            return new Bitmap(AssetLoader.Open(new Uri($"{DefaultConfigs.AvaresFlagTemplate}log.png")));
-        }
-        
-        var fallback = $"{DefaultConfigs.AvaresFlagTemplate}fallback.png";
+        if (_disposed) throw new ObjectDisposedException(nameof(CountryService));
 
-        if (string.IsNullOrWhiteSpace(dxcc)) return new Bitmap(AssetLoader.Open(new Uri(fallback)));
-        
+        // special
+        if (dxcc == LogFlagKey)
+        {
+            return GetOrCreateFlagBitmap($"{DefaultConfigs.AvaresFlagTemplate}log.png");
+        }
+
+        if (string.IsNullOrWhiteSpace(dxcc))
+        {
+            return GetOrCreateFlagBitmap(FallbackFlagUri);
+        }
+
         if (!_dxccCountryInfo.TryGetValue(dxcc, out var result))
         {
-            return new Bitmap(AssetLoader.Open(new Uri(fallback)));
+            return GetOrCreateFlagBitmap(FallbackFlagUri);
         }
 
         var resPath = $"{DefaultConfigs.AvaresFlagTemplate}{result.FlagPngName}";
-        if (AssetLoader.Exists(new Uri(resPath)))
-        {
-            return new Bitmap(AssetLoader.Open(new Uri(resPath)));
-        }
+        return AssetLoader.Exists(new Uri(resPath))
+            ? GetOrCreateFlagBitmap(resPath)
+            : GetOrCreateFlagBitmap(FallbackFlagUri);
+    }
 
-        return new Bitmap(AssetLoader.Open(new Uri(fallback)));
+    private Bitmap GetOrCreateFlagBitmap(string resourcePath)
+    {
+        return _flagCache.GetOrAdd(resourcePath, static path =>
+        {
+            using var stream = AssetLoader.Open(new Uri(path));
+            return new Bitmap(stream);
+        });
     }
     
     private Dictionary<string, DXCCCountryInfo> _dxccCountryJsonParse(string json)
@@ -70,6 +84,14 @@ public class CountryService : ICountryService, IDisposable
 
     public void Dispose()
     {
-        // TODO release managed resources here
+        if (_disposed) return;
+
+        foreach (var bitmap in _flagCache.Values)
+        {
+            bitmap.Dispose();
+        }
+
+        _flagCache.Clear();
+        _disposed = true;
     }
 }
