@@ -37,6 +37,22 @@ namespace CloudlogHelper.ViewModels;
 
 public class SettingsWindowViewModel : ViewModelBase
 {
+    public sealed class ConnectedPluginItem
+    {
+        public string Name { get; init; } = string.Empty;
+        public string Version { get; init; } = string.Empty;
+        public string Uuid { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
+        public string LastHeartbeat { get; init; } = string.Empty;
+        public ulong ReceivedMessageCount { get; init; }
+        public ulong SentMessageCount { get; init; }
+        public ulong ControlErrorCount { get; init; }
+        public ulong ControlRequestCount { get; init; }
+        public uint LastRoundtripMs { get; init; }
+        
+        [Reactive] public ReactiveCommand<Unit, Unit> RemovePlugin { get; set; }
+    }
+
     /// <summary>
     ///     Logger for the class.
     /// </summary>
@@ -50,6 +66,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly IDatabaseService _databaseService;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
     private readonly ILogSystemManager _logSystemManager;
+    private readonly IPluginService _pluginService;
 
     public SettingsWindowViewModel()
     {
@@ -63,6 +80,35 @@ public class SettingsWindowViewModel : ViewModelBase
         HamlibInited = true;
         OmniRigInited = true;
         FullyInitialized = true;
+        ConnectedPluginCount = 2;
+        ConnectedPlugins.Add(new ConnectedPluginItem
+        {
+            Name = "Demo Plugin A",
+            Version = "1.0.0",
+            Uuid = "demo-plugin-a",
+            Description = "Design mode preview item",
+            LastHeartbeat = DateTime.Now.ToString("HH:mm:ss"),
+            ReceivedMessageCount = 120,
+            ControlRequestCount = 10,
+            SentMessageCount = 95,
+            ControlErrorCount = 1,
+            LastRoundtripMs = 42,
+            RemovePlugin = ReactiveCommand.Create(()=>{})
+        });
+        ConnectedPlugins.Add(new ConnectedPluginItem
+        {
+            Name = "Demo Plugin B",
+            Version = "0.9.1",
+            Uuid = "demo-plugin-b",
+            Description = "Design mode preview item",
+            LastHeartbeat = DateTime.Now.ToString("HH:mm:ss"),
+            ReceivedMessageCount = 80,
+            SentMessageCount = 73,
+            ControlRequestCount = 10,
+            ControlErrorCount = 0,
+            LastRoundtripMs = 35,
+            RemovePlugin = ReactiveCommand.Create(()=>{})
+        });
         // InitializeLogSystems();
     }
 
@@ -74,6 +120,7 @@ public class SettingsWindowViewModel : ViewModelBase
         IRigBackendManager rs,
         IMessageBoxManagerService mm,
         ILogSystemManager lm,
+        IPluginService ps,
         IDatabaseService ds)
     {
         _windowManagerService = windowManager;
@@ -82,6 +129,7 @@ public class SettingsWindowViewModel : ViewModelBase
         _databaseService = ds;
         _messageBoxManagerService = mm;
         _logSystemManager = lm;
+        _pluginService = ps;
         
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
@@ -170,6 +218,12 @@ public class SettingsWindowViewModel : ViewModelBase
             // refresh hamlib lib after fully inited
             Observable.Return(Unit.Default)
                 .InvokeCommand(RefreshPort)
+                .DisposeWith(disposables);
+
+            Observable.Interval(TimeSpan.FromSeconds(5))
+                .StartWith(0L)
+                .SelectMany(_ => Observable.FromAsync(_refreshConnectedPluginsAsync))
+                .Subscribe(_ => { }, ex => ClassLogger.Error(ex, "Failed refreshing connected plugins."))
                 .DisposeWith(disposables);
         });
 
@@ -334,6 +388,54 @@ public class SettingsWindowViewModel : ViewModelBase
         // DraftSettings.HamlibSettings.SelectedPort = tmp;
     }
 
+    private async Task<Unit> _refreshConnectedPluginsAsync()
+    {
+        var plugins = await _pluginService.GetConnectedPluginsAsync().ConfigureAwait(false);
+        var pluginItems = plugins
+            .OrderBy(x => x.Name)
+            .Select(x =>
+            {
+                var telemetry = x.GetTelemetrySnapshot();
+                var item = new ConnectedPluginItem
+                {
+                    Name = x.Name,
+                    Version = x.Version,
+                    Uuid = x.Uuid,
+                    Description = x.Description,
+                    LastHeartbeat = x.LastHeartbeat.ToLocalTime().ToString("HH:mm:ss"),
+                    ReceivedMessageCount = telemetry.ReceivedMessageCount,
+                    SentMessageCount = telemetry.SentMessageCount,
+                    ControlErrorCount = telemetry.ControlErrorCount,
+                    ControlRequestCount = telemetry.ControlRequestCount,
+                    LastRoundtripMs = telemetry.LastRoundtripMs,
+                };
+                item.RemovePlugin = ReactiveCommand.CreateFromTask(async () =>
+                {
+                    try
+                    {
+                        await _pluginService.DisconnectPluginAsync(x.Uuid, "User manually removed",
+                            CancellationToken.None);
+                        ConnectedPlugins.Remove(item);
+                    }
+                    catch (Exception e)
+                    {
+                        ClassLogger.Error($"Failed to disconnect plugin: {e.Message}");
+                    }
+                });
+                return item;
+            })
+            .ToList();
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            ConnectedPlugins.Clear();
+            ConnectedPlugins.AddRange(pluginItems);
+            ConnectedPluginCount = ConnectedPlugins.Count;
+        });
+
+        return Unit.Default;
+    }
+
     private void _discardConf()
     {
         // resume settings
@@ -435,6 +537,8 @@ public class SettingsWindowViewModel : ViewModelBase
     [Reactive] public string HamlibVersion { get; set; } = "Unknown hamlib version";
 
     [Reactive] public List<RigInfo> SupportedModels { get; set; } = new();
+    [Reactive] public int ConnectedPluginCount { get; set; }
+    public ObservableCollection<ConnectedPluginItem> ConnectedPlugins { get; } = new();
 
     #endregion
 
