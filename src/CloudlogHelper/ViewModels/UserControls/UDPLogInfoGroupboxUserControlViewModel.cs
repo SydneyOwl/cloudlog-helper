@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -42,19 +43,20 @@ namespace CloudlogHelper.ViewModels.UserControls;
 public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    private readonly SourceList<RecordedCallsignDetail> _allQsos = new();
-    private readonly IApplicationSettingsService _applicationSettingsService;
+    private ReadOnlyObservableCollection<RecordedCallsignDetail> _filteredQsosView = new(new ObservableCollection<RecordedCallsignDetail>());
+    // used at design time
+    private readonly ObservableCollectionExtended<RecordedCallsignDetail> _designFilteredQsos = new();
     private readonly IDatabaseService _databaseService;
     private readonly IDecodedDataProcessorService _decodedDataProcessorService;
     private readonly Subject<Unit> _heartbeatSubject = new();
     private readonly IInAppNotificationService _inAppNotification;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
     private readonly INotificationManager _nativeNotificationManager;
+    private readonly IQsoQueueStore _qsoQueueStore;
     private readonly IQSOUploadService _qsoUploadService;
     private readonly IUdpServerService _udpServerService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ICountryService _countryDxccService;
-    private readonly IPluginService _pluginService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
@@ -103,12 +105,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             CountryFlagAvares = new Bitmap(AssetLoader.Open(new Uri("avares://CloudlogHelper/Assets/Flags/un.png")))
         };
 
-        for (var i = 0; i < 10; i++) FilteredQsos.Add(testQso);
+        for (var i = 0; i < 10; i++) _designFilteredQsos.Add(testQso);
     }
 
     public UDPLogInfoGroupboxUserControlViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
+        _filteredQsosView = new ReadOnlyObservableCollection<RecordedCallsignDetail>(_designFilteredQsos);
         SelectAllCommand = ReactiveCommand.Create(() => { });
         ShowQSODetailCommand = ReactiveCommand.Create<RecordedCallsignDetail, Unit>(_ => Unit.Default);
         ReuploadSelectedCommand = ReactiveCommand.Create(() => { });
@@ -121,7 +124,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _appendTestData();
     }
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollectionExtended<RecordedCallsignDetail>))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ReadOnlyObservableCollection<RecordedCallsignDetail>))]
     public UDPLogInfoGroupboxUserControlViewModel(
         IDatabaseService dbService,
         IInAppNotificationService inAppNotification,
@@ -129,20 +132,18 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IUdpServerService udpServerService,
         IWindowManagerService windowManagerService,
         IClipboardService clipboardService,
-        IApplicationSettingsService ss,
         IQSOUploadService qu,
+        IQsoQueueStore qsoQueueStore,
         INotificationManager nativeNotificationManager,
         IDecodedDataProcessorService decodedDataProcessorService,
-        IPluginService ps,
         ICountryService cs)
     {
         _countryDxccService = cs;
-        _pluginService = ps;
-        _applicationSettingsService = ss;
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
         _nativeNotificationManager = nativeNotificationManager;
         _qsoUploadService = qu;
+        _qsoQueueStore = qsoQueueStore;
         _udpServerService = udpServerService;
         _databaseService = dbService;
         _messageBoxManagerService = messageBoxManagerService;
@@ -212,7 +213,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         });
     }
 
-    public ObservableCollectionExtended<RecordedCallsignDetail> FilteredQsos { get; set; } = new();
+    public ReadOnlyObservableCollection<RecordedCallsignDetail> FilteredQsos => _filteredQsosView;
     public ReactiveCommand<Unit, Unit> SelectAllCommand { get; set; }
     public ReactiveCommand<Unit, Unit> DeleteSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
@@ -256,15 +257,17 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private void SetupQsoList(CompositeDisposable disposables)
     {
-        _allQsos.Connect()
+        _qsoQueueStore.Connect()
             .WhenPropertyChanged(p => p.UploadStatus)
             .Subscribe(async void (x) =>
             {
                 try
                 {
-                    await _pluginService.BroadcastMessageAsync(
-                        PbMsgConverter.ToPbRecordedCallsignDetail(x.Sender),
-                        CancellationToken.None);
+
+                    MessageBus.Current.SendMessage(new PluginEvent()
+                    {
+                        Message = PbMsgConverter.ToPbQSOUploadStatusChanged(x.Sender),
+                    });
                     
                     if (x.Value == UploadStatus.Success) UploadedQsosCount += 1;
                 }
@@ -275,14 +278,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             })
             .DisposeWith(disposables);
 
-        _allQsos.Connect()
+        _qsoQueueStore.Connect()
             .OnItemAdded(async void (x) =>
             {
                 try
                 {
-                    await _pluginService.BroadcastMessageAsync(
-                        PbMsgConverter.ToPbRecordedCallsignDetail(x),
-                        CancellationToken.None);
+                    MessageBus.Current.SendMessage(new PluginEvent()
+                    {
+                        Message = PbMsgConverter.ToPbQSOUploadStatusChanged(x)
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -300,13 +304,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail =>
                 !showFailed || detail.UploadStatus != UploadStatus.Success));
 
-        _allQsos.Connect()
+        _qsoQueueStore.Connect()
             .Filter(filterObservable)
-            .Sort(SortExpressionComparer<RecordedCallsignDetail>
+            .SortAndBind(out ReadOnlyObservableCollection<RecordedCallsignDetail> filteredQsosView, SortExpressionComparer<RecordedCallsignDetail>
                 .Ascending(x => x.DateTimeOff))
-            .Bind(FilteredQsos)
             .Subscribe()
             .DisposeWith(disposables);
+        _filteredQsosView = filteredQsosView;
+        this.RaisePropertyChanged(nameof(FilteredQsos));
     }
 
     private void SetupErrorHandling(CompositeDisposable disposables)
@@ -343,11 +348,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         MessageBus.Current.Listen<QsoUploadRequested>()
             .Subscribe(async x =>
             {
-                _allQsos.Edit(innerList =>
-                {
-                    innerList.AddRange(x.QsoData);
-                    TrimQsoListIfNeeded(innerList);
-                });
+                _qsoQueueStore.AddRange(x.QsoData);
                 
                 foreach (var rcd in x.QsoData)
                 {
@@ -367,41 +368,32 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private void UpdateSelectionState()
     {
-        _allQsos.Edit(innerList =>
+        foreach (var item in _qsoQueueStore.Items)
         {
-            foreach (var item in innerList)
+            if (ShowFailedOnly && item.UploadStatus == UploadStatus.Success)
             {
-                if (ShowFailedOnly && item.UploadStatus == UploadStatus.Success)
-                {
-                    item.Checked = false;
-                    continue;
-                }
-                item.Checked = SelectAll;
+                item.Checked = false;
+                continue;
             }
-        });
+            item.Checked = SelectAll;
+        }
     }
 
     private void _deleteSelectedQsos()
     {
-        var itemsToRemove = _allQsos.Items
+        var itemsToRemove = _qsoQueueStore.Items
             .Where(x => x.Checked)
             .ToList();
             
         if (itemsToRemove.Count == 0) return;
-            
-        _allQsos.Edit(innerList =>
-        {
-            foreach (var item in itemsToRemove)
-            {
-                innerList.Remove(item);
-            }
-        });
+
+        _qsoQueueStore.RemoveRange(itemsToRemove);
     }
     
 
     private async Task _uploadCheckedQSO()
     {
-        var itemsToUpload = _allQsos.Items
+        var itemsToUpload = _qsoQueueStore.Items
             .Where(x => x.Checked && x.UploadStatus != UploadStatus.Success)
             .ToList();
             
@@ -421,7 +413,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task _ignoreSelectedQSO()
     {
-        var candidates = _allQsos.Items
+        var candidates = _qsoQueueStore.Items
             .Where(x => x.Checked)
             .ToList();
             
@@ -451,13 +443,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         {
             ClassLogger.Info($"Ignoring QSO: {item.DXCall}");
             await _databaseService.MarkQsoIgnored(IgnoredQsoDatabase.Parse(item));
-            _allQsos.Remove(item);
+            _qsoQueueStore.Remove(item);
         }
     }
 
     private async Task _createAdifFromCheckedQSO()
     {
-        var checkedItems = _allQsos.Items
+        var checkedItems = _qsoQueueStore.Items
             .Where(x => x.Checked)
             .ToList();
             
@@ -517,7 +509,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             WaitFirstConn = false;
             
             // send to plugin
-            await _pluginService.BroadcastMessageAsync(PbMsgConverter.ToPbWsjtxMessage(message), CancellationToken.None);
+            MessageBus.Current.SendMessage(new PluginEvent()
+            {
+                Message = PbMsgConverter.ToPbWsjtxMessage(message)
+            });
         }
         catch (Exception e)
         {
@@ -538,11 +533,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             
         rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
 
-        _allQsos.Edit(innerList =>
-        {
-            innerList.Add(rcd);
-            TrimQsoListIfNeeded(innerList);
-        });
+        _qsoQueueStore.Add(rcd);
         try
         {
             await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
@@ -598,16 +589,5 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         if (level < LogLevel.Error) return;
         ClassLogger.Error(message);
         // _inAppNotification.SendWarningNotificationSync(message);
-    }
-
-    private static void TrimQsoListIfNeeded(IExtendedList<RecordedCallsignDetail> qsoList)
-    {
-        var overflow = qsoList.Count - DefaultConfigs.MaxRealtimeQsoItems;
-        if (overflow <= 0) return;
-
-        for (var i = 0; i < overflow; i++)
-        {
-            qsoList.RemoveAt(0);
-        }
     }
 }

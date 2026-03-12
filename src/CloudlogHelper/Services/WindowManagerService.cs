@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using CloudlogHelper.Enums;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.Charts;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 
@@ -119,6 +122,24 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     public async Task CreateAndShowWindowByVm(Type vmType, Window? toplevel = null, bool dialog = true)
     {
         await CreateAndShowWindowByVm<object>(vmType, toplevel, dialog);
+    }
+
+
+    public async Task CreateAndShowWindowByVm(PluginControllableWindow wType, Window? toplevel = null, bool dialog = true)
+    {
+        var wn = wType switch
+        {
+            PluginControllableWindow.SettingsWindow => typeof(SettingsWindowViewModel),
+            PluginControllableWindow.AboutWindow => typeof(AboutWindowViewModel),
+            PluginControllableWindow.QSOAssistantWindow => typeof(QsoSyncAssistantWindowViewModel),
+            PluginControllableWindow.PolarChartWindow => typeof(PolarChartWindowViewModel),
+            PluginControllableWindow.StationStatisticWindow => typeof(StationStatisticsChartWindowViewModel),
+            _ => null
+        };
+        
+        if (wn is null) return;
+
+        await CreateAndShowWindowByVm(wn, toplevel, dialog);
     }
 
     public T GetViewModelInstance<T>()

@@ -414,7 +414,7 @@ public class SettingsWindowViewModel : ViewModelBase
                     try
                     {
                         await _pluginService.DisconnectPluginAsync(x.Uuid, "User manually removed",
-                            CancellationToken.None);
+                            CancellationToken.None, true);
                         ConnectedPlugins.Remove(item);
                     }
                     catch (Exception e)
