@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -26,6 +25,7 @@ using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.Views;
 using Flurl.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +47,19 @@ public class App : Application
     private static Mutex? _mutex;
 
     private static ServiceProvider? _servProvider;
+    // Services that must start before main window creation.
+    private static readonly Type[] StartupServices =
+    {
+        typeof(IPluginService)
+    };
+
+    // UI-bound singletons that should be created on the UI thread.
+    private static readonly Type[] UiStartupServices =
+    {
+        typeof(PolarChartWindowViewModel),
+        typeof(StationStatisticsChartWindowViewModel)
+    };
+
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private static TrayIcon? _trayIcon;
     private static ReactiveCommand<Unit, Unit>? _exitCommand;
@@ -95,93 +108,20 @@ public class App : Application
     private async Task Workload(IClassicDesktopStyleApplicationLifetime desktop, Window splashLevel)
     {
         _preInit();
-        _safeExecute(() => Directory.Delete(DefaultConfigs.DefaultTempFilePath, true));
-        _safeExecute(() => Directory.CreateDirectory(DefaultConfigs.DefaultTempFilePath));
+        _prepareTempDirectory();
+        _servProvider = await _buildServiceProviderAsync(desktop).ConfigureAwait(false);
+        var appState = await _initializeAppStateAsync(splashLevel).ConfigureAwait(false);
+        if (!appState.ShouldContinue) return;
 
-        var collection = new ServiceCollection();
-        await collection.AddCommonServicesAsync().ConfigureAwait(false);
-        await collection.AddViewModelsAsync().ConfigureAwait(false);
-        await collection.AddExtraAsync().ConfigureAwait(false);
-        
-        collection.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
-            ApplicationSettingsService.GenerateApplicationSettingsService(
-                pr.GetRequiredService<ILogSystemManager>()!, _cmdOptions.ReinitSettings, 
-                pr.GetRequiredService<IDatabaseService>().GetVersionBeforeUpdate(),
-                pr.GetRequiredService<IMapper>()
-            ));
-
-        collection.AddSingleton<CommandLineOptions>(p => _cmdOptions);
-        collection.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
-            new WindowManagerService(prov, desktop));
-        collection.AddSingleton<IInAppNotificationService, InAppNotificationService>(_ =>
-            new InAppNotificationService(desktop));
-        collection.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
-            new MessageBoxManagerService(desktop));
-        collection.AddSingleton<IClipboardService, ClipboardService>(_ =>
-            new ClipboardService(desktop));
-        
-        _servProvider = collection.BuildServiceProvider();
-
-        var dbSer = _servProvider.GetRequiredService<IDatabaseService>();
-        await dbSer.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase).ConfigureAwait(false);
-        if (dbSer.IsUpgradeNeeded())
-        {
-            var msgBox = _servProvider.GetRequiredService<IMessageBoxManagerService>();
-            var res = false;
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                splashLevel.Topmost = false;
-                var accept = TranslationHelper.GetString(LangKeys.accept);
-                var deny = TranslationHelper.GetString(LangKeys.deny);
-                res = await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
-                    {
-                        ButtonDefinitions = new[]
-                        {
-                            new ButtonDefinition
-                            {
-                                Name = accept
-                            },
-                            new ButtonDefinition
-                            {
-                                Name = deny
-                            }
-                        },
-                        ContentTitle = "User Agreement",
-                        ContentMessage = TranslationHelper.GetString(LangKeys.disclaimer)
-                            .Replace("{1}", VersionInfo.Version),
-                        Icon = Icon.Info,
-                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                        Width = 500,
-                        Height = 350,
-                        SizeToContent = SizeToContent.Manual,
-                        CanResize = false
-                    },
-                    splashLevel) != accept;
-            });
-            if (res)
-            {
-                ClassLogger.Info("User refused disclaimer. Abort.");
-                Environment.Exit(0);
-                return;
-            }
-
-            ClassLogger.Info("User accepted disclaimer.");
-            await dbSer.UpgradeDatabaseAsync().ConfigureAwait(false);
-        }
-        
-        var applicationSettingsService = _servProvider.GetRequiredService<IApplicationSettingsService>();
-        I18NExtension.Culture =
-            TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings
-                .LanguageType);
-
-        _releaseDepFiles(_cmdOptions.ReinitHamlib || dbSer.IsUpgradeNeeded());
+        _warmupServices(StartupServices);
+        _releaseDepFiles(_cmdOptions.ReinitHamlib || appState.RequiresHamlibRefresh);
     }
 
+    // already in ui thread
     private async Task PostExec(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        if (_servProvider is null) throw new ArgumentNullException(nameof(desktop));
-
-        var mainWindow = _servProvider.GetRequiredService<MainWindow>();
+        _warmupServices(UiStartupServices);
+        var mainWindow = _resolveRequiredService<MainWindow>();
         mainWindow.Closed +=  (_, _) => desktop.Shutdown();
         desktop.MainWindow = mainWindow;
         desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -236,6 +176,120 @@ public class App : Application
             // this may fail on Windows 7
             ClassLogger.Warn(ex, "Trayicon failed.");
         }
+    }
+
+    private static void _prepareTempDirectory()
+    {
+        _safeExecute(() => Directory.Delete(DefaultConfigs.DefaultTempFilePath, true));
+        _safeExecute(() => Directory.CreateDirectory(DefaultConfigs.DefaultTempFilePath));
+    }
+
+    private async Task<ServiceProvider> _buildServiceProviderAsync(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        var collection = new ServiceCollection();
+        collection.AddCoreServices();
+        collection.AddViewModels();
+        collection.AddRuntimeServices(desktop, _cmdOptions);
+        await collection.AddPlatformNotificationAsync().ConfigureAwait(false);
+
+        return collection.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateScopes = true,
+            ValidateOnBuild = true
+        });
+    }
+
+    private async Task<(bool ShouldContinue, bool RequiresHamlibRefresh)> _initializeAppStateAsync(Window splashLevel)
+    {
+        var databaseService = _resolveRequiredService<IDatabaseService>();
+        await databaseService.InitDatabaseAsync(forceInitDatabase: _cmdOptions.ReinitDatabase).ConfigureAwait(false);
+        var requiresUpgrade = databaseService.IsUpgradeNeeded();
+
+        if (requiresUpgrade)
+        {
+            var accepted = await _requestDisclaimerAgreementAsync(splashLevel).ConfigureAwait(false);
+            if (!accepted)
+            {
+                ClassLogger.Info("User refused disclaimer. Abort.");
+                Environment.Exit(0);
+                return (false, false);
+            }
+
+            ClassLogger.Info("User accepted disclaimer.");
+            await databaseService.UpgradeDatabaseAsync().ConfigureAwait(false);
+        }
+
+        _applyCultureFromSettings();
+        return (true, requiresUpgrade);
+    }
+
+    private async Task<bool> _requestDisclaimerAgreementAsync(Window splashLevel)
+    {
+        var msgBox = _resolveRequiredService<IMessageBoxManagerService>();
+        var accepted = false;
+
+        await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            splashLevel.Topmost = false;
+            var accept = TranslationHelper.GetString(LangKeys.accept);
+            var deny = TranslationHelper.GetString(LangKeys.deny);
+            var clickResult = await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
+                {
+                    ButtonDefinitions = new[]
+                    {
+                        new ButtonDefinition
+                        {
+                            Name = accept
+                        },
+                        new ButtonDefinition
+                        {
+                            Name = deny
+                        }
+                    },
+                    ContentTitle = "User Agreement",
+                    ContentMessage = TranslationHelper.GetString(LangKeys.disclaimer)
+                        .Replace("{1}", VersionInfo.Version),
+                    Icon = Icon.Info,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    Width = 500,
+                    Height = 350,
+                    SizeToContent = SizeToContent.Manual,
+                    CanResize = false
+                },
+                splashLevel);
+
+            accepted = clickResult == accept;
+        });
+
+        return accepted;
+    }
+
+    private void _applyCultureFromSettings()
+    {
+        var applicationSettingsService = _resolveRequiredService<IApplicationSettingsService>();
+        I18NExtension.Culture =
+            TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings
+                .LanguageType);
+    }
+
+    private void _warmupServices(Type[] servicesToWarmup)
+    {
+        foreach (var serviceType in servicesToWarmup)
+        {
+            _ = _resolveRequiredService(serviceType);
+        }
+    }
+
+    private static object _resolveRequiredService(Type serviceType)
+    {
+        if (_servProvider is null) throw new InvalidOperationException("Service provider has not been initialized.");
+        return _servProvider.GetRequiredService(serviceType);
+    }
+
+    private static T _resolveRequiredService<T>() where T : notnull
+    {
+        if (_servProvider is null) throw new InvalidOperationException("Service provider has not been initialized.");
+        return _servProvider.GetRequiredService<T>();
     }
 
     private Task PreExec(IClassicDesktopStyleApplicationLifetime desktop)

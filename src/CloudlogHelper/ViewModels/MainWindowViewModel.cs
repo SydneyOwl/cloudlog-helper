@@ -47,8 +47,6 @@ public class MainWindowViewModel : ViewModelBase
         RIGDataGroupboxUserControlViewModel rigdataGroupboxUserControlViewModel,
         UserBasicDataGroupboxUserControlViewModel userBasicDataGroupboxUserControlViewModel,
         StatusLightUserControlViewModel statusLightUserControlViewModel,
-        PolarChartWindowViewModel ignored1, // force init - DO NOT REMOVE IT!
-        StationStatisticsChartWindowViewModel ignored2, // force init - DO NOT REMOVE IT!
         CommandLineOptions cmd,
         IWindowManagerService wm,
         IInAppNotificationService inAppNotificationService

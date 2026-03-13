@@ -1173,4 +1173,7 @@
     <data name="Zimbabwe" xml:space="preserve">
         <value>津巴布韦</value>
     </data>
+    <data name="externallog" xml:space="preserve">
+        <value>外部上传</value>
+    </data>
 </root>

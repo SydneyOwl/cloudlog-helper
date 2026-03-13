@@ -1179,4 +1179,7 @@
     <data name="Taiwan" xml:space="preserve">
         <value>Taiwan</value>
     </data>
+    <data name="externallog" xml:space="preserve">
+        <value>External</value>
+    </data>
 </root>

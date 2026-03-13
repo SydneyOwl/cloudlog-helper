@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +10,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ADIFLib;
 using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
@@ -26,6 +27,7 @@ using NLog;
 using ReactiveUI;
 using SydneyOwl.CLHProto.Plugin;
 using Enum = System.Enum;
+using UploadStatus = CloudlogHelper.Enums.UploadStatus;
 
 namespace CloudlogHelper.Services;
 
@@ -34,7 +36,7 @@ public class PluginInfo : IDisposable
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
     private readonly Func<PluginInfo, PipeEnvelope, CancellationToken, Task> _envelopeHandler;
-    private readonly Func<string,string,Task> _selfDeregister;
+    private readonly Func<string, string, Task> _selfDeregister;
     private readonly object _subscriptionLock = new();
     private readonly Dictionary<string, string> _metadata = new();
 
@@ -70,7 +72,7 @@ public class PluginInfo : IDisposable
         _envelopeHandler = envelopeHandler;
         _selfDeregister = selfDeregister;
     }
-    
+
     private void UpdateHeartbeat()
     {
         Interlocked.Exchange(ref _lastHeartbeatTicks, DateTime.UtcNow.Ticks);
@@ -131,11 +133,11 @@ public class PluginInfo : IDisposable
                     await _selfDeregister(Uuid, "disconnected from plugin pipe (nil message recv)");
                     break;
                 }
-                
+
                 IncrementReceived();
 
                 if (anyMessage.Is(PipeDeregisterPluginReq.Descriptor))
-                {                    
+                {
                     var dereg = anyMessage.Unpack<PipeDeregisterPluginReq>();
                     try
                     {
@@ -151,7 +153,9 @@ public class PluginInfo : IDisposable
                     {
                         // ...
                     }
-                    await _selfDeregister(Uuid, string.IsNullOrWhiteSpace(dereg.Reason) ? "Plugin exited normally." :dereg.Reason);
+
+                    await _selfDeregister(Uuid,
+                        string.IsNullOrWhiteSpace(dereg.Reason) ? "Plugin exited normally." : dereg.Reason);
                     break;
                 }
 
@@ -159,11 +163,9 @@ public class PluginInfo : IDisposable
                 {
                     var heartbeat = anyMessage.Unpack<PipeHeartbeat>();
                     if (!string.IsNullOrWhiteSpace(heartbeat.Uuid) && heartbeat.Uuid != Uuid)
-                    {
                         ClassLogger.Warn(
                             $"Heartbeat uuid mismatch for plugin {Name}. Expected {Uuid}, got {heartbeat.Uuid}");
-                    }
-                    
+
                     UpdateHeartbeat();
                     continue;
                 }
@@ -176,6 +178,7 @@ public class PluginInfo : IDisposable
                         IncrementControlRequest();
                         MarkRoundtrip(envelope.Timestamp);
                     }
+
                     await _envelopeHandler(this, envelope, token);
                     continue;
                 }
@@ -183,7 +186,7 @@ public class PluginInfo : IDisposable
                 ClassLogger.Warn($"Unknown plugin message received from {Name}: {anyMessage.TypeUrl}");
             }
             catch (OperationCanceledException)
-            {   
+            {
                 break;
             }
             catch (IOException) when (!token.IsCancellationRequested)
@@ -228,12 +231,10 @@ public class PluginInfo : IDisposable
         try
         {
             if (notify)
-            {
                 SendMessage(new PipeConnectionClosed
                 {
                     Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
                 }, CancellationToken.None).GetAwaiter().GetResult();
-            }
         }
         catch
         {
@@ -248,7 +249,6 @@ public class PluginInfo : IDisposable
         try
         {
             if (_client != null)
-            {
                 try
                 {
                     _client.Close();
@@ -259,7 +259,6 @@ public class PluginInfo : IDisposable
                 {
                     ClassLogger.Error(ex, $"Error closing pipe for {Name}");
                 }
-            }
         }
         finally
         {
@@ -272,7 +271,7 @@ public class PluginInfo : IDisposable
         NamedPipeServerStream client,
         CancellationToken token,
         Func<PluginInfo, PipeEnvelope, CancellationToken, Task> envelopeHandler,
-        Func<string,string,Task> selfDeregister)
+        Func<string, string, Task> selfDeregister)
     {
         var pg = new PluginInfo(envelopeHandler, selfDeregister)
         {
@@ -368,9 +367,8 @@ public class PluginInfo : IDisposable
         {
             case PipeEnvelope envelope:
                 if (envelope.Kind == PipeEnvelopeKind.Event)
-                {
-                    if (!ShouldReceiveEventTopic(envelope.Topic)) return;
-                }
+                    if (!ShouldReceiveEventTopic(envelope.Topic))
+                        return;
                 break;
             case PipeConnectionClosed:
                 break;
@@ -409,11 +407,12 @@ public class PluginInfo : IDisposable
 
     public void Dispose()
     {
-        Task.Run(()=>StopAll(true)).GetAwaiter().GetResult();
+        Task.Run(() => StopAll(true)).GetAwaiter().GetResult();
     }
+
     public void DisposeWithoutNotify()
     {
-        Task.Run(()=>StopAll(false)).GetAwaiter().GetResult();
+        Task.Run(() => StopAll(false)).GetAwaiter().GetResult();
     }
 }
 
@@ -430,19 +429,20 @@ public class PluginService : IPluginService, IDisposable
     private readonly IWindowManagerService _windowManagerService;
     private readonly IInAppNotificationService _notificationService;
     private readonly IQsoQueueStore _qsoQueueStore;
+    private readonly IQSOUploadService _qsoUploadService;
 
     private CancellationTokenSource? _source;
     private Task? _pluginTask;
     private readonly object _serviceLock = new();
     private bool _isRunning;
     private DateTime _serviceStartedAt = DateTime.UtcNow;
-    
+
     private readonly ObservableCollection<Decode> _wsjtxDecodeCache = new();
     private readonly object _decodeCacheLock = new();
-    
+
     private readonly BasicSettings _basicSettings;
     private readonly CompositeDisposable _disp = new();
-    
+
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<Decode>))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(List<PluginInfo>))]
     public PluginService(
@@ -451,7 +451,8 @@ public class PluginService : IPluginService, IDisposable
         IUdpServerService udpServerService,
         IWindowManagerService windowManagerService,
         IInAppNotificationService notificationService,
-        IQsoQueueStore qsoQueueStore)
+        IQsoQueueStore qsoQueueStore,
+        IQSOUploadService qsoUploadService)
     {
         _settingsService = settingsService;
         _rigBackendManager = rigBackendManager;
@@ -460,16 +461,17 @@ public class PluginService : IPluginService, IDisposable
         _notificationService = notificationService;
         _qsoQueueStore = qsoQueueStore;
         _basicSettings = settingsService.GetCurrentSettings().BasicSettings;
-        
+        _qsoUploadService = qsoUploadService;
+
         // high frequency msgs like deocded
         MessageBus.Current.RegisterScheduler<PluginEvent>(RxApp.TaskpoolScheduler);
-        
+
         // batch send decode
         _disp.Add(
             _wsjtxDecodeCache.ObserveCollectionChanges()
                 .Throttle(TimeSpan.FromSeconds(2))
                 .ObserveOn(RxApp.TaskpoolScheduler)
-                .Subscribe(async void (changes) => 
+                .Subscribe(async void (changes) =>
                 {
                     try
                     {
@@ -481,48 +483,46 @@ public class PluginService : IPluginService, IDisposable
                     }
                 })
         );
-        
+
         // push settings'changed
         _disp.Add(MessageBus.Current
-                .Listen<SettingsChanged>()
-                .Subscribe(async void (x) =>
-                {
-                    try{
-                        await HandleSettingsChange(x);        
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Error handling plugin service settings change");
-                    }
-                })); 
-        
-        // receive IMessage
-        _disp.Add(
-            MessageBus.Current
-            .Listen<PluginEvent>()
+            .Listen<SettingsChanged>()
             .Subscribe(async void (x) =>
             {
                 try
                 {
-                    if (x.Message is null) return;
-                    await BroadcastMessageAsync(x.Message, CancellationToken.None);
+                    await HandleSettingsChange(x);
                 }
                 catch (Exception ex)
                 {
                     ClassLogger.Error(ex, "Error handling plugin service settings change");
                 }
-            })); 
-            
-        if (_basicSettings.EnablePlugin)
-        {
-            _ = StartPluginServiceAsync();
-        }
+            }));
+
+        // receive IMessage
+        _disp.Add(
+            MessageBus.Current
+                .Listen<PluginEvent>()
+                .Subscribe(async void (x) =>
+                {
+                    try
+                    {
+                        if (x.Message is null) return;
+                        await BroadcastMessageAsync(x.Message, CancellationToken.None);
+                    }
+                    catch (Exception ex)
+                    {
+                        ClassLogger.Error(ex, "Error handling plugin service settings change");
+                    }
+                }));
+
+        if (_basicSettings.EnablePlugin) _ = StartPluginServiceAsync();
     }
 
     private async Task HandleDecodeCacheChanged()
     {
         if (!_isRunning) return;
-        
+
         Decode[] decodes;
         lock (_decodeCacheLock)
         {
@@ -562,7 +562,7 @@ public class PluginService : IPluginService, IDisposable
         lock (_serviceLock)
         {
             if (_isRunning) return Task.CompletedTask;
-            
+
             try
             {
                 _source = new CancellationTokenSource();
@@ -586,21 +586,20 @@ public class PluginService : IPluginService, IDisposable
     private async Task StopPluginServiceAsync()
     {
         List<PluginInfo> pluginsToDispose;
-        
+
         lock (_serviceLock)
         {
             if (!_isRunning) return;
-            
+
             _isRunning = false;
-            
+
             // Stop the main service
             _source?.Cancel();
             _source?.Dispose();
             _source = null;
         }
-        
+
         if (_pluginTask != null)
-        {
             try
             {
                 await _pluginTask.WaitAsync(TimeSpan.FromSeconds(5));
@@ -615,17 +614,15 @@ public class PluginService : IPluginService, IDisposable
             {
                 ClassLogger.Error(ex, "Error stopping plugin service task");
             }
-        }
-        
+
         using (var writerLock = await _pluginLock.WriterLockAsync(CancellationToken.None))
         {
             pluginsToDispose = new List<PluginInfo>(_plugins);
             _plugins.Clear();
         }
-        
-        
+
+
         foreach (var plugin in pluginsToDispose)
-        {
             try
             {
                 plugin.Dispose();
@@ -634,30 +631,26 @@ public class PluginService : IPluginService, IDisposable
             {
                 ClassLogger.Error(ex, $"Error disposing plugin {plugin.Name}");
             }
-        }
-        
+
         lock (_decodeCacheLock)
         {
             _wsjtxDecodeCache.Clear();
         }
-        
+
         ClassLogger.Info("Plugin service stopped");
     }
 
     public void Dispose()
     {
         _disp?.Dispose();
-        
-        if (_isRunning)
-        {
-            Task.Run(StopPluginServiceAsync).GetAwaiter().GetResult();
-        }
+
+        if (_isRunning) Task.Run(StopPluginServiceAsync).GetAwaiter().GetResult();
     }
 
     public async Task BroadcastMessageAsync(IMessage? message, CancellationToken token)
     {
         if (message is null) return;
-        
+
         if (!_isRunning) return;
 
         // called directly from udp server
@@ -668,28 +661,23 @@ public class PluginService : IPluginService, IDisposable
             {
                 foreach (var pluginInfo in _plugins)
                 {
-                    if (!pluginInfo.ShouldReceiveEventTopic(PipeEnvelopeTopic.EventWsjtxDecodeBatch))
-                    {
-                        continue;
-                    }
+                    if (!pluginInfo.ShouldReceiveEventTopic(PipeEnvelopeTopic.EventWsjtxDecodeBatch)) continue;
                     hasBatchedDecodeSubscriber = true;
                     break;
                 }
             }
 
             if (hasBatchedDecodeSubscriber && wsjtxDecodeMessage.Decode is not null)
-            {
                 lock (_decodeCacheLock)
                 {
                     _wsjtxDecodeCache.Add(wsjtxDecodeMessage.Decode);
                 }
-            }
         }
-        
+
         await TryBroadcastEnvelopeEventAsync(message, token);
     }
 
-    
+
     public async Task<IReadOnlyList<PluginInfo>> GetConnectedPluginsAsync()
     {
         using (var readerLock = await _pluginLock.ReaderLockAsync())
@@ -708,36 +696,24 @@ public class PluginService : IPluginService, IDisposable
         return BuildRuntimeSnapshotAsync(token);
     }
 
-    public async Task<bool> DisconnectPluginAsync(string pluginUuid, string reason, CancellationToken token, bool notify = true)
+    public async Task<bool> DisconnectPluginAsync(string pluginUuid, string reason, CancellationToken token,
+        bool notify = true)
     {
-        if (string.IsNullOrWhiteSpace(pluginUuid))
-        {
-            return false;
-        }
+        if (string.IsNullOrWhiteSpace(pluginUuid)) return false;
 
         PluginInfo? target = null;
         using (var writerLock = await _pluginLock.WriterLockAsync(token))
         {
             target = _plugins.FirstOrDefault(x => x.Uuid == pluginUuid);
-            if (target != null)
-            {
-                _plugins.Remove(target);
-            }
+            if (target != null) _plugins.Remove(target);
         }
 
-        if (target == null)
-        {
-            return false;
-        }
+        if (target == null) return false;
 
         if (notify)
-        {
             target.Dispose();
-        }
         else
-        {
             target.DisposeWithoutNotify();
-        }
         await BroadcastPluginLifecycleAsync(
             target,
             ClhPluginLifecycleEventType.Disconnected,
@@ -746,7 +722,7 @@ public class PluginService : IPluginService, IDisposable
         await BroadcastServerStatusAsync(CancellationToken.None);
         return true;
     }
-    
+
     private async Task _startService(CancellationToken token)
     {
         var scanTask = _scanAndRegisterPlugins(token);
@@ -759,7 +735,7 @@ public class PluginService : IPluginService, IDisposable
         var pipePath = OperatingSystem.IsWindows()
             ? DefaultConfigs.PluginRegisterNamingPipeWindows
             : DefaultConfigs.PluginRegisterNamingPipeUnix;
-        
+
         ClassLogger.Debug("Starting plugin scanning service");
 
         while (!cancellationToken.IsCancellationRequested)
@@ -780,19 +756,13 @@ public class PluginService : IPluginService, IDisposable
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                if (pipeServer is not null)
-                {
-                    await pipeServer.DisposeAsync();
-                }
+                if (pipeServer is not null) await pipeServer.DisposeAsync();
                 ClassLogger.Info("Plugin reg service stopped");
                 break;
             }
             catch (Exception e)
             {
-                if (pipeServer is not null)
-                {
-                    await pipeServer.DisposeAsync();
-                }
+                if (pipeServer is not null) await pipeServer.DisposeAsync();
                 ClassLogger.Error(e, "Plugin registration server error");
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
@@ -814,11 +784,8 @@ public class PluginService : IPluginService, IDisposable
             });
 
             var pluginRegisterInfo = await PipeRegisterPluginReq.Parser.ParseDelimitedFromAsync(server, link.Token);
-            if (pluginRegisterInfo is null)
-            {
-                throw new Exception("Plugin register info is null");
-            }
-            
+            if (pluginRegisterInfo is null) throw new Exception("Plugin register info is null");
+
             ClassLogger.Trace($"Plugin register request received: {pluginRegisterInfo.Name}");
             var registerServerInfo = await BuildServerInfoAsync(link.Token);
             registerServerInfo.ConnectedPluginCount += 1;
@@ -836,10 +803,7 @@ public class PluginService : IPluginService, IDisposable
             using (var writerLock = await _pluginLock.WriterLockAsync(cancellationToken))
             {
                 replacedPlugins = _plugins.Where(x => x.Uuid == pluginInfo.Uuid).ToList();
-                foreach (var replaced in replacedPlugins)
-                {
-                    _plugins.Remove(replaced);
-                }
+                foreach (var replaced in replacedPlugins) _plugins.Remove(replaced);
                 _plugins.Add(pluginInfo);
             }
 
@@ -853,7 +817,7 @@ public class PluginService : IPluginService, IDisposable
                     "replaced-by-new-instance",
                     CancellationToken.None);
             }
-            
+
             await BroadcastPluginLifecycleAsync(
                 pluginInfo,
                 ClhPluginLifecycleEventType.Connected,
@@ -883,7 +847,6 @@ public class PluginService : IPluginService, IDisposable
         finally
         {
             if (!ownershipTransferred)
-            {
                 try
                 {
                     await server.DisposeAsync();
@@ -892,7 +855,6 @@ public class PluginService : IPluginService, IDisposable
                 {
                     ClassLogger.Warn(ex, "Failed to dispose pipe after registration failure");
                 }
-            }
         }
     }
 
@@ -925,10 +887,7 @@ public class PluginService : IPluginService, IDisposable
 
     private async Task HandleEnvelopeRequestAsync(PluginInfo pluginInfo, PipeEnvelope envelope, CancellationToken token)
     {
-        if (envelope.Kind is not (PipeEnvelopeKind.Query or PipeEnvelopeKind.Command))
-        {
-            return;
-        }
+        if (envelope.Kind is not (PipeEnvelopeKind.Query or PipeEnvelopeKind.Command)) return;
 
         var response = new PipeEnvelope
         {
@@ -993,11 +952,10 @@ public class PluginService : IPluginService, IDisposable
                 }
                 case PipeEnvelopeTopic.CommandSubscribeEvents:
                 {
-                    PipeEventSubscription? subscription = envelope.Subscription;
-                    if (subscription is null && envelope.Payload != null && envelope.Payload.Is(PipeEventSubscription.Descriptor))
-                    {
+                    var subscription = envelope.Subscription;
+                    if (subscription is null && envelope.Payload != null &&
+                        envelope.Payload.Is(PipeEventSubscription.Descriptor))
                         subscription = envelope.Payload.Unpack<PipeEventSubscription>();
-                    }
 
                     if (subscription is null)
                     {
@@ -1026,19 +984,16 @@ public class PluginService : IPluginService, IDisposable
                 case PipeEnvelopeTopic.CommandOpenWindow:
                     if (!envelope.Attributes.TryGetValue("window", out var window)) break;
                     if (!envelope.Attributes.TryGetValue("asDialog", out var dialog)) break;
-                    
+
                     if (string.IsNullOrEmpty(window)) break;
                     if (string.IsNullOrEmpty(dialog)) break;
 
                     var tryParse = Enum.TryParse<PluginControllableWindow>(window, out var pCtWindow);
-                    if (!tryParse)
-                    {
-                        break;
-                    }
+                    if (!tryParse) break;
 
                     _ = Dispatcher.UIThread.InvokeAsync(async () =>
                         await _windowManagerService.CreateAndShowWindowByVm(pCtWindow, null, dialog == "true"));
-                    
+
                     response.Success = true;
                     response.Message = "window-opened";
                     break;
@@ -1062,38 +1017,109 @@ public class PluginService : IPluginService, IDisposable
                     var enabled = !_udpServerService.IsUdpServerEnabled();
                     if (envelope.Attributes.TryGetValue("enabled", out var enabledRaw) &&
                         bool.TryParse(enabledRaw, out var parsedEnabled))
-                    {
                         enabled = parsedEnabled;
-                    }
 
                     var patch = new PipeSettingsPatch();
                     patch.Values["udp.enable_udp_server"] = enabled.ToString();
                     var patchResult = ApplySettingsPatch(patch);
                     response.Success = patchResult.Success;
                     response.Message = patchResult.Message;
-                    if (response.Success)
-                    {
-                        response.Payload = Any.Pack(await BuildUdpSnapshotAsync(token));
-                    }
+                    if (response.Success) response.Payload = Any.Pack(await BuildUdpSnapshotAsync(token));
                     break;
                 }
-                case PipeEnvelopeTopic.CommandStartRigBackend:
-                    await _rigBackendManager.StartService();
-                    response.Success = true;
-                    response.Message = "rig-backend-started";
-                    response.Payload = Any.Pack(await BuildRigSnapshotAsync(token));
+                case PipeEnvelopeTopic.CommandToggleRigBackend:
+                    var rigEnabled = !_rigBackendManager.GetPollingAllowed();
+                    var defaultBackend = _rigBackendManager.GetServiceType();
+
+                    if (envelope.Attributes.TryGetValue("enabled", out var enableRigRaw) &&
+                        bool.TryParse(enableRigRaw, out var parsedRigEnabled))
+                        rigEnabled = parsedRigEnabled;
+
+                    var rigPatch = new PipeSettingsPatch();
+                    rigPatch.Values["rig.enable_polling"] = $"{rigEnabled};;;{defaultBackend}";
+                    var rigPatchResult = ApplySettingsPatch(rigPatch);
+
+                    response.Success = rigPatchResult.Success;
+                    response.Message = rigPatchResult.Message;
+                    if (response.Success) response.Payload = Any.Pack(await BuildRigSnapshotAsync(token));
                     break;
-                case PipeEnvelopeTopic.CommandStopRigBackend:
-                    await _rigBackendManager.StopService();
-                    response.Success = true;
-                    response.Message = "rig-backend-stopped";
-                    response.Payload = Any.Pack(await BuildRigSnapshotAsync(token));
+                case PipeEnvelopeTopic.CommandSwitchRigBackend:
+                    if (!envelope.Attributes.TryGetValue("backend", out var rigBackend) ||
+                        !Enum.TryParse<RigBackendServiceEnum>(rigBackend, out _))
+                    {
+                        response.Success = false;
+                        response.Message = "Invalid backend";
+                        break;
+                    }
+
+                    var rigBackendPatch = new PipeSettingsPatch();
+                    rigBackendPatch.Values["rig.backend"] = rigBackend;
+                    var rigBackendPatchResult = ApplySettingsPatch(rigBackendPatch);
+
+                    response.Success = rigBackendPatchResult.Success;
+                    response.Message = rigBackendPatchResult.Message;
+                    if (response.Success) response.Payload = Any.Pack(await BuildRigSnapshotAsync(token));
                     break;
-                case PipeEnvelopeTopic.CommandRestartRigBackend:
-                    await _rigBackendManager.RestartService();
+                case PipeEnvelopeTopic.CommandTriggerQsoReupload:
+                    if (!envelope.Attributes.TryGetValue("qsoIds", out var qsoIds)) break;
+
+                    var qsoIdList = qsoIds.Split(";;;").Where(x => !string.IsNullOrWhiteSpace(x));
+
+                    var callDetails = new List<RecordedCallsignDetail>();
+
+                    foreach (var se in qsoIdList)
+                    {
+                        var recordedCallsignDetail = _qsoQueueStore.Items.FirstOrDefault(x => x.Uuid == se);
+                        if (recordedCallsignDetail is null)
+                        {
+                            response.Success = false;
+                            response.Message = $"QSO {se} not found";
+                            break;
+                        }
+
+                        callDetails.Add(recordedCallsignDetail);
+                    }
+
+                    foreach (var recordedCallsignDetail in callDetails)
+                    {
+                        if (recordedCallsignDetail.UploadStatus != UploadStatus.Fail &&
+                            recordedCallsignDetail.UploadStatus != UploadStatus.Ignored)
+                        {
+                            response.Success = false;
+                            response.Message =
+                                $"QSO {recordedCallsignDetail.Uuid} is being processed. Reupload is ignored";
+                            break;
+                        }
+
+                        recordedCallsignDetail.ForcedUpload = true;
+                        await _qsoUploadService.EnqueueQSOForUploadAsync(recordedCallsignDetail, token);
+                    }
+
                     response.Success = true;
-                    response.Message = "rig-backend-restarted";
-                    response.Payload = Any.Pack(await BuildRigSnapshotAsync(token));
+                    break;
+                case PipeEnvelopeTopic.CommandUploadExternalQso:
+                    if (!envelope.Attributes.TryGetValue("adifLogs", out var adif)) break;
+                    if (string.IsNullOrEmpty(adif)) break;
+                    var localParser = new ADIF();
+                    localParser.ReadFromString(adif, token);
+                    if (localParser.TheQSOs.Count == 0)
+                    {
+                        response.Success = false;
+                        response.Message = "Failed to parse QSO";
+                        break;
+                    }
+
+                    var cloudParsed = localParser.TheQSOs
+                        .AsParallel()
+                        .WithCancellation(token)
+                        .Select(x => RecordedCallsignDetail.Parse(AdifLog.Parse(x), DXCCKeys.externallog))
+                        .ToList();
+
+                    MessageBus.Current.SendMessage(new QsoUploadRequested
+                    {
+                        QsoData = cloudParsed
+                    });
+                    response.Success = true;
                     break;
                 case PipeEnvelopeTopic.CommandUpdateSettings:
                 {
@@ -1105,19 +1131,13 @@ public class PluginService : IPluginService, IDisposable
                     else
                     {
                         patch = new PipeSettingsPatch();
-                        foreach (var kv in envelope.Attributes)
-                        {
-                            patch.Values[kv.Key] = kv.Value;
-                        }
+                        foreach (var kv in envelope.Attributes) patch.Values[kv.Key] = kv.Value;
                     }
 
                     var patchResult = ApplySettingsPatch(patch);
                     response.Success = patchResult.Success;
                     response.Message = patchResult.Message;
-                    if (response.Success)
-                    {
-                        response.Payload = Any.Pack(BuildSettingsSnapshot());
-                    }
+                    if (response.Success) response.Payload = Any.Pack(BuildSettingsSnapshot());
                     break;
                 }
                 default:
@@ -1127,10 +1147,7 @@ public class PluginService : IPluginService, IDisposable
                     break;
             }
 
-            if (!response.Success)
-            {
-                pluginInfo.IncrementControlError();
-            }
+            if (!response.Success) pluginInfo.IncrementControlError();
         }
         catch (Exception ex)
         {
@@ -1170,10 +1187,7 @@ public class PluginService : IPluginService, IDisposable
         var list = new PipePluginList();
         using (var readerLock = await _pluginLock.ReaderLockAsync(token))
         {
-            foreach (var plugin in _plugins)
-            {
-                list.Plugins.Add(plugin.ToPipePluginInfo());
-            }
+            foreach (var plugin in _plugins) list.Plugins.Add(plugin.ToPipePluginInfo());
         }
 
         return list;
@@ -1198,10 +1212,7 @@ public class PluginService : IPluginService, IDisposable
 
         using (var readerLock = await _pluginLock.ReaderLockAsync(token))
         {
-            foreach (var plugin in _plugins)
-            {
-                snapshot.PluginTelemetry.Add(plugin.GetTelemetrySnapshot());
-            }
+            foreach (var plugin in _plugins) snapshot.PluginTelemetry.Add(plugin.GetTelemetrySnapshot());
         }
 
         return snapshot;
@@ -1247,7 +1258,7 @@ public class PluginService : IPluginService, IDisposable
             SampledAt = Timestamp.FromDateTime(DateTime.UtcNow)
         });
     }
-    
+
     private Task<PipeQsoQueueSnapshot> BuildQSOQueueSnapshotAsync(CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -1283,9 +1294,7 @@ public class PluginService : IPluginService, IDisposable
         CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(pluginUuid) || pluginUuid == requester.Uuid)
-        {
             return requester.GetTelemetrySnapshot();
-        }
 
         using (var readerLock = await _pluginLock.ReaderLockAsync(token))
         {
@@ -1356,9 +1365,7 @@ public class PluginService : IPluginService, IDisposable
     private async Task SendNotificationAsync(PipeNotificationCommand notification)
     {
         if (string.IsNullOrWhiteSpace(notification.Message))
-        {
             throw new InvalidOperationException("Notification message cannot be empty.");
-        }
 
         switch (notification.Level)
         {
@@ -1381,14 +1388,11 @@ public class PluginService : IPluginService, IDisposable
 
     private async Task ExecuteMainWindowVisibilityAsync(bool visible)
     {
-        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             var window = _windowManagerService.GetToplevel(typeof(MainWindowViewModel));
-            if (window is null)
-            {
-                throw new InvalidOperationException("Main window is unavailable.");
-            }
-            
+            if (window is null) throw new InvalidOperationException("Main window is unavailable.");
+
             if (visible)
             {
                 window.Show();
@@ -1403,23 +1407,15 @@ public class PluginService : IPluginService, IDisposable
 
     private (bool Success, string Message) ApplySettingsPatch(PipeSettingsPatch? patch)
     {
-        if (patch is null || patch.Values.Count == 0)
-        {
-            return (false, "settings patch is empty");
-        }
+        if (patch is null || patch.Values.Count == 0) return (false, "settings patch is empty");
 
         if (!_settingsService.TryGetDraftSettings(this, out var draft) || draft is null)
-        {
             return (false, "settings are currently locked");
-        }
 
         var errors = new List<string>();
         try
         {
-            foreach (var (key, value) in patch.Values)
-            {
-                ApplyPatchValue(draft, key, value, errors);
-            }
+            foreach (var (key, value) in patch.Values) ApplyPatchValue(draft, key, value, errors);
 
             if (errors.Count > 0)
             {
@@ -1461,86 +1457,123 @@ public class PluginService : IPluginService, IDisposable
                 break;
             case "basic.enable_plugin":
                 if (bool.TryParse(value, out var enablePlugin))
-                {
                     draft.BasicSettings.EnablePlugin = enablePlugin;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "basic.disable_all_charts":
                 if (bool.TryParse(value, out var disableCharts))
-                {
                     draft.BasicSettings.DisableAllCharts = disableCharts;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "cloudlog.auto_qso_upload_enabled":
                 if (bool.TryParse(value, out var autoQso))
-                {
                     draft.CloudlogSettings.AutoQSOUploadEnabled = autoQso;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "cloudlog.auto_rig_upload_enabled":
                 if (bool.TryParse(value, out var autoRig))
-                {
                     draft.CloudlogSettings.AutoRigUploadEnabled = autoRig;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "udp.enable_udp_server":
                 if (bool.TryParse(value, out var enableUdp))
-                {
                     draft.UDPSettings.EnableUDPServer = enableUdp;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "udp.enable_connection_from_outside":
                 if (bool.TryParse(value, out var allowOutside))
-                {
                     draft.UDPSettings.EnableConnectionFromOutside = allowOutside;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "udp.retry_count":
                 draft.UDPSettings.RetryCount = value;
                 break;
             case "udp.push_notification_on_qso_made":
                 if (bool.TryParse(value, out var notifyQsoMade))
-                {
                     draft.UDPSettings.PushNotificationOnQSOMade = notifyQsoMade;
-                }
                 else
-                {
                     errors.Add($"invalid bool value for {key}");
-                }
                 break;
             case "udp.push_notification_on_qso_uploaded":
                 if (bool.TryParse(value, out var notifyQsoUploaded))
-                {
                     draft.UDPSettings.PushNotificationOnQSOUploaded = notifyQsoUploaded;
+                else
+                    errors.Add($"invalid bool value for {key}");
+                break;
+            case "rig.enable_polling":
+                var raw = value.Split(";;;");
+                if (raw.Length != 2)
+                {
+                    errors.Add("Invalid command");
+                    break;
+                }
+
+                var backend = raw[1];
+
+                if (Enum.TryParse<RigBackendServiceEnum>(backend, out var backendService) &&
+                    bool.TryParse(raw[0], out var enablePolling))
+                {
+                    draft.FLRigSettings.PollAllowed = false;
+                    draft.OmniRigSettings.PollAllowed = false;
+                    draft.HamlibSettings.PollAllowed = false;
+
+                    if (enablePolling)
+                        switch (backendService)
+                        {
+                            case RigBackendServiceEnum.Hamlib:
+                                draft.HamlibSettings.PollAllowed = true;
+                                break;
+                            case RigBackendServiceEnum.FLRig:
+                                draft.FLRigSettings.PollAllowed = true;
+                                break;
+                            case RigBackendServiceEnum.OmniRig:
+                                draft.OmniRigSettings.PollAllowed = true;
+                                break;
+                            default:
+                                errors.Add($"unsupported backend: {backendService}");
+                                break;
+                        }
                 }
                 else
                 {
-                    errors.Add($"invalid bool value for {key}");
+                    errors.Add($"invalid rig value for {key}");
                 }
+
+                break;
+            case "rig.backend":
+                if (Enum.TryParse<RigBackendServiceEnum>(value, out var rBackend))
+                {
+                    draft.FLRigSettings.PollAllowed = false;
+                    draft.OmniRigSettings.PollAllowed = false;
+                    draft.HamlibSettings.PollAllowed = false;
+
+                    switch (rBackend)
+                    {
+                        case RigBackendServiceEnum.Hamlib:
+                            draft.HamlibSettings.PollAllowed = true;
+                            break;
+                        case RigBackendServiceEnum.FLRig:
+                            draft.FLRigSettings.PollAllowed = true;
+                            break;
+                        case RigBackendServiceEnum.OmniRig:
+                            draft.OmniRigSettings.PollAllowed = true;
+                            break;
+                        default:
+                            errors.Add($"unsupported backend: {rBackend}");
+                            break;
+                    }
+                }
+                else
+                {
+                    errors.Add($"invalid rig value for {key}");
+                }
+
                 break;
             default:
                 errors.Add($"unsupported patch key: {key}");
@@ -1570,34 +1603,38 @@ public class PluginService : IPluginService, IDisposable
                 switch (internalMessage.PayloadCase)
                 {
                     case ClhInternalMessage.PayloadOneofCase.ServerStatus:
-                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventServerStatus, internalMessage.ServerStatus, token);
+                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventServerStatus,
+                            internalMessage.ServerStatus, token);
                         break;
                     case ClhInternalMessage.PayloadOneofCase.PluginLifecycle:
-                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventPluginLifecycle, internalMessage.PluginLifecycle, token);
+                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventPluginLifecycle,
+                            internalMessage.PluginLifecycle, token);
                         break;
                     case ClhInternalMessage.PayloadOneofCase.QsoUploadStatus:
-                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventQsoUploadStatus, internalMessage.QsoUploadStatus, token);
+                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventQsoUploadStatus,
+                            internalMessage.QsoUploadStatus, token);
                         break;
                     case ClhInternalMessage.PayloadOneofCase.QsoQueueStatus:
-                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventQsoQueueStatus, internalMessage.QsoQueueStatus, token);
+                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventQsoQueueStatus,
+                            internalMessage.QsoQueueStatus, token);
                         break;
                     case ClhInternalMessage.PayloadOneofCase.SettingsChanged:
-                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventSettingsChanged, internalMessage.SettingsChanged, token);
+                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventSettingsChanged,
+                            internalMessage.SettingsChanged, token);
                         break;
                     case ClhInternalMessage.PayloadOneofCase.PluginTelemetry:
-                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventPluginTelemetry, internalMessage.PluginTelemetry, token);
+                        await BroadcastEnvelopeEventAsync(PipeEnvelopeTopic.EventPluginTelemetry,
+                            internalMessage.PluginTelemetry, token);
                         break;
                 }
+
                 break;
         }
     }
 
     private async Task BroadcastEnvelopeEventAsync(PipeEnvelopeTopic topic, IMessage? payload, CancellationToken token)
     {
-        if (payload is null)
-        {
-            return;
-        }
+        if (payload is null) return;
 
         var envelope = new PipeEnvelope
         {
@@ -1613,44 +1650,26 @@ public class PluginService : IPluginService, IDisposable
         var tasks = new List<Task>();
         using (var readerLock = await _pluginLock.ReaderLockAsync(token))
         {
-            foreach (var plugin in _plugins)
-            {
-                tasks.Add(plugin.SendMessage(envelope, token));
-            }
+            foreach (var plugin in _plugins) tasks.Add(plugin.SendMessage(envelope, token));
         }
 
-        if (tasks.Count > 0)
-        {
-            await Task.WhenAll(tasks);
-        }
+        if (tasks.Count > 0) await Task.WhenAll(tasks);
     }
 
     private static ulong SafeToUlong(double value)
     {
-        if (value <= 0)
-        {
-            return 0;
-        }
+        if (value <= 0) return 0;
 
-        if (value >= ulong.MaxValue)
-        {
-            return ulong.MaxValue;
-        }
+        if (value >= ulong.MaxValue) return ulong.MaxValue;
 
         return (ulong)value;
     }
 
     private static uint SafeToUint(double value)
     {
-        if (value <= 0)
-        {
-            return 0;
-        }
+        if (value <= 0) return 0;
 
-        if (value >= uint.MaxValue)
-        {
-            return uint.MaxValue;
-        }
+        if (value >= uint.MaxValue) return uint.MaxValue;
 
         return (uint)value;
     }
@@ -1659,7 +1678,6 @@ public class PluginService : IPluginService, IDisposable
     {
         ClassLogger.Debug("Starting plugin keepalive service");
         while (!cancellationToken.IsCancellationRequested)
-        {
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
@@ -1669,14 +1687,12 @@ public class PluginService : IPluginService, IDisposable
                 using (var readerLock = await _pluginLock.ReaderLockAsync(cancellationToken))
                 {
                     foreach (var pluginInfo in _plugins)
-                    {
                         if (DateTime.UtcNow - pluginInfo.LastHeartbeat >
                             TimeSpan.FromSeconds(DefaultConfigs.PluginKeepaliveTimeoutSec))
                         {
                             ClassLogger.Info($"{pluginInfo.Name} timeout.");
                             toRemove.Add(pluginInfo);
                         }
-                    }
                 }
 
                 if (toRemove.Count == 0)
@@ -1687,10 +1703,7 @@ public class PluginService : IPluginService, IDisposable
 
                 using (var writerLock = await _pluginLock.WriterLockAsync(cancellationToken))
                 {
-                    foreach (var plugin in toRemove)
-                    {
-                        _plugins.Remove(plugin);
-                    }
+                    foreach (var plugin in toRemove) _plugins.Remove(plugin);
                 }
 
                 foreach (var plugin in toRemove)
@@ -1715,6 +1728,5 @@ public class PluginService : IPluginService, IDisposable
                 ClassLogger.Error(e, "Error in heartbeat check");
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
-        }
     }
 }
