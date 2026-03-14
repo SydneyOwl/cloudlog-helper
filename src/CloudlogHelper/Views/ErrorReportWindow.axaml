@@ -4,7 +4,9 @@
         Title="{I18N {x:Static resources:LangKeys.errorccurred}}"
         Topmost="True"
         WindowStartupLocation="CenterScreen"
-        Width="600" Height="450"
+        Width="720" Height="520"
+        MinWidth="620" MinHeight="420"
+        CanResize="True"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:DataType="viewModels:ErrorReportWindowViewModel"
@@ -12,18 +14,57 @@
     <Design.DataContext>
         <viewModels:ErrorReportWindowViewModel />
     </Design.DataContext>
-    <Canvas>
-        <avalonia:MaterialIcon Kind="WarningCircleOutline" Foreground="Orange" Canvas.Top="30" Canvas.Left="10"
-                               Height="120" Width="120" />
-        <Label Canvas.Top="30" Canvas.Left="180" FontSize="25"
-               Content="{I18N {x:Static resources:LangKeys.errorccurred}}" />
-        <TextBlock TextWrapping="Wrap" Width="400" Canvas.Top="80" Canvas.Left="180" FontSize="20"
+    <Grid Margin="20"
+          ColumnDefinitions="Auto,*"
+          RowDefinitions="Auto,Auto,*,Auto"
+          ColumnSpacing="18"
+          RowSpacing="14">
+        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                Width="96" Height="96" CornerRadius="48"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            <avalonia:MaterialIcon Kind="WarningCircleOutline"
+                                   Height="56" Width="56"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource SystemControlForegroundAccentBrush}" />
+        </Border>
+
+        <TextBlock Grid.Row="0" Grid.Column="1"
+                   FontSize="26"
+                   FontWeight="SemiBold"
+                   Text="{I18N {x:Static resources:LangKeys.errorccurred}}" />
+
+        <TextBlock Grid.Row="1" Grid.Column="1"
+                   FontSize="16"
+                   TextWrapping="Wrap"
                    Text="{I18N {x:Static resources:LangKeys.helpfeedback}}" />
-        <Button Content="{I18N {x:Static resources:LangKeys.savelog}}" Canvas.Top="405" Canvas.Left="120" FontSize="20"
-                Click="LogSaveButton_OnClick" />
-        <Button Content="{I18N {x:Static resources:LangKeys.close}}" Canvas.Top="405" Canvas.Left="350" FontSize="20"
-                Click="ExitWindowButton_OnClick" />
-        <SelectableTextBlock Height="230" Width="530" Canvas.Left="30" Canvas.Top="160" Background="LightGray"
-                             Foreground="Black" Name="ErrBlock" Text="(logs here)" TextWrapping="Wrap" />
-    </Canvas>
+
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                CornerRadius="8"
+                Padding="12"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeHighBrush}"
+                BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <SelectableTextBlock Name="ErrBlock"
+                                     Text="(logs here)"
+                                     TextWrapping="Wrap"
+                                     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="12">
+            <Button Content="{I18N {x:Static resources:LangKeys.savelog}}"
+                    HorizontalContentAlignment="Center"
+                    MinWidth="100"
+                    Click="LogSaveButton_OnClick" />
+            <Button Content="{I18N {x:Static resources:LangKeys.close}}"
+                    HorizontalContentAlignment="Center"
+                    MinWidth="100"
+                    Click="ExitWindowButton_OnClick" />
+        </StackPanel>
+    </Grid>
 </Window>
