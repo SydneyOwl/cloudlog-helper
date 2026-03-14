@@ -191,11 +191,6 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         return  Task.CompletedTask;
     }
 
-    public Task<int> GetPendingCountAsync()
-    {
-        return Task.FromResult(_uploadQueue.Count);
-    }
-
     private async Task ProcessUploadQueueAsync(CancellationToken cancellationToken)
     {
         ClassLogger.Info("Started processing upload queue.");

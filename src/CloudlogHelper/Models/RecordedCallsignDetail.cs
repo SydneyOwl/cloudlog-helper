@@ -255,14 +255,14 @@ public class RecordedCallsignDetail : ReactiveObject
         };
     }
 
-    public static RecordedCallsignDetail Parse(AdifLog info, bool markAsOldQso = true)
+    public static RecordedCallsignDetail Parse(AdifLog info, string sourceIdentifier)
     {
         ulong hzValue = 0;
         if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
             Uuid = Guid.NewGuid().ToString(),
-            OriginalCountryName = DXCCKeys.locallog,
+            OriginalCountryName = sourceIdentifier,
             DXCall = info.Call!,
             MyCall = info.StationCallsign,
             ReportSent = info.RstSent!,

@@ -20,14 +20,17 @@ public partial class UDPLogInfoGroupboxUserControl : ReactiveUserControl<UDPLogI
         this.WhenActivated(disposables =>
         {
             // scroll listbox to end if collection changed.
-            Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                    h => ViewModel!.FilteredQsos.CollectionChanged += h,
-                    h => ViewModel!.FilteredQsos.CollectionChanged -= h)
+            this.WhenAnyValue(x => x.ViewModel!.FilteredQsos.Count)
+                .Where(count => count > 0)
+                .Throttle(TimeSpan.FromMilliseconds(200))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(args =>
                 {
-                    if (args.EventArgs.NewStartingIndex >= 0) // Safety check
-                        QsoBox.SelectedIndex = args.EventArgs.NewStartingIndex;
+                    var boxCount = QsoBox.ItemCount;
+                    if (boxCount > 0)
+                    {
+                        QsoBox.SelectedIndex = boxCount - 1;
+                    }
                 })
                 .DisposeWith(disposables);
         });

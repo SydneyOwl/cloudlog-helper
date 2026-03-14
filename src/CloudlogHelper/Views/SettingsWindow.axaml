@@ -95,6 +95,11 @@
         <Style Selector="TabStrip">
             <Setter Property="Margin" Value="0 0 0 16" />
         </Style>
+
+        <Style Selector="ListBox.plugin-listbox">
+            <Setter Property="MinHeight" Value="50" />
+            <Setter Property="MaxHeight" Value="220" />
+        </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*,Auto" Margin="16" IsEnabled="{Binding FullyInitialized}">
@@ -105,7 +110,8 @@
                 Height="20"
                 IsVisible="{Binding !FullyInitialized}"
                 Foreground="{DynamicResource SystemControlHighlightAccentBrush}" />
-            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" IsVisible="{Binding FullyInitialized}"/>
+            <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png"
+                   IsVisible="{Binding FullyInitialized}" />
             <TextBlock Text="{I18N {x:Static resources:LangKeys.settings}}" FontSize="24" FontWeight="Bold" />
         </StackPanel>
 
@@ -119,9 +125,10 @@
                             <TextBlock Text="{I18N {x:Static resources:LangKeys.instancename}}" Classes="setting-label" />
                             <TextBox HorizontalAlignment="Left"
                                      Text="{Binding DraftSettings.BasicSettings.InstanceName}"
-                                     Classes="setting-control"/>
+                                     Classes="setting-control" />
                             <userControls1:TipIconUserControl IsVisible="False"
-                                Margin="10,0,0,0" TooltipText="{I18N {x:Static resources:LangKeys.instancenamehint}}"/>
+                                                              Margin="10,0,0,0"
+                                                              TooltipText="{I18N {x:Static resources:LangKeys.instancenamehint}}" />
                         </StackPanel>
                         <StackPanel Spacing="10">
                             <StackPanel Orientation="Horizontal">
@@ -148,7 +155,7 @@
                                 <CheckBox HorizontalAlignment="Left" Height="20"
                                           Content="{I18N {x:Static resources:LangKeys.disablecharts}}"
                                           IsChecked="{Binding DraftSettings.BasicSettings.DisableAllCharts}" />
-                                
+
                                 <CheckBox HorizontalAlignment="Left" Height="20"
                                           Content="{I18N {x:Static resources:LangKeys.enableplugin}}"
                                           IsChecked="{Binding DraftSettings.BasicSettings.EnablePlugin}" />
@@ -163,7 +170,73 @@
                             <StackPanel Orientation="Horizontal" Spacing="15">
                                 <Button Content="{I18N {x:Static resources:LangKeys.updatebigcty}}"
                                         Command="{Binding UpdateBigCty}" />
-                                <userControls1:TipIconUserControl TooltipText="{I18N {x:Static resources:LangKeys.bigctyhint}}"/>
+                                <userControls1:TipIconUserControl
+                                    TooltipText="{I18N {x:Static resources:LangKeys.bigctyhint}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="6" Margin="0,10,0,0"
+                                        IsVisible="{Binding DraftSettings.BasicSettings.EnablePlugin}">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Connected plugins:" FontSize="14" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding ConnectedPluginCount}" FontSize="14"
+                                               FontWeight="SemiBold" />
+                                </StackPanel>
+                                <ListBox ItemsSource="{Binding ConnectedPlugins}" Classes="plugin-listbox">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+                                                    BorderThickness="0,0,0,1"
+                                                    Padding="6">
+                                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+                                                    <StackPanel Spacing="4">
+                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                            <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                                                            <TextBlock FontWeight="DemiBold" FontSize="10"
+                                                                       Text="{Binding Version}" />
+                                                            <TextBlock FontWeight="DemiBold" Text="{Binding Uuid}"
+                                                                       FontSize="10" />
+                                                        </StackPanel>
+
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Description}"
+                                                                       TextWrapping="NoWrap"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       MaxWidth="400" />
+                                                        </StackPanel>
+
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="HB:" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding LastHeartbeat}" />
+                                                            </StackPanel>
+
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="RX/TX:" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding ReceivedMessageCount}" />
+                                                                <TextBlock Text="/" />
+                                                                <TextBlock Text="{Binding SentMessageCount}" />
+                                                            </StackPanel>
+
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="CTRL REQ/ERR:" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding ControlRequestCount}" />
+                                                                <TextBlock Text="/" />
+                                                                <TextBlock Text="{Binding ControlErrorCount}" />
+                                                            </StackPanel>
+
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="RTT(ms):" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding LastRoundtripMs}" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="1"
+                                                            Content="{avalonia:MaterialIconExt Kind=Remove}"
+                                                            Command="{Binding RemovePlugin}" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                             </StackPanel>
                         </StackPanel>
                         <!-- </Border> -->
@@ -263,14 +336,15 @@
                                 <StackPanel>
                                     <TextBlock Text="HamLib" Classes="section-title" />
                                 </StackPanel>
-                                
-                                <Border BorderBrush="Transparent"  IsVisible="{Binding !HamlibInited}"  CornerRadius="5" Background="DarkOrange" Padding="10">
+
+                                <Border BorderBrush="Transparent" IsVisible="{Binding !HamlibInited}" CornerRadius="5"
+                                        Background="DarkOrange" Padding="10">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
                                         <avalonia:MaterialIcon Kind="Warning" Width="20" Height="20"
                                                                VerticalAlignment="Center"
                                                                HorizontalAlignment="Center"
                                                                Margin="0,0,8,0" />
-                                        <TextBlock 
+                                        <TextBlock
                                             VerticalAlignment="Center"
                                             FontWeight="Heavy"
                                             TextAlignment="Center"
@@ -441,30 +515,31 @@
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- OmniRig Settings -->
                         <Border Classes="setting-card">
                             <StackPanel Spacing="12">
                                 <TextBlock Text="OmniRig" Classes="section-title" />
-                                
-                                <Border BorderBrush="Transparent" CornerRadius="5" IsVisible="{Binding !OmniRigInited}" Background="DarkOrange" Padding="10">
+
+                                <Border BorderBrush="Transparent" CornerRadius="5" IsVisible="{Binding !OmniRigInited}"
+                                        Background="DarkOrange" Padding="10">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
                                         <avalonia:MaterialIcon Kind="Warning" Width="20" Height="20"
                                                                VerticalAlignment="Center"
                                                                HorizontalAlignment="Center"
                                                                Margin="0,0,8,0" />
-                                        <TextBlock 
+                                        <TextBlock
                                             TextAlignment="Center"
                                             VerticalAlignment="Center"
                                             FontWeight="Heavy"
                                             FontSize="14"
                                             Width="360"
                                             TextWrapping="Wrap"
-                                            Text="{I18N {x:Static resources:LangKeys.omniinitfailed}}"></TextBlock>
+                                            Text="{I18N {x:Static resources:LangKeys.omniinitfailed}}" />
                                     </StackPanel>
                                 </Border>
 
-                                <Grid ColumnDefinitions="*,2*,*"  IsVisible="{Binding OmniRigInited}"
+                                <Grid ColumnDefinitions="*,2*,*" IsVisible="{Binding OmniRigInited}"
                                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ShowGridLines="False"
                                       RowSpacing="10">
                                     <!-- Polling -->
@@ -488,7 +563,7 @@
                                     <ComboBox Classes="setting-control" Grid.Row="2" Grid.Column="1"
                                               SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}"
                                               ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}" />
-                                    
+
                                     <userControls1:TestButtonUserControl Grid.Row="0" Grid.Column="2" Grid.RowSpan="4"
                                                                          DataContext="{Binding OmniRigTestButtonUserControl}" />
                                 </Grid>

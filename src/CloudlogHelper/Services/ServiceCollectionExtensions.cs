@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using Avalonia.Controls.ApplicationLifetimes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.ViewModels;
@@ -24,7 +27,7 @@ public static class ServiceCollectionExtensions
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    public static Task AddCommonServicesAsync(this IServiceCollection services)
+    public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
         services.AddSingleton<IRigBackendManager, RigBackendManager>();
         services.AddSingleton<IDatabaseService, DatabaseService>();
@@ -35,15 +38,16 @@ public static class ServiceCollectionExtensions
 #endif
         services.AddSingleton<IUdpServerService, UdpServerService>();
         services.AddSingleton<IQSOUploadService, QSOUploadService>();
+        services.AddSingleton<IQsoQueueStore, QsoQueueStore>();
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         services.AddSingleton<ILogSystemManager, LogSystemManager>();
         services.AddSingleton<ICountryService, CountryService>();
         services.AddSingleton<IPluginService, PluginService>();
-        return Task.CompletedTask;
+        return services;
     }
 
-    public static Task AddViewModelsAsync(this IServiceCollection services)
+    public static IServiceCollection AddViewModels(this IServiceCollection services)
     {
         services.AddTransient<SettingsWindowViewModel>();
         services.AddTransient<AskExitOrMinimizeWindowViewModel>();
@@ -57,10 +61,35 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<StatusLightUserControlViewModel>();
         services.AddSingleton<PolarChartWindowViewModel>();
         services.AddSingleton<StationStatisticsChartWindowViewModel>();
-        return Task.CompletedTask;
+        services.AddSingleton<MainWindow>();
+        return services;
     }
 
-    public static async Task AddExtraAsync(this IServiceCollection services)
+    public static IServiceCollection AddRuntimeServices(this IServiceCollection services,
+        IClassicDesktopStyleApplicationLifetime desktop,
+        CommandLineOptions cmdOptions)
+    {
+        services.AddSingleton(cmdOptions);
+        services.AddSingleton<IWindowManagerService, WindowManagerService>(prov =>
+            new WindowManagerService(prov, desktop));
+        services.AddSingleton<IInAppNotificationService, InAppNotificationService>(_ =>
+            new InAppNotificationService(desktop));
+        services.AddSingleton<IMessageBoxManagerService, MessageBoxManagerService>(_ =>
+            new MessageBoxManagerService(desktop));
+        services.AddSingleton<IClipboardService, ClipboardService>(_ =>
+            new ClipboardService(desktop));
+
+        services.AddAutoMapper(_configureMappings);
+        services.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(pr =>
+            ApplicationSettingsService.GenerateApplicationSettingsService(
+                pr.GetRequiredService<ILogSystemManager>(),
+                cmdOptions.ReinitSettings,
+                pr.GetRequiredService<IDatabaseService>().GetVersionBeforeUpdate(),
+                pr.GetRequiredService<IMapper>()));
+        return services;
+    }
+
+    public static async Task<IServiceCollection> AddPlatformNotificationAsync(this IServiceCollection services)
     {
         try
         {
@@ -100,19 +129,24 @@ public static class ServiceCollectionExtensions
             ClassLogger.Warn(e, "Failed to apply native notification - Using fallback options.");
             services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
         }
-
-        services.AddAutoMapper(cfg =>
+        
+        return services;
+    }
+    
+    private static void _configureMappings(IMapperConfigurationExpression cfg)
+    {
+        var sameTypeMappings = new List<Type>
         {
-            cfg.CreateMap<HamlibSettings, HamlibSettings>();
-            cfg.CreateMap<FLRigSettings, FLRigSettings>();
-            cfg.CreateMap<OmniRigSettings, OmniRigSettings>();
-            cfg.CreateMap<CloudlogSettings, CloudlogSettings>();
-            cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
-            cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
-            cfg.CreateMap<BasicSettings, BasicSettings>();
-            cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
-        });
-        // Register all view models as singletons
-        services.AddSingleton<MainWindow>();
+            typeof(HamlibSettings),
+            typeof(FLRigSettings),
+            typeof(OmniRigSettings),
+            typeof(CloudlogSettings),
+            typeof(UDPServerSettings),
+            typeof(QsoSyncAssistantSettings),
+            typeof(BasicSettings),
+            typeof(ApplicationSettings)
+        };
+
+        foreach (var mapType in sameTypeMappings) cfg.CreateMap(mapType, mapType);
     }
 }

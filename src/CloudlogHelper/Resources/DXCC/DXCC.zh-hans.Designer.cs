@@ -2354,5 +2354,11 @@ namespace CloudlogHelper.Resources.DXCC {
                 return ResourceManager.GetString("Zimbabwe", resourceCulture);
             }
         }
+        
+        public static string externallog {
+            get {
+                return ResourceManager.GetString("externallog", resourceCulture);
+            }
+        }
     }
 }

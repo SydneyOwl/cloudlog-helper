@@ -262,7 +262,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                         }
 
                         if (await _dbService.IsQsoIgnored(
-                                IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i]))))
+                                IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i], DXCCKeys.locallog))))
                         {
                             _logProgress(
                                 $"QSO: {compareRes[i].Call} {compareRes[i].Mode} is not recorded, but it's marked as ignored.");
@@ -286,7 +286,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                     {
                         MessageBus.Current.SendMessage(new QsoUploadRequested
                         {
-                            QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x)).ToList()
+                            QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x, DXCCKeys.locallog)).ToList()
                         });
                     });
 

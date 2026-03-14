@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using CloudlogHelper.Enums;
 
 namespace CloudlogHelper.Services.Interfaces;
 
@@ -13,6 +14,7 @@ public interface IWindowManagerService
     Task<T?> CreateAndShowWindowByVm<T>(Type wType, Window? toplevel = null, bool dialog = true);
 
     Task CreateAndShowWindowByVm(Type wType, Window? toplevel = null, bool dialog = true);
+    Task CreateAndShowWindowByVm(PluginControllableWindow wType, Window? toplevel = null, bool dialog = true);
 
     T GetViewModelInstance<T>();
 

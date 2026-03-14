@@ -273,14 +273,9 @@ public class PbMsgConverter
         };
     }
 
-    /// <summary>
-    /// Convert CloudlogHelper RecordedCallsignDetail to protobuf RecordedCallsignDetail message.
-    /// </summary>
-    /// <param name="detail">The C# model to convert</param>
-    /// <returns>A protobuf RecordedCallsignDetail message</returns>
-    public static ClhInternalMessage ToPbRecordedCallsignDetail(RecordedCallsignDetail detail)
+    public static ClhQSODetail ToPbRecordedQSODetail(RecordedCallsignDetail detail)
     {
-        var pbDetail = new ClhQSOUploadStatusChanged()
+         var pbDetail = new ClhQSODetail()
         {
             Uuid = detail.Uuid,
             OriginalCountryName = detail.OriginalCountryName ?? "",
@@ -314,7 +309,7 @@ public class PbMsgConverter
             RawData = detail.RawData?.ToString() ?? "",
             FailReason = detail.FailReason ?? "",
             UploadStatus = MapUploadStatus(detail.UploadStatus),
-            ForcedUpload = detail.ForcedUpload
+            ForcedUpload = detail.ForcedUpload,
         };
 
         // Copy uploaded services map
@@ -329,10 +324,23 @@ public class PbMsgConverter
             pbDetail.UploadedServicesErrorMessage[kvp.Key] = kvp.Value;
         }
 
+        return pbDetail;
+    }
+
+    /// <summary>
+    /// Convert CloudlogHelper RecordedCallsignDetail to protobuf RecordedCallsignDetail message.
+    /// </summary>
+    /// <param name="detail">The C# model to convert</param>
+    /// <returns>A protobuf RecordedCallsignDetail message</returns>
+    public static ClhInternalMessage ToPbQSOUploadStatusChanged(RecordedCallsignDetail detail)
+    {
         var tmp = new ClhInternalMessage
         {
             Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
-            QsoUploadStatus = pbDetail
+            QsoUploadStatus = new ClhQSOUploadStatusChanged()
+            {
+                Detail = ToPbRecordedQSODetail(detail),
+            }
         };
 
         return tmp;

@@ -16,6 +16,7 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 + Includes a rich set of charts and utilities - polar signal map, distance distribution map, global heatmap, QSO comparison assistant, etc.,
 + Portable and installation-free — ready to run right out of the box.
 + Native support for Windows / Linux / macOS.
++ Supports software control via provided SDKs ([Golang](https://github.com/SydneyOwl/clh-plugin-go-sdk) / [C#](https://github.com/SydneyOwl/clh-plugin-csharp-sdk)).
 + Easily integrates with new logging systems and custom backends, with support for pushing radio and decoded QSO data to user-defined APIs.
 + Optimized for resource-constrained environments — runs reliably on low-end hardware.
 
@@ -383,10 +384,28 @@ The relevant data structure is defined below:
 You can find examples in the `Demo` folder.
 
 ### 🧩 Plugins
-CLH has a built-in plugin system that supports interaction with third-party plugins. You can freely develop plugins using the provided SDK. 
-Currently, CLH can actively push internal information/station information/decoding information to plugins, but it does not support plugins issuing commands to CLH.
+
+Starting from v0.3.2, CLH has a built-in plugin system that supports interaction with third-party plugins. You can freely develop plugins using the provided SDK. 
+
+Basical functions including:
+
++ View current QSO queue status and details (QueryQsoQueueSnapshot).
++ Upload external QSOs by sending ADIF text (CommandUploadExternalQSO / UploadExternalQsoAsync).
++ Trigger re-upload for specific QSOs using qsoIds (multiple IDs separated by ;;;) (CommandTriggerQsoReupload).
++ Read current rig snapshot: backend, endpoint, frequency, mode, split, power (QueryRigSnapshot).
++ Read current UDP server snapshot: running state + bind address (QueryUdpSnapshot).
++ Read current settings snapshot (QuerySettingsSnapshot).
++ Read full runtime snapshot in one request (QueryRuntimeSnapshot).
++ Read server info: version, uptime, keepalive timeout, connected plugin count (QueryServerInfo).
++ Read connected plugin list + plugin metadata/subscriptions (QueryConnectedPlugins).
++ Read plugin telemetry: rx/tx counts, control errors, last roundtrip ms (QueryPluginTelemetry).
++ Control CLH UI: show/hide main window, open Settings/About/QSO Assistant/Station Statistics/Polar Chart windows.
++ Control services: toggle UDP server, toggle rig backend polling, switch rig backend (Hamlib, FLRig, OmniRig).
++ Subscribe to events: server status, plugin lifecycle, WSJT-X messages, realtime decode, batched decode, rig data, QSO upload status, QSO queue status, settings changed, plugin telemetry.
 
 Golang SDK: [clh-plugin-go-sdk](https://github.com/SydneyOwl/clh-plugin-go-sdk)
+
+C# SDK: [clh-plugin-csharp-sdk](https://github.com/SydneyOwl/clh-plugin-csharp-sdk)
 
 ## 🙏 Acknowledgments
 
