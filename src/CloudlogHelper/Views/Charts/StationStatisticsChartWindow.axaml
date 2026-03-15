@@ -89,20 +89,24 @@
             <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}" IsChecked="{Binding AutoSwitchEnabled}"
                       VerticalAlignment="Center" Margin="20,0,5,0" />
 
+            <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}"
+                      IsChecked="{Binding FilterDupeCallsign}"
+                      VerticalAlignment="Center" Margin="0,0,5,0" />
+
             <ComboBox ItemsSource="{Binding Bands}"
                       SelectedValue="{Binding SelectedBand}"
                       VerticalAlignment="Center" Width="80" />
 
-            <TextBlock Margin="10,0,0,0"
-                       Text="{I18N {x:Static resources:LangKeys.samplecount}}"
-                       Foreground="{DynamicResource HighlightForegroundBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" FontWeight="Black" />
+            <!-- <TextBlock Margin="10,0,0,0" -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.samplecount}}" -->
+            <!--            Foreground="{DynamicResource HighlightForegroundBrush}" -->
+            <!--            HorizontalAlignment="Center" -->
+            <!--            VerticalAlignment="Center" FontWeight="Black" /> -->
 
-            <TextBlock Text="{Binding SampleCount}"
-                       Foreground="{DynamicResource HighlightForegroundBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" FontWeight="Black" />
+            <!-- <TextBlock Text="{Binding SampleCount}" -->
+            <!--            Foreground="{DynamicResource HighlightForegroundBrush}" -->
+            <!--            HorizontalAlignment="Center" -->
+            <!--            VerticalAlignment="Center" FontWeight="Black" /> -->
 
             <TextBlock Margin="30,0,0,0"
                        Text="{Binding LastDataUpdatedAt}"

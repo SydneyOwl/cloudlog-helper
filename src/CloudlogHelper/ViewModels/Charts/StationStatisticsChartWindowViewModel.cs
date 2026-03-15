@@ -57,6 +57,8 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     private readonly BasicSettings _basicSettings;
 
     private readonly IChartDataCacheService _chartDataCacheService;
+    
+    private Image? _worldMapImage;
 
     public StationStatisticsChartWindowViewModel()
     {
@@ -83,14 +85,14 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         _plotCache[PlotType.StationBearing] = PlotControl.Multiplot.GetPlot(2);
         _plotCache[PlotType.WorldHeatmap] = PlotControl.Multiplot.GetPlot(3);
 
-        _chartDataCacheService.GetItemAddedObservable()
-            .Do(item => SampleCount += 1)
-            .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleSec))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ => { UpdateChart(); });
-
         this.WhenActivated(disposable =>
         {
+            _chartDataCacheService.GetItemAddedObservable()
+                .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleSec))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(_ => { UpdateChart(); })
+                .DisposeWith(disposable);
+            
             this.WhenAnyValue(x => x.SelectedChart)
                 .Select(selected => selected == 4 || selected == 0)
                 .BindTo(this, x => x.ShouldShowLocationButton);
@@ -99,7 +101,8 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
                     x => x.SelectedClient,
                     x => x.SelectedMode,
                     x => x.UpdatePaused,
-                    x => x.ShowLocation)
+                    x => x.ShowLocation,
+                    x => x.FilterDupeCallsign)
                 .Throttle(TimeSpan.FromMilliseconds(200))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ => UpdateChart())
@@ -116,7 +119,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     public ReactiveCommand<Unit, Unit> ClearChart { get; }
     
     public ReactiveCommand<Unit, Unit> ChangeSingleChart { get; }
-    [Reactive] public int SampleCount { get; set; }
     
     [Reactive] public int SelectedChart  {get; set; }
     
@@ -161,26 +163,23 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         if (SelectedChart == 5) SelectedChart = 0;
     }
 
-    private void _updatePlot_top10decoded()
+    private void _updatePlot_top10decoded(StationChartDataSnapshot chartData)
     {
         ClassLogger.Trace("Updating bar1.");
 
         var plot1 = _plotCache[PlotType.TopDXCC];
         plot1.Clear();
 
-        var bandData = _chartDataCacheService.GetStationCountByBand(SelectedBand);
-        if (bandData is null)
-        {
-            plot1.Title($"Top 10 DXCCs - {SelectedBand} Band\n(No data available)");
-            return;
-        }
-
-        var orderedData = bandData.OrderByDescending(x => x.Value)
+        var orderedData = chartData.StationCountByDxcc.OrderByDescending(x => x.Value)
             .Where(x => x.Value is not null && x.Value > 0)
             .Take(10)
             .ToList();
 
-        if (!orderedData.Any()) return;
+        if (!orderedData.Any())
+        {
+            plot1.Title($"Top 10 DXCCs - {SelectedBand} Band\n(No data available)");
+            return;
+        }
 
         var ticks = new List<Tick>();
         var bars = new List<Bar>();
@@ -218,7 +217,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         plot1.Axes.AutoScale();
     }
 
-    private void _updatePlot_distance()
+    private void _updatePlot_distance(StationChartDataSnapshot chartData)
     {
         ClassLogger.Trace("Updating distance histogram.");
 
@@ -229,9 +228,9 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         var plot2 = _plotCache[PlotType.StationDistance];
         plot2.Clear();
 
-        var bandData = _chartDataCacheService.GetDistanceHistogramByBand(SelectedBand);
+        var bandData = chartData.DistanceHistogram;
 
-        if (bandData is null || bandData.Counts.Sum() == 0)
+        if (bandData.Counts.Sum() == 0)
         {
             plot2.Title($"Station Distance Distribution - {SelectedBand} Band\n(No data available)");
             return;
@@ -253,7 +252,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         plot2.Axes.AutoScale();
     }
 
-    private void _updatePlot_bearing()
+    private void _updatePlot_bearing(StationChartDataSnapshot chartData)
     {
         ClassLogger.Trace("Updating bearing histogram.");
 
@@ -264,9 +263,9 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         var plot3 = _plotCache[PlotType.StationBearing];
         plot3.Clear();
 
-        var bandData = _chartDataCacheService.GetBearingHistogramByBand(SelectedBand);
+        var bandData = chartData.BearingHistogram;
 
-        if (bandData is null || bandData.Counts.Sum() == 0)
+        if (bandData.Counts.Sum() == 0)
         {
             plot3.Title($"Station Bearing Distribution - {SelectedBand} Band\n(No data available)");
             return;
@@ -311,7 +310,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         // plot3.Grid.MajorLineStyle.Width = 0.5f;
     }
 
-    private void _updatePlot_world_heatmap()
+    private void _updatePlot_world_heatmap(StationChartDataSnapshot chartData)
     {
         ClassLogger.Trace("Updating heatmap plot.");
 
@@ -334,20 +333,14 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         plot4!.Axes.Rules.Add(maximumSpan);
 
-        var resourceStream = ApplicationStartUpUtil.GetSingleResourceStream(DefaultConfigs.DefaultWorldMapFile);
-        if (resourceStream is null)
+        if (!TryLoadWorldMapImage())
         {
-            ClassLogger.Error("Resource stream of map is null");
             plot4.Title($"World heatmap(No map available) - {SelectedBand} Band");
             return;
         }
 
-        using var ms = new MemoryStream();
-        resourceStream.CopyTo(ms);
-        var img = new Image(ms.ToArray());
-
         CoordinateRect worldRect = new(-180, 180, -90, 90);
-        plot4.Add.ImageRect(img, worldRect);
+        plot4.Add.ImageRect(_worldMapImage!, worldRect);
         
         if (ShowLocation)
         {
@@ -360,9 +353,8 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             marker.Shape = MarkerShape.HashTag;
         }
 
-        var gridStationCountByBand = _chartDataCacheService.GetGridStationCountByBand(SelectedBand);
-        // gridStationCountByBand = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
-        if (gridStationCountByBand is null || gridStationCountByBand.Cast<double>().All(x => x == 0))
+        var gridStationCountByBand = chartData.GridStationCount;
+        if (gridStationCountByBand.Cast<double>().All(x => x == 0))
         {
             plot4.Title($"World heatmap(No data available) - {SelectedBand} Band");
             return;
@@ -383,7 +375,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     private void ClearData()
     {
         _chartDataCacheService.ClearAccuBuffer();
-        SampleCount = 0;
         UpdateChart();
     }
 
@@ -410,10 +401,29 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ShowErrorMsg = false;
             IsExecutingChartUpdate = true;
             ClassLogger.Debug("Updating statistic");
-            _updatePlot_top10decoded();
-            _updatePlot_distance();
-            _updatePlot_bearing();
-            _updatePlot_world_heatmap();
+            var chartDataSnapshot =
+                _chartDataCacheService.GetStationChartDataSnapshotByBand(SelectedBand, FilterDupeCallsign);
+            switch (SelectedChart)
+            {
+                case 1:
+                    _updatePlot_top10decoded(chartDataSnapshot);
+                    break;
+                case 2:
+                    _updatePlot_distance(chartDataSnapshot);
+                    break;
+                case 3:
+                    _updatePlot_bearing(chartDataSnapshot);
+                    break;
+                case 4:
+                    _updatePlot_world_heatmap(chartDataSnapshot);
+                    break;
+                default:
+                    _updatePlot_top10decoded(chartDataSnapshot);
+                    _updatePlot_distance(chartDataSnapshot);
+                    _updatePlot_bearing(chartDataSnapshot);
+                    _updatePlot_world_heatmap(chartDataSnapshot);
+                    break;
+            }
             _refreshTheme();
             ClassLogger.Debug("Charts updated");
         }
@@ -529,4 +539,22 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ClassLogger.Error(e, "Error adding fake data");
         }
     }
+    
+    private bool TryLoadWorldMapImage()
+    {
+        if (_worldMapImage is not null) return true;
+
+        var resourceStream = ApplicationStartUpUtil.GetSingleResourceStream(DefaultConfigs.DefaultWorldMapFile);
+        if (resourceStream is null)
+        {
+            ClassLogger.Error("Resource stream of map is null");
+            return false;
+        }
+
+        using var ms = new MemoryStream();
+        resourceStream.CopyTo(ms);
+        _worldMapImage = new Image(ms.ToArray());
+        return true;
+    }
+
 }

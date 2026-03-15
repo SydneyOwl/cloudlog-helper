@@ -16,6 +16,7 @@ public interface IChartDataCacheService
     Histogram? GetDistanceHistogramByBand(string? band);
     Histogram? GetBearingHistogramByBand(string? band);
     public Dictionary<string, double?>? GetStationCountByBand(string? band);
+    StationChartDataSnapshot GetStationChartDataSnapshotByBand(string? band, bool filterDupeByCallsign = false);
     void Add(ChartQSOPoint item);
     void Clear();
     void ClearPolarBuffer();
