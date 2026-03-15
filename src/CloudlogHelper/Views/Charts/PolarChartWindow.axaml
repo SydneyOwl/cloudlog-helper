@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:charts1="clr-namespace:CloudlogHelper.ViewModels.Charts"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
-        Width="850" Height="650"
+        Width="850" Height="750"
         CanResize="True"
         x:Class="CloudlogHelper.Views.Charts.PolarChartWindow"
         Title="信号极坐标图"
@@ -98,6 +98,10 @@
 
                 <CheckBox Content="{I18N {x:Static resources:LangKeys.showdensitycolor}}"
                           IsChecked="{Binding ShowDestColor}"
+                          Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.showcoastline}}"
+                          IsChecked="{Binding ShowSimpleMap}"
                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 
                 <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}"

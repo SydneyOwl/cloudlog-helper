@@ -788,4 +788,7 @@
     <data name="enableplugin" xml:space="preserve">
         <value>プラグイン機能を有効にする</value>
     </data>
+    <data name="showcoastline" xml:space="preserve">
+        <value>海岸線を描画</value>
+    </data>
 </root>

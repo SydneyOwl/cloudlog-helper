@@ -789,4 +789,7 @@
     <data name="enableplugin" xml:space="preserve">
         <value>啟用插件功能</value>
     </data>
+    <data name="showcoastline" xml:space="preserve">
+        <value>顯示海岸線</value>
+    </data>
 </root>

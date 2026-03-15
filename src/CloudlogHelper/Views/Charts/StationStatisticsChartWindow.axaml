@@ -96,6 +96,10 @@
             <ComboBox ItemsSource="{Binding Bands}"
                       SelectedValue="{Binding SelectedBand}"
                       VerticalAlignment="Center" Width="80" />
+            
+            <ComboBox ItemsSource="{Binding Clients}"
+                      SelectedValue="{Binding SelectedClient}"
+                      VerticalAlignment="Center" Width="100" />
 
             <!-- <TextBlock Margin="10,0,0,0" -->
             <!--            Text="{I18N {x:Static resources:LangKeys.samplecount}}" -->
@@ -108,11 +112,11 @@
             <!--            HorizontalAlignment="Center" -->
             <!--            VerticalAlignment="Center" FontWeight="Black" /> -->
 
-            <TextBlock Margin="30,0,0,0"
-                       Text="{Binding LastDataUpdatedAt}"
-                       Foreground="{DynamicResource HighlightForegroundBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" FontWeight="Black" />
+            <!-- <TextBlock Margin="30,0,0,0" -->
+            <!--            Text="{Binding LastDataUpdatedAt}" -->
+            <!--            Foreground="{DynamicResource HighlightForegroundBrush}" -->
+            <!--            HorizontalAlignment="Center" -->
+            <!--            VerticalAlignment="Center" FontWeight="Black" /> -->
 
         </StackPanel>
 

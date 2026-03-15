@@ -1664,6 +1664,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 展示海岸线.
+        /// </summary>
+        public static string showcoastline {
+            get {
+                return ResourceManager.GetString("showcoastline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 展示密度颜色.
         /// </summary>
         public static string showdensitycolor {

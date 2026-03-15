@@ -795,4 +795,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="enableplugin" xml:space="preserve">
         <value>Enable plugins</value>
     </data>
+    <data name="showcoastline" xml:space="preserve">
+        <value>Show coast line</value>
+    </data>
 </root>

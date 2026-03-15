@@ -572,7 +572,7 @@ namespace CloudlogHelper.Resources.Language {
         ///
         ///The developers assume no responsibility for any data loss, device damage, or other losses that may result from the use of this software.
         ///
-        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/ [rest of string was truncated]&quot;;.
+        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudl [rest of string was truncated]&quot;;.
         /// </summary>
         public static string disclaimer {
             get {
@@ -1659,6 +1659,15 @@ namespace CloudlogHelper.Resources.Language {
         public static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show coast line.
+        /// </summary>
+        public static string showcoastline {
+            get {
+                return ResourceManager.GetString("showcoastline", resourceCulture);
             }
         }
         

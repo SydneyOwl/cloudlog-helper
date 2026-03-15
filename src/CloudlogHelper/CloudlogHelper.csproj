@@ -109,6 +109,7 @@
         <None Remove="Hamlib\**"/>
         <None Remove="cloudlog-helper.zip"/>
         <EmbeddedResource Include="Resources\NE2_50M_SR_W_proc_small.jpg"/>
+        <EmbeddedResource Include="Resources\polar_coastline_no_borders_lines.png"/>
         <EmbeddedResource Update="Resources\Language\Language.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>

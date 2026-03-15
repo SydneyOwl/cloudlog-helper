@@ -1663,6 +1663,15 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 海岸線を描画.
+        /// </summary>
+        public static string showcoastline {
+            get {
+                return ResourceManager.GetString("showcoastline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 密度色を表示.
         /// </summary>
         public static string showdensitycolor {

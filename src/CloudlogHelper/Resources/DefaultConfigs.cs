@@ -344,6 +344,11 @@ public class DefaultConfigs
     public const string DefaultWorldMapFile = "NE2_50M_SR_W_proc_small.jpg";
 
     /// <summary>
+    ///     Polar chart coastline source map
+    /// </summary>
+    public const string DefaultPolarCoastlineMapFile = "polar_coastline_no_borders_lines.png";
+
+    /// <summary>
     ///     Default WorldHeatmapWidth(lon)
     /// </summary>
     public const int WorldHeatmapWidth = 360;
