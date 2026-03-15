@@ -47,16 +47,45 @@ public struct ChartQSOPoint
 
     private sealed class ChartQsoPointEqualityComparer : IEqualityComparer<ChartQSOPoint>
     {
+        private static readonly StringComparer StringComparer = StringComparer.OrdinalIgnoreCase;
+
         public bool Equals(ChartQSOPoint x, ChartQSOPoint y)
         {
-            return x.DxCallsign == y.DxCallsign && x.Mode == y.Mode && x.Band == y.Band && x.Client == y.Client;
+            return StringComparer.Equals(x.DxCallsign, y.DxCallsign)
+                   && StringComparer.Equals(x.Mode, y.Mode)
+                   && StringComparer.Equals(x.Band, y.Band)
+                   && StringComparer.Equals(x.Client, y.Client);
         }
 
         public int GetHashCode(ChartQSOPoint obj)
         {
-            return HashCode.Combine(obj.DxCallsign, obj.Mode, obj.Band, obj.Client);
+            return HashCode.Combine(
+                StringComparer.GetHashCode(obj.DxCallsign ?? string.Empty),
+                StringComparer.GetHashCode(obj.Mode ?? string.Empty),
+                StringComparer.GetHashCode(obj.Band ?? string.Empty),
+                StringComparer.GetHashCode(obj.Client ?? string.Empty));
+        }
+    }
+
+    private sealed class ChartQsoPointByBandAndCallsignEqualityComparer : IEqualityComparer<ChartQSOPoint>
+    {
+        private static readonly StringComparer StringComparer = StringComparer.OrdinalIgnoreCase;
+
+        public bool Equals(ChartQSOPoint x, ChartQSOPoint y)
+        {
+            return StringComparer.Equals(x.Band, y.Band)
+                   && StringComparer.Equals(x.DxCallsign, y.DxCallsign);
+        }
+
+        public int GetHashCode(ChartQSOPoint obj)
+        {
+            return HashCode.Combine(
+                StringComparer.GetHashCode(obj.Band ?? string.Empty),
+                StringComparer.GetHashCode(obj.DxCallsign ?? string.Empty));
         }
     }
 
     public static IEqualityComparer<ChartQSOPoint> ChartQsoPointComparer { get; } = new ChartQsoPointEqualityComparer();
+    public static IEqualityComparer<ChartQSOPoint> BandAndCallsignComparer { get; } =
+        new ChartQsoPointByBandAndCallsignEqualityComparer();
 }

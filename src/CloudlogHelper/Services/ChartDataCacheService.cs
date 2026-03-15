@@ -21,24 +21,35 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
     private readonly Subject<ChartQSOPoint> _itemAddedSubject = new();
     private readonly object _lock = new();
 
+    // heatmap
     private readonly Dictionary<string, double[,]> _accumulatedGridStationCount =
         new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, double[,]> _dedupGridStationCount =
+        new(StringComparer.OrdinalIgnoreCase);
 
+    // azimuth
     private readonly Dictionary<string, Histogram> _accumulatedStationBearing =
         new(StringComparer.OrdinalIgnoreCase);
-
-    // <Band, <Dxcc, count>>
-    private readonly Dictionary<string, Dictionary<string, double?>> _accumulatedStationCount =
+    private readonly Dictionary<string, Histogram> _dedupStationBearing =
         new(StringComparer.OrdinalIgnoreCase);
 
-    // <Band, Histogram>
+    // <Band, <Dxcc, count>> DXCC
+    private readonly Dictionary<string, Dictionary<string, double?>> _accumulatedStationCount =
+        new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Dictionary<string, double?>> _dedupStationCount =
+        new(StringComparer.OrdinalIgnoreCase);
+
+    // <Band, Histogram> distance
     private readonly Dictionary<string, Histogram> _accumulatedStationDistance =
+        new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Histogram> _dedupStationDistance =
         new(StringComparer.OrdinalIgnoreCase);
 
     // <Band, <Callsign, latest point>>
     private readonly Dictionary<string, Dictionary<string, ChartQSOPoint>> _latestStationPointByBandAndCallsign =
         new(StringComparer.OrdinalIgnoreCase);
 
+    // polar
     private ChartQSOPoint[] _buffer = new ChartQSOPoint[DefaultConfigs.DefaultChartDataCacheNumber];
     private int _count;
     private int _nextIndex;
@@ -82,7 +93,11 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
                         _latestStationPointByBandAndCallsign[item.Band] = dedupeCache;
                     }
 
+                    if (dedupeCache.TryGetValue(item.DxCallsign, out var oldPoint))
+                        _applyPointToDedupAccumulators(oldPoint, -1);
+
                     dedupeCache[item.DxCallsign] = item;
+                    _applyPointToDedupAccumulators(item, 1);
                 }
 
                 if (item.IsAccurate)
@@ -150,6 +165,10 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             _accumulatedStationDistance.Clear();
             _accumulatedGridStationCount.Clear();
             _latestStationPointByBandAndCallsign.Clear();
+            _dedupStationCount.Clear();
+            _dedupStationBearing.Clear();
+            _dedupStationDistance.Clear();
+            _dedupGridStationCount.Clear();
         }
     }
 
@@ -266,9 +285,11 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
 
         var distanceHistogram = _accumulatedStationDistance.GetValueOrDefault(band)
                                 ?? Histogram.WithBinCount(50, 0, 20000);
+        distanceHistogram = _cloneDistanceHistogram(distanceHistogram);
 
         var bearingHistogram = _accumulatedStationBearing.GetValueOrDefault(band)
                                ?? Histogram.WithBinSize(22.5, 0, 360);
+        bearingHistogram = _cloneBearingHistogram(bearingHistogram);
 
         var gridSource = _accumulatedGridStationCount.GetValueOrDefault(band);
         var grid = gridSource is null
@@ -280,26 +301,142 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
 
     private StationChartDataSnapshot _buildDupeFilteredSnapshotByBand(string band)
     {
-        var stationCount = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
-        var distanceHistogram = Histogram.WithBinCount(50, 0, 20000);
-        var bearingHistogram = Histogram.WithBinSize(22.5, 0, 360);
-        var grid = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
+        var stationCountSource = _dedupStationCount.GetValueOrDefault(band);
+        var stationCount = stationCountSource is null
+            ? new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, double?>(stationCountSource, StringComparer.OrdinalIgnoreCase);
 
-        if (!_latestStationPointByBandAndCallsign.TryGetValue(band, out var callsignPoints))
-            return new StationChartDataSnapshot(stationCount, distanceHistogram, bearingHistogram, grid);
+        var distanceSource = _dedupStationDistance.GetValueOrDefault(band)
+                             ?? Histogram.WithBinCount(50, 0, 20000);
+        var distanceHistogram = _cloneDistanceHistogram(distanceSource);
 
-        foreach (var point in callsignPoints.Values)
-        {
-            if (!stationCount.TryGetValue(point.DXCC, out var currCount)) currCount = 0;
-            stationCount[point.DXCC] = currCount + 1;
+        var bearingSource = _dedupStationBearing.GetValueOrDefault(band)
+                            ?? Histogram.WithBinSize(22.5, 0, 360);
+        var bearingHistogram = _cloneBearingHistogram(bearingSource);
 
-            if (!point.IsAccurate) continue;
-            if (point.Distance >= 0) distanceHistogram.Add(point.Distance);
-            if (point.Azimuth >= 0) bearingHistogram.Add(point.Azimuth);
-            _accumulateGridPoint(grid, point.Latitude, point.Longitude);
-        }
+        var gridSource = _dedupGridStationCount.GetValueOrDefault(band);
+        var grid = gridSource is null
+            ? new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth]
+            : (double[,])gridSource.Clone();
 
         return new StationChartDataSnapshot(stationCount, distanceHistogram, bearingHistogram, grid);
+    }
+
+    private void _applyPointToDedupAccumulators(ChartQSOPoint point, int delta)
+    {
+        if (delta == 0) return;
+
+        var stationCountByBand = _getOrCreateDedupStationCount(point.Band);
+        _applyStationCountDelta(stationCountByBand, point.DXCC, delta);
+
+        if (!point.IsAccurate) return;
+
+        var distanceHistogram = _getOrCreateDedupDistanceHistogram(point.Band);
+        _applyHistogramDelta(distanceHistogram, point.Distance, delta, 0, 20000);
+
+        var bearingHistogram = _getOrCreateDedupBearingHistogram(point.Band);
+        _applyHistogramDelta(bearingHistogram, point.Azimuth, delta, 0, 360);
+
+        var grid = _getOrCreateDedupGrid(point.Band);
+        _applyGridDelta(grid, point.Latitude, point.Longitude, delta);
+    }
+
+    private static void _applyStationCountDelta(Dictionary<string, double?> stationCountByDxcc, string dxcc, int delta)
+    {
+        if (!stationCountByDxcc.TryGetValue(dxcc, out var rawCount)) rawCount = 0;
+        var nextValue = (rawCount ?? 0) + delta;
+
+        if (nextValue <= 0)
+        {
+            stationCountByDxcc.Remove(dxcc);
+            return;
+        }
+
+        stationCountByDxcc[dxcc] = nextValue;
+    }
+
+    private static void _applyHistogramDelta(Histogram histogram, double value, int delta, double min, double max)
+    {
+        if (value < min || value > max) return;
+
+        var counts = histogram.Counts;
+        if (counts.Length == 0) return;
+
+        var binSize = (max - min) / counts.Length;
+        if (binSize <= 0) return;
+
+        var idx = (int)Math.Floor((value - min) / binSize);
+        if (idx >= counts.Length) idx = counts.Length - 1;
+        if (idx < 0) return;
+
+        var nextValue = counts[idx] + delta;
+        counts[idx] = nextValue < 0 ? 0 : nextValue;
+    }
+
+    private static void _applyGridDelta(double[,] grid, double latitude, double longitude, int delta)
+    {
+        var xIndex = (int)Math.Round((longitude + 180) / 360 * (DefaultConfigs.WorldHeatmapWidth - 1));
+        var yIndex = (int)Math.Round((latitude + 90) / 180 * (DefaultConfigs.WorldHeatmapHeight - 1));
+
+        xIndex = Math.Clamp(xIndex, 0, DefaultConfigs.WorldHeatmapWidth - 1);
+        yIndex = Math.Clamp(yIndex, 0, DefaultConfigs.WorldHeatmapHeight - 1);
+
+        var nextValue = grid[yIndex, xIndex] + delta;
+        grid[yIndex, xIndex] = nextValue < 0 ? 0 : nextValue;
+    }
+
+    private Dictionary<string, double?> _getOrCreateDedupStationCount(string band)
+    {
+        if (_dedupStationCount.TryGetValue(band, out var stationCount)) return stationCount;
+        stationCount = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
+        _dedupStationCount[band] = stationCount;
+        return stationCount;
+    }
+
+    private Histogram _getOrCreateDedupDistanceHistogram(string band)
+    {
+        if (_dedupStationDistance.TryGetValue(band, out var histogram)) return histogram;
+        histogram = Histogram.WithBinCount(50, 0, 20000);
+        _dedupStationDistance[band] = histogram;
+        return histogram;
+    }
+
+    private Histogram _getOrCreateDedupBearingHistogram(string band)
+    {
+        if (_dedupStationBearing.TryGetValue(band, out var histogram)) return histogram;
+        histogram = Histogram.WithBinSize(22.5, 0, 360);
+        _dedupStationBearing[band] = histogram;
+        return histogram;
+    }
+
+    private double[,] _getOrCreateDedupGrid(string band)
+    {
+        if (_dedupGridStationCount.TryGetValue(band, out var grid)) return grid;
+        grid = new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth];
+        _dedupGridStationCount[band] = grid;
+        return grid;
+    }
+
+    private static Histogram _cloneDistanceHistogram(Histogram source)
+    {
+        var histogram = Histogram.WithBinCount(50, 0, 20000);
+        _copyHistogramCounts(source, histogram);
+        return histogram;
+    }
+
+    private static Histogram _cloneBearingHistogram(Histogram source)
+    {
+        var histogram = Histogram.WithBinSize(22.5, 0, 360);
+        _copyHistogramCounts(source, histogram);
+        return histogram;
+    }
+
+    private static void _copyHistogramCounts(Histogram source, Histogram target)
+    {
+        var sourceCounts = source.Counts;
+        var targetCounts = target.Counts;
+        var len = Math.Min(sourceCounts.Length, targetCounts.Length);
+        Array.Copy(sourceCounts, targetCounts, len);
     }
 
     private static void _accumulateGridPoint(double[,] grid, double latitude, double longitude)

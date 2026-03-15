@@ -151,7 +151,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             PlotControl.Plot.Clear();
 
             var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples,
-                    FilterDupeCallsign ? ChartQSOPoint.ChartQsoPointComparer : null,
+                    FilterDupeCallsign ? ChartQSOPoint.BandAndCallsignComparer : null,
                     point => point.Band == SelectedBand
                              // && point.Mode == SelectedMode 
                              && point.Client == SelectedClient && point.Distance >= 0)
