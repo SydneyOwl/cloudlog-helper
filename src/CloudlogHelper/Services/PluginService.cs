@@ -972,14 +972,12 @@ public class PluginService : IPluginService, IDisposable
                     break;
                 }
                 case PipeEnvelopeTopic.CommandShowMainWindow:
-                    await ExecuteMainWindowVisibilityAsync(true);
-                    response.Success = true;
-                    response.Message = "main-window-shown";
+                    response.Success = false;
+                    response.Message = "not-supported";
                     break;
                 case PipeEnvelopeTopic.CommandHideMainWindow:
-                    await ExecuteMainWindowVisibilityAsync(false);
-                    response.Success = true;
-                    response.Message = "main-window-hidden";
+                    response.Success = false;
+                    response.Message = "not-supported";
                     break;
                 case PipeEnvelopeTopic.CommandOpenWindow:
                     if (!envelope.Attributes.TryGetValue("window", out var window)) break;
@@ -1384,25 +1382,6 @@ public class PluginService : IPluginService, IDisposable
                 await _notificationService.SendInfoNotificationAsync(notification.Message);
                 break;
         }
-    }
-
-    private async Task ExecuteMainWindowVisibilityAsync(bool visible)
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            var window = _windowManagerService.GetToplevel(typeof(MainWindowViewModel));
-            if (window is null) throw new InvalidOperationException("Main window is unavailable.");
-
-            if (visible)
-            {
-                window.Show();
-                window.Activate();
-            }
-            else
-            {
-                window.Hide();
-            }
-        });
     }
 
     private (bool Success, string Message) ApplySettingsPatch(PipeSettingsPatch? patch)
