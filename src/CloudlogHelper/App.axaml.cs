@@ -127,6 +127,7 @@ public class App : Application
         desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         mainWindow.Show();
         mainWindow.Focus();
+        _showWizardIfNeeded(mainWindow);
 
         _exitCommand = ReactiveCommand.Create(() =>
         {
@@ -176,6 +177,28 @@ public class App : Application
             // this may fail on Windows 7
             ClassLogger.Warn(ex, "Trayicon failed.");
         }
+    }
+
+    private void _showWizardIfNeeded(Window mainWindow)
+    {
+        var appSettings = _resolveRequiredService<IApplicationSettingsService>().GetCurrentSettings();
+        if (appSettings.SkipWizard) return;
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            try
+            {
+                var wizardWindow = new WizardWindow
+                {
+                    DataContext = _resolveRequiredService<WizardWindowViewModel>()
+                };
+                await wizardWindow.ShowDialog(mainWindow);
+            }
+            catch (Exception ex)
+            {
+                ClassLogger.Error(ex, "Failed to show first-run wizard.");
+            }
+        });
     }
 
     private static void _prepareTempDirectory()

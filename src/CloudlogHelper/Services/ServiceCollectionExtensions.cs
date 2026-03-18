@@ -53,6 +53,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<AskExitOrMinimizeWindowViewModel>();
         services.AddTransient<QsoSyncAssistantWindowViewModel>();
         services.AddTransient<AboutWindowViewModel>();
+        services.AddTransient<WizardWindowViewModel>();
         
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<UDPLogInfoGroupboxUserControlViewModel>();

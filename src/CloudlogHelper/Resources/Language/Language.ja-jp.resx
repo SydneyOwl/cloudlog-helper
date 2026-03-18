@@ -791,4 +791,91 @@
     <data name="showcoastline" xml:space="preserve">
         <value>海岸線を描画</value>
     </data>
+    <data name="wizard_title" xml:space="preserve">
+        <value>初回起動ウィザード</value>
+    </data>
+    <data name="wizard_welcome_title" xml:space="preserve">
+        <value>ようこそ</value>
+    </data>
+    <data name="wizard_basic_title" xml:space="preserve">
+        <value>基本設定</value>
+    </data>
+    <data name="wizard_cloudlog_title" xml:space="preserve">
+        <value>Cloudlog / Wavelog</value>
+    </data>
+    <data name="wizard_thirdparty_title" xml:space="preserve">
+        <value>サードパーティーログ</value>
+    </data>
+    <data name="wizard_rig_title" xml:space="preserve">
+        <value>無線機バックエンド</value>
+    </data>
+    <data name="wizard_welcome_message" xml:space="preserve">
+        <value>Cloudlog Helper へようこそ。このウィザードでは初期設定を行います。</value>
+    </data>
+    <data name="wizard_basic_hint" xml:space="preserve">
+        <value>Maidenheadグリッドは今入力しても、空のまま後で設定しても構いません。</value>
+    </data>
+    <data name="wizard_chart_feature_label" xml:space="preserve">
+        <value>チャート機能を有効にする</value>
+    </data>
+    <data name="wizard_chart_feature_hint" xml:space="preserve">
+        <value>デバイス性能が低い場合は、この機能を無効にしてください。</value>
+    </data>
+    <data name="wizard_cloudlog_hint" xml:space="preserve">
+        <value>Cloudlog/Wavelog を今すぐ接続するか選択してください。</value>
+    </data>
+    <data name="wizard_cloudlog_enable" xml:space="preserve">
+        <value>Cloudlog / Wavelog を接続する</value>
+    </data>
+    <data name="wizard_cloudlog_url" xml:space="preserve">
+        <value>URL</value>
+    </data>
+    <data name="wizard_cloudlog_apikey" xml:space="preserve">
+        <value>APIキー</value>
+    </data>
+    <data name="wizard_cloudlog_station" xml:space="preserve">
+        <value>ステーション</value>
+    </data>
+    <data name="wizard_cloudlog_test_required" xml:space="preserve">
+        <value>続行する前に Cloudlog/Wavelog 接続テストを実行してください。</value>
+    </data>
+    <data name="wizard_cloudlog_station_required" xml:space="preserve">
+        <value>ステーション情報を選択してください。</value>
+    </data>
+    <data name="wizard_thirdparty_hint" xml:space="preserve">
+        <value>サードパーティーログサービスをここで設定できます。後で設定画面からでも構いません。</value>
+    </data>
+    <data name="wizard_rig_hint" xml:space="preserve">
+        <value>現在使用中の無線機バックエンドを選択して設定してください。後で設定することもできます。</value>
+    </data>
+    <data name="wizard_rig_backend_label" xml:space="preserve">
+        <value>現在の無線機バックエンド</value>
+    </data>
+    <data name="wizard_rig_none" xml:space="preserve">
+        <value>今は設定しない</value>
+    </data>
+    <data name="wizard_rig_hamlib" xml:space="preserve">
+        <value>Hamlib</value>
+    </data>
+    <data name="wizard_rig_flrig" xml:space="preserve">
+        <value>FLRig</value>
+    </data>
+    <data name="wizard_rig_omnirig" xml:space="preserve">
+        <value>OmniRig</value>
+    </data>
+    <data name="wizard_omnirig_unavailable" xml:space="preserve">
+        <value>このデバイスでは OmniRig を利用できません。</value>
+    </data>
+    <data name="wizard_skip" xml:space="preserve">
+        <value>今は不要です</value>
+    </data>
+    <data name="wizard_next" xml:space="preserve">
+        <value>次へ</value>
+    </data>
+    <data name="wizard_previous" xml:space="preserve">
+        <value>戻る</value>
+    </data>
+    <data name="wizard_finish" xml:space="preserve">
+        <value>完了</value>
+    </data>
 </root>

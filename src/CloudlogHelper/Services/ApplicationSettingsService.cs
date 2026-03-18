@@ -170,6 +170,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
     private void InitEmptySettings(ThirdPartyLogService[] logServices)
     {
         _draftSettings = new ApplicationSettings();
+        _draftSettings.SkipWizard = false;
         _draftSettings.BasicSettings.InstanceName = ApplicationStartUpUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);

@@ -1,0 +1,290 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
+        xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        mc:Ignorable="d"
+        x:Class="CloudlogHelper.Views.WizardWindow"
+        x:DataType="viewModels:WizardWindowViewModel"
+        Title="{Binding TitleText}"
+        Width="820"
+        Height="680"
+        MinWidth="760"
+        MinHeight="620"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Icon="avares://CloudlogHelper/Assets/icon.png">
+
+    <Window.Styles>
+        <Style Selector="Border.page-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="FontSize" Value="21" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <Style Selector="TextBlock.page-hint">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.field-label">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,6,0,2" />
+        </Style>
+
+        <Style Selector="TextBox.input, ComboBox.input">
+            <Setter Property="MinWidth" Value="260" />
+        </Style>
+
+        <Style Selector="Button.nav-primary">
+            <Setter Property="MinWidth" Value="120" />
+            <Setter Property="Padding" Value="16 8" />
+        </Style>
+
+        <Style Selector="Button.nav-secondary">
+            <Setter Property="MinWidth" Value="120" />
+            <Setter Property="Padding" Value="16 8" />
+        </Style>
+
+        <Style Selector="Border.subsection-card">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.subsection-title">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0 0 0 4" />
+        </Style>
+
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0 0 0 8" />
+        </Style>
+
+        <Style Selector="TextBlock.setting-label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0 0 12 0" />
+            <Setter Property="MinWidth" Value="140" />
+        </Style>
+
+        <Style Selector="ComboBox.setting-control, TextBox.setting-control">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Width" Value="220" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="18" RowSpacing="14">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <StackPanel>
+                <TextBlock Text="{Binding TitleText}" Classes="page-title" />
+                <TextBlock Text="{Binding CurrentStepTitle}" FontWeight="SemiBold" />
+            </StackPanel>
+            <Border Grid.Column="1"
+                    Background="{DynamicResource SystemControlHighlightAltChromeWhiteBrush}"
+                    CornerRadius="16"
+                    Padding="12,6">
+                <TextBlock Text="{Binding StepIndicatorText}" FontWeight="Bold" />
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Classes="page-card">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <StackPanel IsVisible="{Binding ShowWelcomeStep}" Spacing="16">
+                        <TextBlock Text="{Binding WelcomeMessage}" TextWrapping="Wrap" FontSize="16" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding ShowBasicStep}" Spacing="10">
+                        <TextBlock Text="{Binding BasicStepHint}" Classes="page-hint" />
+                        <TextBlock Text="{I18N {x:Static resources:LangKeys.mygrid}}" Classes="field-label" />
+                        <TextBox Classes="input"
+                                 Text="{Binding DraftSettings.BasicSettings.MyMaidenheadGrid}"
+                                 Watermark="e.g. OM89" />
+                        <CheckBox Margin="0,12,0,0"
+                                  Content="{Binding ChartFeatureLabel}"
+                                  IsChecked="{Binding EnableChartFeature}" />
+                        <TextBlock Text="{Binding ChartFeatureHint}" Classes="page-hint" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding ShowCloudlogStep}" Spacing="10">
+                        <TextBlock Text="{Binding CloudlogStepHint}" Classes="page-hint" />
+                        <CheckBox Content="{Binding CloudlogConnectLabel}"
+                                  IsChecked="{Binding ConnectCloudlog}" />
+
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" IsEnabled="{Binding ConnectCloudlog}">
+                            <TextBlock Grid.Row="0" Text="{Binding CloudlogUrlLabel}" Classes="field-label" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Classes="input"
+                                     Text="{Binding DraftSettings.CloudlogSettings.CloudlogUrl}"
+                                     Watermark="{I18N {x:Static resources:LangKeys.urlexample}}" />
+
+                            <TextBlock Grid.Row="1" Text="{Binding CloudlogApiKeyLabel}" Classes="field-label" />
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                <TextBox Classes="input"
+                                         Text="{Binding DraftSettings.CloudlogSettings.CloudlogApiKey}" />
+                                <userControls:TestButtonUserControl DataContext="{Binding CloudlogTestButtonUserControl}" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="2"
+                                       Text="{Binding CloudlogStationLabel}"
+                                       Classes="field-label"
+                                       IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
+                            <ComboBox Grid.Row="2" Grid.Column="1"
+                                      Classes="input"
+                                      IsVisible="{Binding ShowCloudlogStationIdCombobox}"
+                                      ItemsSource="{Binding DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo}"
+                                      SelectedItem="{Binding DraftSettings.CloudlogSettings.CloudlogStationInfo}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding StationId}" />
+                                            <TextBlock Text="{Binding StationProfileName, StringFormat=' ({0})'}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding ShowThirdPartyStep}" Spacing="12">
+                        <TextBlock Text="{Binding ThirdPartyStepHint}" Classes="page-hint" />
+                        <userControls:LogSystemCard DataContext="{Binding}" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding ShowRigBackendStep}" Spacing="10">
+                        <TextBlock Text="{Binding RigStepHint}" Classes="page-hint" />
+                        <TextBlock Text="{Binding RigBackendLabel}" Classes="field-label" />
+                        <ComboBox Classes="input"
+                                  ItemsSource="{Binding RigBackendOptions}"
+                                  SelectedItem="{Binding SelectedRigBackendOption}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DisplayName}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <Border Classes="subsection-card" Padding="12" IsVisible="{Binding ShowHamlibSettings}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Hamlib" Classes="subsection-title" />
+                                <Border Background="DarkOrange" CornerRadius="4" Padding="10" IsVisible="{Binding !HamlibInited}">
+                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.inithamlibfailed}}" />
+                                </Border>
+                                <Grid IsVisible="{Binding HamlibInited}"
+                                      ColumnDefinitions="Auto,*"
+                                      RowDefinitions="Auto,Auto,Auto"
+                                      RowSpacing="8">
+                                    <TextBlock Grid.Row="0" Text="{I18N {x:Static resources:LangKeys.rigmodel}}" Classes="field-label" />
+                                    <ComboBox Grid.Row="0" Grid.Column="1"
+                                              Classes="input"
+                                              ItemsSource="{Binding SupportedHamlibModels}"
+                                              SelectedItem="{Binding DraftSettings.HamlibSettings.SelectedRigInfo}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Model}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                    <TextBlock Grid.Row="1" Text="{I18N {x:Static resources:LangKeys.deviceport}}" Classes="field-label" />
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                        <ComboBox Classes="input"
+                                                  IsEditable="True"
+                                                  Text="{Binding DraftSettings.HamlibSettings.SelectedPort}"
+                                                  ItemsSource="{Binding Ports}" />
+                                        <Button Command="{Binding RefreshPortCommand}" Width="38" Height="32">
+                                            <avalonia:MaterialIcon Kind="Refresh" />
+                                        </Button>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="2" Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="field-label" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Classes="input"
+                                             Text="{Binding DraftSettings.HamlibSettings.PollInterval}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="subsection-card" Padding="12" IsVisible="{Binding ShowFlRigSettings}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="FLRig" Classes="subsection-title" />
+                                <Grid ColumnDefinitions="Auto,*"
+                                      RowDefinitions="Auto,Auto,Auto"
+                                      RowSpacing="8">
+                                    <TextBlock Grid.Row="0" Text="Host" Classes="field-label" />
+                                    <TextBox Grid.Row="0" Grid.Column="1" Classes="input"
+                                             Text="{Binding DraftSettings.FLRigSettings.FLRigHost}" />
+
+                                    <TextBlock Grid.Row="1" Text="Port" Classes="field-label" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Classes="input"
+                                             Text="{Binding DraftSettings.FLRigSettings.FLRigPort}" />
+
+                                    <TextBlock Grid.Row="2" Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="field-label" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Classes="input"
+                                             Text="{Binding DraftSettings.FLRigSettings.PollInterval}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="subsection-card" Padding="12" IsVisible="{Binding ShowOmniRigSettings}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="OmniRig" Classes="subsection-title" />
+                                <Border Background="DarkOrange" CornerRadius="4" Padding="10" IsVisible="{Binding !OmniRigInited}">
+                                    <TextBlock Text="{Binding RigUnavailableHint}" />
+                                </Border>
+                                <Grid IsVisible="{Binding OmniRigInited}"
+                                      ColumnDefinitions="Auto,*"
+                                      RowDefinitions="Auto,Auto"
+                                      RowSpacing="8">
+                                    <TextBlock Grid.Row="0" Text="{I18N {x:Static resources:LangKeys.targetrig}}" Classes="field-label" />
+                                    <ComboBox Grid.Row="0" Grid.Column="1" Classes="input"
+                                              ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}"
+                                              SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}" />
+
+                                    <TextBlock Grid.Row="1" Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="field-label" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Classes="input"
+                                             Text="{Binding DraftSettings.OmniRigSettings.PollInterval}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+            <Button Content="{Binding SkipButtonText}"
+                    IsVisible="{Binding ShowSkipButton}"
+                    Command="{Binding SkipWizardCommand}"
+                    Classes="nav-secondary" />
+            <Button Content="{Binding PreviousButtonText}"
+                    IsVisible="{Binding ShowPreviousButton}"
+                    Command="{Binding PreviousCommand}"
+                    Classes="nav-secondary" />
+            <Button Content="{Binding NextButtonText}"
+                    IsVisible="{Binding ShowNextButton}"
+                    Command="{Binding NextCommand}"
+                    Classes="nav-primary" />
+            <Button Content="{Binding FinishButtonText}"
+                    IsVisible="{Binding ShowFinishButton}"
+                    Command="{Binding FinishCommand}"
+                    Classes="nav-primary" />
+        </StackPanel>
+    </Grid>
+</Window>
