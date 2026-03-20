@@ -14,26 +14,15 @@ namespace CloudlogHelper.Services;
 
 public class InAppNotificationService : IInAppNotificationService, IDisposable
 {
-    private readonly Logger _classLoggger = LogManager.GetCurrentClassLogger();
     private WindowNotificationManager? _manager;
+    private IClassicDesktopStyleApplicationLifetime _desktop;
 
-    public InAppNotificationService(IClassicDesktopStyleApplicationLifetime topLevel)
+    public InAppNotificationService(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        Dispatcher.UIThread.InvokeAsync(async () =>
-        {
-            try
-            {
-                while (topLevel.MainWindow is not MainWindow) await Task.Delay(100);
-                _manager = new WindowNotificationManager(topLevel.MainWindow);
-            }
-            catch (Exception e)
-            {
-                _classLoggger.Error(e);
-            }
-        });
+        _desktop = desktop;
     }
 
-    public InAppNotificationService(Window topLevel)
+    public InAppNotificationService(Window? topLevel)
     {
         _manager = new WindowNotificationManager(topLevel);
     }
@@ -88,13 +77,24 @@ public class InAppNotificationService : IInAppNotificationService, IDisposable
 
     private async Task SendNotificationAsync(string title, string message, NotificationType tp)
     {
+        _initManager();
         if (string.IsNullOrEmpty(message)) return;
         await Dispatcher.UIThread.InvokeAsync(() => { _manager?.Show(new Notification(title, message, tp)); });
     }
 
     private void SendNotificationSync(string title, string message, NotificationType tp)
     {
+        _initManager();
         if (string.IsNullOrEmpty(message)) return;
         Dispatcher.UIThread.Invoke(() => { _manager?.Show(new Notification(title, message, tp)); });
+    }
+
+    private void _initManager()
+    {
+        if (_manager is not null)return;
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            _manager = new WindowNotificationManager(_desktop.MainWindow);
+        });
     }
 }

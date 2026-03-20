@@ -25,6 +25,6 @@ public class DXCCTranslationTest
         Assert.Equal("安达曼和尼科巴岛", TranslationHelper.GetString(DXCCKeys.Andaman_Nicobar_Is));
         Assert.Equal("新胡安岛欧罗巴岛,欧洲", TranslationHelper.GetString(TranslationHelper.ParseToDXCCKey("Juan de Nova, Europa")));
         I18NExtension.Culture = new CultureInfo("aa-ER");
-        Assert.Equal("Accept", TranslationHelper.GetString(LangKeys.accept));
+        Assert.Equal("Accept", TranslationHelper.GetString(LangKeys.Accept));
     }
 }

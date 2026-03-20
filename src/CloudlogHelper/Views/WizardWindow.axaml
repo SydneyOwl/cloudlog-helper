@@ -182,7 +182,7 @@
         </Style>
 
         <Style Selector="Border.feature-chip">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+            <Setter Property="Background" Value="#2878B8" />
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="999" />

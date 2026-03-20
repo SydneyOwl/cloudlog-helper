@@ -74,12 +74,11 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-
-                <Border Grid.Row="3"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="2"
+                <Border Grid.Row="2"
+                        Grid.Column="2"
                         Classes="feature-chip"
                         HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
                         IsVisible="{Binding ShowDetectedServerInstance}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock FontWeight="SemiBold"
