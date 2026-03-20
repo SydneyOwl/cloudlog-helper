@@ -894,4 +894,9 @@ By continuing, you acknowledge that you have read and agree to the above terms a
     <data name="WizardHiThere" xml:space="preserve">
         <value>Hi there!</value>
     </data>
+    <data name="PluginRestartHint" xml:space="preserve">
+        <value>Please save the settings and close the settings page for the changes to the plugin to take effect.
+
+</value>
+    </data>
 </root>

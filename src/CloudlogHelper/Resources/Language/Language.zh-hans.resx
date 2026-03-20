@@ -895,4 +895,7 @@
     <data name="WizardHiThere" xml:space="preserve">
         <value>欢迎使用!</value>
     </data>
+    <data name="PluginRestartHint" xml:space="preserve">
+        <value>请保存设置并关闭设置窗口使对插件的更改生效</value>
+    </data>
 </root>

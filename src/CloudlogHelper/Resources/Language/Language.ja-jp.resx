@@ -887,4 +887,7 @@
     <data name="WizardHiThere" xml:space="preserve">
         <value>ご利用ください!</value>
     </data>
+    <data name="PluginRestartHint" xml:space="preserve">
+        <value>プラグインの変更を有効にするには、設定を保存して設定ページを閉じてください。</value>
+    </data>
 </root>

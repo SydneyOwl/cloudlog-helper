@@ -26,10 +26,6 @@ public partial class SettingsWindow : ReactiveWindow<SettingsWindowViewModel>
 
         this.WhenActivated(disposables =>
         {
-            var notification = new InAppNotificationService(this);
-
-            ViewModel!.Notification = notification;
-
             ViewModel!.DiscardConf
                 .Subscribe(_ =>
                 {

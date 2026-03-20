@@ -35,24 +35,24 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels;
 
+public class ConnectedPluginItem
+{
+    public string Name { get; init; } = string.Empty;
+    public string Version { get; init; } = string.Empty;
+    public string Uuid { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public string LastHeartbeat { get; init; } = string.Empty;
+    public ulong ReceivedMessageCount { get; init; }
+    public ulong SentMessageCount { get; init; }
+    public ulong ControlErrorCount { get; init; }
+    public ulong ControlRequestCount { get; init; }
+    public uint LastRoundtripMs { get; init; }
+        
+    [Reactive] public ReactiveCommand<Unit, Unit> RemovePlugin { get; set; }
+}
+
 public class SettingsWindowViewModel : ViewModelBase
 {
-    public sealed class ConnectedPluginItem
-    {
-        public string Name { get; init; } = string.Empty;
-        public string Version { get; init; } = string.Empty;
-        public string Uuid { get; init; } = string.Empty;
-        public string Description { get; init; } = string.Empty;
-        public string LastHeartbeat { get; init; } = string.Empty;
-        public ulong ReceivedMessageCount { get; init; }
-        public ulong SentMessageCount { get; init; }
-        public ulong ControlErrorCount { get; init; }
-        public ulong ControlRequestCount { get; init; }
-        public uint LastRoundtripMs { get; init; }
-        
-        [Reactive] public ReactiveCommand<Unit, Unit> RemovePlugin { get; set; }
-    }
-
     /// <summary>
     ///     Logger for the class.
     /// </summary>
@@ -67,6 +67,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly IMessageBoxManagerService _messageBoxManagerService;
     private readonly ILogSystemManager _logSystemManager;
     private readonly IPluginService _pluginService;
+    private IInAppNotificationService _notificationService;
 
     public SettingsWindowViewModel()
     {
@@ -163,6 +164,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
         this.WhenActivated(disposables =>
         {
+            _notificationService = new InAppNotificationService(_windowManagerService.GetToplevel(GetType()));
+
             // ensure rig service is not dupe
             this.WhenAnyValue(x => x.DraftSettings.FLRigSettings.PollAllowed,
                     x => x.DraftSettings.HamlibSettings.PollAllowed,
@@ -172,7 +175,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 {
                     if (e.Count(x => x) > 1)
                     {
-                        Notification?.SendWarningNotificationSync(
+                        _notificationService?.SendWarningNotificationSync(
                             TranslationHelper.GetString(LangKeys.DuplicateRigServiceDetected));
                         DraftSettings.FLRigSettings.PollAllowed = false;
                         DraftSettings.OmniRigSettings.PollAllowed = false;
@@ -185,6 +188,14 @@ public class SettingsWindowViewModel : ViewModelBase
                     I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
                 })
                 .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.DraftSettings.BasicSettings.EnablePlugin)
+                .Where(pg => pg)
+                .Take(1)
+                .Subscribe(pg =>
+                {
+                    _notificationService.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.PluginRestartHint));
+                }).DisposeWith(disposables);
 
             var cmds = new[]
             {
@@ -205,7 +216,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 reactiveCommand.ThrownExceptions
                     .Subscribe(err =>
                     {
-                        Notification?.SendErrorNotificationSync(err.Message);
+                        _notificationService?.SendErrorNotificationSync(err.Message);
                         ClassLogger.Error(err);
                     })
                     .DisposeWith(disposables);
@@ -254,7 +265,6 @@ public class SettingsWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> OpenTempDir { get; }
     public ReactiveCommand<Unit, Unit> UpdateBigCty { get; }
 
-    public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
     public LogSystemCardViewModel LogSystemCard { get; }
 
@@ -267,8 +277,8 @@ public class SettingsWindowViewModel : ViewModelBase
 
     private async Task _handleLogSystemTestErrorAsync(Exception ex)
     {
-        if (Notification is null) return;
-        await Notification.SendErrorNotificationAsync(ex.Message);
+        if (_notificationService is null) return;
+        await _notificationService.SendErrorNotificationAsync(ex.Message);
     }
 
     private async Task _initializeOmniRigAsync()
@@ -301,7 +311,7 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() => { OmniRigInited = false; });
             ClassLogger.Error(e," Failed to init omnirig.");
-            await Notification.SendErrorNotificationAsync(e.Message);
+            await _notificationService.SendErrorNotificationAsync(e.Message);
         }
     }
 
@@ -330,7 +340,7 @@ public class SettingsWindowViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() => { HamlibInited = false; });
             ClassLogger.Error(e, "Failed to init hamlib.");
-            await Notification.SendErrorNotificationAsync(e.Message);
+            await _notificationService.SendErrorNotificationAsync(e.Message);
         }
     }
 

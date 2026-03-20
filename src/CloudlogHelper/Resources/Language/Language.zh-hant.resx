@@ -888,4 +888,7 @@
     <data name="WizardHiThere" xml:space="preserve">
         <value>歡迎使用！</value>
     </data>
+    <data name="PluginRestartHint" xml:space="preserve">
+        <value>請儲存設定並關閉設定頁面，使對外掛程式的更改生效。</value>
+    </data>
 </root>
