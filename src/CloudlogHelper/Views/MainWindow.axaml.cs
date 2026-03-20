@@ -97,7 +97,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
                     .Do(_ => _inAppNotification.SendInfoNotificationSync(
-                        TranslationHelper.GetString(LangKeys.qsosyncing)))
+                        TranslationHelper.GetString(LangKeys.QsoSyncing)))
                     .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
                     .DisposeWith(disposables);
             }

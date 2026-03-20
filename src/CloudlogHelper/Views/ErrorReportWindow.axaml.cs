@@ -48,7 +48,7 @@ public partial class ErrorReportWindow : ReactiveWindow<ErrorReportWindowViewMod
             new FilePickerSaveOptions
             {
                 SuggestedFileName = "CrashLog-" + ts + ".log",
-                Title = TranslationHelper.GetString(LangKeys.savelogto)
+                Title = TranslationHelper.GetString(LangKeys.SaveLogTo)
             });
         if (file is not null)
         {

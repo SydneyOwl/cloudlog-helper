@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -11,8 +12,8 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
-using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.UserControls;
 using Flurl.Http;
 using NLog;
@@ -24,6 +25,7 @@ public class LogSystemCard : UserControl
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private LogSystemCardViewModel? ViewModel => DataContext as LogSystemCardViewModel;
 
     public LogSystemCard()
     {
@@ -45,7 +47,7 @@ public class LogSystemCard : UserControl
 
         var title = new TextBlock
         {
-            Text = TranslationHelper.GetString("thirdpartylogsys"),
+            Text = TranslationHelper.GetString(LangKeys.ThirdPartyLogSystem),
             Classes = { "section-title" }
         };
         stackPanel.Children.Add(title);
@@ -249,13 +251,14 @@ public class LogSystemCard : UserControl
 
         var uploadCheckbox = new CheckBox
         {
-            Content = TranslationHelper.GetString("autoqsoupload"),
+            Content = TranslationHelper.GetString(LangKeys.AutoQsoUpload),
             Classes = { "setting-label" },
             [!ToggleButton.IsCheckedProperty] = new Binding("UploadEnabled")
             {
                 Mode = BindingMode.TwoWay,
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            }
+            },
+            MinWidth = 150,
         };
         Grid.SetRow(uploadCheckbox, config.Fields.Count);
         Grid.SetColumn(uploadCheckbox, 0);
@@ -265,7 +268,8 @@ public class LogSystemCard : UserControl
     private void AddTestButton(Grid grid, LogSystemConfig config)
     {
         var testButtonViewModel = new TestButtonUserControlViewModel(
-            ReactiveCommand.CreateFromTask(() => TestConnectionAsync(config)));
+            ReactiveCommand.CreateFromTask(() => TestConnectionAsync(config)),
+            ViewModel?.TestConnectionErrorHandler);
 
         var testButton = new TestButtonUserControl
         {
@@ -291,7 +295,7 @@ public class LogSystemCard : UserControl
         }
         catch (Exception ex)
         {
-            await HandleTestConnectionException(ex);
+            HandleTestConnectionException(ex);
         }
     }
 
@@ -316,7 +320,7 @@ public class LogSystemCard : UserControl
             (field.Value is string stringValue && string.IsNullOrWhiteSpace(stringValue)))
         {
             throw new ArgumentException(
-                $"{TranslationHelper.GetString("fillall")}({field.PropertyName})");
+                $"{TranslationHelper.GetString(LangKeys.FillAllFields)}({field.PropertyName})");
         }
     }
 
@@ -335,7 +339,7 @@ public class LogSystemCard : UserControl
         }
     }
 
-    private async Task HandleTestConnectionException(Exception ex)
+    private void HandleTestConnectionException(Exception ex)
     {
         if (ex is FlurlHttpException flurlEx && flurlEx.InnerException is TaskCanceledException)
         {
@@ -348,12 +352,7 @@ public class LogSystemCard : UserControl
 
         var actualEx = ex is TargetInvocationException tie ? tie.InnerException ?? tie : ex;
         ClassLogger.Error(actualEx, "Failed to test connection");
-        
-        if (DataContext is SettingsWindowViewModel viewModel)
-        {
-            await viewModel.Notification.SendErrorNotificationAsync(actualEx.Message);
-        }
-        
-        throw ex;
+
+        ExceptionDispatchInfo.Capture(actualEx).Throw();
     }
 }

@@ -371,8 +371,8 @@ public class RecordedCallsignDetail : ReactiveObject
     public string FormatToReadableContent(bool concise = false)
     {
         var template = TranslationHelper.GetString(concise
-            ? LangKeys.qsoconcisetemplate
-            : LangKeys.qsotemplate);
+            ? LangKeys.QsoConciseTemplate
+            : LangKeys.QsoTemplate);
 
         return string.Format(template,
             DXCall ?? "N/A",

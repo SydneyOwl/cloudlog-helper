@@ -66,26 +66,26 @@ public class CloudlogUtil
         {
             // on ios seems it returns "Validrw"
             if (result == "Validrw") return string.Empty;
-            if (result == "Validr") return TranslationHelper.GetString(LangKeys.lackwriteaccess);
-            if (result.Contains("Key Invalid")) return TranslationHelper.GetString(LangKeys.invalidapikey);
-            return TranslationHelper.GetString(LangKeys.unable2checkapi);
+            if (result == "Validr") return TranslationHelper.GetString(LangKeys.MissingWriteAccess);
+            if (result.Contains("Key Invalid")) return TranslationHelper.GetString(LangKeys.InvalidApiKey);
+            return TranslationHelper.GetString(LangKeys.UnableToCheckApi);
         }
 
         if (!result.Contains("<status>Valid</status>"))
         {
-            var description = TranslationHelper.GetString(LangKeys.invalidapikey);
+            var description = TranslationHelper.GetString(LangKeys.InvalidApiKey);
             return description;
         }
 
         if (result.Contains("<rights>r</rights>"))
         {
-            var description = TranslationHelper.GetString(LangKeys.lackwriteaccess);
+            var description = TranslationHelper.GetString(LangKeys.MissingWriteAccess);
             return description;
         }
 
         if (!result.Contains("<rights>rw</rights>"))
         {
-            var description = TranslationHelper.GetString(LangKeys.invalidapikey);
+            var description = TranslationHelper.GetString(LangKeys.InvalidApiKey);
             return description;
         }
 

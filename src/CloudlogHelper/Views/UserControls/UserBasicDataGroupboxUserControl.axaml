@@ -14,7 +14,7 @@
         <userControls:UserBasicDataGroupboxUserControlViewModel />
     </Design.DataContext>
 
-    <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.basicinfo}}" 
+    <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.BasicInfo}}" 
                             Margin="10"
                             MaxWidth="480"
                             HorizontalAlignment="Stretch" 
@@ -35,7 +35,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="0" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.op}}"
+                           Text="{I18N {x:Static resources:LangKeys.Operator}}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="0" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeAccentBrush}" 
@@ -50,7 +50,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="1" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.grid}}"
+                           Text="{I18N {x:Static resources:LangKeys.Grid}}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="1" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">
@@ -63,7 +63,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="2" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.dayqsos}}"
+                           Text="{I18N {x:Static resources:LangKeys.DayQsos}}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="2" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">
@@ -76,7 +76,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="3" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.monthqsos}}"
+                           Text="{I18N {x:Static resources:LangKeys.MonthQsos}}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="3" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">
@@ -89,7 +89,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="4" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.yearqsos}}"
+                           Text="{I18N {x:Static resources:LangKeys.YearQsos}}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="4" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">

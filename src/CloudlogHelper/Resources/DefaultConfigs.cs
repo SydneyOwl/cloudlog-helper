@@ -388,6 +388,9 @@ public class DefaultConfigs
     
     public const string AvaresFlagTemplate = "avares://CloudlogHelper/Assets/Flags/";
 
+    public const int CoastlineOverlaySize = 1100;
+    public const double EarthRadiusKm = 6371.0;
+
     /// <summary>
     ///     The default expiration time for the cached return values of the rigctld In seconds.
     ///     This is calculated dynamically when jtdx sending requests.

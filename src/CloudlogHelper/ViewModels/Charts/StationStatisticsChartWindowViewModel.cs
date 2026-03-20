@@ -384,14 +384,14 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.griderror);
+            ErrorMessage = TranslationHelper.GetString(LangKeys.GridError);
             ShowErrorMsg = true;
             return;
         }
 
         if (_basicSettings.DisableAllCharts)
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.chartsdisabled);
+            ErrorMessage = TranslationHelper.GetString(LangKeys.ChartsDisabled);
             ShowErrorMsg = true;
             return;
         }

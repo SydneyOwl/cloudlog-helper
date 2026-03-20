@@ -74,19 +74,19 @@ public class HamlibSettings : ReactiveValidationObject
         this.ClearValidationRules();
         this.ValidationRule(x => x.SelectedRigInfo,
             st => st?.Id is not null,
-            TranslationHelper.GetString(LangKeys.notnull)
+            TranslationHelper.GetString(LangKeys.Required)
         );
         this.ValidationRule(x => x.SelectedPort,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.notnull)
+            TranslationHelper.GetString(LangKeys.Required)
         );
         this.ValidationRule(x => x.ExternalRigctldHostAddress,
             IPAddrUtil.CheckAddress!,
-            TranslationHelper.GetString(LangKeys.invalidaddr)
+            TranslationHelper.GetString(LangKeys.InvalidAddress)
         );
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.pollintervalreq)
+            TranslationHelper.GetString(LangKeys.PollIntervalRequired)
         );
         
         // skip 4: refer to CloudlogHelper.ViewModels.SettingsWindowViewModel._initializeHamlibAsync

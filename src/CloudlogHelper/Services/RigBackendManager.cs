@@ -303,7 +303,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             throw new InvalidPollException("Poll disabled.");
 
         if (settings.IsHamlibHasErrors())
-            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.confhamlibfirst));
+            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureHamlibFirst));
 
         if (!_currentService.IsServiceRunning() && !settings.UseExternalRigctld)
             await _startRigctld();
@@ -326,7 +326,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             throw new InvalidPollException("Poll disabled.");
 
         if (settings.IsFLRigHasErrors())
-            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.confflrigfirst));
+            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureFlRigFirst));
 
         var data = await _currentService.GetAllRigInfo(
             settings.ReportRFPower,
@@ -344,7 +344,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             throw new InvalidPollException("Poll disabled.");
 
         if (settings.IsOmniRigHasErrors())
-            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.confomnifirst));
+            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureOmniRigFirst));
 
         var data = await _currentService.GetAllRigInfo(
             _appSettings.FLRigSettings.ReportRFPower,
@@ -454,7 +454,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         if (hamlibSettings.IsHamlibHasErrors())
         {
             await _currentService.StopService(_getNewCancellationProcessToken());
-            throw new ArgumentException(TranslationHelper.GetString(LangKeys.confhamlibfirst));
+            throw new ArgumentException(TranslationHelper.GetString(LangKeys.ConfigureHamlibFirst));
         }
 
         var defaultArgs =
@@ -496,7 +496,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             else
             {
                 ClassLogger.Debug($"Unable to Match port from rigctld args.");
-                throw new Exception(TranslationHelper.GetString(LangKeys.failextractinfo));
+                throw new Exception(TranslationHelper.GetString(LangKeys.FailedToExtractInfo));
             }
         }
 

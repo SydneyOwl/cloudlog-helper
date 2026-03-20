@@ -241,7 +241,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             if (string.IsNullOrWhiteSpace(adif))
             {
                 rcd.UploadStatus = UploadStatus.Fail;
-                rcd.FailReason = TranslationHelper.GetString(LangKeys.invalidadif);
+                rcd.FailReason = TranslationHelper.GetString(LangKeys.InvalidAdif);
                 ClassLogger.Warn($"Invalid ADIF data for QSO: {rcd.DXCall}");
                 return;
             }
@@ -249,7 +249,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             if (!ShouldUpload(rcd))
             {
                 rcd.UploadStatus = UploadStatus.Ignored;
-                rcd.FailReason = TranslationHelper.GetString(LangKeys.qsouploaddisabled);
+                rcd.FailReason = TranslationHelper.GetString(LangKeys.QsoUploadDisabled);
                 ClassLogger.Debug($"Auto upload not enabled, ignoring: {rcd.DXCall}");
                 return;
             }
@@ -461,11 +461,11 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             var notification = new Notification
             {
                 Title = success 
-                    ? $"{TranslationHelper.GetString(LangKeys.uploadedaqso)} - {rcd.DXCall}"
-                    : $"{TranslationHelper.GetString(LangKeys.failedqso)} - {rcd.DXCall}",
+                    ? $"{TranslationHelper.GetString(LangKeys.QsoUploaded)} - {rcd.DXCall}"
+                    : $"{TranslationHelper.GetString(LangKeys.FailedQso)} - {rcd.DXCall}",
                 Body = success 
                     ? rcd.FormatToReadableContent(true)
-                    : rcd.FailReason ?? TranslationHelper.GetString(LangKeys.uploadfailedaqso)
+                    : rcd.FailReason ?? TranslationHelper.GetString(LangKeys.QsoUploadFailed)
             };
 
             await _notificationManager.ShowNotification(notification);

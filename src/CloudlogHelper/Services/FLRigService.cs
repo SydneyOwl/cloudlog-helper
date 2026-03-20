@@ -68,10 +68,10 @@ public class FLRigService : IRigService, IDisposable
         var mode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_mode"));
 
         if (!long.TryParse(freqStr, out var freq))
-            throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
+            throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigFrequency) + freqStr);
 
         // if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-        //     throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode + mode));
+        //     throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigMode + mode));
 
         testbk.FrequencyRx = freq;
         testbk.FrequencyTx = freq;
@@ -100,11 +100,11 @@ public class FLRigService : IRigService, IDisposable
                 var txMode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_modeB"));
 
                 if (!long.TryParse(txFreqStr, out var txFreq))
-                    throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigfreq) + freqStr);
+                    throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigFrequency) + freqStr);
 
                 // We no longer check if tx mode is available due to complex flrig digi modes
                 // if (!DefaultConfigs.AvailableRigModes.Contains(txMode))
-                //     throw new RigCommException(TranslationHelper.GetString(LangKeys.unsupportedrigmode) + mode);
+                //     throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigMode) + mode);
 
                 testbk.ModeTx = txMode;
                 testbk.FrequencyTx = txFreq;

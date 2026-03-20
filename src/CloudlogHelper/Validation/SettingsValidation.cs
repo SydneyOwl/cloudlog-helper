@@ -12,7 +12,7 @@ public static class SettingsValidation
 {
     public static string ValidateNotEmpty(string url)
     {
-        if (string.IsNullOrEmpty(url)) return TranslationHelper.GetString(LangKeys.notnull);
+        if (string.IsNullOrEmpty(url)) return TranslationHelper.GetString(LangKeys.Required);
 
         return string.Empty;
     }
@@ -21,7 +21,7 @@ public static class SettingsValidation
     {
         if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
             !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            return TranslationHelper.GetString(LangKeys.startwithhttp);
+            return TranslationHelper.GetString(LangKeys.MustStartWithHttp);
 
         return string.Empty;
     }
@@ -29,7 +29,7 @@ public static class SettingsValidation
     public static string ValidateNotEndsWithApiQso(string url)
     {
         if (url.EndsWith("/api/qso", StringComparison.OrdinalIgnoreCase))
-            return TranslationHelper.GetString(LangKeys.onlymaindomain);
+            return TranslationHelper.GetString(LangKeys.MainDomainOnly);
 
         return string.Empty;
     }
@@ -37,7 +37,7 @@ public static class SettingsValidation
     public static string ValidateSpace(string url)
     {
         if (url.Trim() != url)
-            return TranslationHelper.GetString(LangKeys.spacenotallowed);
+            return TranslationHelper.GetString(LangKeys.SpaceNotAllowed);
         return string.Empty;
     }
 

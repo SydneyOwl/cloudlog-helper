@@ -48,7 +48,7 @@ public class OmniRigSettings : ReactiveValidationObject
         this.ClearValidationRules();
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.pollintervalreq)
+            TranslationHelper.GetString(LangKeys.PollIntervalRequired)
         );
         this.WhenAnyValue(    
             x => x.SelectedRig,

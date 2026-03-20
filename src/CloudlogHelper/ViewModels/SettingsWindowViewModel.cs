@@ -72,6 +72,7 @@ public class SettingsWindowViewModel : ViewModelBase
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         DraftSettings = new ApplicationSettings();
+        LogSystemCard = new LogSystemCardViewModel(LogSystems);
         DiscardConf = ReactiveCommand.Create(() => { });
         OpenConfDir = ReactiveCommand.Create(() => { });
         OpenTempDir = ReactiveCommand.Create(() => { });
@@ -134,6 +135,7 @@ public class SettingsWindowViewModel : ViewModelBase
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
         DraftSettings = settings!;
+        LogSystemCard = new LogSystemCardViewModel(LogSystems, _handleLogSystemTestErrorAsync);
         
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
         HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
@@ -171,7 +173,7 @@ public class SettingsWindowViewModel : ViewModelBase
                     if (e.Count(x => x) > 1)
                     {
                         Notification?.SendWarningNotificationSync(
-                            TranslationHelper.GetString(LangKeys.duperigservdetected));
+                            TranslationHelper.GetString(LangKeys.DuplicateRigServiceDetected));
                         DraftSettings.FLRigSettings.PollAllowed = false;
                         DraftSettings.OmniRigSettings.PollAllowed = false;
                     }
@@ -254,12 +256,19 @@ public class SettingsWindowViewModel : ViewModelBase
 
     public IInAppNotificationService Notification { get; set; }
     public ApplicationSettings DraftSettings { get; set; }
+    public LogSystemCardViewModel LogSystemCard { get; }
 
     private async Task _initializeLogSystemsAsync()
     {
         var config = _logSystemManager.ExtractLogSystemConfigBatch(DraftSettings.LogServices);
         if (config is null) return;
         LogSystems.AddRange(config);
+    }
+
+    private async Task _handleLogSystemTestErrorAsync(Exception ex)
+    {
+        if (Notification is null) return;
+        await Notification.SendErrorNotificationAsync(ex.Message);
     }
 
     private async Task _initializeOmniRigAsync()
@@ -341,7 +350,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
                 DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
                 ShowCloudlogStationIdCombobox = false;
-                throw new Exception(TranslationHelper.GetString(LangKeys.failedstationinfo));
+                throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
             }
 
 
@@ -488,8 +497,8 @@ public class SettingsWindowViewModel : ViewModelBase
                     IsDefault = true,
                     IsCancel = false
                 }
-            }, Icon.Success, TranslationHelper.GetString(LangKeys.success), 
-                string.Format(TranslationHelper.GetString(LangKeys.updatebigctysuccess), 
+            }, Icon.Success, TranslationHelper.GetString(LangKeys.Success), 
+                string.Format(TranslationHelper.GetString(LangKeys.UpdateBigCtySuccess), 
                     callsignRow, countryRow), null);
         }
         catch (Exception ex)
@@ -502,8 +511,8 @@ public class SettingsWindowViewModel : ViewModelBase
                         IsDefault = true,
                         IsCancel = false
                     }
-                }, Icon.Error, TranslationHelper.GetString(LangKeys.error), 
-                string.Format(TranslationHelper.GetString(LangKeys.updatebigctyfailed), ex.Message), null);
+                }, Icon.Error, TranslationHelper.GetString(LangKeys.Error), 
+                string.Format(TranslationHelper.GetString(LangKeys.UpdateBigCtyFailed), ex.Message), null);
         }
     }
     

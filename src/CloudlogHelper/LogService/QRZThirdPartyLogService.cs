@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using CloudlogHelper.LogService.Attributes;
+using CloudlogHelper.Resources;
 using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
@@ -13,7 +14,7 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
 {
     private const string QRZQsoUploadEndpoint = "https://logbook.qrz.com/api";
 
-    [UserInput("apikey", Description = "API Key of your logbook. Note you must have an" +
+    [UserInput(nameof(LangKeys.ApiKey), Description = "API Key of your logbook. Note you must have an" +
                                        " active subscription of qrz to use this function.")]
     public string ApiKey { get; set; }
 

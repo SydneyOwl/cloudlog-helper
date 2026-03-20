@@ -15,7 +15,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
 {
     private const string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
-    [UserInput("apikey")] public string ApiKey { get; set; }
+    [UserInput(nameof(LangKeys.ApiKey))] public string ApiKey { get; set; }
 
     public override Task TestConnectionAsync(CancellationToken token)
     {
@@ -43,9 +43,9 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
         var node = JsonNode.Parse(responseText);
         if (node is JsonObject obj)
         {
-            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)} ({obj["message"]})");
+            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.InvalidApiKey)} ({obj["message"]})");
         }
 
-        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.invalidapikey)}({responseText})");
+        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.InvalidApiKey)}({responseText})");
     }
 }

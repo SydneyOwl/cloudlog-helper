@@ -69,7 +69,7 @@ public partial class SplashWindow : Window
                 statusTextDetailed.Background = Brushes.Orange;
                 statusTextDetailed.Foreground = Brushes.Black;
                 await MessageBoxManager.GetMessageBoxStandard("Error",
-                    TranslationHelper.GetString(LangKeys.dupeinstance), ButtonEnum.Ok,
+                    TranslationHelper.GetString(LangKeys.DuplicateInstance), ButtonEnum.Ok,
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
             });
             Environment.Exit(0);
@@ -84,7 +84,7 @@ public partial class SplashWindow : Window
                 statusTextDetailed.Background = Brushes.Orange;
                 statusTextDetailed.Foreground = Brushes.Black;
                 var wResult = await MessageBoxManager.GetMessageBoxStandard("Error",
-                    TranslationHelper.GetString(LangKeys.bootfail), ButtonEnum.OkAbort,
+                    TranslationHelper.GetString(LangKeys.BootFailed), ButtonEnum.OkAbort,
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
                 if (wResult == ButtonResult.Ok) ApplicationStartUpUtil.ResetApplication();
             });

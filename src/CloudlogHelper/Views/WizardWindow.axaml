@@ -2,33 +2,89 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
-        xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
+        xmlns:stepViews="clr-namespace:CloudlogHelper.Views.WizardSteps"
         mc:Ignorable="d"
+        d:DesignWidth="500"
+        d:DesignHeight="450"
         x:Class="CloudlogHelper.Views.WizardWindow"
         x:DataType="viewModels:WizardWindowViewModel"
-        Title="{Binding TitleText}"
-        Width="820"
-        Height="680"
-        MinWidth="760"
-        MinHeight="620"
+        Title="{I18N {x:Static resources:LangKeys.WizardTitle}}"
+        Width="960"
+        Height="740"
+        MinWidth="860"
+        MinHeight="680"
+        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
+        FontFamily="Segoe UI"
         Icon="avares://CloudlogHelper/Assets/icon.png">
 
     <Window.Styles>
+        <Style Selector="Border.sidebar-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BoxShadow" Value="0 10 24 0 #12000000" />
+        </Style>
+
+        <Style Selector="Border.content-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Padding" Value="22" />
+            <Setter Property="BoxShadow" Value="0 10 24 0 #12000000" />
+        </Style>
+
+        <Style Selector="TextBlock.action-caption">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.action-title">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="TextBlock.content-title">
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <Style Selector="TextBlock.sidebar-title">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Border.step-count-chip">
+            <Setter Property="Background" Value="#E2F2FF" />
+            <Setter Property="BorderBrush" Value="#F4FBFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Padding" Value="14 7" />
+        </Style>
+
+        <Style Selector="Border.step-count-chip TextBlock">
+            <Setter Property="Foreground" Value="#1D3E58" />
+        </Style>
+
         <Style Selector="Border.page-card">
             <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="CornerRadius" Value="16" />
             <Setter Property="Padding" Value="16" />
         </Style>
 
         <Style Selector="TextBlock.page-title">
-            <Setter Property="FontSize" Value="21" />
+            <Setter Property="FontSize" Value="22" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
 
@@ -40,40 +96,109 @@
 
         <Style Selector="TextBlock.field-label">
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,6,0,2" />
+            <Setter Property="Margin" Value="0 0 0 4" />
         </Style>
 
         <Style Selector="TextBox.input, ComboBox.input">
-            <Setter Property="MinWidth" Value="260" />
+            <Setter Property="MinWidth" Value="300" />
         </Style>
 
         <Style Selector="Button.nav-primary">
-            <Setter Property="MinWidth" Value="120" />
-            <Setter Property="Padding" Value="16 8" />
+            <Setter Property="MinWidth" Value="126" />
+            <Setter Property="Padding" Value="18 10" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark1}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Button.nav-primary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}" />
         </Style>
 
         <Style Selector="Button.nav-secondary">
-            <Setter Property="MinWidth" Value="120" />
-            <Setter Property="Padding" Value="16 8" />
+            <Setter Property="MinWidth" Value="126" />
+            <Setter Property="Padding" Value="18 10" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="Background" Value="#142878B8" />
+            <Setter Property="BorderBrush" Value="#5A2878B8" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Button.nav-secondary:pointerover">
+            <Setter Property="Background" Value="#1E2878B8" />
+            <Setter Property="BorderBrush" Value="#7A2878B8" />
+        </Style>
+
+        <Style Selector="Button.nav-secondary:pressed">
+            <Setter Property="Background" Value="#2A2878B8" />
+            <Setter Property="BorderBrush" Value="#8C2878B8" />
+        </Style>
+
+        <Style Selector="Button.footer-link">
+            <Setter Property="Width" Value="42" />
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="21" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Button.footer-link:pointerover">
+            <Setter Property="Background" Value="#142878B8" />
+            <Setter Property="BorderBrush" Value="#5A2878B8" />
+        </Style>
+
+        <Style Selector="Button.footer-link:pressed">
+            <Setter Property="Background" Value="#1E2878B8" />
+            <Setter Property="BorderBrush" Value="#7A2878B8" />
         </Style>
 
         <Style Selector="Border.subsection-card">
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="CornerRadius" Value="14" />
             <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         </Style>
 
-        <Style Selector="TextBlock.subsection-title">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Margin" Value="0 0 0 4" />
+        <Style Selector="Border.highlight-card">
+            <Setter Property="BorderBrush" Value="#2878B8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Background" Value="#102878B8" />
+        </Style>
+
+        <Style Selector="Border.notice-warning">
+            <Setter Property="Background" Value="#21D97706" />
+            <Setter Property="BorderBrush" Value="#45D97706" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+
+        <Style Selector="Border.feature-chip">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Padding" Value="10 6" />
         </Style>
 
         <Style Selector="TextBlock.section-title">
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Margin" Value="0 0 0 8" />
+        </Style>
+
+        <Style Selector="TextBlock.subsection-title">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0 0 0 4" />
         </Style>
 
         <Style Selector="TextBlock.setting-label">
@@ -86,205 +211,332 @@
 
         <Style Selector="ComboBox.setting-control, TextBox.setting-control">
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Width" Value="220" />
+            <Setter Property="Width" Value="250" />
             <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.step-nav">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="MinHeight" Value="54" />
+            <Setter Property="Padding" Value="8 10" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="Button.step-nav:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
+        </Style>
+
+        <Style Selector="Button.step-nav:pressed">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumHighBrush}" />
+        </Style>
+
+        <Style Selector="Button.step-nav:disabled">
+            <Setter Property="Opacity" Value="0.55" />
+        </Style>
+
+        <Style Selector="Border.step-nav-active">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="MinHeight" Value="54" />
+            <Setter Property="Padding" Value="8 10" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Background" Value="#122878B8" />
+            <Setter Property="BorderBrush" Value="#3B62A8DC" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Border.step-badge">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Border.step-badge-active">
+            <Setter Property="Background" Value="#2D6E94" />
+            <Setter Property="BorderBrush" Value="#2D6E94" />
+        </Style>
+
+        <Style Selector="TextBlock.step-nav-title">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,*,Auto" Margin="18" RowSpacing="14">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-            <StackPanel>
-                <TextBlock Text="{Binding TitleText}" Classes="page-title" />
-                <TextBlock Text="{Binding CurrentStepTitle}" FontWeight="SemiBold" />
-            </StackPanel>
-            <Border Grid.Column="1"
-                    Background="{DynamicResource SystemControlHighlightAltChromeWhiteBrush}"
-                    CornerRadius="16"
-                    Padding="12,6">
-                <TextBlock Text="{Binding StepIndicatorText}" FontWeight="Bold" />
+    <Grid Margin="20">
+        <Grid ColumnDefinitions="220,*" ColumnSpacing="16">
+            <Grid RowDefinitions="Auto,*">
+                <Border Classes="sidebar-card" VerticalAlignment="Top">
+                    <StackPanel Spacing="10">
+                        <Button Classes="step-nav"
+                                IsVisible="{Binding !ShowWelcomeStep}"
+                                IsEnabled="{Binding CanNavigateToWelcomeStep}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="0">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge">
+                                    <avalonia:MaterialIcon Kind="Info"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Button>
+                        <Border Classes="step-nav-active" IsVisible="{Binding ShowWelcomeStep}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge step-badge-active">
+                                    <avalonia:MaterialIcon Kind="Info"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Border>
+
+                        <Button Classes="step-nav"
+                                IsVisible="{Binding !ShowBasicStep}"
+                                IsEnabled="{Binding CanNavigateToBasicStep}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="1">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge">
+                                    <avalonia:MaterialIcon Kind="Settings"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Button>
+                        <Border Classes="step-nav-active" IsVisible="{Binding ShowBasicStep}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge step-badge-active">
+                                    <avalonia:MaterialIcon Kind="Settings"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Border>
+
+                        <Button Classes="step-nav"
+                                IsVisible="{Binding !ShowCloudlogStep}"
+                                IsEnabled="{Binding CanNavigateToCloudlogStep}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="2">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge">
+                                    <avalonia:MaterialIcon Kind="CloudUpload"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Button>
+                        <Border Classes="step-nav-active" IsVisible="{Binding ShowCloudlogStep}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge step-badge-active">
+                                    <avalonia:MaterialIcon Kind="CloudUpload"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Border>
+
+                        <Button Classes="step-nav"
+                                IsVisible="{Binding !ShowThirdPartyStep}"
+                                IsEnabled="{Binding CanNavigateToThirdPartyStep}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="3">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge">
+                                    <avalonia:MaterialIcon Kind="FileUploadOutline"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Button>
+                        <Border Classes="step-nav-active" IsVisible="{Binding ShowThirdPartyStep}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge step-badge-active">
+                                    <avalonia:MaterialIcon Kind="FileUploadOutline"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Border>
+
+                        <Button Classes="step-nav"
+                                IsVisible="{Binding !ShowRigBackendStep}"
+                                IsEnabled="{Binding CanNavigateToRigBackendStep}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="4">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge">
+                                    <avalonia:MaterialIcon Kind="Radio"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Button>
+                        <Border Classes="step-nav-active" IsVisible="{Binding ShowRigBackendStep}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Classes="step-badge step-badge-active">
+                                    <avalonia:MaterialIcon Kind="Radio"
+                                                           Width="16"
+                                                           Height="16"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
+                                           Classes="step-nav-title" />
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Button Grid.Row="1"
+                        Classes="footer-link"
+                        Command="{Binding OpenGithubProfileCommand}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Margin="8 0 0 8"
+                        ToolTip.Tip="https://github.com/xxxxx">
+                    <avalonia:MaterialIcon Kind="MicrosoftGithub"
+                                           Width="22"
+                                           Height="22" />
+                </Button>
+            </Grid>
+
+            <Border Grid.Column="1" Classes="content-card">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="25">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="{Binding CurrentStepTitle}"
+                                       Classes="content-title" />
+                            <!-- <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardTitle}}" -->
+                            <!--            Classes="page-hint" /> -->
+                        </StackPanel>
+
+                        <Border Grid.Column="1" Classes="step-count-chip" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding StepIndicatorText}"
+                                       FontWeight="SemiBold" />
+                        </Border>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ContentControl Content="{Binding CurrentStep}">
+                            <ContentControl.DataTemplates>
+                                <DataTemplate DataType="stepVm:WelcomeWizardStepViewModel">
+                                    <stepViews:WelcomeWizardStepView />
+                                </DataTemplate>
+                                <DataTemplate DataType="stepVm:BasicWizardStepViewModel">
+                                    <stepViews:BasicWizardStepView />
+                                </DataTemplate>
+                                <DataTemplate DataType="stepVm:CloudlogWizardStepViewModel">
+                                    <stepViews:CloudlogWizardStepView />
+                                </DataTemplate>
+                                <DataTemplate DataType="stepVm:ThirdPartyWizardStepViewModel">
+                                    <stepViews:ThirdPartyWizardStepView />
+                                </DataTemplate>
+                                <DataTemplate DataType="stepVm:RigBackendWizardStepViewModel">
+                                    <stepViews:RigBackendWizardStepView />
+                                </DataTemplate>
+                            </ContentControl.DataTemplates>
+                        </ContentControl>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="2"
+                            Padding="0 14 0 0"
+                            BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+                            BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="12">
+                            <Button Content="{I18N {x:Static resources:LangKeys.WizardSkip}}"
+                                    HorizontalContentAlignment="Center"
+                                    IsVisible="{Binding ShowSkipButton}"
+                                    Command="{Binding SkipWizardCommand}"
+                                    Classes="nav-secondary" />
+                            <Button Content="{I18N {x:Static resources:LangKeys.WizardPrevious}}"
+                                    HorizontalContentAlignment="Center"
+                                    IsVisible="{Binding ShowPreviousButton}"
+                                    Command="{Binding PreviousCommand}"
+                                    Classes="nav-secondary" />
+                            <Button Content="{I18N {x:Static resources:LangKeys.WizardNext}}"
+                                    HorizontalContentAlignment="Center"
+                                    IsVisible="{Binding ShowNextButton}"
+                                    Command="{Binding NextCommand}"
+                                    Classes="nav-primary" />
+                            <Button Content="{I18N {x:Static resources:LangKeys.WizardFinish}}"
+                                    HorizontalContentAlignment="Center"
+                                    IsVisible="{Binding ShowFinishButton}"
+                                    Command="{Binding FinishCommand}"
+                                    Classes="nav-primary" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Border>
         </Grid>
-
-        <Border Grid.Row="1" Classes="page-card">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Grid>
-                    <StackPanel IsVisible="{Binding ShowWelcomeStep}" Spacing="16">
-                        <TextBlock Text="{Binding WelcomeMessage}" TextWrapping="Wrap" FontSize="16" />
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding ShowBasicStep}" Spacing="10">
-                        <TextBlock Text="{Binding BasicStepHint}" Classes="page-hint" />
-                        <TextBlock Text="{I18N {x:Static resources:LangKeys.mygrid}}" Classes="field-label" />
-                        <TextBox Classes="input"
-                                 Text="{Binding DraftSettings.BasicSettings.MyMaidenheadGrid}"
-                                 Watermark="e.g. OM89" />
-                        <CheckBox Margin="0,12,0,0"
-                                  Content="{Binding ChartFeatureLabel}"
-                                  IsChecked="{Binding EnableChartFeature}" />
-                        <TextBlock Text="{Binding ChartFeatureHint}" Classes="page-hint" />
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding ShowCloudlogStep}" Spacing="10">
-                        <TextBlock Text="{Binding CloudlogStepHint}" Classes="page-hint" />
-                        <CheckBox Content="{Binding CloudlogConnectLabel}"
-                                  IsChecked="{Binding ConnectCloudlog}" />
-
-                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" IsEnabled="{Binding ConnectCloudlog}">
-                            <TextBlock Grid.Row="0" Text="{Binding CloudlogUrlLabel}" Classes="field-label" />
-                            <TextBox Grid.Row="0" Grid.Column="1" Classes="input"
-                                     Text="{Binding DraftSettings.CloudlogSettings.CloudlogUrl}"
-                                     Watermark="{I18N {x:Static resources:LangKeys.urlexample}}" />
-
-                            <TextBlock Grid.Row="1" Text="{Binding CloudlogApiKeyLabel}" Classes="field-label" />
-                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                <TextBox Classes="input"
-                                         Text="{Binding DraftSettings.CloudlogSettings.CloudlogApiKey}" />
-                                <userControls:TestButtonUserControl DataContext="{Binding CloudlogTestButtonUserControl}" />
-                            </StackPanel>
-
-                            <TextBlock Grid.Row="2"
-                                       Text="{Binding CloudlogStationLabel}"
-                                       Classes="field-label"
-                                       IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
-                            <ComboBox Grid.Row="2" Grid.Column="1"
-                                      Classes="input"
-                                      IsVisible="{Binding ShowCloudlogStationIdCombobox}"
-                                      ItemsSource="{Binding DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo}"
-                                      SelectedItem="{Binding DraftSettings.CloudlogSettings.CloudlogStationInfo}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding StationId}" />
-                                            <TextBlock Text="{Binding StationProfileName, StringFormat=' ({0})'}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </Grid>
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding ShowThirdPartyStep}" Spacing="12">
-                        <TextBlock Text="{Binding ThirdPartyStepHint}" Classes="page-hint" />
-                        <userControls:LogSystemCard DataContext="{Binding}" />
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding ShowRigBackendStep}" Spacing="10">
-                        <TextBlock Text="{Binding RigStepHint}" Classes="page-hint" />
-                        <TextBlock Text="{Binding RigBackendLabel}" Classes="field-label" />
-                        <ComboBox Classes="input"
-                                  ItemsSource="{Binding RigBackendOptions}"
-                                  SelectedItem="{Binding SelectedRigBackendOption}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding DisplayName}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-
-                        <Border Classes="subsection-card" Padding="12" IsVisible="{Binding ShowHamlibSettings}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Hamlib" Classes="subsection-title" />
-                                <Border Background="DarkOrange" CornerRadius="4" Padding="10" IsVisible="{Binding !HamlibInited}">
-                                    <TextBlock Text="{I18N {x:Static resources:LangKeys.inithamlibfailed}}" />
-                                </Border>
-                                <Grid IsVisible="{Binding HamlibInited}"
-                                      ColumnDefinitions="Auto,*"
-                                      RowDefinitions="Auto,Auto,Auto"
-                                      RowSpacing="8">
-                                    <TextBlock Grid.Row="0" Text="{I18N {x:Static resources:LangKeys.rigmodel}}" Classes="field-label" />
-                                    <ComboBox Grid.Row="0" Grid.Column="1"
-                                              Classes="input"
-                                              ItemsSource="{Binding SupportedHamlibModels}"
-                                              SelectedItem="{Binding DraftSettings.HamlibSettings.SelectedRigInfo}">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Model}" />
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-
-                                    <TextBlock Grid.Row="1" Text="{I18N {x:Static resources:LangKeys.deviceport}}" Classes="field-label" />
-                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                        <ComboBox Classes="input"
-                                                  IsEditable="True"
-                                                  Text="{Binding DraftSettings.HamlibSettings.SelectedPort}"
-                                                  ItemsSource="{Binding Ports}" />
-                                        <Button Command="{Binding RefreshPortCommand}" Width="38" Height="32">
-                                            <avalonia:MaterialIcon Kind="Refresh" />
-                                        </Button>
-                                    </StackPanel>
-
-                                    <TextBlock Grid.Row="2" Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="field-label" />
-                                    <TextBox Grid.Row="2" Grid.Column="1" Classes="input"
-                                             Text="{Binding DraftSettings.HamlibSettings.PollInterval}" />
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <Border Classes="subsection-card" Padding="12" IsVisible="{Binding ShowFlRigSettings}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="FLRig" Classes="subsection-title" />
-                                <Grid ColumnDefinitions="Auto,*"
-                                      RowDefinitions="Auto,Auto,Auto"
-                                      RowSpacing="8">
-                                    <TextBlock Grid.Row="0" Text="Host" Classes="field-label" />
-                                    <TextBox Grid.Row="0" Grid.Column="1" Classes="input"
-                                             Text="{Binding DraftSettings.FLRigSettings.FLRigHost}" />
-
-                                    <TextBlock Grid.Row="1" Text="Port" Classes="field-label" />
-                                    <TextBox Grid.Row="1" Grid.Column="1" Classes="input"
-                                             Text="{Binding DraftSettings.FLRigSettings.FLRigPort}" />
-
-                                    <TextBlock Grid.Row="2" Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="field-label" />
-                                    <TextBox Grid.Row="2" Grid.Column="1" Classes="input"
-                                             Text="{Binding DraftSettings.FLRigSettings.PollInterval}" />
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <Border Classes="subsection-card" Padding="12" IsVisible="{Binding ShowOmniRigSettings}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="OmniRig" Classes="subsection-title" />
-                                <Border Background="DarkOrange" CornerRadius="4" Padding="10" IsVisible="{Binding !OmniRigInited}">
-                                    <TextBlock Text="{Binding RigUnavailableHint}" />
-                                </Border>
-                                <Grid IsVisible="{Binding OmniRigInited}"
-                                      ColumnDefinitions="Auto,*"
-                                      RowDefinitions="Auto,Auto"
-                                      RowSpacing="8">
-                                    <TextBlock Grid.Row="0" Text="{I18N {x:Static resources:LangKeys.targetrig}}" Classes="field-label" />
-                                    <ComboBox Grid.Row="0" Grid.Column="1" Classes="input"
-                                              ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}"
-                                              SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}" />
-
-                                    <TextBlock Grid.Row="1" Text="{I18N {x:Static resources:LangKeys.pollinterval}}" Classes="field-label" />
-                                    <TextBox Grid.Row="1" Grid.Column="1" Classes="input"
-                                             Text="{Binding DraftSettings.OmniRigSettings.PollInterval}" />
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </ScrollViewer>
-        </Border>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-            <Button Content="{Binding SkipButtonText}"
-                    IsVisible="{Binding ShowSkipButton}"
-                    Command="{Binding SkipWizardCommand}"
-                    Classes="nav-secondary" />
-            <Button Content="{Binding PreviousButtonText}"
-                    IsVisible="{Binding ShowPreviousButton}"
-                    Command="{Binding PreviousCommand}"
-                    Classes="nav-secondary" />
-            <Button Content="{Binding NextButtonText}"
-                    IsVisible="{Binding ShowNextButton}"
-                    Command="{Binding NextCommand}"
-                    Classes="nav-primary" />
-            <Button Content="{Binding FinishButtonText}"
-                    IsVisible="{Binding ShowFinishButton}"
-                    Command="{Binding FinishCommand}"
-                    Classes="nav-primary" />
-        </StackPanel>
     </Grid>
 </Window>

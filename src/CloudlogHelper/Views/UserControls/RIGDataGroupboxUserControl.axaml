@@ -34,7 +34,7 @@
                             HorizontalContentAlignment="Center"
                             Margin="10"
                             VerticalAlignment="Center"
-                            Header="{I18N {x:Static resources:LangKeys.rigdata}}">
+                            Header="{I18N {x:Static resources:LangKeys.RigData}}">
         <Grid ColumnDefinitions="Auto,Auto"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
               ShowGridLines="False" RowSpacing="5" 
@@ -166,11 +166,11 @@
             </Border>
             
             <!-- <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5" -->
-            <!--            Text="{I18N {x:Static resources:LangKeys.uploadstatus}}" /> -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.UploadStatus}}" /> -->
             <!-- <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" /> -->
             <!-- -->
             <!-- <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5" -->
-            <!--            Text="{I18N {x:Static resources:LangKeys.nextuploadtime}}" /> -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.NextUploadTime}}" /> -->
             <!-- <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" /> -->
         </Grid>
     </HeaderedContentControl>

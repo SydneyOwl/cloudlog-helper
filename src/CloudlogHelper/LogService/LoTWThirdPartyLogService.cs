@@ -26,14 +26,14 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
 
     public string?[]? Stations = Array.Empty<string>();
 
-    [UserInput("tqslpath", InputType = FieldType.FilePicker)]
+    [UserInput(nameof(LangKeys.TqslPath), InputType = FieldType.FilePicker)]
     public string LotwFilePath { get; set; }
 
 
-    [UserInput("stationname", InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
+    [UserInput(nameof(LangKeys.StationName), InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
     public string? StationName { get; set; }
 
-    [UserInput("tqslpassword", InputType = FieldType.Password, IsRequired = false)]
+    [UserInput(nameof(LangKeys.TqslPassword), InputType = FieldType.Password, IsRequired = false)]
     public string? TqslPassword { get; set; }
 
     public override async Task TestConnectionAsync(CancellationToken token)

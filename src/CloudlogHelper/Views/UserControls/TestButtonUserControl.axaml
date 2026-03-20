@@ -25,7 +25,7 @@
                 <avalonia:MaterialIcon Kind="TestTube" Width="20" Height="20"
                                        Margin="0,0,8,0" />
                 <TextBlock FontSize="14" FontWeight="Heavy"
-                           Text="{I18N {x:Static resources:LangKeys.testconn}}"
+                           Text="{I18N {x:Static resources:LangKeys.TestConnection}}"
                            IsVisible="{Binding !CheckExecuting}" VerticalAlignment="Center" />
                 <avaloniaProgressRing:ProgressRing Width="20" Height="20"
                                                    IsActive="{Binding CheckExecuting}"

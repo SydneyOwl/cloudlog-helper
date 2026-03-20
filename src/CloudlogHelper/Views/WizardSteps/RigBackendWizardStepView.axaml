@@ -1,0 +1,163 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d"
+             x:Class="CloudlogHelper.Views.WizardSteps.RigBackendWizardStepView"
+             x:DataType="stepVm:RigBackendWizardStepViewModel">
+    <StackPanel Spacing="16">
+        <Border Classes="subsection-card" Padding="16">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <TextBlock VerticalAlignment="Center"
+                           Text="{I18N {x:Static resources:LangKeys.WizardRigBackendLabel}}"
+                           Classes="setting-label" />
+                <ComboBox Grid.Column="1"
+                          Classes="input"
+                          SelectedIndex="{Binding SelectedRigBackendIndex}">
+                    <ComboBoxItem Content="{I18N {x:Static resources:LangKeys.WizardRigNone}}" />
+                    <ComboBoxItem Content="{I18N {x:Static resources:LangKeys.WizardRigHamlib}}" />
+                    <ComboBoxItem Content="{I18N {x:Static resources:LangKeys.WizardRigFlRig}}" />
+                    <ComboBoxItem Content="{I18N {x:Static resources:LangKeys.WizardRigOmniRig}}" />
+                </ComboBox>
+            </Grid>
+        </Border>
+
+        <Border Classes="subsection-card" Padding="16" IsVisible="{Binding ShowHamlibSettings}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Hamlib" Classes="subsection-title" />
+                <TextBlock Text="{Binding HamlibVersion}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           IsVisible="{Binding HamlibInited}" />
+                <Border Classes="notice-warning" Padding="10" IsVisible="{Binding !HamlibInited}">
+                    <TextBlock TextWrapping="Wrap" Text="{I18N {x:Static resources:LangKeys.InitHamlibFailed}}" />
+                </Border>
+                <Grid IsVisible="{Binding HamlibInited}"
+                      ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto"
+                      ColumnSpacing="10"
+                      RowSpacing="8">
+                    <TextBlock Grid.Row="0"
+                               Classes="setting-label"
+                               Text="{I18N {x:Static resources:LangKeys.RigModel}}" />
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              Classes="setting-control"
+                              ItemsSource="{Binding SupportedHamlibModels}"
+                              SelectedItem="{Binding DraftSettings.HamlibSettings.SelectedRigInfo}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Model}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="0"
+                               Classes="setting-label"
+                               Text="{I18N {x:Static resources:LangKeys.DevicePort}}" />
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                        <ComboBox Classes="setting-control"
+                                  IsEditable="True"
+                                  Text="{Binding DraftSettings.HamlibSettings.SelectedPort}"
+                                  ItemsSource="{Binding Ports}" />
+                        <Button Command="{Binding RefreshPortCommand}" Width="38" Height="32">
+                            <avalonia:MaterialIcon Kind="Refresh" />
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="0"
+                               Classes="setting-label"
+                               Text="{I18N {x:Static resources:LangKeys.PollInterval}}" />
+                    <TextBox Grid.Row="2"
+                             Grid.Column="1"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             Classes="setting-control"
+                             Text="{Binding DraftSettings.HamlibSettings.PollInterval}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="subsection-card" Padding="16" IsVisible="{Binding ShowFlRigSettings}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="FLRig" Classes="subsection-title" />
+                <Grid ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto"
+                      ColumnSpacing="10"
+                      RowSpacing="8">
+                    <TextBlock Grid.Row="0"
+                               VerticalAlignment="Center"
+                               Classes="setting-label"
+                               Text="Host" />
+                    <TextBox VerticalAlignment="Center"
+                             Grid.Row="0"
+                             Grid.Column="1"
+                             Classes="setting-control"
+                             Text="{Binding DraftSettings.FLRigSettings.FLRigHost}" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               Classes="setting-label"
+                               Text="Port" />
+                    <TextBox VerticalAlignment="Center"
+                             Grid.Row="1"
+                             Grid.Column="1"
+                             Classes="setting-control"
+                             Text="{Binding DraftSettings.FLRigSettings.FLRigPort}" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               Grid.Row="2"
+                               Grid.Column="0"
+                               Classes="setting-label"
+                               Text="{I18N {x:Static resources:LangKeys.PollInterval}}" />
+                    <TextBox VerticalAlignment="Center"
+                             Grid.Row="2"
+                             Grid.Column="1"
+                             Classes="setting-control"
+                             Text="{Binding DraftSettings.FLRigSettings.PollInterval}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="subsection-card" Padding="16" IsVisible="{Binding ShowOmniRigSettings}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="OmniRig" Classes="subsection-title" />
+                <Border Classes="notice-warning" Padding="10" IsVisible="{Binding !OmniRigInited}">
+                    <TextBlock TextWrapping="Wrap" Text="{I18N {x:Static resources:LangKeys.OmniRigInitFailed}}" />
+                </Border>
+                <Grid IsVisible="{Binding OmniRigInited}"
+                      ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto"
+                      ColumnSpacing="10"
+                      RowSpacing="8">
+                    <TextBlock VerticalAlignment="Center"
+                               Grid.Row="0"
+                               Classes="setting-label"
+                               Text="{I18N {x:Static resources:LangKeys.TargetRig}}" />
+                    <ComboBox VerticalAlignment="Center"
+                              Grid.Row="0"
+                              Grid.Column="1"
+                              Classes="setting-control"
+                              ItemsSource="{x:Static resources:DefaultConfigs.OmniRigAvailableRig}"
+                              SelectedItem="{Binding DraftSettings.OmniRigSettings.SelectedRig}" />
+
+                    <TextBlock VerticalAlignment="Center"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               Classes="setting-label"
+                               Text="{I18N {x:Static resources:LangKeys.PollInterval}}" />
+                    <TextBox VerticalAlignment="Center"
+                             Grid.Row="1"
+                             Grid.Column="1"
+                             Classes="setting-control"
+                             Text="{Binding DraftSettings.OmniRigSettings.PollInterval}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
