@@ -21,6 +21,9 @@ public class CommandLineOptions
     [Option("reinit-hamlib", HelpText = "Force reinitialize hamlib.")]
     public bool ReinitHamlib { get; set; }
 
+    [Option("run-wizard", HelpText = "Run wizard.")]
+    public bool RunWizard { get; set; }
+
     [Option("dev", HelpText = "Developer mode (throw exceptions).")]
     public bool DeveloperMode { get; set; }
 

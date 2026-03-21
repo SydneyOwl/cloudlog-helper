@@ -423,7 +423,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 new List<ButtonDefinition> { new() { Name = "OK", IsDefault = true } },
                 Icon.Info, 
                 "Notice", 
-                TranslationHelper.GetString(LangKeys.pseselfirst));
+                TranslationHelper.GetString(LangKeys.PleaseSelectFirst));
             return;
         }
 
@@ -435,7 +435,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             },
             Icon.Warning, 
             "Warning", 
-            TranslationHelper.GetString(LangKeys.ignoreqsopermanently));
+            TranslationHelper.GetString(LangKeys.IgnoreQsoPermanently));
             
         if (result == "Cancel") return;
         
@@ -547,7 +547,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         {
             _ = _nativeNotificationManager.ShowNotification(new Notification
             {
-                Title = $"{TranslationHelper.GetString(LangKeys.madeaqso)} - {rcd.DXCall}",
+                Title = $"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
                 Body = rcd.FormatToReadableContent(true)
             });
         }
@@ -568,7 +568,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         TxStatus = status.Transmitting;
         MsgSending = string.IsNullOrEmpty(status.TXMessage)
-            ? TranslationHelper.GetString(LangKeys.txing)
+            ? TranslationHelper.GetString(LangKeys.Transmitting)
             : status.TXMessage;
             
         _decodedDataProcessorService.UpdateClientBand(

@@ -230,7 +230,7 @@ public sealed class RigctldService : IRigService, IDisposable
         var freqRaw = await ExecuteCommand(ip, port, "f");
         var freqStr = freqRaw.Split('\n')[0];
         if (!long.TryParse(freqStr, out var freq))
-            throw new RigCommException($"{TranslationHelper.GetString(LangKeys.unsupportedrigfreq)}{freqStr}");
+            throw new RigCommException($"{TranslationHelper.GetString(LangKeys.UnsupportedRigFrequency)}{freqStr}");
         
         radioData.FrequencyRx = freq;
         radioData.FrequencyTx = freq;
@@ -239,7 +239,7 @@ public sealed class RigctldService : IRigService, IDisposable
         var modeRaw = await ExecuteCommand(ip, port, "m");
         var mode = modeRaw.Split('\n')[0];
         if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-            throw new RigCommException($"{TranslationHelper.GetString(LangKeys.unsupportedrigmode)}{mode}");
+            throw new RigCommException($"{TranslationHelper.GetString(LangKeys.UnsupportedRigMode)}{mode}");
         
         radioData.ModeRx = mode;
         radioData.ModeTx = mode;
@@ -336,7 +336,7 @@ public sealed class RigctldService : IRigService, IDisposable
             _onetimeProcess.ErrorDataReceived += (_, e) => AppendToLogBuffer(e.Data);
             
             if (!_onetimeProcess.Start())
-                throw new Exception(TranslationHelper.GetString(LangKeys.inithamlibfailed));
+                throw new Exception(TranslationHelper.GetString(LangKeys.InitHamlibFailed));
             
             _onetimeProcess.BeginOutputReadLine();
             _onetimeProcess.BeginErrorReadLine();
@@ -417,7 +417,7 @@ public sealed class RigctldService : IRigService, IDisposable
         }
         catch (OperationCanceledException)
         {
-            throw new RigCommException(TranslationHelper.GetString(LangKeys.rigtimeout));
+            throw new RigCommException(TranslationHelper.GetString(LangKeys.RigTimeout));
         }
         finally
         {

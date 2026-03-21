@@ -22,12 +22,12 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
     private const string EqslQsoUploadEndpoint =
         "https://www.eQSL.cc/qslcard/importADIF.cfm";
 
-    [UserInput("username")] public string Username { get; set; }
+    [UserInput(nameof(LangKeys.Username))] public string Username { get; set; }
 
-    [UserInput("password", InputType = FieldType.Password)]
+    [UserInput(nameof(LangKeys.Password), InputType = FieldType.Password)]
     public string Password { get; set; }
 
-    [UserInput("qthnickname", IsRequired = false)]
+    [UserInput(nameof(LangKeys.QthNickname), IsRequired = false)]
     public string QTHNickname { get; set; }
 
 

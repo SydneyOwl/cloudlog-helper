@@ -41,15 +41,15 @@ public class FLRigSettings : ReactiveValidationObject
         this.ClearValidationRules();
         this.ValidationRule(x => x.FLRigPort,
             SettingsValidation.CheckHttpPort,
-            TranslationHelper.GetString(LangKeys.invalidport)
+            TranslationHelper.GetString(LangKeys.InvalidPort)
         );
         this.ValidationRule(x => x.FLRigHost,
             SettingsValidation.CheckHttpIp!,
-            TranslationHelper.GetString(LangKeys.invalidaddr)
+            TranslationHelper.GetString(LangKeys.InvalidAddress)
         );
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.pollintervalreq)
+            TranslationHelper.GetString(LangKeys.PollIntervalRequired)
         );
     }
 

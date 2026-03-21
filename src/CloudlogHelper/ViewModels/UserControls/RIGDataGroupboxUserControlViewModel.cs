@@ -406,7 +406,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             },
             Icon.Warning,
             "Warning",
-            TranslationHelper.GetString(LangKeys.failrigcomm));
+            TranslationHelper.GetString(LangKeys.RigCommunicationFailed));
 
         switch (choice)
         {
@@ -485,7 +485,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 if (!_rigBackendManager.GetPollingAllowed())
                                 {
                                     _resetStatus();
-                                    // NextUploadTime = TranslationHelper.GetString(LangKeys.polldisabled);
+                                    // NextUploadTime = TranslationHelper.GetString(LangKeys.PollingDisabled);
                                     await Task.Delay(1000, innerCancellationToken);
                                     continue;
                                 }
@@ -502,7 +502,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                     // }
                                     // NextUploadTime = remaining > 0 
                                     //     ? remaining.ToString()
-                                    //     : TranslationHelper.GetString(LangKeys.gettinginfo);
+                                    //     : TranslationHelper.GetString(LangKeys.GettingInfo);
 
                                     RefreshAfter = $"{remaining}s";
                                     

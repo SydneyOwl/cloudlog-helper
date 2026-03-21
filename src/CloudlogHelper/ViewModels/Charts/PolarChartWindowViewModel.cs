@@ -40,9 +40,6 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
     private Image? _coastlineOverlayImage;
     private string? _coastlineOverlayCacheKey;
 
-    private const int CoastlineOverlaySize = 1100;
-    private const double EarthRadiusKm = 6371.0;
-
     public PolarChartWindowViewModel()
     {
     }
@@ -63,7 +60,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             var a = await _windowManagerService.OpenFileSaverAsync( new FilePickerSaveOptions
             {
                 SuggestedFileName = "Polar-Chart.png",
-                Title = TranslationHelper.GetString(LangKeys.savelogto)
+                Title = TranslationHelper.GetString(LangKeys.SaveLogTo)
             }, _windowManagerService.GetToplevel(GetType()));
             if (a is null) return;
             PlotControl.Plot.GetImage(DefaultConfigs.ExportedPolarChartSize,
@@ -131,14 +128,14 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         if (IsExecutingChartUpdate || UpdatePaused) return;
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.griderror);
+            ErrorMessage = TranslationHelper.GetString(LangKeys.GridError);
             ShowErrorMsg = true;
             return;
         }
 
         if (_basicSettings.DisableAllCharts)
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.chartsdisabled);
+            ErrorMessage = TranslationHelper.GetString(LangKeys.ChartsDisabled);
             ShowErrorMsg = true;
             return;
         }
@@ -291,16 +288,16 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             ? new SKColor(173, 216, 255)
             : new SKColor(50, 120, 170);
 
-        using var overlayBitmap = new SKBitmap(CoastlineOverlaySize, CoastlineOverlaySize, SKColorType.Rgba8888, SKAlphaType.Premul);
+        using var overlayBitmap = new SKBitmap(DefaultConfigs.CoastlineOverlaySize, DefaultConfigs.CoastlineOverlaySize, SKColorType.Rgba8888, SKAlphaType.Premul);
         overlayBitmap.Erase(SKColors.Transparent);
 
-        var alphaMap = new byte[CoastlineOverlaySize, CoastlineOverlaySize];
-        var half = CoastlineOverlaySize / 2.0;
+        var alphaMap = new byte[DefaultConfigs.CoastlineOverlaySize, DefaultConfigs.CoastlineOverlaySize];
+        var half = DefaultConfigs.CoastlineOverlaySize / 2.0;
 
-        for (var y = 0; y < CoastlineOverlaySize; y++)
+        for (var y = 0; y < DefaultConfigs.CoastlineOverlaySize; y++)
         {
             var dy = (half - (y + 0.5)) / half;
-            for (var x = 0; x < CoastlineOverlaySize; x++)
+            for (var x = 0; x < DefaultConfigs.CoastlineOverlaySize; x++)
             {
                 var dx = ((x + 0.5) - half) / half;
                 var distanceKm = Math.Sqrt(dx * dx + dy * dy) * radiusKm;
@@ -321,9 +318,9 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         }
 
         var smoothedAlpha = (byte[,])alphaMap.Clone();
-        for (var y = 1; y < CoastlineOverlaySize - 1; y++)
+        for (var y = 1; y < DefaultConfigs.CoastlineOverlaySize - 1; y++)
         {
-            for (var x = 1; x < CoastlineOverlaySize - 1; x++)
+            for (var x = 1; x < DefaultConfigs.CoastlineOverlaySize - 1; x++)
             {
                 if (alphaMap[y, x] != 0) continue;
 
@@ -342,9 +339,9 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             }
         }
 
-        for (var y = 0; y < CoastlineOverlaySize; y++)
+        for (var y = 0; y < DefaultConfigs.CoastlineOverlaySize; y++)
         {
-            for (var x = 0; x < CoastlineOverlaySize; x++)
+            for (var x = 0; x < DefaultConfigs.CoastlineOverlaySize; x++)
             {
                 var alpha = smoothedAlpha[y, x];
                 if (alpha == 0) continue;
@@ -393,7 +390,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         var lat1 = _degToRad(startLatDeg);
         var lon1 = _degToRad(startLonDeg);
         var bearing = _degToRad(bearingDeg);
-        var angularDistance = distanceKm / EarthRadiusKm;
+        var angularDistance = distanceKm / DefaultConfigs.EarthRadiusKm;
 
         var sinLat1 = Math.Sin(lat1);
         var cosLat1 = Math.Cos(lat1);

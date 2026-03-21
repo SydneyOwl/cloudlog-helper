@@ -30,12 +30,12 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
 
         this.ValidationRule(x => x.CloudlogUserName,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.notnull)
+            TranslationHelper.GetString(LangKeys.Required)
         );
 
         this.ValidationRule(x => x.CloudlogPassword,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.notnull)
+            TranslationHelper.GetString(LangKeys.Required)
         );
     }
 

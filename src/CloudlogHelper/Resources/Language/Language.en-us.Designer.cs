@@ -62,468 +62,504 @@ namespace CloudlogHelper.Resources.Language {
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        public static string about {
+        public static string About {
             get {
-                return ResourceManager.GetString("about", resourceCulture);
+                return ResourceManager.GetString("About", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Accept.
         /// </summary>
-        public static string accept {
+        public static string Accept {
             get {
-                return ResourceManager.GetString("accept", resourceCulture);
+                return ResourceManager.GetString("Accept", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Advanced.
         /// </summary>
-        public static string advancedsettings {
+        public static string AdvancedSettings {
             get {
-                return ResourceManager.GetString("advancedsettings", resourceCulture);
+                return ResourceManager.GetString("AdvancedSettings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Allow external control.
         /// </summary>
-        public static string allowexternalcontrol {
+        public static string AllowExternalControl {
             get {
-                return ResourceManager.GetString("allowexternalcontrol", resourceCulture);
+                return ResourceManager.GetString("AllowExternalControl", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Allow proxy requests.
         /// </summary>
-        public static string allowproxy {
+        public static string AllowProxy {
             get {
-                return ResourceManager.GetString("allowproxy", resourceCulture);
+                return ResourceManager.GetString("AllowProxy", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Angle weight.
         /// </summary>
-        public static string angweight {
+        public static string AngleWeight {
             get {
-                return ResourceManager.GetString("angweight", resourceCulture);
+                return ResourceManager.GetString("AngleWeight", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to API Key.
         /// </summary>
-        public static string apikey {
+        public static string ApiKey {
             get {
-                return ResourceManager.GetString("apikey", resourceCulture);
+                return ResourceManager.GetString("ApiKey", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Auto refresh station info.
         /// </summary>
-        public static string autopollstatus {
+        public static string AutoPollStatus {
             get {
-                return ResourceManager.GetString("autopollstatus", resourceCulture);
+                return ResourceManager.GetString("AutoPollStatus", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto QSO uplaod.
+        ///   Looks up a localized string similar to Auto QSO upload.
         /// </summary>
-        public static string autoqsoupload {
+        public static string AutoQsoUpload {
             get {
-                return ResourceManager.GetString("autoqsoupload", resourceCulture);
+                return ResourceManager.GetString("AutoQsoUpload", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Auto RIG info upload.
         /// </summary>
-        public static string autorigupload {
+        public static string AutoRigUpload {
             get {
-                return ResourceManager.GetString("autorigupload", resourceCulture);
+                return ResourceManager.GetString("AutoRigUpload", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Auto selection.
         /// </summary>
-        public static string autosel {
+        public static string AutoSelect {
             get {
-                return ResourceManager.GetString("autosel", resourceCulture);
+                return ResourceManager.GetString("AutoSelect", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Auto upload rig status.
         /// </summary>
-        public static string autoupdateriginfo {
+        public static string AutoUpdateRigInfo {
             get {
-                return ResourceManager.GetString("autoupdateriginfo", resourceCulture);
+                return ResourceManager.GetString("AutoUpdateRigInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Auto upload QSO to.
         /// </summary>
-        public static string autoupload2 {
+        public static string AutoUploadQsoTo {
             get {
-                return ResourceManager.GetString("autoupload2", resourceCulture);
+                return ResourceManager.GetString("AutoUploadQsoTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto upload QSO to Cloudlog.
+        /// </summary>
+        public static string AutoUploadQsoToCloudlog {
+            get {
+                return ResourceManager.GetString("AutoUploadQsoToCloudlog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto upload QSO to Clublog.
+        /// </summary>
+        public static string AutoUploadQsoToClublog {
+            get {
+                return ResourceManager.GetString("AutoUploadQsoToClublog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto upload QSO to HamCQ.
+        /// </summary>
+        public static string AutoUploadQsoToHamCq {
+            get {
+                return ResourceManager.GetString("AutoUploadQsoToHamCq", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Basical Info.
         /// </summary>
-        public static string basicinfo {
+        public static string BasicInfo {
             get {
-                return ResourceManager.GetString("basicinfo", resourceCulture);
+                return ResourceManager.GetString("BasicInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Basical Settings.
         /// </summary>
-        public static string basicsettings {
+        public static string BasicSettings {
             get {
-                return ResourceManager.GetString("basicsettings", resourceCulture);
+                return ResourceManager.GetString("BasicSettings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Baudrate.
         /// </summary>
-        public static string baudrate {
+        public static string BaudRate {
             get {
-                return ResourceManager.GetString("baudrate", resourceCulture);
+                return ResourceManager.GetString("BaudRate", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Bearing (degrees).
         /// </summary>
-        public static string bearingdeg {
+        public static string BearingDegrees {
             get {
-                return ResourceManager.GetString("bearingdeg", resourceCulture);
+                return ResourceManager.GetString("BearingDegrees", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to You can choose cty.dat or bigcty.dat for import. You can find them at https://www.country-files.com/..
         /// </summary>
-        public static string bigctyhint {
+        public static string BigCtyHint {
             get {
-                return ResourceManager.GetString("bigctyhint", resourceCulture);
+                return ResourceManager.GetString("BigCtyHint", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to start applicaiton. Would you like to reset application?.
         /// </summary>
-        public static string bootfail {
+        public static string BootFailed {
             get {
-                return ResourceManager.GetString("bootfail", resourceCulture);
+                return ResourceManager.GetString("BootFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Calcing...
         /// </summary>
-        public static string calculating {
+        public static string Calculating {
             get {
-                return ResourceManager.GetString("calculating", resourceCulture);
+                return ResourceManager.GetString("Calculating", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Callsign.
         /// </summary>
-        public static string callsign {
+        public static string Callsign {
             get {
-                return ResourceManager.GetString("callsign", resourceCulture);
+                return ResourceManager.GetString("Callsign", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Charts.
         /// </summary>
-        public static string charts {
+        public static string Charts {
             get {
-                return ResourceManager.GetString("charts", resourceCulture);
+                return ResourceManager.GetString("Charts", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Chart feature is disabled, please enable it in settings!.
         /// </summary>
-        public static string chartsdisabled {
+        public static string ChartsDisabled {
             get {
-                return ResourceManager.GetString("chartsdisabled", resourceCulture);
+                return ResourceManager.GetString("ChartsDisabled", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Please check RIG connection!.
         /// </summary>
-        public static string checkrigconn {
+        public static string CheckRigConnection {
             get {
-                return ResourceManager.GetString("checkrigconn", resourceCulture);
+                return ResourceManager.GetString("CheckRigConnection", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
-        public static string clear {
+        public static string Clear {
             get {
-                return ResourceManager.GetString("clear", resourceCulture);
+                return ResourceManager.GetString("Clear", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog Helper can connect to CLH-Server and automatically report decoded data mode information and radio information to the server. When you connect to the server using a specific Android app, the server will push information to your phone..
         /// </summary>
-        public static string clhhintinfo {
+        public static string ClhHintInfo {
             get {
-                return ResourceManager.GetString("clhhintinfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CLH Server IP.
-        /// </summary>
-        public static string clhseraddr {
-            get {
-                return ResourceManager.GetString("clhseraddr", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CLH Server key.
-        /// </summary>
-        public static string clhserkey {
-            get {
-                return ResourceManager.GetString("clhserkey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CLH Server Port.
-        /// </summary>
-        public static string clhserport {
-            get {
-                return ResourceManager.GetString("clhserport", resourceCulture);
+                return ResourceManager.GetString("ClhHintInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to CLH Server.
         /// </summary>
-        public static string clhserver {
+        public static string ClhServer {
             get {
-                return ResourceManager.GetString("clhserver", resourceCulture);
+                return ResourceManager.GetString("ClhServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server IP.
+        /// </summary>
+        public static string ClhServerAddress {
+            get {
+                return ResourceManager.GetString("ClhServerAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server key.
+        /// </summary>
+        public static string ClhServerKey {
+            get {
+                return ResourceManager.GetString("ClhServerKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CLH Server Port.
+        /// </summary>
+        public static string ClhServerPort {
+            get {
+                return ResourceManager.GetString("ClhServerPort", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Use TLS.
         /// </summary>
-        public static string clhusetls {
+        public static string ClhUseTls {
             get {
-                return ResourceManager.GetString("clhusetls", resourceCulture);
+                return ResourceManager.GetString("ClhUseTls", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
-        public static string close {
+        public static string Close {
             get {
-                return ResourceManager.GetString("close", resourceCulture);
+                return ResourceManager.GetString("Close", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Would you like to minimize to the tray or close the application?.
         /// </summary>
-        public static string closeormin {
+        public static string CloseOrMinimize {
             get {
-                return ResourceManager.GetString("closeormin", resourceCulture);
+                return ResourceManager.GetString("CloseOrMinimize", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Fill in your api key here. Require Read/Write access.You can find it under API Keys in the Cloudlog dropdown for your account..
         /// </summary>
-        public static string cloudlogapihelp {
+        public static string CloudlogApiHelp {
             get {
-                return ResourceManager.GetString("cloudlogapihelp", resourceCulture);
+                return ResourceManager.GetString("CloudlogApiHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to You can find it under Station Location in the Cloudlog dropdown for your account..
         /// </summary>
-        public static string cloudlogstationid {
+        public static string CloudlogStationId {
             get {
-                return ResourceManager.GetString("cloudlogstationid", resourceCulture);
+                return ResourceManager.GetString("CloudlogStationId", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Only enter the domain name. There is no need to include index.php/api/qso as the system will automatically complete the path..
         /// </summary>
-        public static string cloudlogurlhelp {
+        public static string CloudlogUrlHelp {
             get {
-                return ResourceManager.GetString("cloudlogurlhelp", resourceCulture);
+                return ResourceManager.GetString("CloudlogUrlHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Clublog Settings.
         /// </summary>
-        public static string clublogsettings {
+        public static string ClublogSettings {
             get {
-                return ResourceManager.GetString("clublogsettings", resourceCulture);
+                return ResourceManager.GetString("ClublogSettings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to If this field is not empty, the software will use the entered content as the default parameters for launching rigctld, and all other configurations will be ignored..
         /// </summary>
-        public static string cmdarghelp {
+        public static string CommandArgHelp {
             get {
-                return ResourceManager.GetString("cmdarghelp", resourceCulture);
+                return ResourceManager.GetString("CommandArgHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid cloudlog configuration; Please check them in settings!.
         /// </summary>
-        public static string confcloudlogfirst {
+        public static string ConfigureCloudlogFirst {
             get {
-                return ResourceManager.GetString("confcloudlogfirst", resourceCulture);
+                return ResourceManager.GetString("ConfigureCloudlogFirst", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Error in flrig settings - correct them first!.
         /// </summary>
-        public static string confflrigfirst {
+        public static string ConfigureFlRigFirst {
             get {
-                return ResourceManager.GetString("confflrigfirst", resourceCulture);
+                return ResourceManager.GetString("ConfigureFlRigFirst", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid hamlib configuration; Please check them in settings!.
         /// </summary>
-        public static string confhamlibfirst {
+        public static string ConfigureHamlibFirst {
             get {
-                return ResourceManager.GetString("confhamlibfirst", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Process conflict: {replace01} may disrupt radio data auto-reporting..
-        /// </summary>
-        public static string conflicthamlib {
-            get {
-                return ResourceManager.GetString("conflicthamlib", resourceCulture);
+                return ResourceManager.GetString("ConfigureHamlibFirst", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Please check OmniRig Settings!.
         /// </summary>
-        public static string confomnifirst {
+        public static string ConfigureOmniRigFirst {
             get {
-                return ResourceManager.GetString("confomnifirst", resourceCulture);
+                return ResourceManager.GetString("ConfigureOmniRigFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process conflict: {replace01} may disrupt radio data auto-reporting..
+        /// </summary>
+        public static string ConflictingHamlib {
+            get {
+                return ResourceManager.GetString("ConflictingHamlib", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Control Panel.
         /// </summary>
-        public static string controlpanel {
+        public static string ControlPanel {
             get {
-                return ResourceManager.GetString("controlpanel", resourceCulture);
+                return ResourceManager.GetString("ControlPanel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current Frequency.
         /// </summary>
-        public static string currentfreq {
+        public static string CurrentFrequency {
             get {
-                return ResourceManager.GetString("currentfreq", resourceCulture);
+                return ResourceManager.GetString("CurrentFrequency", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current Mode.
         /// </summary>
-        public static string currrentmode {
+        public static string CurrentMode {
             get {
-                return ResourceManager.GetString("currrentmode", resourceCulture);
+                return ResourceManager.GetString("CurrentMode", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Dark.
         /// </summary>
-        public static string dark {
+        public static string Dark {
             get {
-                return ResourceManager.GetString("dark", resourceCulture);
+                return ResourceManager.GetString("Dark", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Data Bit.
         /// </summary>
-        public static string databit {
+        public static string DataBit {
             get {
-                return ResourceManager.GetString("databit", resourceCulture);
+                return ResourceManager.GetString("DataBit", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSOs today.
         /// </summary>
-        public static string dayqsos {
+        public static string DayQsos {
             get {
-                return ResourceManager.GetString("dayqsos", resourceCulture);
+                return ResourceManager.GetString("DayQsos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decoded / Qsos: .
+        /// </summary>
+        public static string DecodedQsos {
+            get {
+                return ResourceManager.GetString("DecodedQsos", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to DEL SEL.
         /// </summary>
-        public static string delsel {
+        public static string DeleteSelected {
             get {
-                return ResourceManager.GetString("delsel", resourceCulture);
+                return ResourceManager.GetString("DeleteSelected", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Decline.
         /// </summary>
-        public static string deny {
+        public static string Deny {
             get {
-                return ResourceManager.GetString("deny", resourceCulture);
+                return ResourceManager.GetString("Deny", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Device Port.
         /// </summary>
-        public static string deviceport {
+        public static string DevicePort {
             get {
-                return ResourceManager.GetString("deviceport", resourceCulture);
+                return ResourceManager.GetString("DevicePort", resourceCulture);
             }
         }
         
@@ -532,36 +568,36 @@ namespace CloudlogHelper.Resources.Language {
         ///
         ///.
         /// </summary>
-        public static string disablecharts {
+        public static string DisableCharts {
             get {
-                return ResourceManager.GetString("disablecharts", resourceCulture);
+                return ResourceManager.GetString("DisableCharts", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Disable PTT Control.
         /// </summary>
-        public static string disableptt {
+        public static string DisablePtt {
             get {
-                return ResourceManager.GetString("disableptt", resourceCulture);
+                return ResourceManager.GetString("DisablePtt", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to In some Linux distributions, if rts/dtr is not disabled, it may prevent PTT from initializing correctly, manifesting as the PTT remaining in a triggered state..
         /// </summary>
-        public static string disableptthelp {
+        public static string DisablePttHelp {
             get {
-                return ResourceManager.GetString("disableptthelp", resourceCulture);
+                return ResourceManager.GetString("DisablePttHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Discard.
         /// </summary>
-        public static string discard {
+        public static string Discard {
             get {
-                return ResourceManager.GetString("discard", resourceCulture);
+                return ResourceManager.GetString("Discard", resourceCulture);
             }
         }
         
@@ -574,801 +610,847 @@ namespace CloudlogHelper.Resources.Language {
         ///
         ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudl [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string disclaimer {
+        public static string Disclaimer {
             get {
-                return ResourceManager.GetString("disclaimer", resourceCulture);
+                return ResourceManager.GetString("Disclaimer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Distance (km).
         /// </summary>
-        public static string distkm {
+        public static string DistanceKm {
             get {
-                return ResourceManager.GetString("distkm", resourceCulture);
+                return ResourceManager.GetString("DistanceKm", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Distance weight.
         /// </summary>
-        public static string distweight {
+        public static string DistanceWeight {
             get {
-                return ResourceManager.GetString("distweight", resourceCulture);
+                return ResourceManager.GetString("DistanceWeight", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Double tap QSO to see more.
         /// </summary>
-        public static string doubletap2seemore {
+        public static string DoubleTapToSeeMore {
             get {
-                return ResourceManager.GetString("doubletap2seemore", resourceCulture);
+                return ResourceManager.GetString("DoubleTapToSeeMore", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Program is already running!.
         /// </summary>
-        public static string dupeinstance {
+        public static string DuplicateInstance {
             get {
-                return ResourceManager.GetString("dupeinstance", resourceCulture);
+                return ResourceManager.GetString("DuplicateInstance", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Enable two radio backend control services simultaneously is not allowed..
         /// </summary>
-        public static string duperigservdetected {
+        public static string DuplicateRigServiceDetected {
             get {
-                return ResourceManager.GetString("duperigservdetected", resourceCulture);
+                return ResourceManager.GetString("DuplicateRigServiceDetected", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to e-mail.
         /// </summary>
-        public static string email {
+        public static string Email {
             get {
-                return ResourceManager.GetString("email", resourceCulture);
+                return ResourceManager.GetString("Email", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Advanced.
         /// </summary>
-        public static string enableadvanced {
+        public static string EnableAdvanced {
             get {
-                return ResourceManager.GetString("enableadvanced", resourceCulture);
+                return ResourceManager.GetString("EnableAdvanced", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Enable CLH Server.
         /// </summary>
-        public static string enableclhserver {
+        public static string EnableClhServer {
             get {
-                return ResourceManager.GetString("enableclhserver", resourceCulture);
+                return ResourceManager.GetString("EnableClhServer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Enable connection from outside.
         /// </summary>
-        public static string enableoutsideconn {
+        public static string EnableOutsideConnection {
             get {
-                return ResourceManager.GetString("enableoutsideconn", resourceCulture);
+                return ResourceManager.GetString("EnableOutsideConnection", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Enable plugins.
         /// </summary>
-        public static string enableplugin {
+        public static string EnablePlugin {
             get {
-                return ResourceManager.GetString("enableplugin", resourceCulture);
+                return ResourceManager.GetString("EnablePlugin", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Enable udp server.
         /// </summary>
-        public static string enableudpserver {
+        public static string EnableUdpServer {
             get {
-                return ResourceManager.GetString("enableudpserver", resourceCulture);
+                return ResourceManager.GetString("EnableUdpServer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
-        public static string error {
+        public static string Error {
             get {
-                return ResourceManager.GetString("error", resourceCulture);
+                return ResourceManager.GetString("Error", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Error Occurred!.
         /// </summary>
-        public static string errorccurred {
+        public static string ErrorOccurred {
             get {
-                return ResourceManager.GetString("errorccurred", resourceCulture);
+                return ResourceManager.GetString("ErrorOccurred", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
-        public static string exit {
+        public static string Exit {
             get {
-                return ResourceManager.GetString("exit", resourceCulture);
+                return ResourceManager.GetString("Exit", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Export.
         /// </summary>
-        public static string export {
+        public static string Export {
             get {
-                return ResourceManager.GetString("export", resourceCulture);
+                return ResourceManager.GetString("Export", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Export adi.
         /// </summary>
-        public static string export2adif {
+        public static string ExportToAdif {
             get {
-                return ResourceManager.GetString("export2adif", resourceCulture);
+                return ResourceManager.GetString("ExportToAdif", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to External rigctld host.
         /// </summary>
-        public static string externalrigctldhost {
+        public static string ExternalRigctldHost {
             get {
-                return ResourceManager.GetString("externalrigctldhost", resourceCulture);
+                return ResourceManager.GetString("ExternalRigctldHost", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed!.
         /// </summary>
-        public static string failed {
+        public static string Failed {
             get {
-                return ResourceManager.GetString("failed", resourceCulture);
+                return ResourceManager.GetString("Failed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to upload this QSO..
         /// </summary>
-        public static string failedqso {
+        public static string FailedQso {
             get {
-                return ResourceManager.GetString("failedqso", resourceCulture);
+                return ResourceManager.GetString("FailedQso", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to fetch RIG info!.
         /// </summary>
-        public static string failedriginfo {
+        public static string FailedRigInfo {
             get {
-                return ResourceManager.GetString("failedriginfo", resourceCulture);
+                return ResourceManager.GetString("FailedRigInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to fetch station info!.
         /// </summary>
-        public static string failedstationinfo {
+        public static string FailedStationInfo {
             get {
-                return ResourceManager.GetString("failedstationinfo", resourceCulture);
+                return ResourceManager.GetString("FailedStationInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to fetch station statistics!.
         /// </summary>
-        public static string failedstationstat {
+        public static string FailedStationStatistics {
             get {
-                return ResourceManager.GetString("failedstationstat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to sync QSO: .
-        /// </summary>
-        public static string failedsyncqso {
-            get {
-                return ResourceManager.GetString("failedsyncqso", resourceCulture);
+                return ResourceManager.GetString("FailedStationStatistics", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to extract port number from the command line arguments. Please explicitly specify them using the -t parameters..
         /// </summary>
-        public static string failextractinfo {
+        public static string FailedToExtractInfo {
             get {
-                return ResourceManager.GetString("failextractinfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to communicate with rig!.
-        /// </summary>
-        public static string failrigcomm {
-            get {
-                return ResourceManager.GetString("failrigcomm", resourceCulture);
+                return ResourceManager.GetString("FailedToExtractInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to upload rig info to {addr}. See logs for more!.
         /// </summary>
-        public static string failuploadriginfoto {
+        public static string FailedUploadRigInfoTo {
             get {
-                return ResourceManager.GetString("failuploadriginfoto", resourceCulture);
+                return ResourceManager.GetString("FailedUploadRigInfoTo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Please complete all required fields..
         /// </summary>
-        public static string fillall {
+        public static string FillAllFields {
             get {
-                return ResourceManager.GetString("fillall", resourceCulture);
+                return ResourceManager.GetString("FillAllFields", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Filter dupe samples by callsign.
         /// </summary>
-        public static string filterdupebycallsign {
+        public static string FilterDuplicatesByCallsign {
             get {
-                return ResourceManager.GetString("filterdupebycallsign", resourceCulture);
+                return ResourceManager.GetString("FilterDuplicatesByCallsign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forward raw UDP Packet to.
+        /// </summary>
+        public static string ForwardMessage {
+            get {
+                return ResourceManager.GetString("ForwardMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forward raw UDP Packet to.
+        /// </summary>
+        public static string ForwardTo {
+            get {
+                return ResourceManager.GetString("ForwardTo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Send decoded data to HTTP server.
         /// </summary>
-        public static string forward2tcp {
+        public static string ForwardToTcp {
             get {
-                return ResourceManager.GetString("forward2tcp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Forward raw UDP Packet to.
-        /// </summary>
-        public static string forwardmsg {
-            get {
-                return ResourceManager.GetString("forwardmsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Forward raw UDP Packet to.
-        /// </summary>
-        public static string forwardto {
-            get {
-                return ResourceManager.GetString("forwardto", resourceCulture);
+                return ResourceManager.GetString("ForwardToTcp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Getting info....
         /// </summary>
-        public static string gettinginfo {
+        public static string GettingInfo {
             get {
-                return ResourceManager.GetString("gettinginfo", resourceCulture);
+                return ResourceManager.GetString("GettingInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Grid Square.
         /// </summary>
-        public static string grid {
+        public static string Grid {
             get {
-                return ResourceManager.GetString("grid", resourceCulture);
+                return ResourceManager.GetString("Grid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Grid coordinates are empty or invalid, please check settings!.
         /// </summary>
-        public static string griderror {
+        public static string GridError {
             get {
-                return ResourceManager.GetString("griderror", resourceCulture);
+                return ResourceManager.GetString("GridError", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to HamCQ Settings.
         /// </summary>
-        public static string hamcqsettings {
+        public static string HamCqSettings {
             get {
-                return ResourceManager.GetString("hamcqsettings", resourceCulture);
+                return ResourceManager.GetString("HamCqSettings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
-        public static string help {
+        public static string Help {
             get {
-                return ResourceManager.GetString("help", resourceCulture);
+                return ResourceManager.GetString("Help", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Your feedback is valuable! Could you please share the error details on GitHub to assist in resolving this bug?.
         /// </summary>
-        public static string helpfeedback {
+        public static string HelpFeedback {
             get {
-                return ResourceManager.GetString("helpfeedback", resourceCulture);
+                return ResourceManager.GetString("HelpFeedback", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This QSO is ignored - Maybe none of third party log service is enabled?.
         /// </summary>
-        public static string ignoreqso {
+        public static string IgnoredQso {
             get {
-                return ResourceManager.GetString("ignoreqso", resourceCulture);
+                return ResourceManager.GetString("IgnoredQso", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This operation will permanently ignore the selected QSOs, and subsequent QSO Assistant scans will skip these entries. Do you want to continue?.
         /// </summary>
-        public static string ignoreqsopermanently {
+        public static string IgnoreQsoPermanently {
             get {
-                return ResourceManager.GetString("ignoreqsopermanently", resourceCulture);
+                return ResourceManager.GetString("IgnoreQsoPermanently", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Falied to init hamlib!.
         /// </summary>
-        public static string inithamlibfailed {
+        public static string InitHamlibFailed {
             get {
-                return ResourceManager.GetString("inithamlibfailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Instance Name.
-        /// </summary>
-        public static string instancename {
-            get {
-                return ResourceManager.GetString("instancename", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This field refers to the name used when the software is registered to the clh-server. This name should be unique..
-        /// </summary>
-        public static string instancenamehint {
-            get {
-                return ResourceManager.GetString("instancenamehint", resourceCulture);
+                return ResourceManager.GetString("InitHamlibFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Seems like you&apos;re using {replace01} instead of Cloudlog as the backend service. Some features may not be fully supported..
         /// </summary>
-        public static string instanceuncompitable {
+        public static string InstanceIncompatible {
             get {
-                return ResourceManager.GetString("instanceuncompitable", resourceCulture);
+                return ResourceManager.GetString("InstanceIncompatible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instance Name.
+        /// </summary>
+        public static string InstanceName {
+            get {
+                return ResourceManager.GetString("InstanceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This field refers to the name used when the software is registered to the clh-server. This name should be unique..
+        /// </summary>
+        public static string InstanceNameHint {
+            get {
+                return ResourceManager.GetString("InstanceNameHint", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid host address!.
         /// </summary>
-        public static string invalidaddr {
+        public static string InvalidAddress {
             get {
-                return ResourceManager.GetString("invalidaddr", resourceCulture);
+                return ResourceManager.GetString("InvalidAddress", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid ADIF!.
         /// </summary>
-        public static string invalidadif {
+        public static string InvalidAdif {
             get {
-                return ResourceManager.GetString("invalidadif", resourceCulture);
+                return ResourceManager.GetString("InvalidAdif", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This apikey is invalid!.
         /// </summary>
-        public static string invalidapikey {
+        public static string InvalidApiKey {
             get {
-                return ResourceManager.GetString("invalidapikey", resourceCulture);
+                return ResourceManager.GetString("InvalidApiKey", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid configuration!.
         /// </summary>
-        public static string invalidconf {
+        public static string InvalidConfiguration {
             get {
-                return ResourceManager.GetString("invalidconf", resourceCulture);
+                return ResourceManager.GetString("InvalidConfiguration", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid port number..
         /// </summary>
-        public static string invalidport {
+        public static string InvalidPort {
             get {
-                return ResourceManager.GetString("invalidport", resourceCulture);
+                return ResourceManager.GetString("InvalidPort", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid UDP Server config!.
         /// </summary>
-        public static string invalidudpconf {
+        public static string InvalidUdpConfiguration {
             get {
-                return ResourceManager.GetString("invalidudpconf", resourceCulture);
+                return ResourceManager.GetString("InvalidUdpConfiguration", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to URL is invalid!.
         /// </summary>
-        public static string invalidurl {
+        public static string InvalidUrl {
             get {
-                return ResourceManager.GetString("invalidurl", resourceCulture);
+                return ResourceManager.GetString("InvalidUrl", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to K Value(KNN).
         /// </summary>
-        public static string kval {
+        public static string KValue {
             get {
-                return ResourceManager.GetString("kval", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Apikey needs read/write access but only read is given here!.
-        /// </summary>
-        public static string lackwriteaccess {
-            get {
-                return ResourceManager.GetString("lackwriteaccess", resourceCulture);
+                return ResourceManager.GetString("KValue", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Latitude.
         /// </summary>
-        public static string latitude {
+        public static string Latitude {
             get {
-                return ResourceManager.GetString("latitude", resourceCulture);
+                return ResourceManager.GetString("Latitude", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
-        public static string light {
+        public static string Light {
             get {
-                return ResourceManager.GetString("light", resourceCulture);
+                return ResourceManager.GetString("Light", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Longitude.
         /// </summary>
-        public static string longitude {
+        public static string Longitude {
             get {
-                return ResourceManager.GetString("longitude", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ✅️ A QSO Was made!.
-        /// </summary>
-        public static string madeaqso {
-            get {
-                return ResourceManager.GetString("madeaqso", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Max sample count.
-        /// </summary>
-        public static string maxsamplecount {
-            get {
-                return ResourceManager.GetString("maxsamplecount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to QSOs this month.
-        /// </summary>
-        public static string monthqsos {
-            get {
-                return ResourceManager.GetString("monthqsos", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Must have -vvvvv in command-line args!.
-        /// </summary>
-        public static string mustverbose {
-            get {
-                return ResourceManager.GetString("mustverbose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Grid.
-        /// </summary>
-        public static string mygrid {
-            get {
-                return ResourceManager.GetString("mygrid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Next Upload.
-        /// </summary>
-        public static string nextuploadtime {
-            get {
-                return ResourceManager.GetString("nextuploadtime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (No data).
-        /// </summary>
-        public static string nodata {
-            get {
-                return ResourceManager.GetString("nodata", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Notice.
-        /// </summary>
-        public static string notice {
-            get {
-                return ResourceManager.GetString("notice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This cannot be empty!.
-        /// </summary>
-        public static string notnull {
-            get {
-                return ResourceManager.GetString("notnull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms..
-        /// </summary>
-        public static string omniinitfailed {
-            get {
-                return ResourceManager.GetString("omniinitfailed", resourceCulture);
+                return ResourceManager.GetString("Longitude", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Please input domain only;  don&apos;t end with /api/qso!.
         /// </summary>
-        public static string onlymaindomain {
+        public static string MainDomainOnly {
             get {
-                return ResourceManager.GetString("onlymaindomain", resourceCulture);
+                return ResourceManager.GetString("MainDomainOnly", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operator.
+        ///   Looks up a localized string similar to Max sample count.
         /// </summary>
-        public static string op {
+        public static string MaxSampleCount {
             get {
-                return ResourceManager.GetString("op", resourceCulture);
+                return ResourceManager.GetString("MaxSampleCount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open.
+        ///   Looks up a localized string similar to Polling interval should be more than 1s!.
         /// </summary>
-        public static string open {
+        public static string MinimumPollIntervalError {
             get {
-                return ResourceManager.GetString("open", resourceCulture);
+                return ResourceManager.GetString("MinimumPollIntervalError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open configuration directory.
+        ///   Looks up a localized string similar to Apikey needs read/write access but only read is given here!.
         /// </summary>
-        public static string openconfpath {
+        public static string MissingWriteAccess {
             get {
-                return ResourceManager.GetString("openconfpath", resourceCulture);
+                return ResourceManager.GetString("MissingWriteAccess", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open cache folder.
+        ///   Looks up a localized string similar to QSOs this month.
         /// </summary>
-        public static string opentempfolder {
+        public static string MonthQsos {
             get {
-                return ResourceManager.GetString("opentempfolder", resourceCulture);
+                return ResourceManager.GetString("MonthQsos", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password.
+        ///   Looks up a localized string similar to URL must start with http:// or https://.
         /// </summary>
-        public static string password {
+        public static string MustStartWithHttp {
             get {
-                return ResourceManager.GetString("password", resourceCulture);
+                return ResourceManager.GetString("MustStartWithHttp", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pause.
+        ///   Looks up a localized string similar to My Grid.
         /// </summary>
-        public static string pause {
+        public static string MyGrid {
             get {
-                return ResourceManager.GetString("pause", resourceCulture);
+                return ResourceManager.GetString("MyGrid", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This QSO is pending..
+        ///   Looks up a localized string similar to Next Upload.
         /// </summary>
-        public static string pendingqso {
+        public static string NextUploadTime {
             get {
-                return ResourceManager.GetString("pendingqso", resourceCulture);
+                return ResourceManager.GetString("NextUploadTime", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rig data polling is not enabled！.
+        ///   Looks up a localized string similar to (No data).
         /// </summary>
-        public static string polldisabled {
+        public static string NoData {
             get {
-                return ResourceManager.GetString("polldisabled", resourceCulture);
+                return ResourceManager.GetString("NoData", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Poll interval (sec).
+        ///   Looks up a localized string similar to Notice.
         /// </summary>
-        public static string pollinterval {
+        public static string Notice {
             get {
-                return ResourceManager.GetString("pollinterval", resourceCulture);
+                return ResourceManager.GetString("Notice", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The polling interval must be an integer and greater than 1.
+        ///   Looks up a localized string similar to Error.
         /// </summary>
-        public static string pollintervalreq {
+        public static string NotificationTitleError {
             get {
-                return ResourceManager.GetString("pollintervalreq", resourceCulture);
+                return ResourceManager.GetString("NotificationTitleError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Port.
+        ///   Looks up a localized string similar to Info.
         /// </summary>
-        public static string port {
+        public static string NotificationTitleInfo {
             get {
-                return ResourceManager.GetString("port", resourceCulture);
+                return ResourceManager.GetString("NotificationTitleInfo", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allow proxying requests sent by other applications. Used to prevent potential conflicts caused by simultaneous requests to rigctld..
+        ///   Looks up a localized string similar to Success.
         /// </summary>
-        public static string proxyhelp {
+        public static string NotificationTitleSuccess {
             get {
-                return ResourceManager.GetString("proxyhelp", resourceCulture);
+                return ResourceManager.GetString("NotificationTitleSuccess", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ----Please select----.
+        ///   Looks up a localized string similar to Warning.
         /// </summary>
-        public static string psesel {
+        public static string NotificationTitleWarning {
             get {
-                return ResourceManager.GetString("psesel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please select any qso first!.
-        /// </summary>
-        public static string pseselfirst {
-            get {
-                return ResourceManager.GetString("pseselfirst", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send notifications after:.
-        /// </summary>
-        public static string pushnotificationon {
-            get {
-                return ResourceManager.GetString("pushnotificationon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to QSO Assistant.
-        /// </summary>
-        public static string qsoassistant {
-            get {
-                return ResourceManager.GetString("qsoassistant", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Call Sign: {0}, Country: {1} ({8}) ,  Grid: {9},  Frequency: {10} ({11}), Mode: {12},  Time: {14} to {15},  Report: Sent &apos;{16}&apos; / Received &apos;{17}&apos;.
-        /// </summary>
-        public static string qsoconcisetemplate {
-            get {
-                return ResourceManager.GetString("qsoconcisetemplate", resourceCulture);
+                return ResourceManager.GetString("NotificationTitleWarning", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to A QSO is made.
         /// </summary>
-        public static string qsofinished {
+        public static string NotifyOnQsoFinished {
             get {
-                return ResourceManager.GetString("qsofinished", resourceCulture);
+                return ResourceManager.GetString("NotifyOnQsoFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A QSO is uploaded.
+        /// </summary>
+        public static string NotifyOnQsoUploaded {
+            get {
+                return ResourceManager.GetString("NotifyOnQsoUploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms..
+        /// </summary>
+        public static string OmniRigInitFailed {
+            get {
+                return ResourceManager.GetString("OmniRigInitFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string Open {
+            get {
+                return ResourceManager.GetString("Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open configuration directory.
+        /// </summary>
+        public static string OpenConfigPath {
+            get {
+                return ResourceManager.GetString("OpenConfigPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open cache folder.
+        /// </summary>
+        public static string OpenTempFolder {
+            get {
+                return ResourceManager.GetString("OpenTempFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operator.
+        /// </summary>
+        public static string Operator {
+            get {
+                return ResourceManager.GetString("Operator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        public static string Pause {
+            get {
+                return ResourceManager.GetString("Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This QSO is pending..
+        /// </summary>
+        public static string PendingQso {
+            get {
+                return ResourceManager.GetString("PendingQso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ----Please select----.
+        /// </summary>
+        public static string PleaseSelect {
+            get {
+                return ResourceManager.GetString("PleaseSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select any qso first!.
+        /// </summary>
+        public static string PleaseSelectFirst {
+            get {
+                return ResourceManager.GetString("PleaseSelectFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please save the settings and close the settings page for the changes to the plugin to take effect.
+        ///.
+        /// </summary>
+        public static string PluginRestartHint {
+            get {
+                return ResourceManager.GetString("PluginRestartHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rig data polling is not enabled！.
+        /// </summary>
+        public static string PollingDisabled {
+            get {
+                return ResourceManager.GetString("PollingDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Poll interval (sec).
+        /// </summary>
+        public static string PollInterval {
+            get {
+                return ResourceManager.GetString("PollInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The polling interval must be an integer and greater than 1.
+        /// </summary>
+        public static string PollIntervalRequired {
+            get {
+                return ResourceManager.GetString("PollIntervalRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        public static string Port {
+            get {
+                return ResourceManager.GetString("Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow proxying requests sent by other applications. Used to prevent potential conflicts caused by simultaneous requests to rigctld..
+        /// </summary>
+        public static string ProxyHelp {
+            get {
+                return ResourceManager.GetString("ProxyHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send notifications after:.
+        /// </summary>
+        public static string PushNotifications {
+            get {
+                return ResourceManager.GetString("PushNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to QSO Assistant.
+        /// </summary>
+        public static string QsoAssistant {
+            get {
+                return ResourceManager.GetString("QsoAssistant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Call Sign: {0}, Country: {1} ({8}) ,  Grid: {9},  Frequency: {10} ({11}), Mode: {12},  Time: {14} to {15},  Report: Sent &apos;{16}&apos; / Received &apos;{17}&apos;.
+        /// </summary>
+        public static string QsoConciseTemplate {
+            get {
+                return ResourceManager.GetString("QsoConciseTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ✅️ A QSO Was made!.
+        /// </summary>
+        public static string QsoMade {
+            get {
+                return ResourceManager.GetString("QsoMade", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSO Rate:.
         /// </summary>
-        public static string qsorate {
+        public static string QsoRate {
             get {
-                return ResourceManager.GetString("qsorate", resourceCulture);
+                return ResourceManager.GetString("QsoRate", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSO upload failed retry count.
         /// </summary>
-        public static string qsoretrycount {
+        public static string QsoRetryCount {
             get {
-                return ResourceManager.GetString("qsoretrycount", resourceCulture);
+                return ResourceManager.GetString("QsoRetryCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to sync QSO: .
+        /// </summary>
+        public static string QsoSyncFailed {
+            get {
+                return ResourceManager.GetString("QsoSyncFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Syncing QSO....
         /// </summary>
-        public static string qsosyncing {
+        public static string QsoSyncing {
             get {
-                return ResourceManager.GetString("qsosyncing", resourceCulture);
+                return ResourceManager.GetString("QsoSyncing", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSO Sync finished successfully..
         /// </summary>
-        public static string qsosyncsucc {
+        public static string QsoSyncSucceeded {
             get {
-                return ResourceManager.GetString("qsosyncsucc", resourceCulture);
+                return ResourceManager.GetString("QsoSyncSucceeded", resourceCulture);
             }
         }
         
@@ -1395,504 +1477,477 @@ namespace CloudlogHelper.Resources.Language {
         ///• Upload Status: {28}
         ///• Fail Reason: {29}.
         /// </summary>
-        public static string qsotemplate {
+        public static string QsoTemplate {
             get {
-                return ResourceManager.GetString("qsotemplate", resourceCulture);
+                return ResourceManager.GetString("QsoTemplate", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSO auto upload is disabled..
         /// </summary>
-        public static string qsouploaddisabled {
+        public static string QsoUploadDisabled {
             get {
-                return ResourceManager.GetString("qsouploaddisabled", resourceCulture);
+                return ResourceManager.GetString("QsoUploadDisabled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A QSO is uploaded.
+        ///   Looks up a localized string similar to ✅️ QSO Logged!.
         /// </summary>
-        public static string qsouploaded {
+        public static string QsoUploaded {
             get {
-                return ResourceManager.GetString("qsouploaded", resourceCulture);
+                return ResourceManager.GetString("QsoUploaded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSO Upload Endpoint.
         /// </summary>
-        public static string qsouploadendpoint {
+        public static string QsoUploadEndpoint {
             get {
-                return ResourceManager.GetString("qsouploadendpoint", resourceCulture);
+                return ResourceManager.GetString("QsoUploadEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ☹️ QSO upload failed!.
+        /// </summary>
+        public static string QsoUploadFailed {
+            get {
+                return ResourceManager.GetString("QsoUploadFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QTH Nickname(optional).
         /// </summary>
-        public static string qthnick {
+        public static string QthNick {
             get {
-                return ResourceManager.GetString("qthnick", resourceCulture);
+                return ResourceManager.GetString("QthNick", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QTH Nickname (Optional).
         /// </summary>
-        public static string qthnickname {
+        public static string QthNickname {
             get {
-                return ResourceManager.GetString("qthnickname", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Polling interval should be more than 1s!.
-        /// </summary>
-        public static string reachminiumpollinterval {
-            get {
-                return ResourceManager.GetString("reachminiumpollinterval", resourceCulture);
+                return ResourceManager.GetString("QthNickname", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Received QSO Info.
         /// </summary>
-        public static string recvqso {
+        public static string ReceivedQsoInfo {
             get {
-                return ResourceManager.GetString("recvqso", resourceCulture);
+                return ResourceManager.GetString("ReceivedQsoInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Refresh.
         /// </summary>
-        public static string refresh {
+        public static string Refresh {
             get {
-                return ResourceManager.GetString("refresh", resourceCulture);
+                return ResourceManager.GetString("Refresh", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Remember my choice.
         /// </summary>
-        public static string remembermychoice {
+        public static string RememberMyChoice {
             get {
-                return ResourceManager.GetString("remembermychoice", resourceCulture);
+                return ResourceManager.GetString("RememberMyChoice", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Report RFPOWER.
         /// </summary>
-        public static string reportpwr {
+        public static string ReportPower {
             get {
-                return ResourceManager.GetString("reportpwr", resourceCulture);
+                return ResourceManager.GetString("ReportPower", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Report split info.
         /// </summary>
-        public static string reportsplit {
+        public static string ReportSplit {
             get {
-                return ResourceManager.GetString("reportsplit", resourceCulture);
+                return ResourceManager.GetString("ReportSplit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This cannot be empty!.
+        /// </summary>
+        public static string Required {
+            get {
+                return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must have -vvvvv in command-line args!.
+        /// </summary>
+        public static string RequireVerboseLogging {
+            get {
+                return ResourceManager.GetString("RequireVerboseLogging", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Retry count should be an integer and larger than 0!.
         /// </summary>
-        public static string retrycountreq {
+        public static string RetryCountRequired {
             get {
-                return ResourceManager.GetString("retrycountreq", resourceCulture);
+                return ResourceManager.GetString("RetryCountRequired", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This QSO is being retried..
         /// </summary>
-        public static string retryingqso {
+        public static string RetryingQso {
             get {
-                return ResourceManager.GetString("retryingqso", resourceCulture);
+                return ResourceManager.GetString("RetryingQso", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to UP AGN.
         /// </summary>
-        public static string reuploadsel {
+        public static string ReuploadSelected {
             get {
-                return ResourceManager.GetString("reuploadsel", resourceCulture);
+                return ResourceManager.GetString("ReuploadSelected", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Some radios do not support reading the transmit power, or the data read may be incorrect. Therefore  this feature is disabled by default..
         /// </summary>
-        public static string rfpowerhelp {
+        public static string RfPowerHelp {
             get {
-                return ResourceManager.GetString("rfpowerhelp", resourceCulture);
+                return ResourceManager.GetString("RfPowerHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rig Backend System.
         /// </summary>
-        public static string rigbackendsystem {
+        public static string RigBackendSystem {
             get {
-                return ResourceManager.GetString("rigbackendsystem", resourceCulture);
+                return ResourceManager.GetString("RigBackendSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to communicate with rig!.
+        /// </summary>
+        public static string RigCommunicationFailed {
+            get {
+                return ResourceManager.GetString("RigCommunicationFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rigctld cmd args.
         /// </summary>
-        public static string rigctldcmdarg {
+        public static string RigctldCommandArg {
             get {
-                return ResourceManager.GetString("rigctldcmdarg", resourceCulture);
+                return ResourceManager.GetString("RigctldCommandArg", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rigctld service not started; Please check your configuration!.
         /// </summary>
-        public static string rigctldnotstart {
+        public static string RigctldNotStarted {
             get {
-                return ResourceManager.GetString("rigctldnotstart", resourceCulture);
+                return ResourceManager.GetString("RigctldNotStarted", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rig Data.
         /// </summary>
-        public static string rigdata {
+        public static string RigData {
             get {
-                return ResourceManager.GetString("rigdata", resourceCulture);
+                return ResourceManager.GetString("RigData", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Right click QSO to see more.
         /// </summary>
-        public static string rightclick2seemore {
+        public static string RightClickToSeeMore {
             get {
-                return ResourceManager.GetString("rightclick2seemore", resourceCulture);
+                return ResourceManager.GetString("RightClickToSeeMore", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to RIG Info upload endpoint.
         /// </summary>
-        public static string riginfouploadendpoint {
+        public static string RigInfoUploadEndpoint {
             get {
-                return ResourceManager.GetString("riginfouploadendpoint", resourceCulture);
+                return ResourceManager.GetString("RigInfoUploadEndpoint", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rig Model.
         /// </summary>
-        public static string rigmodel {
+        public static string RigModel {
             get {
-                return ResourceManager.GetString("rigmodel", resourceCulture);
+                return ResourceManager.GetString("RigModel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rig communication time out, please check connection!.
         /// </summary>
-        public static string rigtimeout {
+        public static string RigTimeout {
             get {
-                return ResourceManager.GetString("rigtimeout", resourceCulture);
+                return ResourceManager.GetString("RigTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run Configuration Wizard.
+        /// </summary>
+        public static string RunWizard {
+            get {
+                return ResourceManager.GetString("RunWizard", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sample count = .
         /// </summary>
-        public static string samplecount {
+        public static string SampleCount {
             get {
-                return ResourceManager.GetString("samplecount", resourceCulture);
+                return ResourceManager.GetString("SampleCount", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Apply&amp;Save.
         /// </summary>
-        public static string save {
+        public static string Save {
             get {
-                return ResourceManager.GetString("save", resourceCulture);
+                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Save Log.
         /// </summary>
-        public static string savelog {
+        public static string SaveLog {
             get {
-                return ResourceManager.GetString("savelog", resourceCulture);
+                return ResourceManager.GetString("SaveLog", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Save log to....
         /// </summary>
-        public static string savelogto {
+        public static string SaveLogTo {
             get {
-                return ResourceManager.GetString("savelogto", resourceCulture);
+                return ResourceManager.GetString("SaveLogTo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Select All.
         /// </summary>
-        public static string selall {
+        public static string SelectAll {
             get {
-                return ResourceManager.GetString("selall", resourceCulture);
+                return ResourceManager.GetString("SelectAll", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
-        public static string settings {
+        public static string Settings {
             get {
-                return ResourceManager.GetString("settings", resourceCulture);
+                return ResourceManager.GetString("Settings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show coast line.
         /// </summary>
-        public static string showcoastline {
+        public static string ShowCoastline {
             get {
-                return ResourceManager.GetString("showcoastline", resourceCulture);
+                return ResourceManager.GetString("ShowCoastline", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show density color.
         /// </summary>
-        public static string showdensitycolor {
+        public static string ShowDensityColor {
             get {
-                return ResourceManager.GetString("showdensitycolor", resourceCulture);
+                return ResourceManager.GetString("ShowDensityColor", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show failed only.
         /// </summary>
-        public static string showfailonly {
+        public static string ShowFailedOnly {
             get {
-                return ResourceManager.GetString("showfailonly", resourceCulture);
+                return ResourceManager.GetString("ShowFailedOnly", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Close App.
         /// </summary>
-        public static string shutdown {
+        public static string Shutdown {
             get {
-                return ResourceManager.GetString("shutdown", resourceCulture);
+                return ResourceManager.GetString("Shutdown", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Signal count.
         /// </summary>
-        public static string signalcount {
+        public static string SignalCount {
             get {
-                return ResourceManager.GetString("signalcount", resourceCulture);
+                return ResourceManager.GetString("SignalCount", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Signal distribution.
         /// </summary>
-        public static string signalpolarchart {
+        public static string SignalPolarChart {
             get {
-                return ResourceManager.GetString("signalpolarchart", resourceCulture);
+                return ResourceManager.GetString("SignalPolarChart", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The string must not have leading or trailing spaces..
         /// </summary>
-        public static string spacenotallowed {
+        public static string SpaceNotAllowed {
             get {
-                return ResourceManager.GetString("spacenotallowed", resourceCulture);
+                return ResourceManager.GetString("SpaceNotAllowed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Semicolon-separated addresses must specify http(s).
         /// </summary>
-        public static string spiltby {
+        public static string SplitBySemicolon {
             get {
-                return ResourceManager.GetString("spiltby", resourceCulture);
+                return ResourceManager.GetString("SplitBySemicolon", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Some radios do not support reading the split data, or the data read may be incorrect. Therefore, this feature is disabled by default..
         /// </summary>
-        public static string splithelp {
+        public static string SplitHelp {
             get {
-                return ResourceManager.GetString("splithelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to URL must start with http:// or https://.
-        /// </summary>
-        public static string startwithhttp {
-            get {
-                return ResourceManager.GetString("startwithhttp", resourceCulture);
+                return ResourceManager.GetString("SplitHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Station Bearing Distribution - {0} Band {1}.
         /// </summary>
-        public static string stationbearing {
+        public static string StationBearingDistribution {
             get {
-                return ResourceManager.GetString("stationbearing", resourceCulture);
+                return ResourceManager.GetString("StationBearingDistribution", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Station Distance Distribution - {0} Band {1}.
         /// </summary>
-        public static string stationdistance {
+        public static string StationDistanceDistribution {
             get {
-                return ResourceManager.GetString("stationdistance", resourceCulture);
+                return ResourceManager.GetString("StationDistanceDistribution", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Cloudlog Station ID.
         /// </summary>
-        public static string stationid {
+        public static string StationId {
             get {
-                return ResourceManager.GetString("stationid", resourceCulture);
+                return ResourceManager.GetString("StationId", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Station name.
         /// </summary>
-        public static string stationname {
+        public static string StationName {
             get {
-                return ResourceManager.GetString("stationname", resourceCulture);
+                return ResourceManager.GetString("StationName", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Received Station Statistic.
         /// </summary>
-        public static string stationstatisticgraph {
+        public static string StationStatisticGraph {
             get {
-                return ResourceManager.GetString("stationstatisticgraph", resourceCulture);
+                return ResourceManager.GetString("StationStatisticGraph", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Stop Bit.
         /// </summary>
-        public static string stopbit {
+        public static string StopBit {
             get {
-                return ResourceManager.GetString("stopbit", resourceCulture);
+                return ResourceManager.GetString("StopBit", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Success.
         /// </summary>
-        public static string success {
+        public static string Success {
             get {
-                return ResourceManager.GetString("success", resourceCulture);
+                return ResourceManager.GetString("Success", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This QSO Uploaded successfully..
         /// </summary>
-        public static string successqso {
+        public static string SuccessfulQso {
             get {
-                return ResourceManager.GetString("successqso", resourceCulture);
+                return ResourceManager.GetString("SuccessfulQso", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Also upload info to.
         /// </summary>
-        public static string syncrigto {
+        public static string SyncRigInfoTo {
             get {
-                return ResourceManager.GetString("syncrigto", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fail.
-        /// </summary>
-        public static string t_Fail {
-            get {
-                return ResourceManager.GetString("t_Fail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ignored.
-        /// </summary>
-        public static string t_Ignored {
-            get {
-                return ResourceManager.GetString("t_Ignored", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Pending....
-        /// </summary>
-        public static string t_Pending {
-            get {
-                return ResourceManager.GetString("t_Pending", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrying....
-        /// </summary>
-        public static string t_Retrying {
-            get {
-                return ResourceManager.GetString("t_Retrying", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Success.
-        /// </summary>
-        public static string t_Success {
-            get {
-                return ResourceManager.GetString("t_Success", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Uploading....
-        /// </summary>
-        public static string t_Uploading {
-            get {
-                return ResourceManager.GetString("t_Uploading", resourceCulture);
+                return ResourceManager.GetString("SyncRigInfoTo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Target RIG.
         /// </summary>
-        public static string targetrig {
+        public static string TargetRig {
             get {
-                return ResourceManager.GetString("targetrig", resourceCulture);
+                return ResourceManager.GetString("TargetRig", resourceCulture);
             }
         }
         
@@ -1900,261 +1955,216 @@ namespace CloudlogHelper.Resources.Language {
         ///   Looks up a localized string similar to * After each configuration change, you must click &quot;Test&quot; to test and apply the changes.
         ///.
         /// </summary>
-        public static string testandapply {
+        public static string TestAndApply {
             get {
-                return ResourceManager.GetString("testandapply", resourceCulture);
+                return ResourceManager.GetString("TestAndApply", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Test .
         /// </summary>
-        public static string testconn {
+        public static string TestConnection {
             get {
-                return ResourceManager.GetString("testconn", resourceCulture);
+                return ResourceManager.GetString("TestConnection", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Testing....
         /// </summary>
-        public static string testing {
+        public static string Testing {
             get {
-                return ResourceManager.GetString("testing", resourceCulture);
+                return ResourceManager.GetString("Testing", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Theme Color.
         /// </summary>
-        public static string themecolor {
+        public static string ThemeColor {
             get {
-                return ResourceManager.GetString("themecolor", resourceCulture);
+                return ResourceManager.GetString("ThemeColor", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Third-party Log Systems.
         /// </summary>
-        public static string thirdpartylogsys {
+        public static string ThirdPartyLogSystem {
             get {
-                return ResourceManager.GetString("thirdpartylogsys", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error.
-        /// </summary>
-        public static string titleerror {
-            get {
-                return ResourceManager.GetString("titleerror", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Info.
-        /// </summary>
-        public static string titleinfo {
-            get {
-                return ResourceManager.GetString("titleinfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Success.
-        /// </summary>
-        public static string titlesuccess {
-            get {
-                return ResourceManager.GetString("titlesuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string titlewarning {
-            get {
-                return ResourceManager.GetString("titlewarning", resourceCulture);
+                return ResourceManager.GetString("ThirdPartyLogSystem", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Tools.
         /// </summary>
-        public static string tools {
+        public static string Tools {
             get {
-                return ResourceManager.GetString("tools", resourceCulture);
+                return ResourceManager.GetString("Tools", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Top 10 DXCCs - {0} Band {1}.
         /// </summary>
-        public static string top10decoded {
+        public static string Top10DecodedDxccs {
             get {
-                return ResourceManager.GetString("top10decoded", resourceCulture);
+                return ResourceManager.GetString("Top10DecodedDxccs", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Decoded:.
         /// </summary>
-        public static string totaldec {
+        public static string TotalDecoded {
             get {
-                return ResourceManager.GetString("totaldec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decoded / Qsos: .
-        /// </summary>
-        public static string totaldivqso {
-            get {
-                return ResourceManager.GetString("totaldivqso", resourceCulture);
+                return ResourceManager.GetString("TotalDecoded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Recorded:.
         /// </summary>
-        public static string totalrec {
+        public static string TotalReceived {
             get {
-                return ResourceManager.GetString("totalrec", resourceCulture);
+                return ResourceManager.GetString("TotalReceived", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Uploaded:.
         /// </summary>
-        public static string totaluploaded {
+        public static string TotalUploaded {
             get {
-                return ResourceManager.GetString("totaluploaded", resourceCulture);
+                return ResourceManager.GetString("TotalUploaded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Minimize to tray.
         /// </summary>
-        public static string totray {
+        public static string ToTray {
             get {
-                return ResourceManager.GetString("totray", resourceCulture);
+                return ResourceManager.GetString("ToTray", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to TQSL Password.
         /// </summary>
-        public static string tqslpassword {
+        public static string TqslPassword {
             get {
-                return ResourceManager.GetString("tqslpassword", resourceCulture);
+                return ResourceManager.GetString("TqslPassword", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to TQSL Path.
         /// </summary>
-        public static string tqslpath {
+        public static string TqslPath {
             get {
-                return ResourceManager.GetString("tqslpath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Transparency.
-        /// </summary>
-        public static string transparency {
-            get {
-                return ResourceManager.GetString("transparency", resourceCulture);
+                return ResourceManager.GetString("TqslPath", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Tx....
         /// </summary>
-        public static string txing {
+        public static string Transmitting {
             get {
-                return ResourceManager.GetString("txing", resourceCulture);
+                return ResourceManager.GetString("Transmitting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transparency.
+        /// </summary>
+        public static string Transparency {
+            get {
+                return ResourceManager.GetString("Transparency", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The port number should be consistent with the settings in JTDX/wsjt-x. The default is 2237..
         /// </summary>
-        public static string udpporthelp {
+        public static string UdpPortHelp {
             get {
-                return ResourceManager.GetString("udpporthelp", resourceCulture);
+                return ResourceManager.GetString("UdpPortHelp", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to UDP Server.
         /// </summary>
-        public static string udpserver {
+        public static string UdpServer {
             get {
-                return ResourceManager.GetString("udpserver", resourceCulture);
+                return ResourceManager.GetString("UdpServer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to UDP Connection timeout!.
         /// </summary>
-        public static string udptimeout {
+        public static string UdpTimeout {
             get {
-                return ResourceManager.GetString("udptimeout", resourceCulture);
+                return ResourceManager.GetString("UdpTimeout", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unable to check apikey availability; Please check whether the url is correct or not!.
         /// </summary>
-        public static string unable2checkapi {
+        public static string UnableToCheckApi {
             get {
-                return ResourceManager.GetString("unable2checkapi", resourceCulture);
+                return ResourceManager.GetString("UnableToCheckApi", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
-        public static string unknown {
+        public static string Unknown {
             get {
-                return ResourceManager.GetString("unknown", resourceCulture);
+                return ResourceManager.GetString("Unknown", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unsupported rig freq:.
         /// </summary>
-        public static string unsupportedrigfreq {
+        public static string UnsupportedRigFrequency {
             get {
-                return ResourceManager.GetString("unsupportedrigfreq", resourceCulture);
+                return ResourceManager.GetString("UnsupportedRigFrequency", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unsupported rig mode:.
         /// </summary>
-        public static string unsupportedrigmode {
+        public static string UnsupportedRigMode {
             get {
-                return ResourceManager.GetString("unsupportedrigmode", resourceCulture);
+                return ResourceManager.GetString("UnsupportedRigMode", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Update callsign and country data.
         /// </summary>
-        public static string updatebigcty {
+        public static string UpdateBigCty {
             get {
-                return ResourceManager.GetString("updatebigcty", resourceCulture);
+                return ResourceManager.GetString("UpdateBigCty", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Call sign and country data update failed: {0}！.
         /// </summary>
-        public static string updatebigctyfailed {
+        public static string UpdateBigCtyFailed {
             get {
-                return ResourceManager.GetString("updatebigctyfailed", resourceCulture);
+                return ResourceManager.GetString("UpdateBigCtyFailed", resourceCulture);
             }
         }
         
@@ -2162,162 +2172,450 @@ namespace CloudlogHelper.Resources.Language {
         ///   Looks up a localized string similar to Call sign and country data updated successfully!
         ///{0} call sign rules and {1} country data entries written.
         /// </summary>
-        public static string updatebigctysuccess {
+        public static string UpdateBigCtySuccess {
             get {
-                return ResourceManager.GetString("updatebigctysuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Auto upload QSO to Cloudlog.
-        /// </summary>
-        public static string upload2cloudlog {
-            get {
-                return ResourceManager.GetString("upload2cloudlog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Auto upload QSO to Clublog.
-        /// </summary>
-        public static string upload2clublog {
-            get {
-                return ResourceManager.GetString("upload2clublog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Auto upload QSO to HamCQ.
-        /// </summary>
-        public static string upload2hamcq {
-            get {
-                return ResourceManager.GetString("upload2hamcq", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ✅️ QSO Logged!.
-        /// </summary>
-        public static string uploadedaqso {
-            get {
-                return ResourceManager.GetString("uploadedaqso", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ☹️ QSO upload failed!.
-        /// </summary>
-        public static string uploadfailedaqso {
-            get {
-                return ResourceManager.GetString("uploadfailedaqso", resourceCulture);
+                return ResourceManager.GetString("UpdateBigCtySuccess", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Uploading....
         /// </summary>
-        public static string uploading {
+        public static string Uploading {
             get {
-                return ResourceManager.GetString("uploading", resourceCulture);
+                return ResourceManager.GetString("Uploading", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This QSO is being uploaded.
         /// </summary>
-        public static string uploadingqso {
+        public static string UploadingQso {
             get {
-                return ResourceManager.GetString("uploadingqso", resourceCulture);
+                return ResourceManager.GetString("UploadingQso", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Upload RIG info.
         /// </summary>
-        public static string uploadriginfo {
+        public static string UploadRigInfo {
             get {
-                return ResourceManager.GetString("uploadriginfo", resourceCulture);
+                return ResourceManager.GetString("UploadRigInfo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Upload Status.
         /// </summary>
-        public static string uploadstatus {
+        public static string UploadStatus {
             get {
-                return ResourceManager.GetString("uploadstatus", resourceCulture);
+                return ResourceManager.GetString("UploadStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fail.
+        /// </summary>
+        public static string UploadStatusFailed {
+            get {
+                return ResourceManager.GetString("UploadStatusFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignored.
+        /// </summary>
+        public static string UploadStatusIgnored {
+            get {
+                return ResourceManager.GetString("UploadStatusIgnored", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pending....
+        /// </summary>
+        public static string UploadStatusPending {
+            get {
+                return ResourceManager.GetString("UploadStatusPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrying....
+        /// </summary>
+        public static string UploadStatusRetrying {
+            get {
+                return ResourceManager.GetString("UploadStatusRetrying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Success.
+        /// </summary>
+        public static string UploadStatusSuccess {
+            get {
+                return ResourceManager.GetString("UploadStatusSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading....
+        /// </summary>
+        public static string UploadStatusUploading {
+            get {
+                return ResourceManager.GetString("UploadStatusUploading", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to e.g. http://cloudlog.com.
         /// </summary>
-        public static string urlexample {
+        public static string UrlExample {
             get {
-                return ResourceManager.GetString("urlexample", resourceCulture);
+                return ResourceManager.GetString("UrlExample", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to URL Format error!.
         /// </summary>
-        public static string urlformaterror {
+        public static string UrlFormatError {
             get {
-                return ResourceManager.GetString("urlformaterror", resourceCulture);
+                return ResourceManager.GetString("UrlFormatError", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Use external rigctld.
         /// </summary>
-        public static string useexternalrigctld {
+        public static string UseExternalRigctld {
             get {
-                return ResourceManager.GetString("useexternalrigctld", resourceCulture);
+                return ResourceManager.GetString("UseExternalRigctld", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Username.
         /// </summary>
-        public static string username {
+        public static string Username {
             get {
-                return ResourceManager.GetString("username", resourceCulture);
+                return ResourceManager.GetString("Username", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Waiting for connection....
         /// </summary>
-        public static string waitconn {
+        public static string WaitingConnection {
             get {
-                return ResourceManager.GetString("waitconn", resourceCulture);
+                return ResourceManager.GetString("WaitingConnection", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The average number of QSOs per minute achieved within 5 minutes..
         /// </summary>
-        public static string within5min {
+        public static string WithinFiveMinutes {
             get {
-                return ResourceManager.GetString("within5min", resourceCulture);
+                return ResourceManager.GetString("WithinFiveMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can fill in your Maidenhead grid now, or leave it empty and configure later..
+        /// </summary>
+        public static string WizardBasicHint {
+            get {
+                return ResourceManager.GetString("WizardBasicHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Basic Settings.
+        /// </summary>
+        public static string WizardBasicTitle {
+            get {
+                return ResourceManager.GetString("WizardBasicTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If your device has low performance, disable this option..
+        /// </summary>
+        public static string WizardChartFeatureHint {
+            get {
+                return ResourceManager.GetString("WizardChartFeatureHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable chart features.
+        /// </summary>
+        public static string WizardChartFeatureLabel {
+            get {
+                return ResourceManager.GetString("WizardChartFeatureLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to API Key.
+        /// </summary>
+        public static string WizardCloudlogApiKey {
+            get {
+                return ResourceManager.GetString("WizardCloudlogApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detected:.
+        /// </summary>
+        public static string WizardCloudlogDetectedInstance {
+            get {
+                return ResourceManager.GetString("WizardCloudlogDetectedInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect Cloudlog / Wavelog now.
+        /// </summary>
+        public static string WizardCloudlogEnable {
+            get {
+                return ResourceManager.GetString("WizardCloudlogEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose whether you want to connect Cloudlog/Wavelog now..
+        /// </summary>
+        public static string WizardCloudlogHint {
+            get {
+                return ResourceManager.GetString("WizardCloudlogHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Station.
+        /// </summary>
+        public static string WizardCloudlogStation {
+            get {
+                return ResourceManager.GetString("WizardCloudlogStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select a station profile..
+        /// </summary>
+        public static string WizardCloudlogStationRequired {
+            get {
+                return ResourceManager.GetString("WizardCloudlogStationRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please test the Cloudlog/Wavelog connection before continuing..
+        /// </summary>
+        public static string WizardCloudlogTestRequired {
+            get {
+                return ResourceManager.GetString("WizardCloudlogTestRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cloudlog / Wavelog.
+        /// </summary>
+        public static string WizardCloudlogTitle {
+            get {
+                return ResourceManager.GetString("WizardCloudlogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL.
+        /// </summary>
+        public static string WizardCloudlogUrl {
+            get {
+                return ResourceManager.GetString("WizardCloudlogUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finish.
+        /// </summary>
+        public static string WizardFinish {
+            get {
+                return ResourceManager.GetString("WizardFinish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hi there!.
+        /// </summary>
+        public static string WizardHiThere {
+            get {
+                return ResourceManager.GetString("WizardHiThere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string WizardNext {
+            get {
+                return ResourceManager.GetString("WizardNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OmniRig is not available on this device..
+        /// </summary>
+        public static string WizardOmniRigUnavailable {
+            get {
+                return ResourceManager.GetString("WizardOmniRigUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous.
+        /// </summary>
+        public static string WizardPrevious {
+            get {
+                return ResourceManager.GetString("WizardPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current rig backend.
+        /// </summary>
+        public static string WizardRigBackendLabel {
+            get {
+                return ResourceManager.GetString("WizardRigBackendLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FLRig.
+        /// </summary>
+        public static string WizardRigFlRig {
+            get {
+                return ResourceManager.GetString("WizardRigFlRig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hamlib.
+        /// </summary>
+        public static string WizardRigHamlib {
+            get {
+                return ResourceManager.GetString("WizardRigHamlib", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select your current rig backend and configure it. You can also skip this step..
+        /// </summary>
+        public static string WizardRigHint {
+            get {
+                return ResourceManager.GetString("WizardRigHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip for now.
+        /// </summary>
+        public static string WizardRigNone {
+            get {
+                return ResourceManager.GetString("WizardRigNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OmniRig.
+        /// </summary>
+        public static string WizardRigOmniRig {
+            get {
+                return ResourceManager.GetString("WizardRigOmniRig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rig Backend.
+        /// </summary>
+        public static string WizardRigTitle {
+            get {
+                return ResourceManager.GetString("WizardRigTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip setup.
+        /// </summary>
+        public static string WizardSkip {
+            get {
+                return ResourceManager.GetString("WizardSkip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure third-party log services now, or leave them disabled and set them later..
+        /// </summary>
+        public static string WizardThirdPartyHint {
+            get {
+                return ResourceManager.GetString("WizardThirdPartyHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Third-Party Logs.
+        /// </summary>
+        public static string WizardThirdPartyTitle {
+            get {
+                return ResourceManager.GetString("WizardThirdPartyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First-Run Setup.
+        /// </summary>
+        public static string WizardTitle {
+            get {
+                return ResourceManager.GetString("WizardTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Cloudlog Helper! This wizard will help you quickly complete the initial setup of the software. You can also run it again later by clicking About -&gt; Run Wizard..
+        /// </summary>
+        public static string WizardWelcomeMessage {
+            get {
+                return ResourceManager.GetString("WizardWelcomeMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome.
+        /// </summary>
+        public static string WizardWelcomeTitle {
+            get {
+                return ResourceManager.GetString("WizardWelcomeTitle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to World Heatmap - {0} Band {1}.
         /// </summary>
-        public static string worldheatmap {
+        public static string WorldHeatmap {
             get {
-                return ResourceManager.GetString("worldheatmap", resourceCulture);
+                return ResourceManager.GetString("WorldHeatmap", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to QSOs this year.
         /// </summary>
-        public static string yearqsos {
+        public static string YearQsos {
             get {
-                return ResourceManager.GetString("yearqsos", resourceCulture);
+                return ResourceManager.GetString("YearQsos", resourceCulture);
             }
         }
     }

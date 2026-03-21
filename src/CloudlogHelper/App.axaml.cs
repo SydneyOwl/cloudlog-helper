@@ -140,12 +140,12 @@ public class App : Application
         {
             var nmiExit = new NativeMenuItem
             {
-                Header = TranslationHelper.GetString(LangKeys.exit),
+                Header = TranslationHelper.GetString(LangKeys.Exit),
                 Command = _exitCommand
             };
             var nmiOpen = new NativeMenuItem
             {
-                Header = TranslationHelper.GetString(LangKeys.open),
+                Header = TranslationHelper.GetString(LangKeys.Open),
                 Command = _openCommand
             };
 
@@ -231,8 +231,8 @@ public class App : Application
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             splashLevel.Topmost = false;
-            var accept = TranslationHelper.GetString(LangKeys.accept);
-            var deny = TranslationHelper.GetString(LangKeys.deny);
+            var accept = TranslationHelper.GetString(LangKeys.Accept);
+            var deny = TranslationHelper.GetString(LangKeys.Deny);
             var clickResult = await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
                 {
                     ButtonDefinitions = new[]
@@ -247,7 +247,7 @@ public class App : Application
                         }
                     },
                     ContentTitle = "User Agreement",
-                    ContentMessage = TranslationHelper.GetString(LangKeys.disclaimer)
+                    ContentMessage = TranslationHelper.GetString(LangKeys.Disclaimer)
                         .Replace("{1}", VersionInfo.Version),
                     Icon = Icon.Info,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -297,7 +297,7 @@ public class App : Application
         Directory.CreateDirectory(ApplicationStartUpUtil.GetConfigDir());
         _mutex = new Mutex(true, DefaultConfigs.MutexId, out var createdNew);
         // check if init is allowed?
-        if (!createdNew) throw new DuplicateProcessException(TranslationHelper.GetString(LangKeys.dupeinstance));
+        if (!createdNew) throw new DuplicateProcessException(TranslationHelper.GetString(LangKeys.DuplicateInstance));
 
         return Task.CompletedTask;
     }

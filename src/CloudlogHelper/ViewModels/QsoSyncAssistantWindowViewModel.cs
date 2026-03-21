@@ -303,10 +303,10 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
             if (errorOccurred)
                 throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
-            _logProgress(TranslationHelper.GetString(LangKeys.qsosyncsucc), 100);
+            _logProgress(TranslationHelper.GetString(LangKeys.QsoSyncSucceeded), 100);
             if (_executeOnStart)
                 await _inAppNotification.SendSuccessNotificationAsync(
-                    $"{TranslationHelper.GetString(LangKeys.qsosyncsucc)}");
+                    $"{TranslationHelper.GetString(LangKeys.QsoSyncSucceeded)}");
         }
         catch (Exception ex)
         {
@@ -314,7 +314,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
             ClassLogger.Error(ex, "Sync qso error");
             if (_executeOnStart)
                 await _inAppNotification.SendErrorNotificationAsync(
-                    $"{TranslationHelper.GetString(LangKeys.failedsyncqso)}{ex.Message}");
+                    $"{TranslationHelper.GetString(LangKeys.QsoSyncFailed)}{ex.Message}");
         }
         finally
         {

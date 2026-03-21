@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
+             mc:Ignorable="d"
+             d:DesignWidth="500"
+             d:DesignHeight="450"
+             x:Class="CloudlogHelper.Views.WizardSteps.WelcomeWizardStepView"
+             x:DataType="stepVm:WelcomeWizardStepViewModel">
+    <StackPanel Spacing="16">
+        <Border Classes="highlight-card" Padding="20">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                <Border Width="76"
+                        Height="76"
+                        CornerRadius="22"
+                        Padding="16"
+                        Background="#142878B8"
+                        BorderBrush="#332878B8"
+                        BorderThickness="1">
+                    <Image Width="44"
+                           Height="44"
+                           Source="avares://CloudlogHelper/Assets/icon.png" />
+                </Border>
+
+                <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardHiThere}}"
+                               Classes="section-title" />
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardWelcomeMessage}}"
+                               Classes="page-hint"
+                               FontSize="15" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>

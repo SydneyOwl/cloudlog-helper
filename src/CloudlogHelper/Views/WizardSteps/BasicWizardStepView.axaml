@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
+             mc:Ignorable="d"
+             d:DesignWidth="500"
+             d:DesignHeight="450"
+             x:Class="CloudlogHelper.Views.WizardSteps.BasicWizardStepView"
+             x:DataType="stepVm:BasicWizardStepViewModel">
+    <StackPanel Spacing="16">
+        <Border Classes="subsection-card" Padding="16">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.MyGrid}}"
+                           Classes="subsection-title" />
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardBasicHint}}"
+                           Classes="page-hint" />
+                <TextBox Classes="input"
+                         Text="{Binding BasicSettings.MyMaidenheadGrid}"
+                         Watermark="e.g. OM89" />
+            </StackPanel>
+        </Border>
+
+        <Border Classes="highlight-card" Padding="16">
+            <StackPanel Spacing="8">
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.WizardChartFeatureLabel}}"
+                          IsChecked="{Binding EnableChartFeature}" />
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardChartFeatureHint}}"
+                           Classes="page-hint" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

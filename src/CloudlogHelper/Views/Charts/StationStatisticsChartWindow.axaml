@@ -86,10 +86,10 @@
                     Background="DarkOrange"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-            <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}" IsChecked="{Binding AutoSwitchEnabled}"
+            <CheckBox Content="{I18N {x:Static resources:LangKeys.AutoSelect}}" IsChecked="{Binding AutoSwitchEnabled}"
                       VerticalAlignment="Center" Margin="20,0,5,0" />
 
-            <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}"
+            <CheckBox Content="{I18N {x:Static resources:LangKeys.FilterDuplicatesByCallsign}}"
                       IsChecked="{Binding FilterDupeCallsign}"
                       VerticalAlignment="Center" Margin="0,0,5,0" />
 
@@ -102,7 +102,7 @@
                       VerticalAlignment="Center" Width="100" />
 
             <!-- <TextBlock Margin="10,0,0,0" -->
-            <!--            Text="{I18N {x:Static resources:LangKeys.samplecount}}" -->
+            <!--            Text="{I18N {x:Static resources:LangKeys.SampleCount}}" -->
             <!--            Foreground="{DynamicResource HighlightForegroundBrush}" -->
             <!--            HorizontalAlignment="Center" -->
             <!--            VerticalAlignment="Center" FontWeight="Black" /> -->

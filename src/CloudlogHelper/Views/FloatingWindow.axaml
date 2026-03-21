@@ -21,7 +21,7 @@
 
     <Window.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="{I18N {x:Static resources:LangKeys.transparency}}">
+            <MenuItem Header="{I18N {x:Static resources:LangKeys.Transparency}}">
                 <MenuItem Header="10%" Click="TransparencyMenuItem_Click" />
                 <MenuItem Header="30%" Click="TransparencyMenuItem_Click" />
                 <MenuItem Header="50%" Click="TransparencyMenuItem_Click" />

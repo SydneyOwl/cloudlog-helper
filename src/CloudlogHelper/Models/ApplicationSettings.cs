@@ -23,6 +23,12 @@ public class ApplicationSettings : ReactiveValidationObject
     public ProgramShutdownMode ShutdownMode { get; set; } = ProgramShutdownMode.NotSpecified;
 
     /// <summary>
+    ///     Skip first-run wizard when application starts.
+    /// </summary>
+    [Reactive]
+    public bool SkipWizard { get; set; } = true;
+
+    /// <summary>
     ///     Some basic settings.
     /// </summary>
     [Reactive]

@@ -29,9 +29,9 @@ public class CloudlogSettings : ReactiveValidationObject
         set => CloudlogStationInfoId = value?.StationId;
     }
 
-    [Reactive] public bool AutoQSOUploadEnabled { get; set; } = true;
-    [Reactive] public bool AutoRigUploadEnabled { get; set; } = true;
-    [Reactive] public bool AutoPollStationStatus { get; set; } = true;
+    [Reactive] public bool AutoQSOUploadEnabled { get; set; } = false;
+    [Reactive] public bool AutoRigUploadEnabled { get; set; } = false;
+    [Reactive] public bool AutoPollStationStatus { get; set; } = false;
 
     [Reactive]
     public ObservableCollection<StationInfo> AvailableCloudlogStationInfo { get; set; } = new();

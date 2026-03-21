@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
+             xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
+             mc:Ignorable="d"
+             x:Class="CloudlogHelper.Views.WizardSteps.ThirdPartyWizardStepView"
+             x:DataType="stepVm:ThirdPartyWizardStepViewModel">
+    <StackPanel Spacing="14">
+        <Border Classes="highlight-card" Padding="16">
+            <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyHint}}"
+                       Classes="page-hint" />
+        </Border>
+        <userControls:LogSystemCard
+            DataContext="{Binding LogSystemCard}" />
+    </StackPanel>
+</UserControl>

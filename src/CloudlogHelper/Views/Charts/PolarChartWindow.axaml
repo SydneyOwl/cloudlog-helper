@@ -69,26 +69,26 @@
                 Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
             <StackPanel Spacing="10">
-                <TextBlock Text="{I18N {x:Static resources:LangKeys.controlpanel}}" Classes="header"
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.ControlPanel}}" Classes="header"
                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 
                 <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="10">
-                    <ToggleButton Grid.Row="0" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.pause}}"
+                    <ToggleButton Grid.Row="0" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.Pause}}"
                                   HorizontalAlignment="Stretch" IsChecked="{Binding UpdatePaused}"
                                   Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                                   BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-                    <Button Grid.Row="0" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.export}}"
+                    <Button Grid.Row="0" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.Export}}"
                             HorizontalAlignment="Stretch" Command="{Binding SaveChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-                    <Button Grid.Row="1" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.refresh}}"
+                    <Button Grid.Row="1" Grid.Column="0" Content="{I18N {x:Static resources:LangKeys.Refresh}}"
                             HorizontalAlignment="Stretch" Command="{Binding RefreshChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-                    <Button Grid.Row="1" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.clear}}"
+                    <Button Grid.Row="1" Grid.Column="1" Content="{I18N {x:Static resources:LangKeys.Clear}}"
                             HorizontalAlignment="Stretch" Command="{Binding ClearChart}"
                             Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
@@ -96,20 +96,20 @@
 
                 <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
 
-                <CheckBox Content="{I18N {x:Static resources:LangKeys.showdensitycolor}}"
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.ShowDensityColor}}"
                           IsChecked="{Binding ShowDestColor}"
                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 
-                <CheckBox Content="{I18N {x:Static resources:LangKeys.showcoastline}}"
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.ShowCoastline}}"
                           IsChecked="{Binding ShowSimpleMap}"
                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 
-                <CheckBox Content="{I18N {x:Static resources:LangKeys.filterdupebycallsign}}"
+                <CheckBox Content="{I18N {x:Static resources:LangKeys.FilterDuplicatesByCallsign}}"
                           IsChecked="{Binding FilterDupeCallsign}"
                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.maxsamplecount}}" FontWeight="SemiBold"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.MaxSampleCount}}" FontWeight="SemiBold"
                                Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -124,7 +124,7 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.kval}}" FontWeight="SemiBold" Margin="0,0,0,5"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.KValue}}" FontWeight="SemiBold" Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding #kSlider.Value}"
@@ -138,7 +138,7 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.distweight}}" FontWeight="SemiBold"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.DistanceWeight}}" FontWeight="SemiBold"
                                Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -155,7 +155,7 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.angweight}}" FontWeight="SemiBold"
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.AngleWeight}}" FontWeight="SemiBold"
                                Margin="0,0,0,5"
                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -199,7 +199,7 @@
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
                             Orientation="Horizontal"
                             Spacing="5">
-                    <CheckBox Content="{I18N {x:Static resources:LangKeys.autosel}}"
+                    <CheckBox Content="{I18N {x:Static resources:LangKeys.AutoSelect}}"
                               IsChecked="{Binding AutoSwitchEnabled}"
                               VerticalAlignment="Center" Margin="0,0,5,0" />
 

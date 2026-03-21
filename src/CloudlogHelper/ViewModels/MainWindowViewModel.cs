@@ -31,7 +31,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly IInAppNotificationService _inAppNotificationService;
 
     private readonly IWindowManagerService _windowManager;
-    private bool _isRigctldUsingExternal;
+    
 
     public MainWindowViewModel()
     {
@@ -47,6 +47,7 @@ public class MainWindowViewModel : ViewModelBase
         RIGDataGroupboxUserControlViewModel rigdataGroupboxUserControlViewModel,
         UserBasicDataGroupboxUserControlViewModel userBasicDataGroupboxUserControlViewModel,
         StatusLightUserControlViewModel statusLightUserControlViewModel,
+        IApplicationSettingsService _settingsService,
         CommandLineOptions cmd,
         IWindowManagerService wm,
         IInAppNotificationService inAppNotificationService
@@ -62,6 +63,7 @@ public class MainWindowViewModel : ViewModelBase
         _windowManager = wm;
         OpenSettingsWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(SettingsWindowViewModel), true));
         OpenAboutWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(AboutWindowViewModel), true));
+        OpenWizardWindow = ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(WizardWindowViewModel), true));
         OpenQSOAssistantWindow =
             ReactiveCommand.CreateFromTask(() => OpenWindow(typeof(QsoSyncAssistantWindowViewModel), true));
         OpenSignalPolarChartWindow =
@@ -81,86 +83,19 @@ public class MainWindowViewModel : ViewModelBase
         RigDataGroupboxUserControlVm = rigdataGroupboxUserControlViewModel;
         UDPLogInfoGroupboxUserControlVm = udpLogInfoGroupboxUserControlViewModel;
         StatusLightUserControlViewModel = statusLightUserControlViewModel;
-
+        
         this.WhenActivated(disposable =>
         {
+            if (cmd.RunWizard || !_settingsService.GetCurrentSettings().SkipWizard)
+            {
+                _ = _showWizard();
+            }
+            
             MessageBus.Current.Listen<WindowSplitChanged>().Subscribe(res =>
             {
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    if (res.IsSplit)
-                    {
-                        switch (res.Sender)
-                        {
-                            case UDPLogInfoGroupboxUserControlViewModel:
-                            {
-                                var k = new UDPLogInfoGroupboxUserControl
-                                {
-                                    DataContext = res.Sender
-                                };
-                                k.Height = double.NaN;
-                                var floatWin = new FloatingWindow
-                                {
-                                    DataContext = new FloatingWindowViewModel(k)
-                                };
-                                floatWin.SizeToContent = SizeToContent.Width;
-                                floatWin.Height = 600;
-                                floatWin.Show();
-                                var track = _windowManager.Track(floatWin);
-                                ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
-                                UDPLogBoxEnabled = false;
-                                break;
-                            }
-                            case UserBasicDataGroupboxUserControlViewModel:
-                            {
-                                var k = new UserBasicDataGroupboxUserControl
-                                {
-                                    DataContext = res.Sender
-                                };
-                                var floatWin = new FloatingWindow
-                                {
-                                    DataContext = new FloatingWindowViewModel(k)
-                                };
-                                floatWin.Show();
-                                var track = _windowManager.Track(floatWin);
-                                ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
-                                UserBasicBoxEnabled = false;
-                                break;
-                            }
-                            case RIGDataGroupboxUserControlViewModel:
-                            {
-                                var k = new RIGDataGroupboxUserControl
-                                {
-                                    DataContext = res.Sender
-                                };
-                                var floatWin = new FloatingWindow
-                                {
-                                    DataContext = new FloatingWindowViewModel(k)
-                                };
-                                floatWin.Show();
-                                var track = _windowManager.Track(floatWin);
-                                ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
-                                RigDataBoxEnabled = false;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _windowManager.CloseWindowBySeq(res.SenderSeq!);
-                        switch (res.Sender)
-                        {
-                            case UDPLogInfoGroupboxUserControlViewModel:
-                                UDPLogBoxEnabled = true;
-                                break;
-                            case RIGDataGroupboxUserControlViewModel:
-                                RigDataBoxEnabled = true;
-                                break;
-                            case UserBasicDataGroupboxUserControlViewModel:
-                                UserBasicBoxEnabled = true;
-                                break;
-                        }
-                    }
+                    _handleSplitCommand(res);
                 });
             }).DisposeWith(disposable);
         });
@@ -170,9 +105,10 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public bool UserBasicBoxEnabled { get; set; } = true;
     [Reactive] public bool RigDataBoxEnabled { get; set; } = true;
     [Reactive] public bool UDPLogBoxEnabled { get; set; } = true;
+    
     public ReactiveCommand<Unit, Unit> OpenSettingsWindow { get; }
-
     public ReactiveCommand<Unit, Unit> OpenAboutWindow { get; }
+    public ReactiveCommand<Unit, Unit> OpenWizardWindow { get; }
     public ReactiveCommand<Unit, Unit> OpenQSOAssistantWindow { get; }
     public ReactiveCommand<Unit, Unit> OpenSignalPolarChartWindow { get; }
     public ReactiveCommand<Unit, Unit> OpenStationStatisticChartWindow { get; }
@@ -183,6 +119,96 @@ public class MainWindowViewModel : ViewModelBase
     public RIGDataGroupboxUserControlViewModel RigDataGroupboxUserControlVm { get; set; }
     public UDPLogInfoGroupboxUserControlViewModel UDPLogInfoGroupboxUserControlVm { get; set; }
     public StatusLightUserControlViewModel StatusLightUserControlViewModel { get; set; }
+    
+    private void _handleSplitCommand(WindowSplitChanged res)
+    {
+         if (res.IsSplit)
+         {
+             switch (res.Sender)
+             {
+                 case UDPLogInfoGroupboxUserControlViewModel:
+                 {
+                     var k = new UDPLogInfoGroupboxUserControl
+                     {
+                         DataContext = res.Sender
+                     };
+                     k.Height = double.NaN;
+                     var floatWin = new FloatingWindow
+                     {
+                         DataContext = new FloatingWindowViewModel(k)
+                     };
+                     floatWin.SizeToContent = SizeToContent.Width;
+                     floatWin.Height = 600;
+                     floatWin.Show();
+                     var track = _windowManager.Track(floatWin);
+                     ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
+                     UDPLogBoxEnabled = false;
+                     break;
+                 }
+                 case UserBasicDataGroupboxUserControlViewModel:
+                 {
+                     var k = new UserBasicDataGroupboxUserControl
+                     {
+                         DataContext = res.Sender
+                     };
+                     var floatWin = new FloatingWindow
+                     {
+                         DataContext = new FloatingWindowViewModel(k)
+                     };
+                     floatWin.Show();
+                     var track = _windowManager.Track(floatWin);
+                     ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
+                     UserBasicBoxEnabled = false;
+                     break;
+                 }
+                 case RIGDataGroupboxUserControlViewModel:
+                 {
+                     var k = new RIGDataGroupboxUserControl
+                     {
+                         DataContext = res.Sender
+                     };
+                     var floatWin = new FloatingWindow
+                     {
+                         DataContext = new FloatingWindowViewModel(k)
+                     };
+                     floatWin.Show();
+                     var track = _windowManager.Track(floatWin);
+                     ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
+                     RigDataBoxEnabled = false;
+                     break;
+                 }
+             }
+         }
+         else
+         {
+             _windowManager.CloseWindowBySeq(res.SenderSeq!);
+             switch (res.Sender)
+             {
+                 case UDPLogInfoGroupboxUserControlViewModel:
+                     UDPLogBoxEnabled = true;
+                     break;
+                 case RIGDataGroupboxUserControlViewModel:
+                     RigDataBoxEnabled = true;
+                     break;
+                 case UserBasicDataGroupboxUserControlViewModel:
+                     UserBasicBoxEnabled = true;
+                     break;
+             }
+         }
+    }
+
+    private async Task _showWizard()
+    {
+        try
+        {
+            var topLevel = _windowManager.GetToplevel(GetType());
+            await _windowManager.CreateAndShowWindowByVm(typeof(WizardWindowViewModel), topLevel);
+        }
+        catch(Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to launch wizard");
+        }
+    }
 
     private async Task OpenWindow(Type vm, bool dialog)
     {

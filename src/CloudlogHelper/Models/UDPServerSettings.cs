@@ -50,7 +50,7 @@ public class UDPServerSettings : ReactiveValidationObject
                 if (!int.TryParse(st, out var res)) return false;
                 return res is <= 65535 and >= 0;
             },
-            TranslationHelper.GetString(LangKeys.invalidport)
+            TranslationHelper.GetString(LangKeys.InvalidPort)
         );
         this.ValidationRule(
             x => x.RetryCount,
@@ -59,7 +59,7 @@ public class UDPServerSettings : ReactiveValidationObject
                 if (!int.TryParse(st, out var res)) return false;
                 return !string.IsNullOrEmpty(st) && res >= 0;
             },
-            TranslationHelper.GetString(LangKeys.retrycountreq)
+            TranslationHelper.GetString(LangKeys.RetryCountRequired)
         );
     }
 
