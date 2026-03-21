@@ -21,7 +21,7 @@
         </Border>
 
         <Border Classes="subsection-card" Padding="16" IsVisible="{Binding ConnectCloudlog}">
-            <Grid ColumnDefinitions="Auto,260,*"
+            <Grid ColumnDefinitions="Auto,Auto,*"
                   RowDefinitions="Auto,Auto,Auto,Auto"
                   ColumnSpacing="10"
                   RowSpacing="10"
@@ -61,6 +61,7 @@
                            IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
                 <ComboBox Grid.Row="2"
                           Grid.Column="1"
+                          HorizontalAlignment="Left"
                           Classes="setting-control"
                           IsVisible="{Binding ShowCloudlogStationIdCombobox}"
                           ItemsSource="{Binding CloudlogSettings.AvailableCloudlogStationInfo}"

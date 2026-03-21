@@ -8,38 +8,37 @@
         xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
         xmlns:stepViews="clr-namespace:CloudlogHelper.Views.WizardSteps"
         mc:Ignorable="d"
-        d:DesignWidth="500"
-        d:DesignHeight="450"
+        d:DesignWidth="900"
+        d:DesignHeight="700"
         x:Class="CloudlogHelper.Views.WizardWindow"
         x:DataType="viewModels:WizardWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.WizardTitle}}"
-        Width="960"
-        Height="740"
-        MinWidth="860"
-        MinHeight="680"
+        Width="900"
+        Height="700"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
         FontFamily="Segoe UI"
         Icon="avares://CloudlogHelper/Assets/icon.png">
 
     <Window.Styles>
+        <!-- 侧边栏卡片 -->
         <Style Selector="Border.sidebar-card">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="20" />
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="BoxShadow" Value="0 10 24 0 #12000000" />
+            <Setter Property="Padding" Value="12" />
         </Style>
 
+        <!-- 内容卡片 -->
         <Style Selector="Border.content-card">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="20" />
-            <Setter Property="Padding" Value="22" />
-            <Setter Property="BoxShadow" Value="0 10 24 0 #12000000" />
+            <Setter Property="Padding" Value="24" />
         </Style>
 
         <Style Selector="TextBlock.action-caption">
@@ -51,33 +50,37 @@
         <Style Selector="TextBlock.action-title">
             <Setter Property="FontSize" Value="15" />
             <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="TextBlock.content-title">
             <Setter Property="FontSize" Value="26" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="TextBlock.sidebar-title">
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
+        <!-- 步骤计数芯片 - 使用系统强调色变体 -->
         <Style Selector="Border.step-count-chip">
-            <Setter Property="Background" Value="#E2F2FF" />
-            <Setter Property="BorderBrush" Value="#F4FBFF" />
+            <Setter Property="Background" Value="{DynamicResource SystemChromeHighColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemChromeHighColor}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="999" />
             <Setter Property="Padding" Value="14 7" />
         </Style>
 
         <Style Selector="Border.step-count-chip TextBlock">
-            <Setter Property="Foreground" Value="#1D3E58" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="Border.page-card">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="16" />
             <Setter Property="Padding" Value="16" />
@@ -86,6 +89,7 @@
         <Style Selector="TextBlock.page-title">
             <Setter Property="FontSize" Value="22" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="TextBlock.page-hint">
@@ -97,93 +101,111 @@
         <Style Selector="TextBlock.field-label">
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Margin" Value="0 0 0 4" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="TextBox.input, ComboBox.input">
             <Setter Property="MinWidth" Value="300" />
         </Style>
 
+        <!-- 主要导航按钮 - 使用系统强调色 -->
         <Style Selector="Button.nav-primary">
             <Setter Property="MinWidth" Value="126" />
             <Setter Property="Padding" Value="18 10" />
             <Setter Property="CornerRadius" Value="10" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
             <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark1}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style Selector="Button.nav-primary:pointerover">
             <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark1}" />
         </Style>
 
+        <Style Selector="Button.nav-primary:pressed">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark2}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark2}" />
+        </Style>
+
+        <!-- 次要导航按钮 -->
         <Style Selector="Button.nav-secondary">
             <Setter Property="MinWidth" Value="126" />
             <Setter Property="Padding" Value="18 10" />
             <Setter Property="CornerRadius" Value="10" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="Background" Value="#142878B8" />
-            <Setter Property="BorderBrush" Value="#5A2878B8" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style Selector="Button.nav-secondary:pointerover">
-            <Setter Property="Background" Value="#1E2878B8" />
-            <Setter Property="BorderBrush" Value="#7A2878B8" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
         </Style>
 
         <Style Selector="Button.nav-secondary:pressed">
-            <Setter Property="Background" Value="#2A2878B8" />
-            <Setter Property="BorderBrush" Value="#8C2878B8" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
         </Style>
 
+        <!-- 页脚链接按钮 -->
         <Style Selector="Button.footer-link">
             <Setter Property="Width" Value="42" />
             <Setter Property="Height" Value="42" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="CornerRadius" Value="21" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style Selector="Button.footer-link:pointerover">
-            <Setter Property="Background" Value="#142878B8" />
-            <Setter Property="BorderBrush" Value="#5A2878B8" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
         </Style>
 
         <Style Selector="Button.footer-link:pressed">
-            <Setter Property="Background" Value="#1E2878B8" />
-            <Setter Property="BorderBrush" Value="#7A2878B8" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark1}" />
         </Style>
 
+        <!-- 子区域卡片 -->
         <Style Selector="Border.subsection-card">
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="14" />
             <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         </Style>
 
+        <!-- 高亮卡片 -->
         <Style Selector="Border.highlight-card">
-            <Setter Property="BorderBrush" Value="#2878B8" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Background" Value="#102878B8" />
+            <Setter Property="Background" Value="{DynamicResource  SystemChromeMediumLowColor}" />
         </Style>
 
+        <!-- 警告提示 -->
         <Style Selector="Border.notice-warning">
-            <Setter Property="Background" Value="#21D97706" />
-            <Setter Property="BorderBrush" Value="#45D97706" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="10" />
         </Style>
 
+        <Style Selector="Border.notice-warning TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <!-- 特性标签 -->
         <Style Selector="Border.feature-chip">
-            <Setter Property="Background" Value="#2878B8" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="999" />
             <Setter Property="Padding" Value="10 6" />
@@ -193,12 +215,14 @@
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Margin" Value="0 0 0 8" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="TextBlock.subsection-title">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="0 0 0 4" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="TextBlock.setting-label">
@@ -207,6 +231,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="0 0 12 0" />
             <Setter Property="MinWidth" Value="140" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="ComboBox.setting-control, TextBox.setting-control">
@@ -215,53 +240,58 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
+        <!-- 步骤导航按钮 -->
         <Style Selector="Button.step-nav">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="MinHeight" Value="54" />
-            <Setter Property="Padding" Value="8 10" />
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="MinHeight" Value="56" />
+            <Setter Property="Padding" Value="10 10" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="14" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
         <Style Selector="Button.step-nav:pointerover">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
         </Style>
 
         <Style Selector="Button.step-nav:pressed">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumHighBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
         </Style>
 
         <Style Selector="Button.step-nav:disabled">
             <Setter Property="Opacity" Value="0.55" />
         </Style>
 
+        <!-- 激活的步骤区域 -->
         <Style Selector="Border.step-nav-active">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="MinHeight" Value="54" />
-            <Setter Property="Padding" Value="8 10" />
+            <Setter Property="MinHeight" Value="56" />
+            <Setter Property="Padding" Value="10 10" />
             <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Background" Value="#122878B8" />
-            <Setter Property="BorderBrush" Value="#3B62A8DC" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
+        <!-- 步骤徽章 -->
         <Style Selector="Border.step-badge">
             <Setter Property="Width" Value="30" />
             <Setter Property="Height" Value="30" />
             <Setter Property="CornerRadius" Value="15" />
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
+        <!-- 激活的步骤徽章 -->
         <Style Selector="Border.step-badge-active">
-            <Setter Property="Background" Value="#2D6E94" />
-            <Setter Property="BorderBrush" Value="#2D6E94" />
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
         </Style>
 
         <Style Selector="TextBlock.step-nav-title">
@@ -270,14 +300,19 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextWrapping" Value="NoWrap" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <Style Selector="Border.step-nav-active TextBlock.step-nav-title">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
     </Window.Styles>
 
-    <Grid Margin="20">
-        <Grid ColumnDefinitions="220,*" ColumnSpacing="16">
+    <Grid Margin="24">
+        <Grid ColumnDefinitions="236,*" ColumnSpacing="20">
             <Grid RowDefinitions="Auto,*">
                 <Border Classes="sidebar-card" VerticalAlignment="Top">
-                    <StackPanel Spacing="10">
+                    <StackPanel Spacing="8">
                         <Button Classes="step-nav"
                                 IsVisible="{Binding !ShowWelcomeStep}"
                                 IsEnabled="{Binding CanNavigateToWelcomeStep}"
@@ -290,7 +325,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
@@ -305,7 +340,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="White" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
@@ -325,7 +360,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
@@ -340,7 +375,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="White" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
@@ -360,7 +395,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
@@ -375,7 +410,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="White" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
@@ -395,7 +430,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
@@ -410,7 +445,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="White" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
@@ -430,7 +465,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
@@ -445,7 +480,7 @@
                                                            Height="16"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
-                                                           Foreground="White" />
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
                                            Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
@@ -460,7 +495,7 @@
                         Command="{Binding OpenGithubProfileCommand}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Margin="8 0 0 8"
+                        Margin="10 0 0 10"
                         ToolTip.Tip="https://github.com/xxxxx">
                     <avalonia:MaterialIcon Kind="MicrosoftGithub"
                                            Width="22"
@@ -469,13 +504,11 @@
             </Grid>
 
             <Border Grid.Column="1" Classes="content-card">
-                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="25">
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="22">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
                         <StackPanel Spacing="3">
                             <TextBlock Text="{Binding CurrentStepTitle}"
                                        Classes="content-title" />
-                            <!-- <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardTitle}}" -->
-                            <!--            Classes="page-hint" /> -->
                         </StackPanel>
 
                         <Border Grid.Column="1" Classes="step-count-chip" VerticalAlignment="Center">
@@ -484,7 +517,7 @@
                         </Border>
                     </Grid>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0 2 6 2">
                         <ContentControl Content="{Binding CurrentStep}">
                             <ContentControl.DataTemplates>
                                 <DataTemplate DataType="stepVm:WelcomeWizardStepViewModel">
@@ -507,12 +540,12 @@
                     </ScrollViewer>
 
                     <Border Grid.Row="2"
-                            Padding="0 14 0 0"
-                            BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+                            Padding="0 16 0 0"
+                            BorderBrush="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}"
                             BorderThickness="0,1,0,0">
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Right"
-                                    Spacing="12">
+                                    Spacing="10">
                             <Button Content="{I18N {x:Static resources:LangKeys.WizardSkip}}"
                                     HorizontalContentAlignment="Center"
                                     IsVisible="{Binding ShowSkipButton}"

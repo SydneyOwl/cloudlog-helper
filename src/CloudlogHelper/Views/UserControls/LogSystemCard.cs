@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
+using Avalonia.Layout;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
@@ -94,7 +95,7 @@ public class LogSystemCard : UserControl
         {
             ColumnDefinitions =
             {
-                new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                new ColumnDefinition { Width = GridLength.Auto },
                 new ColumnDefinition { Width = GridLength.Auto },
                 new ColumnDefinition { Width = GridLength.Auto },
                 new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
@@ -161,6 +162,7 @@ public class LogSystemCard : UserControl
         {
             Classes = { "setting-control" },
             DataContext = field,
+            HorizontalAlignment = HorizontalAlignment.Left,
             Watermark = field.Watermark ?? string.Empty,
             [!TextBox.TextProperty] = new Binding("Value")
             {
