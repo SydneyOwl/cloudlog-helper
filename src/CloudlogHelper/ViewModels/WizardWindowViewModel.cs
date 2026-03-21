@@ -242,10 +242,7 @@ public class WizardWindowViewModel : ViewModelBase
     {
         if (_isApplying) return;
 
-        DraftSettings.SkipWizard = true;
-        _cloudlogStep.DisableCloudlogAutomation();
-
-        _settingsService.ApplySettings(this, LogSystems.ToList());
+        _settingsService.RestoreSettings(this);
         _isApplying = true;
         _source.Cancel();
         CloseRequested = true;
