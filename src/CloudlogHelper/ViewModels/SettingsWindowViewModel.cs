@@ -190,6 +190,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.DraftSettings.BasicSettings.EnablePlugin)
+                .Skip(1)
                 .Where(pg => pg)
                 .Take(1)
                 .Subscribe(pg =>
