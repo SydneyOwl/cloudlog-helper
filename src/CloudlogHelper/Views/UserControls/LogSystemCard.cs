@@ -163,6 +163,7 @@ public class LogSystemCard : UserControl
             Classes = { "setting-control" },
             DataContext = field,
             HorizontalAlignment = HorizontalAlignment.Left,
+            MaxWidth = 200,
             Watermark = field.Watermark ?? string.Empty,
             [!TextBox.TextProperty] = new Binding("Value")
             {
@@ -179,6 +180,8 @@ public class LogSystemCard : UserControl
             Classes = { "setting-control" },
             PasswordChar = '•',
             DataContext = field,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            MaxWidth = 200,
             [!TextBox.TextProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,
@@ -193,6 +196,8 @@ public class LogSystemCard : UserControl
         {
             Classes = { "setting-control" },
             DataContext = field,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            MaxWidth = 200,
             [!CheckBox.IsCheckedProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,
@@ -208,6 +213,8 @@ public class LogSystemCard : UserControl
             Classes = { "setting-control" },
             DataContext = field,
             ItemsSource = field.Selections,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            MaxWidth = 200,
             [!SelectingItemsControl.SelectedValueProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,
