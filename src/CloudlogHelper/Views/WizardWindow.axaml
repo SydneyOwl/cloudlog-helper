@@ -495,8 +495,7 @@
                         Command="{Binding OpenGithubProfileCommand}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Margin="10 0 0 10"
-                        ToolTip.Tip="https://github.com/xxxxx">
+                        Margin="10 0 0 10">
                     <avalonia:MaterialIcon Kind="MicrosoftGithub"
                                            Width="22"
                                            Height="22" />
