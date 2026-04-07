@@ -210,7 +210,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                     cancellationToken, 
                     uploadTimeoutSrc.Token);
 
-                await ProcessUploadItemAsync(uploadItem, cancellationToken).ConfigureAwait(false);
+                await ProcessUploadItemAsync(uploadItem, linkedCts.Token).ConfigureAwait(false);
                 uploadItem.RecordedCallsignDetail.IsInUploadQueue = false;
                 await Task.Delay(1000, cancellationToken);
             }

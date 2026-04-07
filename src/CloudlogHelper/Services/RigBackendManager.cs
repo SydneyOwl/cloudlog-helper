@@ -346,9 +346,10 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         if (settings.IsOmniRigHasErrors())
             throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureOmniRigFirst));
 
+        // skip for now
         var data = await _currentService.GetAllRigInfo(
-            _appSettings.FLRigSettings.ReportRFPower,
-            _appSettings.FLRigSettings.ReportSplitInfo,
+            false,
+            false,
             cancellationToken);
             
         return data;

@@ -46,7 +46,7 @@ public class OmniRigService : IRigService, IDisposable
 
                 _version = _omniRigEngine.InterfaceVersion;
 
-                if (_version < 0x101 && _version > 0x299)
+                if (_version < 0x101 || _version > 0x299)
                 {
                     _omniRigEngine = null;
                     throw new Exception("OmniRig is not installed or has unsupported version.");
