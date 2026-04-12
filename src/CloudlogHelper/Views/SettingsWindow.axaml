@@ -244,7 +244,7 @@
                 </ScrollViewer>
             </TabItem>
             <!-- Cloudlog Tab -->
-            <TabItem Header="Cloudlog">
+            <TabItem Header="Cloudlog/Wavelog">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="8" Margin="0 8 0 0">
                         <Border Classes="setting-card">

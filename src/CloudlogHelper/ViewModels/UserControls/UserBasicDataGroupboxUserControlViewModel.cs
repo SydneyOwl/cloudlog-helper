@@ -146,9 +146,9 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
             return;
         }
 
-        QsToday = statistic.Value.Today;
-        QsMonth = statistic.Value.MonthQsos;
-        QsYear = statistic.Value.YearQsos;
+        QsToday = statistic.Value.Today.ToString();
+        QsMonth = statistic.Value.MonthQsos.ToString();
+        QsYear = statistic.Value.YearQsos.ToString();
     }
 
     private void _setStatusToUnknown()
