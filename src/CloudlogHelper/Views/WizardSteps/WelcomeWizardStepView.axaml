@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
              xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
              mc:Ignorable="d"
              d:DesignWidth="500"
@@ -25,9 +25,9 @@
                 </Border>
 
                 <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardHiThere}}"
+                    <TextBlock Text="{x:Static p:Language.WizardHiThere}"
                                Classes="section-title" />
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardWelcomeMessage}}"
+                    <TextBlock Text="{x:Static p:Language.WizardWelcomeMessage}"
                                Classes="page-hint"
                                FontSize="15" />
                 </StackPanel>

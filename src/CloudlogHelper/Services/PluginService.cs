@@ -16,6 +16,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.DXCC;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
@@ -1110,7 +1111,7 @@ public class PluginService : IPluginService, IDisposable
                     var cloudParsed = localParser.TheQSOs
                         .AsParallel()
                         .WithCancellation(token)
-                        .Select(x => RecordedCallsignDetail.Parse(AdifLog.Parse(x), DXCCKeys.externallog))
+                        .Select(x => RecordedCallsignDetail.Parse(AdifLog.Parse(x), DXCC.externallog))
                         .ToList();
 
                     MessageBus.Current.SendMessage(new QsoUploadRequested

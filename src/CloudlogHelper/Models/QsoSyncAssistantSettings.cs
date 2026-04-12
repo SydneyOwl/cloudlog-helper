@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
 using ReactiveUI.Fody.Helpers;
@@ -30,12 +31,12 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
 
         this.ValidationRule(x => x.CloudlogUserName,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.Required)
+            TranslationHelper.GetString(Language.Required)
         );
 
         this.ValidationRule(x => x.CloudlogPassword,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.Required)
+            TranslationHelper.GetString(Language.Required)
         );
     }
 

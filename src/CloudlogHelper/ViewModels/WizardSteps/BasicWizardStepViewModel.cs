@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -38,6 +39,6 @@ public sealed class BasicWizardStepViewModel : WizardStepViewModelBase
             return Task.FromResult(WizardValidationResult.Success);
         }
 
-        return Task.FromResult(WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.GridError)));
+        return Task.FromResult(WizardValidationResult.Failed(TranslationHelper.GetString(Language.GridError)));
     }
 }

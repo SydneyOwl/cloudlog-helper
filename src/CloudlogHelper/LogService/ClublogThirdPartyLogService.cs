@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using Flurl.Http;
 
@@ -21,13 +22,13 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
     private const string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
 
-    [UserInput(nameof(LangKeys.Callsign), Description = "Enter your callsign registered at clublog.")]
+    [UserInput(nameof(Language.Callsign), Description = "Enter your callsign registered at clublog.")]
     public string Callsign { get; set; }
 
-    [UserInput(nameof(LangKeys.Password), InputType = FieldType.Password)]
+    [UserInput(nameof(Language.Password), InputType = FieldType.Password)]
     public string Password { get; set; }
 
-    [UserInput(nameof(LangKeys.Email))] public string Email { get; set; }
+    [UserInput(nameof(Language.Email))] public string Email { get; set; }
 
 
     public override async Task TestConnectionAsync(CancellationToken token)

@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
         xmlns:stepViews="clr-namespace:CloudlogHelper.Views.WizardSteps"
@@ -12,7 +12,7 @@
         d:DesignHeight="700"
         x:Class="CloudlogHelper.Views.WizardWindow"
         x:DataType="viewModels:WizardWindowViewModel"
-        Title="{I18N {x:Static resources:LangKeys.WizardTitle}}"
+        Title="{x:Static p:Language.WizardTitle}"
         Width="900"
         Height="700"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
@@ -328,7 +328,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
+                                           Text="{x:Static p:Language.WizardWelcomeTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Button>
@@ -343,7 +343,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
+                                           Text="{x:Static p:Language.WizardWelcomeTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Border>
@@ -363,7 +363,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
+                                           Text="{x:Static p:Language.WizardBasicTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Button>
@@ -378,7 +378,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
+                                           Text="{x:Static p:Language.WizardBasicTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Border>
@@ -398,7 +398,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
+                                           Text="{x:Static p:Language.WizardCloudlogTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Button>
@@ -413,7 +413,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
+                                           Text="{x:Static p:Language.WizardCloudlogTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Border>
@@ -433,7 +433,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
+                                           Text="{x:Static p:Language.WizardThirdPartyTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Button>
@@ -448,7 +448,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
+                                           Text="{x:Static p:Language.WizardThirdPartyTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Border>
@@ -468,7 +468,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
+                                           Text="{x:Static p:Language.WizardRigTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Button>
@@ -483,7 +483,7 @@
                                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
                                 </Border>
                                 <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
+                                           Text="{x:Static p:Language.WizardRigTitle}"
                                            Classes="step-nav-title" />
                             </Grid>
                         </Border>
@@ -545,22 +545,22 @@
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="10">
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardSkip}}"
+                            <Button Content="{x:Static p:Language.WizardSkip}"
                                     HorizontalContentAlignment="Center"
                                     IsVisible="{Binding ShowSkipButton}"
                                     Command="{Binding SkipWizardCommand}"
                                     Classes="nav-secondary" />
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardPrevious}}"
+                            <Button Content="{x:Static p:Language.WizardPrevious}"
                                     HorizontalContentAlignment="Center"
                                     IsVisible="{Binding ShowPreviousButton}"
                                     Command="{Binding PreviousCommand}"
                                     Classes="nav-secondary" />
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardNext}}"
+                            <Button Content="{x:Static p:Language.WizardNext}"
                                     HorizontalContentAlignment="Center"
                                     IsVisible="{Binding ShowNextButton}"
                                     Command="{Binding NextCommand}"
                                     Classes="nav-primary" />
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardFinish}}"
+                            <Button Content="{x:Static p:Language.WizardFinish}"
                                     HorizontalContentAlignment="Center"
                                     IsVisible="{Binding ShowFinishButton}"
                                     Command="{Binding FinishCommand}"

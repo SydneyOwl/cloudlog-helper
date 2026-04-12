@@ -15,7 +15,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
@@ -24,6 +23,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using DesktopNotifications;
@@ -119,7 +119,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
 
-        I18NExtension.Culture = new CultureInfo("ja-JP");
+        TranslationHelper.ApplyCulture(SupportedLanguage.Japanese);
 
         _appendTestData();
     }
@@ -423,7 +423,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 new List<ButtonDefinition> { new() { Name = "OK", IsDefault = true } },
                 Icon.Info, 
                 "Notice", 
-                TranslationHelper.GetString(LangKeys.PleaseSelectFirst));
+                TranslationHelper.GetString(Language.PleaseSelectFirst));
             return;
         }
 
@@ -435,7 +435,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             },
             Icon.Warning, 
             "Warning", 
-            TranslationHelper.GetString(LangKeys.IgnoreQsoPermanently));
+            TranslationHelper.GetString(Language.IgnoreQsoPermanently));
             
         if (result == "Cancel") return;
         
@@ -547,7 +547,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         {
             _ = _nativeNotificationManager.ShowNotification(new Notification
             {
-                Title = $"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
+                Title = $"{TranslationHelper.GetString(Language.QsoMade)} - {rcd.DXCall}",
                 Body = rcd.FormatToReadableContent(true)
             });
         }
@@ -568,7 +568,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         TxStatus = status.Transmitting;
         MsgSending = string.IsNullOrEmpty(status.TXMessage)
-            ? TranslationHelper.GetString(LangKeys.Transmitting)
+            ? TranslationHelper.GetString(Language.Transmitting)
             : status.TXMessage;
             
         _decodedDataProcessorService.UpdateClientBand(

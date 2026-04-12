@@ -3,6 +3,7 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Converters;
@@ -13,13 +14,13 @@ public class UploadStatusToLangKeyConverter : IValueConverter
     {
         return value switch
         {
-            UploadStatus.Uploading => LangKeys.UploadStatusUploading,
-            UploadStatus.Retrying => LangKeys.UploadStatusRetrying,
-            UploadStatus.Pending => LangKeys.UploadStatusPending,
-            UploadStatus.Success => LangKeys.UploadStatusSuccess,
-            UploadStatus.Fail => LangKeys.UploadStatusFailed,
-            UploadStatus.Ignored => LangKeys.UploadStatusIgnored,
-            _ => LangKeys.Unknown
+            UploadStatus.Uploading => TranslationHelper.GetString(Language.UploadStatusUploading),
+            UploadStatus.Retrying => TranslationHelper.GetString(Language.UploadStatusRetrying),
+            UploadStatus.Pending => TranslationHelper.GetString(Language.UploadStatusPending),
+            UploadStatus.Success => TranslationHelper.GetString(Language.UploadStatusSuccess),
+            UploadStatus.Fail => TranslationHelper.GetString(Language.UploadStatusFailed),
+            UploadStatus.Ignored => TranslationHelper.GetString(Language.UploadStatusIgnored),
+            _ => TranslationHelper.GetString(Language.Unknown)
         };
     }
 

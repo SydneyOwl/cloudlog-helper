@@ -1,516 +1,332 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
-                id="root"
-                xmlns="">
-        <xsd:element name="root" msdata:IsDataSet="true">
-
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>1.3</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+<?xml version="1.0" encoding="utf-8"?><root><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root" xmlns=""><xsd:element name="root" msdata:IsDataSet="true"></xsd:element></xsd:schema><resheader name="resmimetype"><value>text/microsoft-resx</value></resheader><resheader name="version"><value>1.3</value></resheader><resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
             PublicKeyToken=b77a5c561934e089
-        </value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+        </value></resheader><resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
             PublicKeyToken=b77a5c561934e089
-        </value>
-    </resheader>
-    <data name="About" xml:space="preserve">
+        </value></resheader><data name="About" xml:space="preserve">
         <value>About</value>
-    </data>
-    <data name="Help" xml:space="preserve">
+    </data><data name="Help" xml:space="preserve">
         <value>Help</value>
-    </data>
-    <data name="Settings" xml:space="preserve">
+    </data><data name="Settings" xml:space="preserve">
         <value>Settings</value>
-    </data>
-    <data name="ThemeColor" xml:space="preserve">
+    </data><data name="ThemeColor" xml:space="preserve">
         <value>Theme Color</value>
-    </data>
-    <data name="SaveLogTo" xml:space="preserve">
+    </data><data name="SaveLogTo" xml:space="preserve">
         <value>Save log to...</value>
-    </data>
-    <data name="ErrorOccurred" xml:space="preserve">
+    </data><data name="ErrorOccurred" xml:space="preserve">
         <value>Error Occurred!</value>
-    </data>
-    <data name="SaveLog" xml:space="preserve">
+    </data><data name="SaveLog" xml:space="preserve">
         <value>Save Log</value>
-    </data>
-    <data name="Close" xml:space="preserve">
+    </data><data name="Close" xml:space="preserve">
         <value>Close</value>
-    </data>
-    <data name="HelpFeedback" xml:space="preserve">
+    </data><data name="HelpFeedback" xml:space="preserve">
         <value>Your feedback is valuable! Could you please share the error details on GitHub to assist in resolving this bug?</value>
-    </data>
-    <data name="Light" xml:space="preserve">
+    </data><data name="Light" xml:space="preserve">
         <value>Light</value>
-    </data>
-    <data name="Dark" xml:space="preserve">
+    </data><data name="Dark" xml:space="preserve">
         <value>Dark</value>
-    </data>
-    <data name="BasicSettings" xml:space="preserve">
+    </data><data name="BasicSettings" xml:space="preserve">
         <value>Basical Settings</value>
-    </data>
-    <data name="TestConnection" xml:space="preserve">
+    </data><data name="TestConnection" xml:space="preserve">
         <value>Test </value>
-    </data>
-    <data name="UrlExample" xml:space="preserve">
+    </data><data name="UrlExample" xml:space="preserve">
         <value>e.g. http://cloudlog.com</value>
-    </data>
-    <data name="Required" xml:space="preserve">
+    </data><data name="Required" xml:space="preserve">
         <value>This cannot be empty!</value>
-    </data>
-    <data name="MustStartWithHttp" xml:space="preserve">
+    </data><data name="MustStartWithHttp" xml:space="preserve">
         <value>URL must start with http:// or https://</value>
-    </data>
-    <data name="MainDomainOnly" xml:space="preserve">
+    </data><data name="MainDomainOnly" xml:space="preserve">
         <value>Please input domain only;  don't end with /api/qso!</value>
-    </data>
-    <data name="InvalidUrl" xml:space="preserve">
+    </data><data name="InvalidUrl" xml:space="preserve">
         <value>URL is invalid!</value>
-    </data>
-    <data name="Save" xml:space="preserve">
+    </data><data name="Save" xml:space="preserve">
         <value>Apply&amp;Save</value>
-    </data>
-    <data name="Discard" xml:space="preserve">
+    </data><data name="Discard" xml:space="preserve">
         <value>Discard</value>
-    </data>
-    <data name="CloudlogUrlHelp" xml:space="preserve">
+    </data><data name="CloudlogUrlHelp" xml:space="preserve">
         <value>Only enter the domain name. There is no need to include index.php/api/qso as the system will automatically complete the path.</value>
-    </data>
-    <data name="CloudlogApiHelp" xml:space="preserve">
+    </data><data name="CloudlogApiHelp" xml:space="preserve">
         <value>Fill in your api key here. Require Read/Write access.You can find it under API Keys in the Cloudlog dropdown for your account.</value>
-    </data>
-    <data name="UrlFormatError" xml:space="preserve">
+    </data><data name="UrlFormatError" xml:space="preserve">
         <value>URL Format error!</value>
-    </data>
-    <data name="Error" xml:space="preserve">
+    </data><data name="Error" xml:space="preserve">
         <value>Error</value>
-    </data>
-    <data name="Testing" xml:space="preserve">
+    </data><data name="Testing" xml:space="preserve">
         <value>Testing...</value>
-    </data>
-    <data name="UnableToCheckApi" xml:space="preserve">
+    </data><data name="UnableToCheckApi" xml:space="preserve">
         <value>Unable to check apikey availability; Please check whether the url is correct or not!</value>
-    </data>
-    <data name="InvalidApiKey" xml:space="preserve">
+    </data><data name="InvalidApiKey" xml:space="preserve">
         <value>This apikey is invalid!</value>
-    </data>
-    <data name="MissingWriteAccess" xml:space="preserve">
+    </data><data name="MissingWriteAccess" xml:space="preserve">
         <value>Apikey needs read/write access but only read is given here!</value>
-    </data>
-    <data name="InitHamlibFailed" xml:space="preserve">
+    </data><data name="InitHamlibFailed" xml:space="preserve">
         <value>Falied to init hamlib!</value>
-    </data>
-    <data name="AutoUpdateRigInfo" xml:space="preserve">
+    </data><data name="AutoUpdateRigInfo" xml:space="preserve">
         <value>Auto upload rig status</value>
-    </data>
-    <data name="RigModel" xml:space="preserve">
+    </data><data name="RigModel" xml:space="preserve">
         <value>Rig Model</value>
-    </data>
-    <data name="DevicePort" xml:space="preserve">
+    </data><data name="DevicePort" xml:space="preserve">
         <value>Device Port</value>
-    </data>
-    <data name="EnableAdvanced" xml:space="preserve">
+    </data><data name="EnableAdvanced" xml:space="preserve">
         <value>Advanced</value>
-    </data>
-    <data name="BaudRate" xml:space="preserve">
+    </data><data name="BaudRate" xml:space="preserve">
         <value>Baudrate</value>
-    </data>
-    <data name="StopBit" xml:space="preserve">
+    </data><data name="StopBit" xml:space="preserve">
         <value>Stop Bit</value>
-    </data>
-    <data name="DataBit" xml:space="preserve">
+    </data><data name="DataBit" xml:space="preserve">
         <value>Data Bit</value>
-    </data>
-    <data name="RigctldCommandArg" xml:space="preserve">
+    </data><data name="RigctldCommandArg" xml:space="preserve">
         <value>Rigctld cmd args</value>
-    </data>
-    <data name="CheckRigConnection" xml:space="preserve">
+    </data><data name="CheckRigConnection" xml:space="preserve">
         <value>Please check RIG connection!</value>
-    </data>
-    <data name="PollInterval" xml:space="preserve">
+    </data><data name="PollInterval" xml:space="preserve">
         <value>Poll interval (sec)</value>
-    </data>
-    <data name="MinimumPollIntervalError" xml:space="preserve">
+    </data><data name="MinimumPollIntervalError" xml:space="preserve">
         <value>Polling interval should be more than 1s!</value>
-    </data>
-    <data name="PollIntervalRequired" xml:space="preserve">
+    </data><data name="PollIntervalRequired" xml:space="preserve">
         <value>The polling interval must be an integer and greater than 1</value>
-    </data>
-    <data name="Open" xml:space="preserve">
+    </data><data name="Open" xml:space="preserve">
         <value>Open</value>
-    </data>
-    <data name="Exit" xml:space="preserve">
+    </data><data name="Exit" xml:space="preserve">
         <value>Exit</value>
-    </data>
-    <data name="Notice" xml:space="preserve">
+    </data><data name="Notice" xml:space="preserve">
         <value>Notice</value>
-    </data>
-    <data name="CloseOrMinimize" xml:space="preserve">
+    </data><data name="CloseOrMinimize" xml:space="preserve">
         <value>Would you like to minimize to the tray or close the application?</value>
-    </data>
-    <data name="Shutdown" xml:space="preserve">
+    </data><data name="Shutdown" xml:space="preserve">
         <value>Close App</value>
-    </data>
-    <data name="ToTray" xml:space="preserve">
+    </data><data name="ToTray" xml:space="preserve">
         <value>Minimize to tray</value>
-    </data>
-    <data name="RememberMyChoice" xml:space="preserve">
+    </data><data name="RememberMyChoice" xml:space="preserve">
         <value>Remember my choice</value>
-    </data>
-    <data name="ConflictingHamlib" xml:space="preserve">
+    </data><data name="ConflictingHamlib" xml:space="preserve">
         <value>Process conflict: {replace01} may disrupt radio data auto-reporting.</value>
-    </data>
-    <data name="StationId" xml:space="preserve">
+    </data><data name="StationId" xml:space="preserve">
         <value>Cloudlog Station ID</value>
-    </data>
-    <data name="CloudlogStationId" xml:space="preserve">
+    </data><data name="CloudlogStationId" xml:space="preserve">
         <value>You can find it under Station Location in the Cloudlog dropdown for your account.</value>
-    </data>
-    <data name="FailedStationInfo" xml:space="preserve">
+    </data><data name="FailedStationInfo" xml:space="preserve">
         <value>Failed to fetch station info!</value>
-    </data>
-    <data name="BasicInfo" xml:space="preserve">
+    </data><data name="BasicInfo" xml:space="preserve">
         <value>Basical Info</value>
-    </data>
-    <data name="InvalidConfiguration" xml:space="preserve">
+    </data><data name="InvalidConfiguration" xml:space="preserve">
         <value>Invalid configuration!</value>
-    </data>
-    <data name="Calculating" xml:space="preserve">
+    </data><data name="Calculating" xml:space="preserve">
         <value>Calcing..</value>
-    </data>
-    <data name="Unknown" xml:space="preserve">
+    </data><data name="Unknown" xml:space="preserve">
         <value>Unknown</value>
-    </data>
-    <data name="FailedStationStatistics" xml:space="preserve">
+    </data><data name="FailedStationStatistics" xml:space="preserve">
         <value>Failed to fetch station statistics!</value>
-    </data>
-    <data name="Operator" xml:space="preserve">
+    </data><data name="Operator" xml:space="preserve">
         <value>Operator</value>
-    </data>
-    <data name="Grid" xml:space="preserve">
+    </data><data name="Grid" xml:space="preserve">
         <value>Grid Square</value>
-    </data>
-    <data name="YearQsos" xml:space="preserve">
+    </data><data name="YearQsos" xml:space="preserve">
         <value>QSOs this year</value>
-    </data>
-    <data name="MonthQsos" xml:space="preserve">
+    </data><data name="MonthQsos" xml:space="preserve">
         <value>QSOs this month</value>
-    </data>
-    <data name="DayQsos" xml:space="preserve">
+    </data><data name="DayQsos" xml:space="preserve">
         <value>QSOs today</value>
-    </data>
-    <data name="FailedRigInfo" xml:space="preserve">
+    </data><data name="FailedRigInfo" xml:space="preserve">
         <value>Failed to fetch RIG info!</value>
-    </data>
-    <data name="ConfigureCloudlogFirst" xml:space="preserve">
+    </data><data name="ConfigureCloudlogFirst" xml:space="preserve">
         <value>Invalid cloudlog configuration; Please check them in settings!</value>
-    </data>
-    <data name="ConfigureHamlibFirst" xml:space="preserve">
+    </data><data name="ConfigureHamlibFirst" xml:space="preserve">
         <value>Invalid hamlib configuration; Please check them in settings!</value>
-    </data>
-    <data name="UnsupportedRigMode" xml:space="preserve">
+    </data><data name="UnsupportedRigMode" xml:space="preserve">
         <value>Unsupported rig mode:</value>
-    </data>
-    <data name="UnsupportedRigFrequency" xml:space="preserve">
+    </data><data name="UnsupportedRigFrequency" xml:space="preserve">
         <value>Unsupported rig freq:</value>
-    </data>
-    <data name="RigTimeout" xml:space="preserve">
+    </data><data name="RigTimeout" xml:space="preserve">
         <value>Rig communication time out, please check connection!</value>
-    </data>
-    <data name="RigctldNotStarted" xml:space="preserve">
+    </data><data name="RigctldNotStarted" xml:space="preserve">
         <value>Rigctld service not started; Please check your configuration!</value>
-    </data>
-    <data name="Failed" xml:space="preserve">
+    </data><data name="Failed" xml:space="preserve">
         <value>Failed!</value>
-    </data>
-    <data name="Success" xml:space="preserve">
+    </data><data name="Success" xml:space="preserve">
         <value>Success</value>
-    </data>
-    <data name="GettingInfo" xml:space="preserve">
+    </data><data name="GettingInfo" xml:space="preserve">
         <value>Getting info...</value>
-    </data>
-    <data name="PollingDisabled" xml:space="preserve">
+    </data><data name="PollingDisabled" xml:space="preserve">
         <value>Rig data polling is not enabled！</value>
-    </data>
-    <data name="RigData" xml:space="preserve">
+    </data><data name="RigData" xml:space="preserve">
         <value>Rig Data</value>
-    </data>
-    <data name="CurrentFrequency" xml:space="preserve">
+    </data><data name="CurrentFrequency" xml:space="preserve">
         <value>Current Frequency</value>
-    </data>
-    <data name="CurrentMode" xml:space="preserve">
+    </data><data name="CurrentMode" xml:space="preserve">
         <value>Current Mode</value>
-    </data>
-    <data name="UploadStatus" xml:space="preserve">
+    </data><data name="UploadStatus" xml:space="preserve">
         <value>Upload Status</value>
-    </data>
-    <data name="NextUploadTime" xml:space="preserve">
+    </data><data name="NextUploadTime" xml:space="preserve">
         <value>Next Upload</value>
-    </data>
-    <data name="InvalidPort" xml:space="preserve">
+    </data><data name="InvalidPort" xml:space="preserve">
         <value>Invalid port number.</value>
-    </data>
-    <data name="Port" xml:space="preserve">
+    </data><data name="Port" xml:space="preserve">
         <value>Port</value>
-    </data>
-    <data name="UdpPortHelp" xml:space="preserve">
+    </data><data name="UdpPortHelp" xml:space="preserve">
         <value>The port number should be consistent with the settings in JTDX/wsjt-x. The default is 2237.</value>
-    </data>
-    <data name="EnableUdpServer" xml:space="preserve">
+    </data><data name="EnableUdpServer" xml:space="preserve">
         <value>Enable udp server</value>
-    </data>
-    <data name="EnableOutsideConnection" xml:space="preserve">
+    </data><data name="EnableOutsideConnection" xml:space="preserve">
         <value>Enable connection from outside</value>
-    </data>
-    <data name="InvalidUdpConfiguration" xml:space="preserve">
+    </data><data name="InvalidUdpConfiguration" xml:space="preserve">
         <value>Invalid UDP Server config!</value>
-    </data>
-    <data name="Uploading" xml:space="preserve">
+    </data><data name="Uploading" xml:space="preserve">
         <value>Uploading...</value>
-    </data>
-    <data name="Transmitting" xml:space="preserve">
+    </data><data name="Transmitting" xml:space="preserve">
         <value>Tx...</value>
-    </data>
-    <data name="UdpTimeout" xml:space="preserve">
+    </data><data name="UdpTimeout" xml:space="preserve">
         <value>UDP Connection timeout!</value>
-    </data>
-    <data name="WaitingConnection" xml:space="preserve">
+    </data><data name="WaitingConnection" xml:space="preserve">
         <value>Waiting for connection...</value>
-    </data>
-    <data name="DecodedQsos" xml:space="preserve">
+    </data><data name="DecodedQsos" xml:space="preserve">
         <value>Decoded / Qsos: </value>
-    </data>
-    <data name="ReceivedQsoInfo" xml:space="preserve">
+    </data><data name="ReceivedQsoInfo" xml:space="preserve">
         <value>Received QSO Info</value>
-    </data>
-    <data name="SelectAll" xml:space="preserve">
+    </data><data name="SelectAll" xml:space="preserve">
         <value>Select All</value>
-    </data>
-    <data name="ShowFailedOnly" xml:space="preserve">
+    </data><data name="ShowFailedOnly" xml:space="preserve">
         <value>Show failed only</value>
-    </data>
-    <data name="ReuploadSelected" xml:space="preserve">
+    </data><data name="ReuploadSelected" xml:space="preserve">
         <value>UP AGN</value>
-    </data>
-    <data name="DeleteSelected" xml:space="preserve">
+    </data><data name="DeleteSelected" xml:space="preserve">
         <value>DEL SEL</value>
-    </data>
-    <data name="WithinFiveMinutes" xml:space="preserve">
+    </data><data name="WithinFiveMinutes" xml:space="preserve">
         <value>The average number of QSOs per minute achieved within 5 minutes.</value>
-    </data>
-    <data name="QsoRate" xml:space="preserve">
+    </data><data name="QsoRate" xml:space="preserve">
         <value>QSO Rate:</value>
-    </data>
-    <data name="ExportToAdif" xml:space="preserve">
+    </data><data name="ExportToAdif" xml:space="preserve">
         <value>Export adi</value>
-    </data>
-    <data name="RetryCountRequired" xml:space="preserve">
+    </data><data name="RetryCountRequired" xml:space="preserve">
         <value>Retry count should be an integer and larger than 0!</value>
-    </data>
-    <data name="QsoUploadDisabled" xml:space="preserve">
+    </data><data name="QsoUploadDisabled" xml:space="preserve">
         <value>QSO auto upload is disabled.</value>
-    </data>
-    <data name="UploadStatusUploading" xml:space="preserve">
+    </data><data name="UploadStatusUploading" xml:space="preserve">
         <value>Uploading...</value>
-    </data>
-    <data name="UploadStatusRetrying" xml:space="preserve">
+    </data><data name="UploadStatusRetrying" xml:space="preserve">
         <value>Retrying...</value>
-    </data>
-    <data name="UploadStatusPending" xml:space="preserve">
+    </data><data name="UploadStatusPending" xml:space="preserve">
         <value>Pending...</value>
-    </data>
-    <data name="UploadStatusSuccess" xml:space="preserve">
+    </data><data name="UploadStatusSuccess" xml:space="preserve">
         <value>Success</value>
-    </data>
-    <data name="UploadStatusFailed" xml:space="preserve">
+    </data><data name="UploadStatusFailed" xml:space="preserve">
         <value>Fail</value>
-    </data>
-    <data name="UploadStatusIgnored" xml:space="preserve">
+    </data><data name="UploadStatusIgnored" xml:space="preserve">
         <value>Ignored</value>
-    </data>
-    <data name="UseExternalRigctld" xml:space="preserve">
+    </data><data name="UseExternalRigctld" xml:space="preserve">
         <value>Use external rigctld</value>
-    </data>
-    <data name="ExternalRigctldHost" xml:space="preserve">
+    </data><data name="ExternalRigctldHost" xml:space="preserve">
         <value>External rigctld host</value>
-    </data>
-    <data name="InvalidAddress" xml:space="preserve">
+    </data><data name="InvalidAddress" xml:space="preserve">
         <value>Invalid host address!</value>
-    </data>
-    <data name="AutoQsoUpload" xml:space="preserve">
+    </data><data name="AutoQsoUpload" xml:space="preserve">
         <value>Auto QSO upload</value>
-    </data>
-    <data name="QsoRetryCount" xml:space="preserve">
+    </data><data name="QsoRetryCount" xml:space="preserve">
         <value>QSO upload failed retry count</value>
-    </data>
-    <data name="ReportPower" xml:space="preserve">
+    </data><data name="ReportPower" xml:space="preserve">
         <value>Report RFPOWER</value>
-    </data>
-    <data name="ReportSplit" xml:space="preserve">
+    </data><data name="ReportSplit" xml:space="preserve">
         <value>Report split info</value>
-    </data>
-    <data name="RfPowerHelp" xml:space="preserve">
+    </data><data name="RfPowerHelp" xml:space="preserve">
         <value>Some radios do not support reading the transmit power, or the data read may be incorrect. Therefore  this feature is disabled by default.</value>
-    </data>
-    <data name="SplitHelp" xml:space="preserve">
+    </data><data name="SplitHelp" xml:space="preserve">
         <value>Some radios do not support reading the split data, or the data read may be incorrect. Therefore, this feature is disabled by default.</value>
-    </data>
-    <data name="SpaceNotAllowed" xml:space="preserve">
+    </data><data name="SpaceNotAllowed" xml:space="preserve">
         <value>The string must not have leading or trailing spaces.</value>
-    </data>
-    <data name="InstanceIncompatible" xml:space="preserve">
+    </data><data name="InstanceIncompatible" xml:space="preserve">
         <value>Seems like you're using {replace01} instead of Cloudlog as the backend service. Some features may not be fully supported.</value>
-    </data>
-    <data name="DisablePtt" xml:space="preserve">
+    </data><data name="DisablePtt" xml:space="preserve">
         <value>Disable PTT Control</value>
-    </data>
-    <data name="AllowExternalControl" xml:space="preserve">
+    </data><data name="AllowExternalControl" xml:space="preserve">
         <value>Allow external control</value>
-    </data>
-    <data name="CommandArgHelp" xml:space="preserve">
+    </data><data name="CommandArgHelp" xml:space="preserve">
         <value>If this field is not empty, the software will use the entered content as the default parameters for launching rigctld, and all other configurations will be ignored.</value>
-    </data>
-    <data name="DisablePttHelp" xml:space="preserve">
+    </data><data name="DisablePttHelp" xml:space="preserve">
         <value>In some Linux distributions, if rts/dtr is not disabled, it may prevent PTT from initializing correctly, manifesting as the PTT remaining in a triggered state.</value>
-    </data>
-    <data name="AllowProxy" xml:space="preserve">
+    </data><data name="AllowProxy" xml:space="preserve">
         <value>Allow proxy requests</value>
-    </data>
-    <data name="ProxyHelp" xml:space="preserve">
+    </data><data name="ProxyHelp" xml:space="preserve">
         <value>Allow proxying requests sent by other applications. Used to prevent potential conflicts caused by simultaneous requests to rigctld.</value>
-    </data>
-    <data name="FailedToExtractInfo" xml:space="preserve">
+    </data><data name="FailedToExtractInfo" xml:space="preserve">
         <value>Failed to extract port number from the command line arguments. Please explicitly specify them using the -t parameters.</value>
-    </data>
-    <data name="ClublogSettings" xml:space="preserve">
+    </data><data name="ClublogSettings" xml:space="preserve">
         <value>Clublog Settings</value>
-    </data>
-    <data name="Callsign" xml:space="preserve">
+    </data><data name="Callsign" xml:space="preserve">
         <value>Callsign</value>
-    </data>
-    <data name="Password" xml:space="preserve">
+    </data><data name="Password" xml:space="preserve">
         <value>Password</value>
-    </data>
-    <data name="FillAllFields" xml:space="preserve">
+    </data><data name="FillAllFields" xml:space="preserve">
         <value>Please complete all required fields.</value>
-    </data>
-    <data name="AutoUploadQsoToCloudlog" xml:space="preserve">
+    </data><data name="AutoUploadQsoToCloudlog" xml:space="preserve">
         <value>Auto upload QSO to Cloudlog</value>
-    </data>
-    <data name="AutoUploadQsoToClublog" xml:space="preserve">
+    </data><data name="AutoUploadQsoToClublog" xml:space="preserve">
         <value>Auto upload QSO to Clublog</value>
-    </data>
-    <data name="HamCqSettings" xml:space="preserve">
+    </data><data name="HamCqSettings" xml:space="preserve">
         <value>HamCQ Settings</value>
-    </data>
-    <data name="AutoUploadQsoToHamCq" xml:space="preserve">
+    </data><data name="AutoUploadQsoToHamCq" xml:space="preserve">
         <value>Auto upload QSO to HamCQ</value>
-    </data>
-    <data name="AutoUploadQsoTo" xml:space="preserve">
+    </data><data name="AutoUploadQsoTo" xml:space="preserve">
         <value>Auto upload QSO to</value>
-    </data>
-    <data name="ForwardMessage" xml:space="preserve">
+    </data><data name="ForwardMessage" xml:space="preserve">
         <value>Forward raw UDP Packet to</value>
-    </data>
-    <data name="ForwardTo" xml:space="preserve">
+    </data><data name="ForwardTo" xml:space="preserve">
         <value>Forward raw UDP Packet to</value>
-    </data>
-    <data name="AdvancedSettings" xml:space="preserve">
+    </data><data name="AdvancedSettings" xml:space="preserve">
         <value>Advanced</value>
-    </data>
-    <data name="UdpServer" xml:space="preserve">
+    </data><data name="UdpServer" xml:space="preserve">
         <value>UDP Server</value>
-    </data>
-    <data name="Tools" xml:space="preserve">
+    </data><data name="Tools" xml:space="preserve">
         <value>Tools</value>
-    </data>
-    <data name="QsoAssistant" xml:space="preserve">
+    </data><data name="QsoAssistant" xml:space="preserve">
         <value>QSO Assistant</value>
-    </data>
-    <data name="QsoSyncSucceeded" xml:space="preserve">
+    </data><data name="QsoSyncSucceeded" xml:space="preserve">
         <value>QSO Sync finished successfully.</value>
-    </data>
-    <data name="NotificationTitleInfo" xml:space="preserve">
+    </data><data name="NotificationTitleInfo" xml:space="preserve">
         <value>Info</value>
-    </data>
-    <data name="NotificationTitleSuccess" xml:space="preserve">
+    </data><data name="NotificationTitleSuccess" xml:space="preserve">
         <value>Success</value>
-    </data>
-    <data name="NotificationTitleWarning" xml:space="preserve">
+    </data><data name="NotificationTitleWarning" xml:space="preserve">
         <value>Warning</value>
-    </data>
-    <data name="NotificationTitleError" xml:space="preserve">
+    </data><data name="NotificationTitleError" xml:space="preserve">
         <value>Error</value>
-    </data>
-    <data name="QsoSyncing" xml:space="preserve">
+    </data><data name="QsoSyncing" xml:space="preserve">
         <value>Syncing QSO...</value>
-    </data>
-    <data name="QsoSyncFailed" xml:space="preserve">
+    </data><data name="QsoSyncFailed" xml:space="preserve">
         <value>Failed to sync QSO: </value>
-    </data>
-    <data name="ThirdPartyLogSystem" xml:space="preserve">
+    </data><data name="ThirdPartyLogSystem" xml:space="preserve">
         <value>Third-party Log Systems</value>
-    </data>
-    <data name="Username" xml:space="preserve">
+    </data><data name="Username" xml:space="preserve">
         <value>Username</value>
-    </data>
-    <data name="QthNick" xml:space="preserve">
+    </data><data name="QthNick" xml:space="preserve">
         <value>QTH Nickname(optional)</value>
-    </data>
-    <data name="UploadingQso" xml:space="preserve">
+    </data><data name="UploadingQso" xml:space="preserve">
         <value>This QSO is being uploaded</value>
-    </data>
-    <data name="RetryingQso" xml:space="preserve">
+    </data><data name="RetryingQso" xml:space="preserve">
         <value>This QSO is being retried.</value>
-    </data>
-    <data name="PendingQso" xml:space="preserve">
+    </data><data name="PendingQso" xml:space="preserve">
         <value>This QSO is pending.</value>
-    </data>
-    <data name="SuccessfulQso" xml:space="preserve">
+    </data><data name="SuccessfulQso" xml:space="preserve">
         <value>This QSO Uploaded successfully.</value>
-    </data>
-    <data name="FailedQso" xml:space="preserve">
+    </data><data name="FailedQso" xml:space="preserve">
         <value>Failed to upload this QSO.</value>
-    </data>
-    <data name="IgnoredQso" xml:space="preserve">
+    </data><data name="IgnoredQso" xml:space="preserve">
         <value>This QSO is ignored - Maybe none of third party log service is enabled?</value>
-    </data>
-    <data name="IgnoreQsoPermanently" xml:space="preserve">
+    </data><data name="IgnoreQsoPermanently" xml:space="preserve">
         <value>This operation will permanently ignore the selected QSOs, and subsequent QSO Assistant scans will skip these entries. Do you want to continue?</value>
-    </data>
-    <data name="RigCommunicationFailed" xml:space="preserve">
+    </data><data name="RigCommunicationFailed" xml:space="preserve">
         <value>Failed to communicate with rig!</value>
-    </data>
-    <data name="PleaseSelectFirst" xml:space="preserve">
+    </data><data name="PleaseSelectFirst" xml:space="preserve">
         <value>Please select any qso first!</value>
-    </data>
-    <data name="DuplicateInstance" xml:space="preserve">
+    </data><data name="DuplicateInstance" xml:space="preserve">
         <value>Program is already running!</value>
-    </data>
-    <data name="BootFailed" xml:space="preserve">
+    </data><data name="BootFailed" xml:space="preserve">
         <value>Failed to start applicaiton. Would you like to reset application?</value>
-    </data>
-    <data name="SyncRigInfoTo" xml:space="preserve">
+    </data><data name="SyncRigInfoTo" xml:space="preserve">
         <value>Also upload info to</value>
-    </data>
-    <data name="SplitBySemicolon" xml:space="preserve">
+    </data><data name="SplitBySemicolon" xml:space="preserve">
         <value>Semicolon-separated addresses must specify http(s)</value>
-    </data>
-    <data name="FailedUploadRigInfoTo" xml:space="preserve">
+    </data><data name="FailedUploadRigInfoTo" xml:space="preserve">
         <value>Failed to upload rig info to {addr}. See logs for more!</value>
-    </data>
-    <data name="QsoTemplate" xml:space="preserve">
+    </data><data name="QsoTemplate" xml:space="preserve">
         <value>• Call Sign: {0}
 • Country: {1} (CQ Zone: {2}, ITU Zone: {3})
 • Continent: {4}
@@ -532,17 +348,13 @@
 • Client: {27}
 • Upload Status: {28}
 • Fail Reason: {29}</value>
-    </data>
-    <data name="DoubleTapToSeeMore" xml:space="preserve">
+    </data><data name="DoubleTapToSeeMore" xml:space="preserve">
         <value>Double tap QSO to see more</value>
-    </data>
-    <data name="Accept" xml:space="preserve">
+    </data><data name="Accept" xml:space="preserve">
         <value>Accept</value>
-    </data>
-    <data name="Deny" xml:space="preserve">
+    </data><data name="Deny" xml:space="preserve">
         <value>Decline</value>
-    </data>
-    <data name="Disclaimer" xml:space="preserve">
+    </data><data name="Disclaimer" xml:space="preserve">
         <value>Welcome to Cloudlog Helper v{1}!
 
 This software is open-sourced under The Unlicense and provided "as is", for technical exchange and learning purposes only. Users must assume all risks associated with its use.
@@ -550,352 +362,237 @@ This software is open-sourced under The Unlicense and provided "as is", for tech
 The developers assume no responsibility for any data loss, device damage, or other losses that may result from the use of this software.
 
 By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudlog-helper).</value>
-    </data>
-    <data name="RequireVerboseLogging" xml:space="preserve">
+    </data><data name="RequireVerboseLogging" xml:space="preserve">
         <value>Must have -vvvvv in command-line args!</value>
-    </data>
-    <data name="PushNotifications" xml:space="preserve">
+    </data><data name="PushNotifications" xml:space="preserve">
         <value>Send notifications after:</value>
-    </data>
-    <data name="NotifyOnQsoFinished" xml:space="preserve">
+    </data><data name="NotifyOnQsoFinished" xml:space="preserve">
         <value>A QSO is made</value>
-    </data>
-    <data name="NotifyOnQsoUploaded" xml:space="preserve">
+    </data><data name="NotifyOnQsoUploaded" xml:space="preserve">
         <value>A QSO is uploaded</value>
-    </data>
-    <data name="AutoPollStatus" xml:space="preserve">
+    </data><data name="AutoPollStatus" xml:space="preserve">
         <value>Auto refresh station info</value>
-    </data>
-    <data name="QsoMade" xml:space="preserve">
+    </data><data name="QsoMade" xml:space="preserve">
         <value>✅️ A QSO Was made!</value>
-    </data>
-    <data name="QsoUploaded" xml:space="preserve">
+    </data><data name="QsoUploaded" xml:space="preserve">
         <value>✅️ QSO Logged!</value>
-    </data>
-    <data name="QsoConciseTemplate" xml:space="preserve">
+    </data><data name="QsoConciseTemplate" xml:space="preserve">
         <value>Call Sign: {0}, Country: {1} ({8}) ,  Grid: {9},  Frequency: {10} ({11}), Mode: {12},  Time: {14} to {15},  Report: Sent '{16}' / Received '{17}'</value>
-    </data>
-    <data name="QsoUploadFailed" xml:space="preserve">
+    </data><data name="QsoUploadFailed" xml:space="preserve">
         <value>☹️ QSO upload failed!</value>
-    </data>
-    <data name="Transparency" xml:space="preserve">
+    </data><data name="Transparency" xml:space="preserve">
         <value>Transparency</value>
-    </data>
-    <data name="Charts" xml:space="preserve">
+    </data><data name="Charts" xml:space="preserve">
         <value>Charts</value>
-    </data>
-    <data name="SignalPolarChart" xml:space="preserve">
+    </data><data name="SignalPolarChart" xml:space="preserve">
         <value>Signal distribution</value>
-    </data>
-    <data name="MyGrid" xml:space="preserve">
+    </data><data name="MyGrid" xml:space="preserve">
         <value>My Grid</value>
-    </data>
-    <data name="DisableCharts" xml:space="preserve">
+    </data><data name="DisableCharts" xml:space="preserve">
         <value>Disable chart feature (low-performance devices only)
 
 </value>
-    </data>
-    <data name="GridError" xml:space="preserve">
+    </data><data name="GridError" xml:space="preserve">
         <value>Grid coordinates are empty or invalid, please check settings!</value>
-    </data>
-    <data name="ChartsDisabled" xml:space="preserve">
+    </data><data name="ChartsDisabled" xml:space="preserve">
         <value>Chart feature is disabled, please enable it in settings!</value>
-    </data>
-    <data name="TestAndApply" xml:space="preserve">
+    </data><data name="TestAndApply" xml:space="preserve">
         <value>* After each configuration change, you must click "Test" to test and apply the changes.
 </value>
-    </data>
-    <data name="DuplicateRigServiceDetected" xml:space="preserve">
+    </data><data name="DuplicateRigServiceDetected" xml:space="preserve">
         <value>Enable two radio backend control services simultaneously is not allowed.</value>
-    </data>
-    <data name="ConfigureFlRigFirst" xml:space="preserve">
+    </data><data name="ConfigureFlRigFirst" xml:space="preserve">
         <value>Error in flrig settings - correct them first!</value>
-    </data>
-    <data name="RigBackendSystem" xml:space="preserve">
+    </data><data name="RigBackendSystem" xml:space="preserve">
         <value>Rig Backend System</value>
-    </data>
-    <data name="ForwardToTcp" xml:space="preserve">
+    </data><data name="ForwardToTcp" xml:space="preserve">
         <value>Send decoded data to HTTP server</value>
-    </data>
-    <data name="StationStatisticGraph" xml:space="preserve">
+    </data><data name="StationStatisticGraph" xml:space="preserve">
         <value>Received Station Statistic</value>
-    </data>
-    <data name="ControlPanel" xml:space="preserve">
+    </data><data name="ControlPanel" xml:space="preserve">
         <value>Control Panel</value>
-    </data>
-    <data name="Pause" xml:space="preserve">
+    </data><data name="Pause" xml:space="preserve">
         <value>Pause</value>
-    </data>
-    <data name="Export" xml:space="preserve">
+    </data><data name="Export" xml:space="preserve">
         <value>Export</value>
-    </data>
-    <data name="Refresh" xml:space="preserve">
+    </data><data name="Refresh" xml:space="preserve">
         <value>Refresh</value>
-    </data>
-    <data name="ShowDensityColor" xml:space="preserve">
+    </data><data name="ShowDensityColor" xml:space="preserve">
         <value>Show density color</value>
-    </data>
-    <data name="FilterDuplicatesByCallsign" xml:space="preserve">
+    </data><data name="FilterDuplicatesByCallsign" xml:space="preserve">
         <value>Filter dupe samples by callsign</value>
-    </data>
-    <data name="MaxSampleCount" xml:space="preserve">
+    </data><data name="MaxSampleCount" xml:space="preserve">
         <value>Max sample count</value>
-    </data>
-    <data name="KValue" xml:space="preserve">
+    </data><data name="KValue" xml:space="preserve">
         <value>K Value(KNN)</value>
-    </data>
-    <data name="DistanceWeight" xml:space="preserve">
+    </data><data name="DistanceWeight" xml:space="preserve">
         <value>Distance weight</value>
-    </data>
-    <data name="AngleWeight" xml:space="preserve">
+    </data><data name="AngleWeight" xml:space="preserve">
         <value>Angle weight</value>
-    </data>
-    <data name="AutoSelect" xml:space="preserve">
+    </data><data name="AutoSelect" xml:space="preserve">
         <value>Auto selection</value>
-    </data>
-    <data name="SampleCount" xml:space="preserve">
+    </data><data name="SampleCount" xml:space="preserve">
         <value>Sample count = </value>
-    </data>
-    <data name="Clear" xml:space="preserve">
+    </data><data name="Clear" xml:space="preserve">
         <value>Clear</value>
-    </data>
-    <data name="OpenConfigPath" xml:space="preserve">
+    </data><data name="OpenConfigPath" xml:space="preserve">
         <value>Open configuration directory</value>
-    </data>
-    <data name="OpenTempFolder" xml:space="preserve">
+    </data><data name="OpenTempFolder" xml:space="preserve">
         <value>Open cache folder</value>
-    </data>
-    <data name="Top10DecodedDxccs" xml:space="preserve">
+    </data><data name="Top10DecodedDxccs" xml:space="preserve">
         <value>Top 10 DXCCs - {0} Band {1}</value>
-    </data>
-    <data name="NoData" xml:space="preserve">
+    </data><data name="NoData" xml:space="preserve">
         <value>(No data)</value>
-    </data>
-    <data name="SignalCount" xml:space="preserve">
+    </data><data name="SignalCount" xml:space="preserve">
         <value>Signal count</value>
-    </data>
-    <data name="StationDistanceDistribution" xml:space="preserve">
+    </data><data name="StationDistanceDistribution" xml:space="preserve">
         <value>Station Distance Distribution - {0} Band {1}</value>
-    </data>
-    <data name="DistanceKm" xml:space="preserve">
+    </data><data name="DistanceKm" xml:space="preserve">
         <value>Distance (km)</value>
-    </data>
-    <data name="StationBearingDistribution" xml:space="preserve">
+    </data><data name="StationBearingDistribution" xml:space="preserve">
         <value>Station Bearing Distribution - {0} Band {1}</value>
-    </data>
-    <data name="BearingDegrees" xml:space="preserve">
+    </data><data name="BearingDegrees" xml:space="preserve">
         <value>Bearing (degrees)</value>
-    </data>
-    <data name="WorldHeatmap" xml:space="preserve">
+    </data><data name="WorldHeatmap" xml:space="preserve">
         <value>World Heatmap - {0} Band {1}</value>
-    </data>
-    <data name="Longitude" xml:space="preserve">
+    </data><data name="Longitude" xml:space="preserve">
         <value>Longitude</value>
-    </data>
-    <data name="Latitude" xml:space="preserve">
+    </data><data name="Latitude" xml:space="preserve">
         <value>Latitude</value>
-    </data>
-    <data name="Email" xml:space="preserve">
+    </data><data name="Email" xml:space="preserve">
         <value>e-mail</value>
-    </data>
-    <data name="QthNickname" xml:space="preserve">
+    </data><data name="QthNickname" xml:space="preserve">
         <value>QTH Nickname (Optional)</value>
-    </data>
-    <data name="ApiKey" xml:space="preserve">
+    </data><data name="ApiKey" xml:space="preserve">
         <value>API Key</value>
-    </data>
-    <data name="UploadRigInfo" xml:space="preserve">
+    </data><data name="UploadRigInfo" xml:space="preserve">
         <value>Upload RIG info</value>
-    </data>
-    <data name="TqslPath" xml:space="preserve">
+    </data><data name="TqslPath" xml:space="preserve">
         <value>TQSL Path</value>
-    </data>
-    <data name="StationName" xml:space="preserve">
+    </data><data name="StationName" xml:space="preserve">
         <value>Station name</value>
-    </data>
-    <data name="TqslPassword" xml:space="preserve">
+    </data><data name="TqslPassword" xml:space="preserve">
         <value>TQSL Password</value>
-    </data>
-    <data name="TargetRig" xml:space="preserve">
+    </data><data name="TargetRig" xml:space="preserve">
         <value>Target RIG</value>
-    </data>
-    <data name="OmniRigInitFailed" xml:space="preserve">
+    </data><data name="OmniRigInitFailed" xml:space="preserve">
         <value>Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms.</value>
-    </data>
-    <data name="ConfigureOmniRigFirst" xml:space="preserve">
+    </data><data name="ConfigureOmniRigFirst" xml:space="preserve">
         <value>Please check OmniRig Settings!</value>
-    </data>
-    <data name="TotalDecoded" xml:space="preserve">
+    </data><data name="TotalDecoded" xml:space="preserve">
         <value>Decoded:</value>
-    </data>
-    <data name="TotalReceived" xml:space="preserve">
+    </data><data name="TotalReceived" xml:space="preserve">
         <value>Recorded:</value>
-    </data>
-    <data name="TotalUploaded" xml:space="preserve">
+    </data><data name="TotalUploaded" xml:space="preserve">
         <value>Uploaded:</value>
-    </data>
-    <data name="ClhServer" xml:space="preserve">
+    </data><data name="ClhServer" xml:space="preserve">
         <value>CLH Server</value>
-    </data>
-    <data name="ClhServerAddress" xml:space="preserve">
+    </data><data name="ClhServerAddress" xml:space="preserve">
         <value>CLH Server IP</value>
-    </data>
-    <data name="ClhServerPort" xml:space="preserve">
+    </data><data name="ClhServerPort" xml:space="preserve">
         <value>CLH Server Port</value>
-    </data>
-    <data name="ClhServerKey" xml:space="preserve">
+    </data><data name="ClhServerKey" xml:space="preserve">
         <value>CLH Server key</value>
-    </data>
-    <data name="ClhUseTls" xml:space="preserve">
+    </data><data name="ClhUseTls" xml:space="preserve">
         <value>Use TLS</value>
-    </data>
-    <data name="ClhHintInfo" xml:space="preserve">
+    </data><data name="ClhHintInfo" xml:space="preserve">
         <value>Cloudlog Helper can connect to CLH-Server and automatically report decoded data mode information and radio information to the server. When you connect to the server using a specific Android app, the server will push information to your phone.</value>
-    </data>
-    <data name="EnableClhServer" xml:space="preserve">
+    </data><data name="EnableClhServer" xml:space="preserve">
         <value>Enable CLH Server</value>
-    </data>
-    <data name="InstanceNameHint" xml:space="preserve">
+    </data><data name="InstanceNameHint" xml:space="preserve">
         <value>This field refers to the name used when the software is registered to the clh-server. This name should be unique.</value>
-    </data>
-    <data name="InstanceName" xml:space="preserve">
+    </data><data name="InstanceName" xml:space="preserve">
         <value>Instance Name</value>
-    </data>
-    <data name="InvalidAdif" xml:space="preserve">
+    </data><data name="InvalidAdif" xml:space="preserve">
         <value>Invalid ADIF!</value>
-    </data>
-    <data name="UpdateBigCty" xml:space="preserve">
+    </data><data name="UpdateBigCty" xml:space="preserve">
         <value>Update callsign and country data</value>
-    </data>
-    <data name="UpdateBigCtySuccess" xml:space="preserve">
+    </data><data name="UpdateBigCtySuccess" xml:space="preserve">
         <value>Call sign and country data updated successfully!
 {0} call sign rules and {1} country data entries written</value>
-    </data>
-    <data name="UpdateBigCtyFailed" xml:space="preserve">
+    </data><data name="UpdateBigCtyFailed" xml:space="preserve">
         <value>Call sign and country data update failed: {0}！</value>
-    </data>
-    <data name="PleaseSelect" xml:space="preserve">
+    </data><data name="PleaseSelect" xml:space="preserve">
         <value>----Please select----</value>
-    </data>
-    <data name="BigCtyHint" xml:space="preserve">
+    </data><data name="BigCtyHint" xml:space="preserve">
         <value>You can choose cty.dat or bigcty.dat for import. You can find them at https://www.country-files.com/.</value>
-    </data>
-    <data name="RightClickToSeeMore" xml:space="preserve">
+    </data><data name="RightClickToSeeMore" xml:space="preserve">
         <value>Right click QSO to see more</value>
-    </data>
-    <data name="AutoRigUpload" xml:space="preserve">
+    </data><data name="AutoRigUpload" xml:space="preserve">
         <value>Auto RIG info upload</value>
-    </data>
-    <data name="QsoUploadEndpoint" xml:space="preserve">
+    </data><data name="QsoUploadEndpoint" xml:space="preserve">
         <value>QSO Upload Endpoint</value>
-    </data>
-    <data name="RigInfoUploadEndpoint" xml:space="preserve">
+    </data><data name="RigInfoUploadEndpoint" xml:space="preserve">
         <value>RIG Info upload endpoint</value>
-    </data>
-    <data name="EnablePlugin" xml:space="preserve">
+    </data><data name="EnablePlugin" xml:space="preserve">
         <value>Enable plugins</value>
-    </data>
-    <data name="ShowCoastline" xml:space="preserve">
+    </data><data name="ShowCoastline" xml:space="preserve">
         <value>Show coast line</value>
-    </data>
-    <data name="WizardTitle" xml:space="preserve">
+    </data><data name="WizardTitle" xml:space="preserve">
         <value>First-Run Setup</value>
-    </data>
-    <data name="WizardWelcomeTitle" xml:space="preserve">
+    </data><data name="WizardWelcomeTitle" xml:space="preserve">
         <value>Welcome</value>
-    </data>
-    <data name="WizardBasicTitle" xml:space="preserve">
+    </data><data name="WizardBasicTitle" xml:space="preserve">
         <value>Basic Settings</value>
-    </data>
-    <data name="WizardCloudlogTitle" xml:space="preserve">
+    </data><data name="WizardCloudlogTitle" xml:space="preserve">
         <value>Cloudlog / Wavelog</value>
-    </data>
-    <data name="WizardThirdPartyTitle" xml:space="preserve">
+    </data><data name="WizardThirdPartyTitle" xml:space="preserve">
         <value>Third-Party Logs</value>
-    </data>
-    <data name="WizardRigTitle" xml:space="preserve">
+    </data><data name="WizardRigTitle" xml:space="preserve">
         <value>Rig Backend</value>
-    </data>
-    <data name="WizardWelcomeMessage" xml:space="preserve">
+    </data><data name="WizardWelcomeMessage" xml:space="preserve">
         <value>Welcome to Cloudlog Helper! This wizard will help you quickly complete the initial setup of the software. You can also run it again later by clicking About -&gt; Run Wizard.</value>
-    </data>
-    <data name="WizardBasicHint" xml:space="preserve">
+    </data><data name="WizardBasicHint" xml:space="preserve">
         <value>You can fill in your Maidenhead grid now, or leave it empty and configure later.</value>
-    </data>
-    <data name="WizardChartFeatureLabel" xml:space="preserve">
+    </data><data name="WizardChartFeatureLabel" xml:space="preserve">
         <value>Enable chart features</value>
-    </data>
-    <data name="WizardChartFeatureHint" xml:space="preserve">
+    </data><data name="WizardChartFeatureHint" xml:space="preserve">
         <value>If your device has low performance, disable this option.</value>
-    </data>
-    <data name="WizardCloudlogHint" xml:space="preserve">
+    </data><data name="WizardCloudlogHint" xml:space="preserve">
         <value>Choose whether you want to connect Cloudlog/Wavelog now.</value>
-    </data>
-    <data name="WizardCloudlogEnable" xml:space="preserve">
+    </data><data name="WizardCloudlogEnable" xml:space="preserve">
         <value>Connect Cloudlog / Wavelog now</value>
-    </data>
-    <data name="WizardCloudlogUrl" xml:space="preserve">
+    </data><data name="WizardCloudlogUrl" xml:space="preserve">
         <value>URL</value>
-    </data>
-    <data name="WizardCloudlogApiKey" xml:space="preserve">
+    </data><data name="WizardCloudlogApiKey" xml:space="preserve">
         <value>API Key</value>
-    </data>
-    <data name="WizardCloudlogStation" xml:space="preserve">
+    </data><data name="WizardCloudlogStation" xml:space="preserve">
         <value>Station</value>
-    </data>
-    <data name="WizardCloudlogTestRequired" xml:space="preserve">
+    </data><data name="WizardCloudlogTestRequired" xml:space="preserve">
         <value>Please test the Cloudlog/Wavelog connection before continuing.</value>
-    </data>
-    <data name="WizardCloudlogStationRequired" xml:space="preserve">
+    </data><data name="WizardCloudlogStationRequired" xml:space="preserve">
         <value>Please select a station profile.</value>
-    </data>
-    <data name="WizardCloudlogDetectedInstance" xml:space="preserve">
+    </data><data name="WizardCloudlogDetectedInstance" xml:space="preserve">
         <value>Detected:</value>
-    </data>
-    <data name="WizardThirdPartyHint" xml:space="preserve">
+    </data><data name="WizardThirdPartyHint" xml:space="preserve">
         <value>Configure third-party log services now, or leave them disabled and set them later.</value>
-    </data>
-    <data name="WizardRigHint" xml:space="preserve">
+    </data><data name="WizardRigHint" xml:space="preserve">
         <value>Select your current rig backend and configure it. You can also skip this step.</value>
-    </data>
-    <data name="WizardRigBackendLabel" xml:space="preserve">
+    </data><data name="WizardRigBackendLabel" xml:space="preserve">
         <value>Current rig backend</value>
-    </data>
-    <data name="WizardRigNone" xml:space="preserve">
+    </data><data name="WizardRigNone" xml:space="preserve">
         <value>Skip for now</value>
-    </data>
-    <data name="WizardRigHamlib" xml:space="preserve">
+    </data><data name="WizardRigHamlib" xml:space="preserve">
         <value>Hamlib</value>
-    </data>
-    <data name="WizardRigFlRig" xml:space="preserve">
+    </data><data name="WizardRigFlRig" xml:space="preserve">
         <value>FLRig</value>
-    </data>
-    <data name="WizardRigOmniRig" xml:space="preserve">
+    </data><data name="WizardRigOmniRig" xml:space="preserve">
         <value>OmniRig</value>
-    </data>
-    <data name="WizardOmniRigUnavailable" xml:space="preserve">
+    </data><data name="WizardOmniRigUnavailable" xml:space="preserve">
         <value>OmniRig is not available on this device.</value>
-    </data>
-    <data name="WizardSkip" xml:space="preserve">
+    </data><data name="WizardSkip" xml:space="preserve">
         <value>Skip setup</value>
-    </data>
-    <data name="WizardNext" xml:space="preserve">
+    </data><data name="WizardNext" xml:space="preserve">
         <value>Next</value>
-    </data>
-    <data name="WizardPrevious" xml:space="preserve">
+    </data><data name="WizardPrevious" xml:space="preserve">
         <value>Previous</value>
-    </data>
-    <data name="WizardFinish" xml:space="preserve">
+    </data><data name="WizardFinish" xml:space="preserve">
         <value>Finish</value>
-    </data>
-    <data name="RunWizard" xml:space="preserve">
+    </data><data name="RunWizard" xml:space="preserve">
         <value>Run Configuration Wizard</value>
-    </data>
-    <data name="WizardHiThere" xml:space="preserve">
+    </data><data name="WizardHiThere" xml:space="preserve">
         <value>Hi there!</value>
-    </data>
-    <data name="PluginRestartHint" xml:space="preserve">
+    </data><data name="PluginRestartHint" xml:space="preserve">
         <value>Please save the settings and close the settings page for the changes to the plugin to take effect.
 </value>
-    </data>
-</root>
+    </data><data name="LanguageLabel" xml:space="preserve"><value>Language</value></data><data name="LanguageRestartHint" xml:space="preserve"><value>Language changes will take effect after restarting the application.</value></data></root>

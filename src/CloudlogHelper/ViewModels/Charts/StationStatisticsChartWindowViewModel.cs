@@ -10,6 +10,7 @@ using Avalonia;
 using Avalonia.Styling;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
@@ -384,14 +385,14 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.GridError);
+            ErrorMessage = TranslationHelper.GetString(Language.GridError);
             ShowErrorMsg = true;
             return;
         }
 
         if (_basicSettings.DisableAllCharts)
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.ChartsDisabled);
+            ErrorMessage = TranslationHelper.GetString(Language.ChartsDisabled);
             ShowErrorMsg = true;
             return;
         }

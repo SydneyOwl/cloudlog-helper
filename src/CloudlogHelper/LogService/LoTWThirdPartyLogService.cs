@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using NLog;
 using Path = System.IO.Path;
@@ -26,14 +27,14 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
 
     public string?[]? Stations = Array.Empty<string>();
 
-    [UserInput(nameof(LangKeys.TqslPath), InputType = FieldType.FilePicker)]
+    [UserInput(nameof(Language.TqslPath), InputType = FieldType.FilePicker)]
     public string LotwFilePath { get; set; }
 
 
-    [UserInput(nameof(LangKeys.StationName), InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
+    [UserInput(nameof(Language.StationName), InputType = FieldType.ComboBox, SelectionsArrayName = nameof(Stations))]
     public string? StationName { get; set; }
 
-    [UserInput(nameof(LangKeys.TqslPassword), InputType = FieldType.Password, IsRequired = false)]
+    [UserInput(nameof(Language.TqslPassword), InputType = FieldType.Password, IsRequired = false)]
     public string? TqslPassword { get; set; }
 
     public override async Task TestConnectionAsync(CancellationToken token)

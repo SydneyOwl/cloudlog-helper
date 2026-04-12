@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
 using ReactiveUI;
@@ -48,7 +49,7 @@ public class OmniRigSettings : ReactiveValidationObject
         this.ClearValidationRules();
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.PollIntervalRequired)
+            TranslationHelper.GetString(Language.PollIntervalRequired)
         );
         this.WhenAnyValue(    
             x => x.SelectedRig,

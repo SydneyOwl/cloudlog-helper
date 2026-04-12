@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CloudlogHelper.Enums;
@@ -20,6 +19,7 @@ using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
@@ -68,11 +68,13 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly ILogSystemManager _logSystemManager;
     private readonly IPluginService _pluginService;
     private IInAppNotificationService _notificationService;
+    private readonly SupportedLanguage _initialLanguageType;
 
     public SettingsWindowViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
         DraftSettings = new ApplicationSettings();
+        _initialLanguageType = DraftSettings.BasicSettings.LanguageType;
         LogSystemCard = new LogSystemCardViewModel(LogSystems);
         DiscardConf = ReactiveCommand.Create(() => { });
         OpenConfDir = ReactiveCommand.Create(() => { });
@@ -136,6 +138,7 @@ public class SettingsWindowViewModel : ViewModelBase
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
         DraftSettings = settings!;
+        _initialLanguageType = DraftSettings.BasicSettings.LanguageType;
         LogSystemCard = new LogSystemCardViewModel(LogSystems, _handleLogSystemTestErrorAsync);
         
         var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
@@ -152,7 +155,7 @@ public class SettingsWindowViewModel : ViewModelBase
         
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
         DiscardConf = ReactiveCommand.Create(_discardConf);
-        SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
+        SaveAndApplyConf = ReactiveCommand.CreateFromTask(_saveAndApplyConf);
         OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
         OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
         UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
@@ -176,18 +179,11 @@ public class SettingsWindowViewModel : ViewModelBase
                     if (e.Count(x => x) > 1)
                     {
                         _notificationService?.SendWarningNotificationSync(
-                            TranslationHelper.GetString(LangKeys.DuplicateRigServiceDetected));
+                            TranslationHelper.GetString(Language.DuplicateRigServiceDetected));
                         DraftSettings.FLRigSettings.PollAllowed = false;
                         DraftSettings.OmniRigSettings.PollAllowed = false;
                     }
                 }).DisposeWith(disposables);
-
-            // Subscribe language change
-            this.WhenAnyValue(x => x.DraftSettings.BasicSettings.LanguageType).Subscribe(language =>
-                {
-                    I18NExtension.Culture = TranslationHelper.GetCultureInfo(language);
-                })
-                .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.DraftSettings.BasicSettings.EnablePlugin)
                 .Skip(1)
@@ -195,7 +191,7 @@ public class SettingsWindowViewModel : ViewModelBase
                 .Take(1)
                 .Subscribe(pg =>
                 {
-                    _notificationService.SendInfoNotificationSync(TranslationHelper.GetString(LangKeys.PluginRestartHint));
+                    _notificationService.SendInfoNotificationSync(TranslationHelper.GetString(Language.PluginRestartHint));
                 }).DisposeWith(disposables);
 
             var cmds = new[]
@@ -361,10 +357,9 @@ public class SettingsWindowViewModel : ViewModelBase
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
                 DraftSettings.CloudlogSettings.CloudlogStationInfo = null;
                 ShowCloudlogStationIdCombobox = false;
-                throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
+                throw new Exception(TranslationHelper.GetString(Language.FailedStationInfo));
             }
-
-
+            
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
             ShowCloudlogStationIdCombobox = true;
@@ -508,8 +503,8 @@ public class SettingsWindowViewModel : ViewModelBase
                     IsDefault = true,
                     IsCancel = false
                 }
-            }, Icon.Success, TranslationHelper.GetString(LangKeys.Success), 
-                string.Format(TranslationHelper.GetString(LangKeys.UpdateBigCtySuccess), 
+            }, Icon.Success, TranslationHelper.GetString(Language.Success), 
+                string.Format(TranslationHelper.GetString(Language.UpdateBigCtySuccess), 
                     callsignRow, countryRow), null);
         }
         catch (Exception ex)
@@ -522,16 +517,26 @@ public class SettingsWindowViewModel : ViewModelBase
                         IsDefault = true,
                         IsCancel = false
                     }
-                }, Icon.Error, TranslationHelper.GetString(LangKeys.Error), 
-                string.Format(TranslationHelper.GetString(LangKeys.UpdateBigCtyFailed), ex.Message), null);
+                }, Icon.Error, TranslationHelper.GetString(Language.Error), 
+                string.Format(TranslationHelper.GetString(Language.UpdateBigCtyFailed), ex.Message),
+                _windowManagerService.GetToplevel(GetType()));
         }
     }
     
-    private void _saveAndApplyConf()
+    private async Task _saveAndApplyConf()
     {
         if (Design.IsDesignMode) return;
+        var languageChanged = DraftSettings.BasicSettings.LanguageType != _initialLanguageType;
         _settingsService.ApplySettings(this, LogSystems.ToList());
         _source.Cancel();
+
+        if (languageChanged)
+        {
+            await _messageBoxManagerService.DoShowStandardMessageboxDialogAsync(Icon.Info, ButtonEnum.Ok,
+                TranslationHelper.GetString(Language.NotificationTitleWarning),
+                TranslationHelper.GetString(Language.LanguageRestartHint),
+                _windowManagerService.GetToplevel(GetType()));
+        }
 
         MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.NothingJustClosed });
     }

@@ -8,6 +8,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Flurl.Http;
@@ -68,10 +69,10 @@ public class FLRigService : IRigService, IDisposable
         var mode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_mode"));
 
         if (!long.TryParse(freqStr, out var freq))
-            throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigFrequency) + freqStr);
+            throw new RigCommException(TranslationHelper.GetString(Language.UnsupportedRigFrequency) + freqStr);
 
         // if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-        //     throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigMode + mode));
+        //     throw new RigCommException(TranslationHelper.GetString(Language.UnsupportedRigMode + mode));
 
         testbk.FrequencyRx = freq;
         testbk.FrequencyTx = freq;
@@ -100,11 +101,11 @@ public class FLRigService : IRigService, IDisposable
                 var txMode = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_modeB"));
 
                 if (!long.TryParse(txFreqStr, out var txFreq))
-                    throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigFrequency) + freqStr);
+                    throw new RigCommException(TranslationHelper.GetString(Language.UnsupportedRigFrequency) + freqStr);
 
                 // We no longer check if tx mode is available due to complex flrig digi modes
                 // if (!DefaultConfigs.AvailableRigModes.Contains(txMode))
-                //     throw new RigCommException(TranslationHelper.GetString(LangKeys.UnsupportedRigMode) + mode);
+                //     throw new RigCommException(TranslationHelper.GetString(Language.UnsupportedRigMode) + mode);
 
                 testbk.ModeTx = txMode;
                 testbk.FrequencyTx = txFreq;

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.WizardSteps;
@@ -294,12 +295,12 @@ public class WizardWindowViewModel : ViewModelBase
     {
         var key = step switch
         {
-            WelcomeStepIndex => LangKeys.WizardWelcomeTitle,
-            BasicStepIndex => LangKeys.WizardBasicTitle,
-            CloudlogStepIndex => LangKeys.WizardCloudlogTitle,
-            ThirdPartyStepIndex => LangKeys.WizardThirdPartyTitle,
-            RigBackendStepIndex => LangKeys.WizardRigTitle,
-            _ => LangKeys.WizardTitle
+            WelcomeStepIndex => Language.WizardWelcomeTitle,
+            BasicStepIndex => Language.WizardBasicTitle,
+            CloudlogStepIndex => Language.WizardCloudlogTitle,
+            ThirdPartyStepIndex => Language.WizardThirdPartyTitle,
+            RigBackendStepIndex => Language.WizardRigTitle,
+            _ => Language.WizardTitle
         };
 
         return TranslationHelper.GetString(key);
@@ -309,12 +310,12 @@ public class WizardWindowViewModel : ViewModelBase
     {
         var key = step switch
         {
-            WelcomeStepIndex => LangKeys.WizardWelcomeMessage,
-            BasicStepIndex => LangKeys.WizardBasicHint,
-            CloudlogStepIndex => LangKeys.WizardCloudlogHint,
-            ThirdPartyStepIndex => LangKeys.WizardThirdPartyHint,
-            RigBackendStepIndex => LangKeys.WizardRigHint,
-            _ => LangKeys.WizardWelcomeMessage
+            WelcomeStepIndex => Language.WizardWelcomeMessage,
+            BasicStepIndex => Language.WizardBasicHint,
+            CloudlogStepIndex => Language.WizardCloudlogHint,
+            ThirdPartyStepIndex => Language.WizardThirdPartyHint,
+            RigBackendStepIndex => Language.WizardRigHint,
+            _ => Language.WizardWelcomeMessage
         };
 
         return TranslationHelper.GetString(key);
@@ -326,7 +327,7 @@ public class WizardWindowViewModel : ViewModelBase
         await _messageBoxManagerService.DoShowStandardMessageboxDialogAsync(
             Icon.Error,
             ButtonEnum.Ok,
-            TranslationHelper.GetString(LangKeys.Error),
+            TranslationHelper.GetString(Language.Error),
             message,
             _windowManager.GetToplevel(GetType())
             );

@@ -12,6 +12,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using DynamicData.Kernel;
@@ -230,7 +231,7 @@ public sealed class RigctldService : IRigService, IDisposable
         var freqRaw = await ExecuteCommand(ip, port, "f");
         var freqStr = freqRaw.Split('\n')[0];
         if (!long.TryParse(freqStr, out var freq))
-            throw new RigCommException($"{TranslationHelper.GetString(LangKeys.UnsupportedRigFrequency)}{freqStr}");
+            throw new RigCommException($"{TranslationHelper.GetString(Language.UnsupportedRigFrequency)}{freqStr}");
         
         radioData.FrequencyRx = freq;
         radioData.FrequencyTx = freq;
@@ -239,7 +240,7 @@ public sealed class RigctldService : IRigService, IDisposable
         var modeRaw = await ExecuteCommand(ip, port, "m");
         var mode = modeRaw.Split('\n')[0];
         if (!DefaultConfigs.AvailableRigModes.Contains(mode))
-            throw new RigCommException($"{TranslationHelper.GetString(LangKeys.UnsupportedRigMode)}{mode}");
+            throw new RigCommException($"{TranslationHelper.GetString(Language.UnsupportedRigMode)}{mode}");
         
         radioData.ModeRx = mode;
         radioData.ModeTx = mode;
@@ -336,7 +337,7 @@ public sealed class RigctldService : IRigService, IDisposable
             _onetimeProcess.ErrorDataReceived += (_, e) => AppendToLogBuffer(e.Data);
             
             if (!_onetimeProcess.Start())
-                throw new Exception(TranslationHelper.GetString(LangKeys.InitHamlibFailed));
+                throw new Exception(TranslationHelper.GetString(Language.InitHamlibFailed));
             
             _onetimeProcess.BeginOutputReadLine();
             _onetimeProcess.BeginErrorReadLine();
@@ -417,7 +418,7 @@ public sealed class RigctldService : IRigService, IDisposable
         }
         catch (OperationCanceledException)
         {
-            throw new RigCommException(TranslationHelper.GetString(LangKeys.RigTimeout));
+            throw new RigCommException(TranslationHelper.GetString(Language.RigTimeout));
         }
         finally
         {

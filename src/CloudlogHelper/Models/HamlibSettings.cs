@@ -5,6 +5,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
 using ReactiveUI;
@@ -74,19 +75,19 @@ public class HamlibSettings : ReactiveValidationObject
         this.ClearValidationRules();
         this.ValidationRule(x => x.SelectedRigInfo,
             st => st?.Id is not null,
-            TranslationHelper.GetString(LangKeys.Required)
+            TranslationHelper.GetString(Language.Required)
         );
         this.ValidationRule(x => x.SelectedPort,
             SettingsValidation.CheckStringNotNull,
-            TranslationHelper.GetString(LangKeys.Required)
+            TranslationHelper.GetString(Language.Required)
         );
         this.ValidationRule(x => x.ExternalRigctldHostAddress,
             IPAddrUtil.CheckAddress!,
-            TranslationHelper.GetString(LangKeys.InvalidAddress)
+            TranslationHelper.GetString(Language.InvalidAddress)
         );
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.PollIntervalRequired)
+            TranslationHelper.GetString(Language.PollIntervalRequired)
         );
         
         // skip 4: refer to CloudlogHelper.ViewModels.SettingsWindowViewModel._initializeHamlibAsync

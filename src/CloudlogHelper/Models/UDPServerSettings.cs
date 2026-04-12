@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -50,7 +51,7 @@ public class UDPServerSettings : ReactiveValidationObject
                 if (!int.TryParse(st, out var res)) return false;
                 return res is <= 65535 and >= 0;
             },
-            TranslationHelper.GetString(LangKeys.InvalidPort)
+            TranslationHelper.GetString(Language.InvalidPort)
         );
         this.ValidationRule(
             x => x.RetryCount,
@@ -59,7 +60,7 @@ public class UDPServerSettings : ReactiveValidationObject
                 if (!int.TryParse(st, out var res)) return false;
                 return !string.IsNullOrEmpty(st) && res >= 0;
             },
-            TranslationHelper.GetString(LangKeys.RetryCountRequired)
+            TranslationHelper.GetString(Language.RetryCountRequired)
         );
     }
 

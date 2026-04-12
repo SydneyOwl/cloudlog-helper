@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
@@ -97,7 +98,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 Observable.Timer(TimeSpan.FromMilliseconds(2000))
                     .Select(_ => Unit.Default)
                     .Do(_ => _inAppNotification.SendInfoNotificationSync(
-                        TranslationHelper.GetString(LangKeys.QsoSyncing)))
+                        TranslationHelper.GetString(Language.QsoSyncing)))
                     .InvokeCommand(qsoSyncAssistantWindowViewModel.StartSyncCommand)
                     .DisposeWith(disposables);
             }

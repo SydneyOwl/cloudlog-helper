@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using Flurl;
 using Flurl.Http;
 using NLog;
@@ -66,26 +67,26 @@ public class CloudlogUtil
         {
             // on ios seems it returns "Validrw"
             if (result == "Validrw") return string.Empty;
-            if (result == "Validr") return TranslationHelper.GetString(LangKeys.MissingWriteAccess);
-            if (result.Contains("Key Invalid")) return TranslationHelper.GetString(LangKeys.InvalidApiKey);
-            return TranslationHelper.GetString(LangKeys.UnableToCheckApi);
+            if (result == "Validr") return TranslationHelper.GetString(Language.MissingWriteAccess);
+            if (result.Contains("Key Invalid")) return TranslationHelper.GetString(Language.InvalidApiKey);
+            return TranslationHelper.GetString(Language.UnableToCheckApi);
         }
 
         if (!result.Contains("<status>Valid</status>"))
         {
-            var description = TranslationHelper.GetString(LangKeys.InvalidApiKey);
+            var description = TranslationHelper.GetString(Language.InvalidApiKey);
             return description;
         }
 
         if (result.Contains("<rights>r</rights>"))
         {
-            var description = TranslationHelper.GetString(LangKeys.MissingWriteAccess);
+            var description = TranslationHelper.GetString(Language.MissingWriteAccess);
             return description;
         }
 
         if (!result.Contains("<rights>rw</rights>"))
         {
-            var description = TranslationHelper.GetString(LangKeys.InvalidApiKey);
+            var description = TranslationHelper.GetString(Language.InvalidApiKey);
             return description;
         }
 

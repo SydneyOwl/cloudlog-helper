@@ -8,6 +8,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
@@ -15,13 +16,13 @@ namespace CloudlogHelper.LogService;
 [LogService("Custom API", Description = "Custom API Log Service")]
 public class CustomAPIThirdPartyLogService : ThirdPartyLogService
 {
-    [UserInput(nameof(LangKeys.QsoUploadEndpoint), InputType = FieldType.Text, IsRequired = false, Description = "Endpoints for uploading QSO info. Spilt by Semicolon. See readme for more.")]
+    [UserInput(nameof(Language.QsoUploadEndpoint), InputType = FieldType.Text, IsRequired = false, Description = "Endpoints for uploading QSO info. Spilt by Semicolon. See readme for more.")]
     public string QSOEndpoint { get; set; }
     
-    [UserInput(nameof(LangKeys.RigInfoUploadEndpoint), InputType = FieldType.Text, IsRequired = false, Description = "Endpoints for uploading RIG info. Spilt by Semicolon. See readme for more.")]
+    [UserInput(nameof(Language.RigInfoUploadEndpoint), InputType = FieldType.Text, IsRequired = false, Description = "Endpoints for uploading RIG info. Spilt by Semicolon. See readme for more.")]
     public string RIGEndpoint { get; set; }
     
-    [UserInput(nameof(LangKeys.UploadRigInfo), InputType = FieldType.CheckBox)]
+    [UserInput(nameof(Language.UploadRigInfo), InputType = FieldType.CheckBox)]
     public bool AllowUploadRigInfo { get; set; } = false;
     
     public override Task TestConnectionAsync(CancellationToken token)

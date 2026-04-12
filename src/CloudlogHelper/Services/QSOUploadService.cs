@@ -9,6 +9,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using DesktopNotifications;
@@ -241,7 +242,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             if (string.IsNullOrWhiteSpace(adif))
             {
                 rcd.UploadStatus = UploadStatus.Fail;
-                rcd.FailReason = TranslationHelper.GetString(LangKeys.InvalidAdif);
+                rcd.FailReason = TranslationHelper.GetString(Language.InvalidAdif);
                 ClassLogger.Warn($"Invalid ADIF data for QSO: {rcd.DXCall}");
                 return;
             }
@@ -249,7 +250,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             if (!ShouldUpload(rcd))
             {
                 rcd.UploadStatus = UploadStatus.Ignored;
-                rcd.FailReason = TranslationHelper.GetString(LangKeys.QsoUploadDisabled);
+                rcd.FailReason = TranslationHelper.GetString(Language.QsoUploadDisabled);
                 ClassLogger.Debug($"Auto upload not enabled, ignoring: {rcd.DXCall}");
                 return;
             }
@@ -461,11 +462,11 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             var notification = new Notification
             {
                 Title = success 
-                    ? $"{TranslationHelper.GetString(LangKeys.QsoUploaded)} - {rcd.DXCall}"
-                    : $"{TranslationHelper.GetString(LangKeys.FailedQso)} - {rcd.DXCall}",
+                    ? $"{TranslationHelper.GetString(Language.QsoUploaded)} - {rcd.DXCall}"
+                    : $"{TranslationHelper.GetString(Language.FailedQso)} - {rcd.DXCall}",
                 Body = success 
                     ? rcd.FormatToReadableContent(true)
-                    : rcd.FailReason ?? TranslationHelper.GetString(LangKeys.QsoUploadFailed)
+                    : rcd.FailReason ?? TranslationHelper.GetString(Language.QsoUploadFailed)
             };
 
             await _notificationManager.ShowNotification(notification);

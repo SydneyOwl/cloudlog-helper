@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
@@ -70,7 +71,7 @@ public sealed class RigBackendWizardStepViewModel : WizardStepViewModelBase
                 if (!HamlibInited || _draftSettings.HamlibSettings.IsHamlibHasErrors())
                 {
                     return Task.FromResult(
-                        WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.ConfigureHamlibFirst)));
+                        WizardValidationResult.Failed(TranslationHelper.GetString(Language.ConfigureHamlibFirst)));
                 }
 
                 break;
@@ -78,7 +79,7 @@ public sealed class RigBackendWizardStepViewModel : WizardStepViewModelBase
                 if (_draftSettings.FLRigSettings.IsFLRigHasErrors())
                 {
                     return Task.FromResult(
-                        WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.ConfigureFlRigFirst)));
+                        WizardValidationResult.Failed(TranslationHelper.GetString(Language.ConfigureFlRigFirst)));
                 }
 
                 break;
@@ -86,13 +87,13 @@ public sealed class RigBackendWizardStepViewModel : WizardStepViewModelBase
                 if (!OmniRigInited)
                 {
                     return Task.FromResult(
-                        WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.OmniRigInitFailed)));
+                        WizardValidationResult.Failed(TranslationHelper.GetString(Language.OmniRigInitFailed)));
                 }
 
                 if (_draftSettings.OmniRigSettings.IsOmniRigHasErrors())
                 {
                     return Task.FromResult(
-                        WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.ConfigureOmniRigFirst)));
+                        WizardValidationResult.Failed(TranslationHelper.GetString(Language.ConfigureOmniRigFirst)));
                 }
 
                 break;

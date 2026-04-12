@@ -1,8 +1,8 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
              xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -25,7 +25,7 @@
                 <avalonia:MaterialIcon Kind="TestTube" Width="20" Height="20"
                                        Margin="0,0,8,0" />
                 <TextBlock FontSize="14" FontWeight="Heavy"
-                           Text="{I18N {x:Static resources:LangKeys.TestConnection}}"
+                           Text="{x:Static p:Language.TestConnection}"
                            IsVisible="{Binding !CheckExecuting}" VerticalAlignment="Center" />
                 <avaloniaProgressRing:ProgressRing Width="20" Height="20"
                                                    IsActive="{Binding CheckExecuting}"

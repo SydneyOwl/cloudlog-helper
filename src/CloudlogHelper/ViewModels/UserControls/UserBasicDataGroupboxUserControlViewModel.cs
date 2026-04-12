@@ -9,6 +9,7 @@ using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Material.Icons;
@@ -50,11 +51,11 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     public bool InitSkipped { get; }
 
-    [Reactive] public string? OP { get; set; } = TranslationHelper.GetString(LangKeys.Unknown);
-    [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString(LangKeys.Unknown);
-    [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString(LangKeys.Unknown);
-    [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString(LangKeys.Unknown);
-    [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString(LangKeys.Unknown);
+    [Reactive] public string? OP { get; set; } = TranslationHelper.GetString(Language.Unknown);
+    [Reactive] public string? GridSquare { get; set; } = TranslationHelper.GetString(Language.Unknown);
+    [Reactive] public string? QsToday { get; set; } = TranslationHelper.GetString(Language.Unknown);
+    [Reactive] public string? QsMonth { get; set; } = TranslationHelper.GetString(Language.Unknown);
+    [Reactive] public string? QsYear { get; set; } = TranslationHelper.GetString(Language.Unknown);
     [Reactive] public MaterialIconKind? BackendType { get; set; } = MaterialIconKind.QuestionMark;
     
     private void Initialize()
@@ -128,11 +129,11 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
         }
         
         if (_settings.IsCloudlogHasErrors(true))
-            throw new Exception(TranslationHelper.GetString(LangKeys.ConfigureCloudlogFirst));
+            throw new Exception(TranslationHelper.GetString(Language.ConfigureCloudlogFirst));
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
             _settings.CloudlogStationInfo?.StationId!, source.Token);
-        if (info is null) throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
+        if (info is null) throw new Exception(TranslationHelper.GetString(Language.FailedStationInfo));
 
         OP = info.StationCallsign;
         GridSquare = info.StationGridsquare;
@@ -142,7 +143,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
             _settings.CloudlogApiKey, source.Token);
         if (statistic is null)
         {
-            throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationStatistics));
+            throw new Exception(TranslationHelper.GetString(Language.FailedStationStatistics));
             return;
         }
 
@@ -153,10 +154,10 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
 
     private void _setStatusToUnknown()
     {
-        OP = TranslationHelper.GetString(LangKeys.Unknown);
-        GridSquare = TranslationHelper.GetString(LangKeys.Unknown);
-        QsToday = TranslationHelper.GetString(LangKeys.Unknown);
-        QsMonth = TranslationHelper.GetString(LangKeys.Unknown);
-        QsYear = TranslationHelper.GetString(LangKeys.Unknown);
+        OP = TranslationHelper.GetString(Language.Unknown);
+        GridSquare = TranslationHelper.GetString(Language.Unknown);
+        QsToday = TranslationHelper.GetString(Language.Unknown);
+        QsMonth = TranslationHelper.GetString(Language.Unknown);
+        QsYear = TranslationHelper.GetString(Language.Unknown);
     }
 }

@@ -1059,6 +1059,24 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 语言.
+        /// </summary>
+        public static string LanguageLabel {
+            get {
+                return ResourceManager.GetString("LanguageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 语言更改将在重启应用后生效。.
+        /// </summary>
+        public static string LanguageRestartHint {
+            get {
+                return ResourceManager.GetString("LanguageRestartHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 纬度.
         /// </summary>
         public static string Latitude {
@@ -1320,7 +1338,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请保存设置并关闭设置窗口使对插件的更改生效.
+        ///   Looks up a localized string similar to 请保存设置并关闭设置页面，使对外部插件的更改生效。.
         /// </summary>
         public static string PluginRestartHint {
             get {

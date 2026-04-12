@@ -14,6 +14,7 @@ using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using Flurl.Http;
@@ -48,7 +49,7 @@ public class LogSystemCard : UserControl
 
         var title = new TextBlock
         {
-            Text = TranslationHelper.GetString(LangKeys.ThirdPartyLogSystem),
+            Text = TranslationHelper.GetString(Language.ThirdPartyLogSystem),
             Classes = { "section-title" }
         };
         stackPanel.Children.Add(title);
@@ -260,7 +261,7 @@ public class LogSystemCard : UserControl
 
         var uploadCheckbox = new CheckBox
         {
-            Content = TranslationHelper.GetString(LangKeys.AutoQsoUpload),
+            Content = TranslationHelper.GetString(Language.AutoQsoUpload),
             Classes = { "setting-label" },
             [!ToggleButton.IsCheckedProperty] = new Binding("UploadEnabled")
             {
@@ -329,7 +330,7 @@ public class LogSystemCard : UserControl
             (field.Value is string stringValue && string.IsNullOrWhiteSpace(stringValue)))
         {
             throw new ArgumentException(
-                $"{TranslationHelper.GetString(LangKeys.FillAllFields)}({field.PropertyName})");
+                $"{TranslationHelper.GetString(Language.FillAllFields)}({field.PropertyName})");
         }
     }
 

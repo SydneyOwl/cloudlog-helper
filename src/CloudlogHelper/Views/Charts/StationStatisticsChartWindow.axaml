@@ -1,9 +1,9 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:charts="clr-namespace:CloudlogHelper.ViewModels.Charts"
-        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
         Width="1000" Height="700" CanResize="False"
@@ -86,10 +86,10 @@
                     Background="DarkOrange"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-            <CheckBox Content="{I18N {x:Static resources:LangKeys.AutoSelect}}" IsChecked="{Binding AutoSwitchEnabled}"
+            <CheckBox Content="{x:Static p:Language.AutoSelect}" IsChecked="{Binding AutoSwitchEnabled}"
                       VerticalAlignment="Center" Margin="20,0,5,0" />
 
-            <CheckBox Content="{I18N {x:Static resources:LangKeys.FilterDuplicatesByCallsign}}"
+            <CheckBox Content="{x:Static p:Language.FilterDuplicatesByCallsign}"
                       IsChecked="{Binding FilterDupeCallsign}"
                       VerticalAlignment="Center" Margin="0,0,5,0" />
 
@@ -102,7 +102,7 @@
                       VerticalAlignment="Center" Width="100" />
 
             <!-- <TextBlock Margin="10,0,0,0" -->
-            <!--            Text="{I18N {x:Static resources:LangKeys.SampleCount}}" -->
+            <!--            Text="{x:Static p:Language.SampleCount}" -->
             <!--            Foreground="{DynamicResource HighlightForegroundBrush}" -->
             <!--            HorizontalAlignment="Center" -->
             <!--            VerticalAlignment="Center" FontWeight="Black" /> -->

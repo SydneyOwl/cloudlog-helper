@@ -15,6 +15,8 @@ using CloudlogHelper.Database;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.DXCC;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using DynamicData.Binding;
@@ -262,7 +264,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                         }
 
                         if (await _dbService.IsQsoIgnored(
-                                IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i], DXCCKeys.locallog))))
+                                IgnoredQsoDatabase.Parse(RecordedCallsignDetail.Parse(compareRes[i], DXCC.locallog))))
                         {
                             _logProgress(
                                 $"QSO: {compareRes[i].Call} {compareRes[i].Mode} is not recorded, but it's marked as ignored.");
@@ -286,7 +288,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
                     {
                         MessageBus.Current.SendMessage(new QsoUploadRequested
                         {
-                            QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x, DXCCKeys.locallog)).ToList()
+                            QsoData = compareRes.Select(x => RecordedCallsignDetail.Parse(x, DXCC.locallog)).ToList()
                         });
                     });
 
@@ -303,10 +305,10 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
             if (errorOccurred)
                 throw new Exception("One(or some) of the local files process failed. Please check them in logs.");
-            _logProgress(TranslationHelper.GetString(LangKeys.QsoSyncSucceeded), 100);
+            _logProgress(TranslationHelper.GetString(Language.QsoSyncSucceeded), 100);
             if (_executeOnStart)
                 await _inAppNotification.SendSuccessNotificationAsync(
-                    $"{TranslationHelper.GetString(LangKeys.QsoSyncSucceeded)}");
+                    $"{TranslationHelper.GetString(Language.QsoSyncSucceeded)}");
         }
         catch (Exception ex)
         {
@@ -314,7 +316,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
             ClassLogger.Error(ex, "Sync qso error");
             if (_executeOnStart)
                 await _inAppNotification.SendErrorNotificationAsync(
-                    $"{TranslationHelper.GetString(LangKeys.QsoSyncFailed)}{ex.Message}");
+                    $"{TranslationHelper.GetString(Language.QsoSyncFailed)}{ex.Message}");
         }
         finally
         {

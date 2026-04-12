@@ -14,6 +14,7 @@ using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Google.Protobuf.WellKnownTypes;
@@ -406,7 +407,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             },
             Icon.Warning,
             "Warning",
-            TranslationHelper.GetString(LangKeys.RigCommunicationFailed));
+            TranslationHelper.GetString(Language.RigCommunicationFailed));
 
         switch (choice)
         {
@@ -485,7 +486,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 if (!_rigBackendManager.GetPollingAllowed())
                                 {
                                     _resetStatus();
-                                    // NextUploadTime = TranslationHelper.GetString(LangKeys.PollingDisabled);
+                                    // NextUploadTime = TranslationHelper.GetString(Language.PollingDisabled);
                                     await Task.Delay(1000, innerCancellationToken);
                                     continue;
                                 }
@@ -502,7 +503,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                     // }
                                     // NextUploadTime = remaining > 0 
                                     //     ? remaining.ToString()
-                                    //     : TranslationHelper.GetString(LangKeys.GettingInfo);
+                                    //     : TranslationHelper.GetString(Language.GettingInfo);
 
                                     RefreshAfter = $"{remaining}s";
                                     

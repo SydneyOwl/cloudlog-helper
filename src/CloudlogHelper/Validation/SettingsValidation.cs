@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 
 namespace CloudlogHelper.Validation;
@@ -12,7 +13,7 @@ public static class SettingsValidation
 {
     public static string ValidateNotEmpty(string url)
     {
-        if (string.IsNullOrEmpty(url)) return TranslationHelper.GetString(LangKeys.Required);
+        if (string.IsNullOrEmpty(url)) return TranslationHelper.GetString(Language.Required);
 
         return string.Empty;
     }
@@ -21,7 +22,7 @@ public static class SettingsValidation
     {
         if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
             !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            return TranslationHelper.GetString(LangKeys.MustStartWithHttp);
+            return TranslationHelper.GetString(Language.MustStartWithHttp);
 
         return string.Empty;
     }
@@ -29,7 +30,7 @@ public static class SettingsValidation
     public static string ValidateNotEndsWithApiQso(string url)
     {
         if (url.EndsWith("/api/qso", StringComparison.OrdinalIgnoreCase))
-            return TranslationHelper.GetString(LangKeys.MainDomainOnly);
+            return TranslationHelper.GetString(Language.MainDomainOnly);
 
         return string.Empty;
     }
@@ -37,7 +38,7 @@ public static class SettingsValidation
     public static string ValidateSpace(string url)
     {
         if (url.Trim() != url)
-            return TranslationHelper.GetString(LangKeys.SpaceNotAllowed);
+            return TranslationHelper.GetString(Language.SpaceNotAllowed);
         return string.Empty;
     }
 

@@ -1,9 +1,9 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
              xmlns:userControls2="clr-namespace:CloudlogHelper.Views.UserControls"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -28,33 +28,33 @@
                   ShowGridLines="False" Margin="5"
                   VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RowSpacing="10">
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,10,0">
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.TotalDecoded}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Static p:Language.TotalDecoded}" FontWeight="Bold" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding AllDecodedCount}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                 </StackPanel>
     
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,10,0">
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.QsoRate}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Static p:Language.QsoRate}" FontWeight="Bold" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                         <TextBlock Text="{Binding QsAvgMin}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                         <userControls2:TipIconUserControl
-                            TooltipText="{I18N {x:Static resources:LangKeys.WithinFiveMinutes}}" VerticalAlignment="Center" />
+                            TooltipText="{x:Static p:Language.WithinFiveMinutes}" VerticalAlignment="Center" />
                     </StackPanel>
                 </StackPanel> 
     
                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="10,0,0,0">
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.TotalReceived}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Static p:Language.TotalReceived}" FontWeight="Bold" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding RecordedQsosCount}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                 </StackPanel>
     
                 <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="10,0,0,0">
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.TotalUploaded}}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Static p:Language.TotalUploaded}" FontWeight="Bold" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding UploadedQsosCount}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                 </StackPanel>
                 
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <Button Content="{I18N {x:Static resources:LangKeys.SelectAll}}" Command="{Binding SelectAllCommand}"
+                    <Button Content="{x:Static p:Language.SelectAll}" Command="{Binding SelectAllCommand}"
                             Margin="5,0,5,0" />
-                    <CheckBox Content="{I18N {x:Static resources:LangKeys.ShowFailedOnly}}"
+                    <CheckBox Content="{x:Static p:Language.ShowFailedOnly}"
                               IsChecked="{Binding ShowFailedOnly}" Margin="20,0,0,0" />
                     <userControls2:WindowSplitToggleButtonUserControl
                         DataContext="{Binding SplitUserControlViewModel}"
@@ -79,7 +79,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True"
-                                           ToolTip.Tip="{I18N {x:Static resources:LangKeys.RightClickToSeeMore}}"
+                                           ToolTip.Tip="{x:Static p:Language.RightClickToSeeMore}"
                                            Cursor="Hand"
                                            Background="Transparent">
                                     
@@ -115,10 +115,7 @@
                                                            TextTrimming="CharacterEllipsis"
                                                            FontWeight="Bold" VerticalAlignment="Center" MaxHeight="20" >
                                                     <TextBlock.Text>
-                                                        <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
-                                                            <LanguageBinding Key="{x:Static resources:DXCCKeys.empty}"/>
-                                                            <Binding Path="OriginalCountryName" Converter="{StaticResource NameToKey}"/>
-                                                        </I18N>
+                                                        <Binding Path="OriginalCountryName" Converter="{StaticResource NameToKey}" />
                                                     </TextBlock.Text>
                                                 </TextBlock>
                                             </StackPanel>
@@ -192,10 +189,7 @@
                                                     VerticalAlignment="Bottom"
                                                     FontWeight="Bold" >
                                                     <TextBlock.Text>
-                                                        <I18N Key="{x:Static resources:DXCCKeys.spaceholder}">
-                                                            <LanguageBinding Key="{x:Static resources:DXCCKeys.empty}"/>
-                                                            <Binding Path="UploadStatus" Converter="{StaticResource StatusToLanguageKey}"/>
-                                                        </I18N>
+                                                        <Binding Path="UploadStatus" Converter="{StaticResource StatusToLanguageKey}" />
                                                     </TextBlock.Text>
                                                 </TextBlock>
                                                 <avalonia:MaterialIcon Kind="HelpCircleOutline"
@@ -250,7 +244,7 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                             <avalonia:MaterialIcon Kind="Warning" Foreground="Yellow" Margin="0,3,0,0"/>
                             <TextBlock TextAlignment="Center"
-                                       Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.UdpTimeout}}" />
+                                       Foreground="Azure" Text="{x:Static p:Language.UdpTimeout}" />
                         </StackPanel>
                     </StackPanel>
 
@@ -259,17 +253,17 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                             <avalonia:MaterialIcon Kind="Sleep" Foreground="White" Margin="0,3,0,0"/>
                             <TextBlock Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       Foreground="Azure" Text="{I18N {x:Static resources:LangKeys.WaitingConnection}}" />
+                                       Foreground="Azure" Text="{x:Static p:Language.WaitingConnection}" />
                         </StackPanel>
                     </StackPanel>
                 </Grid>
                 <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10"
                             Margin="0,10,0,0" HorizontalAlignment="Right">
-                    <Button Content="{I18N {x:Static resources:LangKeys.ExportToAdif}}"
+                    <Button Content="{x:Static p:Language.ExportToAdif}"
                             Command="{Binding ExportSelectedToAdiCommand}" />
-                    <Button Content="{I18N {x:Static resources:LangKeys.ReuploadSelected}}"
+                    <Button Content="{x:Static p:Language.ReuploadSelected}"
                             Command="{Binding ReuploadSelectedCommand}" />
-                    <Button Content="{I18N {x:Static resources:LangKeys.DeleteSelected}}"
+                    <Button Content="{x:Static p:Language.DeleteSelected}"
                             Command="{Binding DeleteSelectedCommand}" />
                     <Button Content="{avalonia:MaterialIconExt Kind=PublishDisabled}"
                             Background="Orange"

@@ -1,186 +1,112 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>1.3</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <data name="About" xml:space="preserve">
+<?xml version="1.0" encoding="utf-8"?><root><xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"><xsd:element name="root" msdata:IsDataSet="true"></xsd:element></xsd:schema><resheader name="resmimetype"><value>text/microsoft-resx</value></resheader><resheader name="version"><value>1.3</value></resheader><resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader><resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader><data name="About" xml:space="preserve">
         <value>について</value>
-    </data>
-    <data name="Accept" xml:space="preserve">
+    </data><data name="Accept" xml:space="preserve">
         <value>承諾</value>
-    </data>
-    <data name="AdvancedSettings" xml:space="preserve">
+    </data><data name="AdvancedSettings" xml:space="preserve">
         <value>詳細設定</value>
-    </data>
-    <data name="AllowExternalControl" xml:space="preserve">
+    </data><data name="AllowExternalControl" xml:space="preserve">
         <value>外部制御を許可</value>
-    </data>
-    <data name="AllowProxy" xml:space="preserve">
+    </data><data name="AllowProxy" xml:space="preserve">
         <value>リクエストプロキシを許可</value>
-    </data>
-    <data name="AngleWeight" xml:space="preserve">
+    </data><data name="AngleWeight" xml:space="preserve">
         <value>角度の重み</value>
-    </data>
-    <data name="ApiKey" xml:space="preserve">
+    </data><data name="ApiKey" xml:space="preserve">
         <value>APIキー</value>
-    </data>
-    <data name="AutoPollStatus" xml:space="preserve">
+    </data><data name="AutoPollStatus" xml:space="preserve">
         <value>自動的にステーション情報を更新</value>
-    </data>
-    <data name="AutoQsoUpload" xml:space="preserve">
+    </data><data name="AutoQsoUpload" xml:space="preserve">
         <value>QSOを自動アップロード</value>
-    </data>
-    <data name="AutoSelect" xml:space="preserve">
+    </data><data name="AutoSelect" xml:space="preserve">
         <value>自動選択</value>
-    </data>
-    <data name="AutoUpdateRigInfo" xml:space="preserve">
+    </data><data name="AutoUpdateRigInfo" xml:space="preserve">
         <value>無線機データの自動報告</value>
-    </data>
-    <data name="AutoUploadQsoTo" xml:space="preserve">
+    </data><data name="AutoUploadQsoTo" xml:space="preserve">
         <value>QSOを自動アップロード先</value>
-    </data>
-    <data name="BasicInfo" xml:space="preserve">
+    </data><data name="BasicInfo" xml:space="preserve">
         <value>基本情報</value>
-    </data>
-    <data name="BasicSettings" xml:space="preserve">
+    </data><data name="BasicSettings" xml:space="preserve">
         <value>基本設定</value>
-    </data>
-    <data name="BaudRate" xml:space="preserve">
+    </data><data name="BaudRate" xml:space="preserve">
         <value>ボーレート</value>
-    </data>
-    <data name="BearingDegrees" xml:space="preserve">
+    </data><data name="BearingDegrees" xml:space="preserve">
         <value>角度（度）</value>
-    </data>
-    <data name="BootFailed" xml:space="preserve">
+    </data><data name="BootFailed" xml:space="preserve">
         <value>起動に失敗しました！すべての設定をリセットしますか？</value>
-    </data>
-    <data name="Calculating" xml:space="preserve">
+    </data><data name="Calculating" xml:space="preserve">
         <value>計算中...</value>
-    </data>
-    <data name="Callsign" xml:space="preserve">
+    </data><data name="Callsign" xml:space="preserve">
         <value>コールサイン</value>
-    </data>
-    <data name="Charts" xml:space="preserve">
+    </data><data name="Charts" xml:space="preserve">
         <value>チャート</value>
-    </data>
-    <data name="ChartsDisabled" xml:space="preserve">
+    </data><data name="ChartsDisabled" xml:space="preserve">
         <value>チャート機能は無効です。設定で有効にしてください！</value>
-    </data>
-    <data name="CheckRigConnection" xml:space="preserve">
+    </data><data name="CheckRigConnection" xml:space="preserve">
         <value>無線機の接続を確認してください！</value>
-    </data>
-    <data name="Clear" xml:space="preserve">
+    </data><data name="Clear" xml:space="preserve">
         <value>クリア</value>
-    </data>
-    <data name="ClhHintInfo" xml:space="preserve">
+    </data><data name="ClhHintInfo" xml:space="preserve">
         <value>Cloudlog HelperはCLH-Serverに接続でき、デコードされたデータモード情報および無線機情報をサーバーに自動報告します。特定のAndroidアプリを使用してサーバーに接続すると、サーバーからスマートフォンに情報がプッシュされます。</value>
-    </data>
-    <data name="ClhServerAddress" xml:space="preserve">
+    </data><data name="ClhServerAddress" xml:space="preserve">
         <value>CLHサーバーIP</value>
-    </data>
-    <data name="ClhServerKey" xml:space="preserve">
+    </data><data name="ClhServerKey" xml:space="preserve">
         <value>CLHサーバーキー</value>
-    </data>
-    <data name="ClhServerPort" xml:space="preserve">
+    </data><data name="ClhServerPort" xml:space="preserve">
         <value>CLHサーバーポート</value>
-    </data>
-    <data name="ClhServer" xml:space="preserve">
+    </data><data name="ClhServer" xml:space="preserve">
         <value>CLHサーバー</value>
-    </data>
-    <data name="ClhUseTls" xml:space="preserve">
+    </data><data name="ClhUseTls" xml:space="preserve">
         <value>TLSを使用</value>
-    </data>
-    <data name="Close" xml:space="preserve">
+    </data><data name="Close" xml:space="preserve">
         <value>ウィンドウを閉じる</value>
-    </data>
-    <data name="CloseOrMinimize" xml:space="preserve">
+    </data><data name="CloseOrMinimize" xml:space="preserve">
         <value>トレイに最小化しますか、それともプログラムを終了しますか？</value>
-    </data>
-    <data name="CloudlogApiHelp" xml:space="preserve">
+    </data><data name="CloudlogApiHelp" xml:space="preserve">
         <value>APIキーを入力してください。このキーには読み取り/書き込み権限が必要です。ホームページのアカウントドロップダウンメニューから確認できます。</value>
-    </data>
-    <data name="CloudlogStationId" xml:space="preserve">
+    </data><data name="CloudlogStationId" xml:space="preserve">
         <value>ホームページのアカウントドロップダウンメニュー内の「ステーションアドレス」から確認できます。</value>
-    </data>
-    <data name="CloudlogUrlHelp" xml:space="preserve">
+    </data><data name="CloudlogUrlHelp" xml:space="preserve">
         <value>ドメイン名のみを入力してください。「index.php/api/qso」などのパスは不要です。プログラムが自動的に補完します。</value>
-    </data>
-    <data name="ClublogSettings" xml:space="preserve">
+    </data><data name="ClublogSettings" xml:space="preserve">
         <value>Clublog設定</value>
-    </data>
-    <data name="CommandArgHelp" xml:space="preserve">
+    </data><data name="CommandArgHelp" xml:space="preserve">
         <value>このフィールドが空でない場合、ソフトウェアは入力された内容をrigctld起動時のデフォルト引数として使用し、他のすべての設定は無視されます。</value>
-    </data>
-    <data name="ConfigureCloudlogFirst" xml:space="preserve">
+    </data><data name="ConfigureCloudlogFirst" xml:space="preserve">
         <value>Cloudlog設定が無効です。設定で修正してください！</value>
-    </data>
-    <data name="ConfigureFlRigFirst" xml:space="preserve">
+    </data><data name="ConfigureFlRigFirst" xml:space="preserve">
         <value>FLRIG設定に誤りがあります。設定で修正してください！</value>
-    </data>
-    <data name="ConfigureHamlibFirst" xml:space="preserve">
+    </data><data name="ConfigureHamlibFirst" xml:space="preserve">
         <value>Hamlib設定が無効です。設定で修正してください！</value>
-    </data>
-    <data name="ConflictingHamlib" xml:space="preserve">
+    </data><data name="ConflictingHamlib" xml:space="preserve">
         <value>プロセス {replace01} が実行中のため、無線機データの自動報告機能に影響を与える可能性があります！</value>
-    </data>
-    <data name="ConfigureOmniRigFirst" xml:space="preserve">
+    </data><data name="ConfigureOmniRigFirst" xml:space="preserve">
         <value>OmniRigの設定を確認してください！</value>
-    </data>
-    <data name="ControlPanel" xml:space="preserve">
+    </data><data name="ControlPanel" xml:space="preserve">
         <value>コントロールパネル</value>
-    </data>
-    <data name="CurrentFrequency" xml:space="preserve">
+    </data><data name="CurrentFrequency" xml:space="preserve">
         <value>現在の周波数</value>
-    </data>
-    <data name="CurrentMode" xml:space="preserve">
+    </data><data name="CurrentMode" xml:space="preserve">
         <value>現在のモード</value>
-    </data>
-    <data name="Dark" xml:space="preserve">
+    </data><data name="Dark" xml:space="preserve">
         <value>ダークモード</value>
-    </data>
-    <data name="DataBit" xml:space="preserve">
+    </data><data name="DataBit" xml:space="preserve">
         <value>データビット</value>
-    </data>
-    <data name="DayQsos" xml:space="preserve">
+    </data><data name="DayQsos" xml:space="preserve">
         <value>本日のQSO数</value>
-    </data>
-    <data name="DeleteSelected" xml:space="preserve">
+    </data><data name="DeleteSelected" xml:space="preserve">
         <value>削除</value>
-    </data>
-    <data name="Deny" xml:space="preserve">
+    </data><data name="Deny" xml:space="preserve">
         <value>拒否</value>
-    </data>
-    <data name="DevicePort" xml:space="preserve">
+    </data><data name="DevicePort" xml:space="preserve">
         <value>デバイスポート</value>
-    </data>
-    <data name="DisableCharts" xml:space="preserve">
+    </data><data name="DisableCharts" xml:space="preserve">
         <value>チャート機能を無効にする（低性能デバイス向け）</value>
-    </data>
-    <data name="DisablePtt" xml:space="preserve">
+    </data><data name="DisablePtt" xml:space="preserve">
         <value>PTT制御を無効にする</value>
-    </data>
-    <data name="DisablePttHelp" xml:space="preserve">
+    </data><data name="DisablePttHelp" xml:space="preserve">
         <value>一部のLinuxディストリビューションでは、rts/dtrを無効にしないとPTTが正しく初期化されず、常にトリガー状態になることがあります。</value>
-    </data>
-    <data name="Discard" xml:space="preserve">
+    </data><data name="Discard" xml:space="preserve">
         <value>キャンセル</value>
-    </data>
-    <data name="Disclaimer" xml:space="preserve">
+    </data><data name="Disclaimer" xml:space="preserve">
         <value>Cloudlog Helper v{1}へようこそ！
 
 使用を開始する前に、下記の【免責事項と利用規約】をお読みいただき、同意してください。n
@@ -189,266 +115,179 @@
 本ソフトウェアはThe Unlicenseライセンスに基づきオープンソースとして提供されており、「現状のまま」技術交流および学習目的でのみ使用可能です。使用者は自己の責任において使用するものとし、本ソフトウェアの使用により生じたデータ損失、機器の損傷、その他の一切の損害について、開発者は一切の責任を負いません。
 
 継続して使用することにより、上記条項およびプロジェクトのGitHubページ（https://github.com/sydneyowl/cloudlog-helper）に記載された完全な免責事項に同意したものとみなされます。</value>
-    </data>
-    <data name="DistanceKm" xml:space="preserve">
+    </data><data name="DistanceKm" xml:space="preserve">
         <value>距離（km）</value>
-    </data>
-    <data name="DistanceWeight" xml:space="preserve">
+    </data><data name="DistanceWeight" xml:space="preserve">
         <value>距離の重み</value>
-    </data>
-    <data name="DoubleTapToSeeMore" xml:space="preserve">
+    </data><data name="DoubleTapToSeeMore" xml:space="preserve">
         <value>ダブルクリックで詳細を表示</value>
-    </data>
-    <data name="DuplicateInstance" xml:space="preserve">
+    </data><data name="DuplicateInstance" xml:space="preserve">
         <value>プログラムはすでに実行中です！</value>
-    </data>
-    <data name="DuplicateRigServiceDetected" xml:space="preserve">
+    </data><data name="DuplicateRigServiceDetected" xml:space="preserve">
         <value>2つの無線機バックエンド制御サービスを同時に有効にすることはできません！</value>
-    </data>
-    <data name="Email" xml:space="preserve">
+    </data><data name="Email" xml:space="preserve">
         <value>メールアドレス</value>
-    </data>
-    <data name="EnableAdvanced" xml:space="preserve">
+    </data><data name="EnableAdvanced" xml:space="preserve">
         <value>詳細設定</value>
-    </data>
-    <data name="EnableClhServer" xml:space="preserve">
+    </data><data name="EnableClhServer" xml:space="preserve">
         <value>CLHサーバーを有効化</value>
-    </data>
-    <data name="EnableOutsideConnection" xml:space="preserve">
+    </data><data name="EnableOutsideConnection" xml:space="preserve">
         <value>外部接続を許可</value>
-    </data>
-    <data name="EnableUdpServer" xml:space="preserve">
+    </data><data name="EnableUdpServer" xml:space="preserve">
         <value>UDPサーバーを有効化</value>
-    </data>
-    <data name="Error" xml:space="preserve">
+    </data><data name="Error" xml:space="preserve">
         <value>エラー</value>
-    </data>
-    <data name="ErrorOccurred" xml:space="preserve">
+    </data><data name="ErrorOccurred" xml:space="preserve">
         <value>エラーが発生しました！</value>
-    </data>
-    <data name="Exit" xml:space="preserve">
+    </data><data name="Exit" xml:space="preserve">
         <value>終了</value>
-    </data>
-    <data name="Export" xml:space="preserve">
+    </data><data name="Export" xml:space="preserve">
         <value>エクスポート</value>
-    </data>
-    <data name="ExportToAdif" xml:space="preserve">
+    </data><data name="ExportToAdif" xml:space="preserve">
         <value>ADI形式でエクスポート</value>
-    </data>
-    <data name="ExternalRigctldHost" xml:space="preserve">
+    </data><data name="ExternalRigctldHost" xml:space="preserve">
         <value>Rigctldサービスアドレス</value>
-    </data>
-    <data name="Failed" xml:space="preserve">
+    </data><data name="Failed" xml:space="preserve">
         <value>失敗！</value>
-    </data>
-    <data name="FailedQso" xml:space="preserve">
+    </data><data name="FailedQso" xml:space="preserve">
         <value>このQSOのアップロードに失敗しました。</value>
-    </data>
-    <data name="FailedRigInfo" xml:space="preserve">
+    </data><data name="FailedRigInfo" xml:space="preserve">
         <value>無線機データを取得できません！</value>
-    </data>
-    <data name="FailedStationInfo" xml:space="preserve">
+    </data><data name="FailedStationInfo" xml:space="preserve">
         <value>ステーション情報を取得できません！</value>
-    </data>
-    <data name="FailedStationStatistics" xml:space="preserve">
+    </data><data name="FailedStationStatistics" xml:space="preserve">
         <value>ステーションデータを取得できません！</value>
-    </data>
-    <data name="QsoSyncFailed" xml:space="preserve">
+    </data><data name="QsoSyncFailed" xml:space="preserve">
         <value>QSO同期中にエラーが発生しました：</value>
-    </data>
-    <data name="FailedToExtractInfo" xml:space="preserve">
+    </data><data name="FailedToExtractInfo" xml:space="preserve">
         <value>コマンドライン引数からポート番号を抽出できません。明示的に-tパラメータで指定してください。</value>
-    </data>
-    <data name="RigCommunicationFailed" xml:space="preserve">
+    </data><data name="RigCommunicationFailed" xml:space="preserve">
         <value>無線機との通信に失敗しました！</value>
-    </data>
-    <data name="FailedUploadRigInfoTo" xml:space="preserve">
+    </data><data name="FailedUploadRigInfoTo" xml:space="preserve">
         <value>{addr}へのアップロードに失敗しました。ログを確認してください！</value>
-    </data>
-    <data name="FillAllFields" xml:space="preserve">
+    </data><data name="FillAllFields" xml:space="preserve">
         <value>すべての情報を正しく入力してください！</value>
-    </data>
-    <data name="FilterDuplicatesByCallsign" xml:space="preserve">
+    </data><data name="FilterDuplicatesByCallsign" xml:space="preserve">
         <value>重複サンプル（コールサイン）をフィルタリング</value>
-    </data>
-    <data name="ForwardToTcp" xml:space="preserve">
+    </data><data name="ForwardToTcp" xml:space="preserve">
         <value>デコード情報をHTTPサーバーに転送</value>
-    </data>
-    <data name="ForwardMessage" xml:space="preserve">
+    </data><data name="ForwardMessage" xml:space="preserve">
         <value>受信したUDPパケットを転送先</value>
-    </data>
-    <data name="ForwardTo" xml:space="preserve">
+    </data><data name="ForwardTo" xml:space="preserve">
         <value>受信したUDPパケットを転送先</value>
-    </data>
-    <data name="GettingInfo" xml:space="preserve">
+    </data><data name="GettingInfo" xml:space="preserve">
         <value>データ取得中...</value>
-    </data>
-    <data name="Grid" xml:space="preserve">
+    </data><data name="Grid" xml:space="preserve">
         <value>座標</value>
-    </data>
-    <data name="GridError" xml:space="preserve">
+    </data><data name="GridError" xml:space="preserve">
         <value>グリッド座標が空または不正です。設定を確認してください！</value>
-    </data>
-    <data name="HamCqSettings" xml:space="preserve">
+    </data><data name="HamCqSettings" xml:space="preserve">
         <value>HamCQ設定</value>
-    </data>
-    <data name="Help" xml:space="preserve">
+    </data><data name="Help" xml:space="preserve">
         <value>ヘルプ</value>
-    </data>
-    <data name="HelpFeedback" xml:space="preserve">
+    </data><data name="HelpFeedback" xml:space="preserve">
         <value>Githubにエラー情報をフィードバックして、開発者がこのバグを修正できるようにご協力ください！</value>
-    </data>
-    <data name="IgnoredQso" xml:space="preserve">
+    </data><data name="IgnoredQso" xml:space="preserve">
         <value>このQSOは無視されました — すべてのサードパーティログのアップロード機能がオフになっていませんか？</value>
-    </data>
-    <data name="IgnoreQsoPermanently" xml:space="preserve">
+    </data><data name="IgnoreQsoPermanently" xml:space="preserve">
         <value>この操作により、選択されたQSOは今後永久に無視され、QSOアシスタントがローカルQSOをスキャンする際にこれらの項目をスキップします。よろしいですか？</value>
-    </data>
-    <data name="InitHamlibFailed" xml:space="preserve">
+    </data><data name="InitHamlibFailed" xml:space="preserve">
         <value>Hamlibの初期化に失敗しました！</value>
-    </data>
-    <data name="InstanceName" xml:space="preserve">
+    </data><data name="InstanceName" xml:space="preserve">
         <value>インスタンス名</value>
-    </data>
-    <data name="InstanceNameHint" xml:space="preserve">
+    </data><data name="InstanceNameHint" xml:space="preserve">
         <value>このフィールドは、ソフトウェアがclh-serverに登録する際に使用する名前です。この名前は一意である必要があります。</value>
-    </data>
-    <data name="InstanceIncompatible" xml:space="preserve">
+    </data><data name="InstanceIncompatible" xml:space="preserve">
         <value>使用中のバックエンドサービスは{replace01}のようで、Cloudlogではありません。そのため、一部の機能がサポートされない可能性があります。</value>
-    </data>
-    <data name="InvalidAddress" xml:space="preserve">
+    </data><data name="InvalidAddress" xml:space="preserve">
         <value>アドレスが無効です！</value>
-    </data>
-    <data name="InvalidAdif" xml:space="preserve">
+    </data><data name="InvalidAdif" xml:space="preserve">
         <value>ADIF形式が無効です！</value>
-    </data>
-    <data name="InvalidApiKey" xml:space="preserve">
+    </data><data name="InvalidApiKey" xml:space="preserve">
         <value>このAPIキーは無効です！</value>
-    </data>
-    <data name="InvalidConfiguration" xml:space="preserve">
+    </data><data name="InvalidConfiguration" xml:space="preserve">
         <value>設定が無効です！</value>
-    </data>
-    <data name="InvalidPort" xml:space="preserve">
+    </data><data name="InvalidPort" xml:space="preserve">
         <value>ポート番号が無効です</value>
-    </data>
-    <data name="InvalidUdpConfiguration" xml:space="preserve">
+    </data><data name="InvalidUdpConfiguration" xml:space="preserve">
         <value>UDPサーバー設定が無効です！</value>
-    </data>
-    <data name="InvalidUrl" xml:space="preserve">
+    </data><data name="InvalidUrl" xml:space="preserve">
         <value>URLが無効です！</value>
-    </data>
-    <data name="KValue" xml:space="preserve">
+    </data><data name="KValue" xml:space="preserve">
         <value>K値（KNN）</value>
-    </data>
-    <data name="MissingWriteAccess" xml:space="preserve">
+    </data><data name="MissingWriteAccess" xml:space="preserve">
         <value>APIキーには読み取り/書き込み権限が必要ですが、提供されたキーは読み取り専用です！</value>
-    </data>
-    <data name="Latitude" xml:space="preserve">
+    </data><data name="Latitude" xml:space="preserve">
         <value>緯度</value>
-    </data>
-    <data name="Light" xml:space="preserve">
+    </data><data name="Light" xml:space="preserve">
         <value>ライトモード</value>
-    </data>
-    <data name="Longitude" xml:space="preserve">
+    </data><data name="Longitude" xml:space="preserve">
         <value>経度</value>
-    </data>
-    <data name="QsoMade" xml:space="preserve">
+    </data><data name="QsoMade" xml:space="preserve">
         <value>✅️ QSOが完了しました！</value>
-    </data>
-    <data name="MaxSampleCount" xml:space="preserve">
+    </data><data name="MaxSampleCount" xml:space="preserve">
         <value>最大サンプルポイント数</value>
-    </data>
-    <data name="MonthQsos" xml:space="preserve">
+    </data><data name="MonthQsos" xml:space="preserve">
         <value>今月のQSO数</value>
-    </data>
-    <data name="RequireVerboseLogging" xml:space="preserve">
+    </data><data name="RequireVerboseLogging" xml:space="preserve">
         <value>コマンドライン引数に-vvvvvを追加する必要があります！</value>
-    </data>
-    <data name="MyGrid" xml:space="preserve">
+    </data><data name="MyGrid" xml:space="preserve">
         <value>マイグリッド</value>
-    </data>
-    <data name="NextUploadTime" xml:space="preserve">
+    </data><data name="NextUploadTime" xml:space="preserve">
         <value>次回報告予定時刻</value>
-    </data>
-    <data name="NoData" xml:space="preserve">
+    </data><data name="NoData" xml:space="preserve">
         <value>（データなし）</value>
-    </data>
-    <data name="Notice" xml:space="preserve">
+    </data><data name="Notice" xml:space="preserve">
         <value>注意</value>
-    </data>
-    <data name="Required" xml:space="preserve">
+    </data><data name="Required" xml:space="preserve">
         <value>この項目は必須です！</value>
-    </data>
-    <data name="OmniRigInitFailed" xml:space="preserve">
+    </data><data name="OmniRigInitFailed" xml:space="preserve">
         <value>OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在、AOTコンパイルされていないWindowsプラットフォームでのみサポートされています。</value>
-    </data>
-    <data name="MainDomainOnly" xml:space="preserve">
+    </data><data name="MainDomainOnly" xml:space="preserve">
         <value>メインドメインのみを入力してください。「/api/qso」で終わってはいけません！</value>
-    </data>
-    <data name="Operator" xml:space="preserve">
+    </data><data name="Operator" xml:space="preserve">
         <value>オペレーター</value>
-    </data>
-    <data name="Open" xml:space="preserve">
+    </data><data name="Open" xml:space="preserve">
         <value>開く</value>
-    </data>
-    <data name="OpenConfigPath" xml:space="preserve">
+    </data><data name="OpenConfigPath" xml:space="preserve">
         <value>設定ディレクトリを開く</value>
-    </data>
-    <data name="OpenTempFolder" xml:space="preserve">
+    </data><data name="OpenTempFolder" xml:space="preserve">
         <value>キャッシュディレクトリを開く</value>
-    </data>
-    <data name="Password" xml:space="preserve">
+    </data><data name="Password" xml:space="preserve">
         <value>パスワード</value>
-    </data>
-    <data name="Pause" xml:space="preserve">
+    </data><data name="Pause" xml:space="preserve">
         <value>一時停止</value>
-    </data>
-    <data name="PendingQso" xml:space="preserve">
+    </data><data name="PendingQso" xml:space="preserve">
         <value>このQSOはアップロード待ちです。</value>
-    </data>
-    <data name="PollingDisabled" xml:space="preserve">
+    </data><data name="PollingDisabled" xml:space="preserve">
         <value>設定で「無線機データの自動報告」を有効にしてください</value>
-    </data>
-    <data name="PollInterval" xml:space="preserve">
+    </data><data name="PollInterval" xml:space="preserve">
         <value>ポーリング間隔（秒）</value>
-    </data>
-    <data name="PollIntervalRequired" xml:space="preserve">
+    </data><data name="PollIntervalRequired" xml:space="preserve">
         <value>ポーリング間隔は1より大きい整数でなければなりません！</value>
-    </data>
-    <data name="Port" xml:space="preserve">
+    </data><data name="Port" xml:space="preserve">
         <value>ポート番号</value>
-    </data>
-    <data name="ProxyHelp" xml:space="preserve">
+    </data><data name="ProxyHelp" xml:space="preserve">
         <value>他のアプリケーションからのリクエストをプロキシすることを許可します。これにより、rigctldへの同時リクエストによる競合を回避できます。</value>
-    </data>
-    <data name="PleaseSelectFirst" xml:space="preserve">
+    </data><data name="PleaseSelectFirst" xml:space="preserve">
         <value>まずQSOをチェックしてください！</value>
-    </data>
-    <data name="PushNotifications" xml:space="preserve">
+    </data><data name="PushNotifications" xml:space="preserve">
         <value>以下の状況でシステム通知をプッシュ：</value>
-    </data>
-    <data name="QsoAssistant" xml:space="preserve">
+    </data><data name="QsoAssistant" xml:space="preserve">
         <value>QSOアップロードアシスタント</value>
-    </data>
-    <data name="QsoConciseTemplate" xml:space="preserve">
+    </data><data name="QsoConciseTemplate" xml:space="preserve">
         <value>コールサイン: {0}, 国: {1} ({8}), グリッド: {9}, 周波数: {10} ({11}), モード: {12}, 時間: {14} ～ {15}, 信号レポート: 送信 '{16}' / 受信 '{17}'</value>
-    </data>
-    <data name="NotifyOnQsoFinished" xml:space="preserve">
+    </data><data name="NotifyOnQsoFinished" xml:space="preserve">
         <value>QSO完了時</value>
-    </data>
-    <data name="QsoRate" xml:space="preserve">
+    </data><data name="QsoRate" xml:space="preserve">
         <value>QSOレート：</value>
-    </data>
-    <data name="QsoRetryCount" xml:space="preserve">
+    </data><data name="QsoRetryCount" xml:space="preserve">
         <value>QSOアップロード失敗時の再試行回数</value>
-    </data>
-    <data name="QsoSyncing" xml:space="preserve">
+    </data><data name="QsoSyncing" xml:space="preserve">
         <value>QSOを同期中...</value>
-    </data>
-    <data name="QsoSyncSucceeded" xml:space="preserve">
+    </data><data name="QsoSyncSucceeded" xml:space="preserve">
         <value>QSOの同期が成功しました！</value>
-    </data>
-    <data name="QsoTemplate" xml:space="preserve">
+    </data><data name="QsoTemplate" xml:space="preserve">
         <value>• コールサイン: {0}
 • 国: {1} (CQゾーン: {2}, ITUゾーン: {3})
 • 大陸: {4}
@@ -470,424 +309,284 @@
 • クライアント: {27}
 • アップロード状態: {28}
 • 失敗理由: {29}</value>
-    </data>
-    <data name="QsoUploadDisabled" xml:space="preserve">
+    </data><data name="QsoUploadDisabled" xml:space="preserve">
         <value>QSO自動アップロード機能が有効になっていません。</value>
-    </data>
-    <data name="NotifyOnQsoUploaded" xml:space="preserve">
+    </data><data name="NotifyOnQsoUploaded" xml:space="preserve">
         <value>QSOアップロード完了時</value>
-    </data>
-    <data name="QthNick" xml:space="preserve">
+    </data><data name="QthNick" xml:space="preserve">
         <value>QTHエイリアス（任意）</value>
-    </data>
-    <data name="QthNickname" xml:space="preserve">
+    </data><data name="QthNickname" xml:space="preserve">
         <value>QTHニックネーム（任意）</value>
-    </data>
-    <data name="MinimumPollIntervalError" xml:space="preserve">
+    </data><data name="MinimumPollIntervalError" xml:space="preserve">
         <value>ポーリング間隔は1秒以上にしてください！</value>
-    </data>
-    <data name="ReceivedQsoInfo" xml:space="preserve">
+    </data><data name="ReceivedQsoInfo" xml:space="preserve">
         <value>完了済みQSO情報</value>
-    </data>
-    <data name="Refresh" xml:space="preserve">
+    </data><data name="Refresh" xml:space="preserve">
         <value>更新</value>
-    </data>
-    <data name="RememberMyChoice" xml:space="preserve">
+    </data><data name="RememberMyChoice" xml:space="preserve">
         <value>選択を記憶</value>
-    </data>
-    <data name="ReportPower" xml:space="preserve">
+    </data><data name="ReportPower" xml:space="preserve">
         <value>送信出力を報告</value>
-    </data>
-    <data name="ReportSplit" xml:space="preserve">
+    </data><data name="ReportSplit" xml:space="preserve">
         <value>異周波数（Split）情報を報告</value>
-    </data>
-    <data name="RetryCountRequired" xml:space="preserve">
+    </data><data name="RetryCountRequired" xml:space="preserve">
         <value>再試行回数は0より大きい整数でなければなりません！</value>
-    </data>
-    <data name="RetryingQso" xml:space="preserve">
+    </data><data name="RetryingQso" xml:space="preserve">
         <value>アップロードを再試行中</value>
-    </data>
-    <data name="ReuploadSelected" xml:space="preserve">
+    </data><data name="ReuploadSelected" xml:space="preserve">
         <value>再送信</value>
-    </data>
-    <data name="RfPowerHelp" xml:space="preserve">
+    </data><data name="RfPowerHelp" xml:space="preserve">
         <value>一部の無線機は送信出力の読み取りをサポートしていないか、誤ったデータを返すため、この機能はデフォルトで無効になっています。</value>
-    </data>
-    <data name="RigBackendSystem" xml:space="preserve">
+    </data><data name="RigBackendSystem" xml:space="preserve">
         <value>無線機バックエンド制御システム</value>
-    </data>
-    <data name="RigctldCommandArg" xml:space="preserve">
+    </data><data name="RigctldCommandArg" xml:space="preserve">
         <value>Rigctldコマンドライン引数</value>
-    </data>
-    <data name="RigctldNotStarted" xml:space="preserve">
+    </data><data name="RigctldNotStarted" xml:space="preserve">
         <value>Rigctldサービスが起動していません。設定を確認してください！</value>
-    </data>
-    <data name="RigData" xml:space="preserve">
+    </data><data name="RigData" xml:space="preserve">
         <value>無線機データ</value>
-    </data>
-    <data name="RigModel" xml:space="preserve">
+    </data><data name="RigModel" xml:space="preserve">
         <value>無線機モデル</value>
-    </data>
-    <data name="RigTimeout" xml:space="preserve">
+    </data><data name="RigTimeout" xml:space="preserve">
         <value>無線機との通信がタイムアウトしました。接続を確認してください！</value>
-    </data>
-    <data name="SampleCount" xml:space="preserve">
+    </data><data name="SampleCount" xml:space="preserve">
         <value>サンプル数 = </value>
-    </data>
-    <data name="Save" xml:space="preserve">
+    </data><data name="Save" xml:space="preserve">
         <value>変更を適用</value>
-    </data>
-    <data name="SaveLog" xml:space="preserve">
+    </data><data name="SaveLog" xml:space="preserve">
         <value>ログを保存</value>
-    </data>
-    <data name="SaveLogTo" xml:space="preserve">
+    </data><data name="SaveLogTo" xml:space="preserve">
         <value>ログを保存先...</value>
-    </data>
-    <data name="SelectAll" xml:space="preserve">
+    </data><data name="SelectAll" xml:space="preserve">
         <value>すべて選択</value>
-    </data>
-    <data name="Settings" xml:space="preserve">
+    </data><data name="Settings" xml:space="preserve">
         <value>設定</value>
-    </data>
-    <data name="ShowDensityColor" xml:space="preserve">
+    </data><data name="ShowDensityColor" xml:space="preserve">
         <value>密度色を表示</value>
-    </data>
-    <data name="ShowFailedOnly" xml:space="preserve">
+    </data><data name="ShowFailedOnly" xml:space="preserve">
         <value>アップロード失敗項目のみ表示</value>
-    </data>
-    <data name="Shutdown" xml:space="preserve">
+    </data><data name="Shutdown" xml:space="preserve">
         <value>プログラムを閉じる</value>
-    </data>
-    <data name="SignalCount" xml:space="preserve">
+    </data><data name="SignalCount" xml:space="preserve">
         <value>信号カウント</value>
-    </data>
-    <data name="SignalPolarChart" xml:space="preserve">
+    </data><data name="SignalPolarChart" xml:space="preserve">
         <value>信号分布極座標プロット</value>
-    </data>
-    <data name="SpaceNotAllowed" xml:space="preserve">
+    </data><data name="SpaceNotAllowed" xml:space="preserve">
         <value>文字列の前後にスペースは使用できません</value>
-    </data>
-    <data name="SplitBySemicolon" xml:space="preserve">
+    </data><data name="SplitBySemicolon" xml:space="preserve">
         <value>セミコロンで区切られたアドレスには、http(s) の指定が必要です</value>
-    </data>
-    <data name="SplitHelp" xml:space="preserve">
+    </data><data name="SplitHelp" xml:space="preserve">
         <value>一部の無線機は異周波数（Split）情報の読み取りをサポートしていないか、誤ったデータを返すため、この機能はデフォルトで無効になっています。</value>
-    </data>
-    <data name="MustStartWithHttp" xml:space="preserve">
+    </data><data name="MustStartWithHttp" xml:space="preserve">
         <value>URLは http:// または https:// で始まる必要があります！</value>
-    </data>
-    <data name="StationBearingDistribution" xml:space="preserve">
+    </data><data name="StationBearingDistribution" xml:space="preserve">
         <value>ステーション方位分布 - {0}バンド {1}</value>
-    </data>
-    <data name="StationDistanceDistribution" xml:space="preserve">
+    </data><data name="StationDistanceDistribution" xml:space="preserve">
         <value>ステーション距離分布 - {0}バンド {1}</value>
-    </data>
-    <data name="StationId" xml:space="preserve">
+    </data><data name="StationId" xml:space="preserve">
         <value>Cloudlog ステーションID</value>
-    </data>
-    <data name="StationName" xml:space="preserve">
+    </data><data name="StationName" xml:space="preserve">
         <value>ステーション名</value>
-    </data>
-    <data name="StationStatisticGraph" xml:space="preserve">
+    </data><data name="StationStatisticGraph" xml:space="preserve">
         <value>デコード済みステーション統計</value>
-    </data>
-    <data name="StopBit" xml:space="preserve">
+    </data><data name="StopBit" xml:space="preserve">
         <value>ストップビット</value>
-    </data>
-    <data name="Success" xml:space="preserve">
+    </data><data name="Success" xml:space="preserve">
         <value>成功！</value>
-    </data>
-    <data name="SuccessfulQso" xml:space="preserve">
+    </data><data name="SuccessfulQso" xml:space="preserve">
         <value>このQSOは正常にアップロードされました。</value>
-    </data>
-    <data name="SyncRigInfoTo" xml:space="preserve">
+    </data><data name="SyncRigInfoTo" xml:space="preserve">
         <value>同時に無線機情報を次の宛先にも報告</value>
-    </data>
-    <data name="TargetRig" xml:space="preserve">
+    </data><data name="TargetRig" xml:space="preserve">
         <value>対象無線機</value>
-    </data>
-    <data name="TestAndApply" xml:space="preserve">
+    </data><data name="TestAndApply" xml:space="preserve">
         <value>* 設定を変更するたびに、「テスト」をクリックして変更をテスト・適用する必要があります。</value>
-    </data>
-    <data name="TestConnection" xml:space="preserve">
+    </data><data name="TestConnection" xml:space="preserve">
         <value>テスト</value>
-    </data>
-    <data name="Testing" xml:space="preserve">
+    </data><data name="Testing" xml:space="preserve">
         <value>テスト中...</value>
-    </data>
-    <data name="ThemeColor" xml:space="preserve">
+    </data><data name="ThemeColor" xml:space="preserve">
         <value>テーマカラー</value>
-    </data>
-    <data name="ThirdPartyLogSystem" xml:space="preserve">
+    </data><data name="ThirdPartyLogSystem" xml:space="preserve">
         <value>サードパーティログシステム</value>
-    </data>
-    <data name="NotificationTitleError" xml:space="preserve">
+    </data><data name="NotificationTitleError" xml:space="preserve">
         <value>エラー</value>
-    </data>
-    <data name="NotificationTitleInfo" xml:space="preserve">
+    </data><data name="NotificationTitleInfo" xml:space="preserve">
         <value>ヒント</value>
-    </data>
-    <data name="NotificationTitleSuccess" xml:space="preserve">
+    </data><data name="NotificationTitleSuccess" xml:space="preserve">
         <value>成功</value>
-    </data>
-    <data name="NotificationTitleWarning" xml:space="preserve">
+    </data><data name="NotificationTitleWarning" xml:space="preserve">
         <value>注意</value>
-    </data>
-    <data name="Tools" xml:space="preserve">
+    </data><data name="Tools" xml:space="preserve">
         <value>ツール</value>
-    </data>
-    <data name="Top10DecodedDxccs" xml:space="preserve">
+    </data><data name="Top10DecodedDxccs" xml:space="preserve">
         <value>上位10 DXCC - {0}バンド {1}</value>
-    </data>
-    <data name="TotalDecoded" xml:space="preserve">
+    </data><data name="TotalDecoded" xml:space="preserve">
         <value>総デコード数：</value>
-    </data>
-    <data name="DecodedQsos" xml:space="preserve">
+    </data><data name="DecodedQsos" xml:space="preserve">
         <value>総デコード数 / QSO数：</value>
-    </data>
-    <data name="TotalReceived" xml:space="preserve">
+    </data><data name="TotalReceived" xml:space="preserve">
         <value>記録済み数：</value>
-    </data>
-    <data name="TotalUploaded" xml:space="preserve">
+    </data><data name="TotalUploaded" xml:space="preserve">
         <value>アップロード済み数：</value>
-    </data>
-    <data name="ToTray" xml:space="preserve">
+    </data><data name="ToTray" xml:space="preserve">
         <value>トレイに最小化</value>
-    </data>
-    <data name="TqslPassword" xml:space="preserve">
+    </data><data name="TqslPassword" xml:space="preserve">
         <value>TQSLパスワード</value>
-    </data>
-    <data name="TqslPath" xml:space="preserve">
+    </data><data name="TqslPath" xml:space="preserve">
         <value>TQSLパス</value>
-    </data>
-    <data name="Transparency" xml:space="preserve">
+    </data><data name="Transparency" xml:space="preserve">
         <value>透明度</value>
-    </data>
-    <data name="Transmitting" xml:space="preserve">
+    </data><data name="Transmitting" xml:space="preserve">
         <value>送信中...</value>
-    </data>
-    <data name="UploadStatusFailed" xml:space="preserve">
+    </data><data name="UploadStatusFailed" xml:space="preserve">
         <value>アップロード失敗</value>
-    </data>
-    <data name="UploadStatusIgnored" xml:space="preserve">
+    </data><data name="UploadStatusIgnored" xml:space="preserve">
         <value>アップロードを無視</value>
-    </data>
-    <data name="UploadStatusPending" xml:space="preserve">
+    </data><data name="UploadStatusPending" xml:space="preserve">
         <value>待機中...</value>
-    </data>
-    <data name="UploadStatusRetrying" xml:space="preserve">
+    </data><data name="UploadStatusRetrying" xml:space="preserve">
         <value>再試行中...</value>
-    </data>
-    <data name="UploadStatusSuccess" xml:space="preserve">
+    </data><data name="UploadStatusSuccess" xml:space="preserve">
         <value>アップロード成功</value>
-    </data>
-    <data name="UploadStatusUploading" xml:space="preserve">
+    </data><data name="UploadStatusUploading" xml:space="preserve">
         <value>アップロード中..</value>
-    </data>
-    <data name="UdpPortHelp" xml:space="preserve">
+    </data><data name="UdpPortHelp" xml:space="preserve">
         <value>ポート番号はJTDX/wsjt-xの設定と一致させる必要があります。デフォルトは2237です</value>
-    </data>
-    <data name="UdpServer" xml:space="preserve">
+    </data><data name="UdpServer" xml:space="preserve">
         <value>UDPサーバー</value>
-    </data>
-    <data name="UdpTimeout" xml:space="preserve">
+    </data><data name="UdpTimeout" xml:space="preserve">
         <value>UDP接続がタイムアウトしました！</value>
-    </data>
-    <data name="UnableToCheckApi" xml:space="preserve">
+    </data><data name="UnableToCheckApi" xml:space="preserve">
         <value>APIキーの有効性を確認できません。入力されたアドレスが正しいか確認してください！</value>
-    </data>
-    <data name="Unknown" xml:space="preserve">
+    </data><data name="Unknown" xml:space="preserve">
         <value>不明</value>
-    </data>
-    <data name="UnsupportedRigFrequency" xml:space="preserve">
+    </data><data name="UnsupportedRigFrequency" xml:space="preserve">
         <value>サポートされていない無線機周波数：</value>
-    </data>
-    <data name="UnsupportedRigMode" xml:space="preserve">
+    </data><data name="UnsupportedRigMode" xml:space="preserve">
         <value>サポートされていない無線機モード：</value>
-    </data>
-    <data name="AutoUploadQsoToCloudlog" xml:space="preserve">
+    </data><data name="AutoUploadQsoToCloudlog" xml:space="preserve">
         <value>CloudlogにQSOを自動アップロード</value>
-    </data>
-    <data name="AutoUploadQsoToClublog" xml:space="preserve">
+    </data><data name="AutoUploadQsoToClublog" xml:space="preserve">
         <value>ClublogにQSOを自動アップロード</value>
-    </data>
-    <data name="AutoUploadQsoToHamCq" xml:space="preserve">
+    </data><data name="AutoUploadQsoToHamCq" xml:space="preserve">
         <value>HamCQにQSOを自動アップロード</value>
-    </data>
-    <data name="QsoUploaded" xml:space="preserve">
+    </data><data name="QsoUploaded" xml:space="preserve">
         <value>✅️ QSOのアップロードに成功しました！</value>
-    </data>
-    <data name="QsoUploadFailed" xml:space="preserve">
+    </data><data name="QsoUploadFailed" xml:space="preserve">
         <value>☹️ QSOのアップロードに失敗しました！</value>
-    </data>
-    <data name="Uploading" xml:space="preserve">
+    </data><data name="Uploading" xml:space="preserve">
         <value>アップロード中...</value>
-    </data>
-    <data name="UploadingQso" xml:space="preserve">
+    </data><data name="UploadingQso" xml:space="preserve">
         <value>このQSOをアップロードしています。</value>
-    </data>
-    <data name="UploadRigInfo" xml:space="preserve">
+    </data><data name="UploadRigInfo" xml:space="preserve">
         <value>無線機情報をアップロード</value>
-    </data>
-    <data name="UploadStatus" xml:space="preserve">
+    </data><data name="UploadStatus" xml:space="preserve">
         <value>報告ステータス</value>
-    </data>
-    <data name="UrlExample" xml:space="preserve">
+    </data><data name="UrlExample" xml:space="preserve">
         <value>例: http://cloudlog.com</value>
-    </data>
-    <data name="UrlFormatError" xml:space="preserve">
+    </data><data name="UrlFormatError" xml:space="preserve">
         <value>URL形式が不正です！</value>
-    </data>
-    <data name="UseExternalRigctld" xml:space="preserve">
+    </data><data name="UseExternalRigctld" xml:space="preserve">
         <value>外部Rigctldサービスを使用</value>
-    </data>
-    <data name="Username" xml:space="preserve">
+    </data><data name="Username" xml:space="preserve">
         <value>ユーザー名</value>
-    </data>
-    <data name="WaitingConnection" xml:space="preserve">
+    </data><data name="WaitingConnection" xml:space="preserve">
         <value>接続待機中..</value>
-    </data>
-    <data name="WithinFiveMinutes" xml:space="preserve">
+    </data><data name="WithinFiveMinutes" xml:space="preserve">
         <value>過去5分間の1分あたり平均QSO数。</value>
-    </data>
-    <data name="WorldHeatmap" xml:space="preserve">
+    </data><data name="WorldHeatmap" xml:space="preserve">
         <value>ヒートマップ - {0}バンド {1}</value>
-    </data>
-    <data name="YearQsos" xml:space="preserve">
+    </data><data name="YearQsos" xml:space="preserve">
         <value>年間QSO数</value>
-    </data>
-    <data name="UpdateBigCty" xml:space="preserve">
+    </data><data name="UpdateBigCty" xml:space="preserve">
         <value>更新コールサインと国データ</value>
-    </data>
-    <data name="UpdateBigCtySuccess" xml:space="preserve">
+    </data><data name="UpdateBigCtySuccess" xml:space="preserve">
         <value>コールサインと国データの更新が成功しました！
 コールサイン規則を{0}件、国データを{1}件書き込みました</value>
-    </data>
-    <data name="UpdateBigCtyFailed" xml:space="preserve">
+    </data><data name="UpdateBigCtyFailed" xml:space="preserve">
         <value>コールサインと国データの更新に失敗しました：{0}！</value>
-    </data>
-    <data name="PleaseSelect" xml:space="preserve">
+    </data><data name="PleaseSelect" xml:space="preserve">
         <value>--選択してください--</value>
-    </data>
-    <data name="BigCtyHint" xml:space="preserve">
+    </data><data name="BigCtyHint" xml:space="preserve">
         <value>cty.datまたはbigcty.datをインポートするために選択できます。詳細はhttps://www.country-files.com/でご確認ください。
 </value>
-    </data>
-    <data name="RightClickToSeeMore" xml:space="preserve">
+    </data><data name="RightClickToSeeMore" xml:space="preserve">
         <value>QSO を右クリックして詳細を表示</value>
-    </data>
-    <data name="AutoRigUpload" xml:space="preserve">
+    </data><data name="AutoRigUpload" xml:space="preserve">
         <value>RIG情報の自動アップロード</value>
-    </data>
-    <data name="QsoUploadEndpoint" xml:space="preserve">
+    </data><data name="QsoUploadEndpoint" xml:space="preserve">
         <value>QSOアップロードエンドポイント</value>
-    </data>
-    <data name="RigInfoUploadEndpoint" xml:space="preserve">
+    </data><data name="RigInfoUploadEndpoint" xml:space="preserve">
         <value>無線機情報アップロードエンドポイント</value>
-    </data>
-    <data name="EnablePlugin" xml:space="preserve">
+    </data><data name="EnablePlugin" xml:space="preserve">
         <value>プラグイン機能を有効にする</value>
-    </data>
-    <data name="ShowCoastline" xml:space="preserve">
+    </data><data name="ShowCoastline" xml:space="preserve">
         <value>海岸線を描画</value>
-    </data>
-    <data name="WizardTitle" xml:space="preserve">
+    </data><data name="WizardTitle" xml:space="preserve">
         <value>初回起動ウィザード</value>
-    </data>
-    <data name="WizardWelcomeTitle" xml:space="preserve">
+    </data><data name="WizardWelcomeTitle" xml:space="preserve">
         <value>ようこそ</value>
-    </data>
-    <data name="WizardBasicTitle" xml:space="preserve">
+    </data><data name="WizardBasicTitle" xml:space="preserve">
         <value>基本設定</value>
-    </data>
-    <data name="WizardCloudlogTitle" xml:space="preserve">
+    </data><data name="WizardCloudlogTitle" xml:space="preserve">
         <value>Cloudlog / Wavelog</value>
-    </data>
-    <data name="WizardThirdPartyTitle" xml:space="preserve">
+    </data><data name="WizardThirdPartyTitle" xml:space="preserve">
         <value>サードパーティーログ</value>
-    </data>
-    <data name="WizardRigTitle" xml:space="preserve">
+    </data><data name="WizardRigTitle" xml:space="preserve">
         <value>無線機バックエンド</value>
-    </data>
-    <data name="WizardWelcomeMessage" xml:space="preserve">
+    </data><data name="WizardWelcomeMessage" xml:space="preserve">
         <value>Cloudlog Helper へようこそ。このウィザードでは初期設定を行います。</value>
-    </data>
-    <data name="WizardBasicHint" xml:space="preserve">
+    </data><data name="WizardBasicHint" xml:space="preserve">
         <value>Maidenheadグリッドは今入力しても、空のまま後で設定しても構いません。</value>
-    </data>
-    <data name="WizardChartFeatureLabel" xml:space="preserve">
+    </data><data name="WizardChartFeatureLabel" xml:space="preserve">
         <value>チャート機能を有効にする</value>
-    </data>
-    <data name="WizardChartFeatureHint" xml:space="preserve">
+    </data><data name="WizardChartFeatureHint" xml:space="preserve">
         <value>デバイス性能が低い場合は、この機能を無効にしてください。</value>
-    </data>
-    <data name="WizardCloudlogHint" xml:space="preserve">
+    </data><data name="WizardCloudlogHint" xml:space="preserve">
         <value>Cloudlog/Wavelog を今すぐ接続するか選択してください。</value>
-    </data>
-    <data name="WizardCloudlogEnable" xml:space="preserve">
+    </data><data name="WizardCloudlogEnable" xml:space="preserve">
         <value>Cloudlog / Wavelog を接続する</value>
-    </data>
-    <data name="WizardCloudlogUrl" xml:space="preserve">
+    </data><data name="WizardCloudlogUrl" xml:space="preserve">
         <value>URL</value>
-    </data>
-    <data name="WizardCloudlogApiKey" xml:space="preserve">
+    </data><data name="WizardCloudlogApiKey" xml:space="preserve">
         <value>APIキー</value>
-    </data>
-    <data name="WizardCloudlogStation" xml:space="preserve">
+    </data><data name="WizardCloudlogStation" xml:space="preserve">
         <value>ステーション</value>
-    </data>
-    <data name="WizardCloudlogTestRequired" xml:space="preserve">
+    </data><data name="WizardCloudlogTestRequired" xml:space="preserve">
         <value>続行する前に Cloudlog/Wavelog 接続テストを実行してください。</value>
-    </data>
-    <data name="WizardCloudlogStationRequired" xml:space="preserve">
+    </data><data name="WizardCloudlogStationRequired" xml:space="preserve">
         <value>ステーション情報を選択してください。</value>
-    </data>
-    <data name="WizardCloudlogDetectedInstance" xml:space="preserve">
+    </data><data name="WizardCloudlogDetectedInstance" xml:space="preserve">
         <value>検出:</value>
-    </data>
-    <data name="WizardThirdPartyHint" xml:space="preserve">
+    </data><data name="WizardThirdPartyHint" xml:space="preserve">
         <value>サードパーティーログサービスをここで設定できます。後で設定画面からでも構いません。</value>
-    </data>
-    <data name="WizardRigHint" xml:space="preserve">
+    </data><data name="WizardRigHint" xml:space="preserve">
         <value>現在使用中の無線機バックエンドを選択して設定してください。後で設定することもできます。</value>
-    </data>
-    <data name="WizardRigBackendLabel" xml:space="preserve">
+    </data><data name="WizardRigBackendLabel" xml:space="preserve">
         <value>現在の無線機バックエンド</value>
-    </data>
-    <data name="WizardRigNone" xml:space="preserve">
+    </data><data name="WizardRigNone" xml:space="preserve">
         <value>今は設定しない</value>
-    </data>
-    <data name="WizardRigHamlib" xml:space="preserve">
+    </data><data name="WizardRigHamlib" xml:space="preserve">
         <value>Hamlib</value>
-    </data>
-    <data name="WizardRigFlRig" xml:space="preserve">
+    </data><data name="WizardRigFlRig" xml:space="preserve">
         <value>FLRig</value>
-    </data>
-    <data name="WizardRigOmniRig" xml:space="preserve">
+    </data><data name="WizardRigOmniRig" xml:space="preserve">
         <value>OmniRig</value>
-    </data>
-    <data name="WizardOmniRigUnavailable" xml:space="preserve">
+    </data><data name="WizardOmniRigUnavailable" xml:space="preserve">
         <value>このデバイスでは OmniRig を利用できません。</value>
-    </data>
-    <data name="WizardSkip" xml:space="preserve">
+    </data><data name="WizardSkip" xml:space="preserve">
         <value>スキップ</value>
-    </data>
-    <data name="WizardNext" xml:space="preserve">
+    </data><data name="WizardNext" xml:space="preserve">
         <value>次へ</value>
-    </data>
-    <data name="WizardPrevious" xml:space="preserve">
+    </data><data name="WizardPrevious" xml:space="preserve">
         <value>戻る</value>
-    </data>
-    <data name="WizardFinish" xml:space="preserve">
+    </data><data name="WizardFinish" xml:space="preserve">
         <value>完了</value>
-    </data>
-    <data name="RunWizard" xml:space="preserve">
+    </data><data name="RunWizard" xml:space="preserve">
         <value>構成ウィザードを実行</value>
-    </data>
-    <data name="WizardHiThere" xml:space="preserve">
+    </data><data name="WizardHiThere" xml:space="preserve">
         <value>ご利用ください!</value>
-    </data>
-    <data name="PluginRestartHint" xml:space="preserve">
+    </data><data name="PluginRestartHint" xml:space="preserve">
         <value>プラグインの変更を有効にするには、設定を保存して設定ページを閉じてください。</value>
-    </data>
-</root>
+    </data><data name="LanguageLabel" xml:space="preserve"><value>言語</value></data><data name="LanguageRestartHint" xml:space="preserve"><value>言語の変更はアプリを再起動すると反映されます。</value></data></root>

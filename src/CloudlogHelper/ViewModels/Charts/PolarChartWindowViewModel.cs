@@ -9,6 +9,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
@@ -60,7 +61,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             var a = await _windowManagerService.OpenFileSaverAsync( new FilePickerSaveOptions
             {
                 SuggestedFileName = "Polar-Chart.png",
-                Title = TranslationHelper.GetString(LangKeys.SaveLogTo)
+                Title = TranslationHelper.GetString(Language.SaveLogTo)
             }, _windowManagerService.GetToplevel(GetType()));
             if (a is null) return;
             PlotControl.Plot.GetImage(DefaultConfigs.ExportedPolarChartSize,
@@ -128,14 +129,14 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         if (IsExecutingChartUpdate || UpdatePaused) return;
         if (!MaidenheadGridUtil.CheckMaidenhead(_basicSettings.MyMaidenheadGrid))
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.GridError);
+            ErrorMessage = TranslationHelper.GetString(Language.GridError);
             ShowErrorMsg = true;
             return;
         }
 
         if (_basicSettings.DisableAllCharts)
         {
-            ErrorMessage = TranslationHelper.GetString(LangKeys.ChartsDisabled);
+            ErrorMessage = TranslationHelper.GetString(Language.ChartsDisabled);
             ShowErrorMsg = true;
             return;
         }

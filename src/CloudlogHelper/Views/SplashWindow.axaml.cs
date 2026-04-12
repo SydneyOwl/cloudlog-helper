@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using CloudlogHelper.Exceptions;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -69,7 +70,7 @@ public partial class SplashWindow : Window
                 statusTextDetailed.Background = Brushes.Orange;
                 statusTextDetailed.Foreground = Brushes.Black;
                 await MessageBoxManager.GetMessageBoxStandard("Error",
-                    TranslationHelper.GetString(LangKeys.DuplicateInstance), ButtonEnum.Ok,
+                    TranslationHelper.GetString(Language.DuplicateInstance), ButtonEnum.Ok,
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
             });
             Environment.Exit(0);
@@ -84,7 +85,7 @@ public partial class SplashWindow : Window
                 statusTextDetailed.Background = Brushes.Orange;
                 statusTextDetailed.Foreground = Brushes.Black;
                 var wResult = await MessageBoxManager.GetMessageBoxStandard("Error",
-                    TranslationHelper.GetString(LangKeys.BootFailed), ButtonEnum.OkAbort,
+                    TranslationHelper.GetString(Language.BootFailed), ButtonEnum.OkAbort,
                     MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
                 if (wResult == ButtonResult.Ok) ApplicationStartUpUtil.ResetApplication();
             });

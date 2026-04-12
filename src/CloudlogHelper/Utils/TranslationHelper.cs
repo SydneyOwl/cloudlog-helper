@@ -3,11 +3,14 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
+using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.DXCC;
+using CloudlogHelper.Resources.Language;
 using NLog;
 
 namespace CloudlogHelper.Utils;
@@ -21,6 +24,8 @@ public static class TranslationHelper
     ///     Logger for the class.
     /// </summary>
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
+    private static readonly ResourceManager LanguageResourceManager = Language.ResourceManager;
+    private static readonly ResourceManager DxccResourceManager = DXCC.ResourceManager;
 
     public static SupportedLanguageInfo[] GetSupportedLanguageInfos()
     {
@@ -60,7 +65,7 @@ public static class TranslationHelper
         
         // check if this translation exists
         // if not we use original key
-        if (string.IsNullOrEmpty(I18NExtension.Translate(result)))
+        if (string.IsNullOrEmpty(DxccResourceManager.GetString(result, DXCC.Culture ?? CultureInfo.CurrentUICulture)))
         {
             return input;
         }
@@ -79,7 +84,32 @@ public static class TranslationHelper
         {
             return string.Empty;
         }
-        return I18NExtension.Translate(key) ?? key;
+
+        var culture = Language.Culture ?? CultureInfo.CurrentUICulture;
+        return LanguageResourceManager.GetString(key, culture)
+               ?? DxccResourceManager.GetString(key, DXCC.Culture ?? culture)
+               ?? key;
+    }
+
+    public static string GetDxccString(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            return string.Empty;
+        }
+
+        return DxccResourceManager.GetString(key, DXCC.Culture ?? CultureInfo.CurrentUICulture) ?? key;
+    }
+
+    public static string GetDxccDisplayName(string? originalName)
+    {
+        if (string.IsNullOrWhiteSpace(originalName))
+        {
+            return GetString(Language.Unknown);
+        }
+
+        var key = ParseToDXCCKey(originalName);
+        return key == originalName ? originalName : GetDxccString(key);
     }
 
     /// <summary>
@@ -119,10 +149,23 @@ public static class TranslationHelper
         return language switch
         {
             SupportedLanguage.English => new CultureInfo("en-US"),
-            SupportedLanguage.SimplifiedChinese => new CultureInfo("zh-CN"),
-            SupportedLanguage.TraditionalChinese => new CultureInfo("zh-TW"),
+            SupportedLanguage.SimplifiedChinese => new CultureInfo("zh-Hans"),
+            SupportedLanguage.TraditionalChinese => new CultureInfo("zh-Hant"),
             SupportedLanguage.Japanese => new CultureInfo("ja-JP"),
             _ => new CultureInfo("en-US")
         };
+    }
+
+    public static void ApplyCulture(SupportedLanguage language)
+    {
+        var culture = GetCultureInfo(language);
+        Thread.CurrentThread.CurrentUICulture = culture;
+        Thread.CurrentThread.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        Language.Culture = culture;
+        DXCC.Culture = culture;
     }
 }

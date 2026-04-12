@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using Flurl;
 using Flurl.Http;
@@ -22,12 +23,12 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
     private const string EqslQsoUploadEndpoint =
         "https://www.eQSL.cc/qslcard/importADIF.cfm";
 
-    [UserInput(nameof(LangKeys.Username))] public string Username { get; set; }
+    [UserInput(nameof(Language.Username))] public string Username { get; set; }
 
-    [UserInput(nameof(LangKeys.Password), InputType = FieldType.Password)]
+    [UserInput(nameof(Language.Password), InputType = FieldType.Password)]
     public string Password { get; set; }
 
-    [UserInput(nameof(LangKeys.QthNickname), IsRequired = false)]
+    [UserInput(nameof(Language.QthNickname), IsRequired = false)]
     public string QTHNickname { get; set; }
 
 

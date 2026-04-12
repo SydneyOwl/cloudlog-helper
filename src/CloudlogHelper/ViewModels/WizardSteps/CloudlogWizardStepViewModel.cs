@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
 using Flurl.Http;
@@ -60,7 +61,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
     [Reactive] public bool ShowDetectedServerInstance { get; set; }
 
     [Reactive] public string DetectedServerInstanceDisplayName { get; set; } =
-        TranslationHelper.GetString(LangKeys.Unknown);
+        TranslationHelper.GetString(Language.Unknown);
 
     public ReactiveCommand<Unit, Unit> TestCloudlogConnectionCommand { get; }
 
@@ -90,19 +91,19 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
         if (CloudlogSettings.IsCloudlogHasErrors())
         {
             return Task.FromResult(
-                WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.InvalidConfiguration)));
+                WizardValidationResult.Failed(TranslationHelper.GetString(Language.InvalidConfiguration)));
         }
 
         if (!_cloudlogTestPassed)
         {
             return Task.FromResult(
-                WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.WizardCloudlogTestRequired)));
+                WizardValidationResult.Failed(TranslationHelper.GetString(Language.WizardCloudlogTestRequired)));
         }
 
         if (CloudlogSettings.CloudlogStationInfo is null)
         {
             return Task.FromResult(
-                WizardValidationResult.Failed(TranslationHelper.GetString(LangKeys.WizardCloudlogStationRequired)));
+                WizardValidationResult.Failed(TranslationHelper.GetString(Language.WizardCloudlogStationRequired)));
         }
 
         _setCloudlogAutomation(true);
@@ -142,7 +143,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
     private void _clearDetectedServerInstanceState()
     {
         ShowDetectedServerInstance = false;
-        DetectedServerInstanceDisplayName = TranslationHelper.GetString(LangKeys.Unknown);
+        DetectedServerInstanceDisplayName = TranslationHelper.GetString(Language.Unknown);
     }
 
     private static string _getServerInstanceDisplayName(ServerInstanceType instanceType)
@@ -151,7 +152,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
         {
             ServerInstanceType.Cloudlog => nameof(ServerInstanceType.Cloudlog),
             ServerInstanceType.Wavelog => nameof(ServerInstanceType.Wavelog),
-            _ => TranslationHelper.GetString(LangKeys.Unknown)
+            _ => TranslationHelper.GetString(Language.Unknown)
         };
     }
 
@@ -191,7 +192,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
             if (stationInfo.Count == 0)
             {
                 await Dispatcher.UIThread.InvokeAsync(_clearCloudlogSelectionState);
-                throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
+                throw new Exception(TranslationHelper.GetString(Language.FailedStationInfo));
             }
 
             await Dispatcher.UIThread.InvokeAsync(() =>

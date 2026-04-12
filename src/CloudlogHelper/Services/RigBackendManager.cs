@@ -11,6 +11,7 @@ using CloudlogHelper.Exceptions;
 using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using Flurl.Http;
@@ -303,7 +304,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             throw new InvalidPollException("Poll disabled.");
 
         if (settings.IsHamlibHasErrors())
-            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureHamlibFirst));
+            throw new InvalidConfigurationException(TranslationHelper.GetString(Language.ConfigureHamlibFirst));
 
         if (!_currentService.IsServiceRunning() && !settings.UseExternalRigctld)
             await _startRigctld();
@@ -326,7 +327,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             throw new InvalidPollException("Poll disabled.");
 
         if (settings.IsFLRigHasErrors())
-            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureFlRigFirst));
+            throw new InvalidConfigurationException(TranslationHelper.GetString(Language.ConfigureFlRigFirst));
 
         var data = await _currentService.GetAllRigInfo(
             settings.ReportRFPower,
@@ -344,7 +345,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             throw new InvalidPollException("Poll disabled.");
 
         if (settings.IsOmniRigHasErrors())
-            throw new InvalidConfigurationException(TranslationHelper.GetString(LangKeys.ConfigureOmniRigFirst));
+            throw new InvalidConfigurationException(TranslationHelper.GetString(Language.ConfigureOmniRigFirst));
 
         // skip for now
         var data = await _currentService.GetAllRigInfo(
@@ -455,7 +456,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         if (hamlibSettings.IsHamlibHasErrors())
         {
             await _currentService.StopService(_getNewCancellationProcessToken());
-            throw new ArgumentException(TranslationHelper.GetString(LangKeys.ConfigureHamlibFirst));
+            throw new ArgumentException(TranslationHelper.GetString(Language.ConfigureHamlibFirst));
         }
 
         var defaultArgs =
@@ -497,7 +498,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             else
             {
                 ClassLogger.Debug($"Unable to Match port from rigctld args.");
-                throw new Exception(TranslationHelper.GetString(LangKeys.FailedToExtractInfo));
+                throw new Exception(TranslationHelper.GetString(Language.FailedToExtractInfo));
             }
         }
 

@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
              xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
              xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
              mc:Ignorable="d"
@@ -13,9 +13,9 @@
     <StackPanel Spacing="16">
         <Border Classes="highlight-card" Padding="16">
             <StackPanel Spacing="8">
-                <CheckBox Content="{I18N {x:Static resources:LangKeys.WizardCloudlogEnable}}"
+                <CheckBox Content="{x:Static p:Language.WizardCloudlogEnable}"
                           IsChecked="{Binding ConnectCloudlog}" />
-                <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardCloudlogHint}}"
+                <TextBlock Text="{x:Static p:Language.WizardCloudlogHint}"
                            Classes="page-hint" />
             </StackPanel>
         </Border>
@@ -29,18 +29,18 @@
                 <TextBlock Grid.Row="0"
                            VerticalAlignment="Center"
                            Classes="setting-label"
-                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogUrl}}" />
+                           Text="{x:Static p:Language.WizardCloudlogUrl}" />
                 <TextBox Grid.Row="0"
                          Grid.Column="1"
                          Classes="setting-control"
                          Text="{Binding CloudlogSettings.CloudlogUrl}"
-                         Watermark="{I18N {x:Static resources:LangKeys.UrlExample}}" />
+                         Watermark="{x:Static p:Language.UrlExample}" />
 
                 <TextBlock Grid.Row="1"
                            Grid.Column="0"
                            VerticalAlignment="Center"
                            Classes="setting-label"
-                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogApiKey}}" />
+                           Text="{x:Static p:Language.WizardCloudlogApiKey}" />
                 <TextBox Grid.Row="1"
                          Grid.Column="1"
                          Classes="setting-control"
@@ -57,7 +57,7 @@
                            Grid.Column="0"
                            VerticalAlignment="Center"
                            Classes="setting-label"
-                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogStation}}"
+                           Text="{x:Static p:Language.WizardCloudlogStation}"
                            IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
                 <ComboBox Grid.Row="2"
                           Grid.Column="1"
@@ -83,7 +83,7 @@
                         IsVisible="{Binding ShowDetectedServerInstance}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock FontWeight="SemiBold"
-                                   Text="{I18N {x:Static resources:LangKeys.WizardCloudlogDetectedInstance}}" />
+                                   Text="{x:Static p:Language.WizardCloudlogDetectedInstance}" />
                         <TextBlock FontWeight="SemiBold"
                                    Text="{Binding DetectedServerInstanceDisplayName}" />
                     </StackPanel>

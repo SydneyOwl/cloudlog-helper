@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
 using ReactiveUI;
@@ -41,15 +42,15 @@ public class FLRigSettings : ReactiveValidationObject
         this.ClearValidationRules();
         this.ValidationRule(x => x.FLRigPort,
             SettingsValidation.CheckHttpPort,
-            TranslationHelper.GetString(LangKeys.InvalidPort)
+            TranslationHelper.GetString(Language.InvalidPort)
         );
         this.ValidationRule(x => x.FLRigHost,
             SettingsValidation.CheckHttpIp!,
-            TranslationHelper.GetString(LangKeys.InvalidAddress)
+            TranslationHelper.GetString(Language.InvalidAddress)
         );
         this.ValidationRule(x => x.PollInterval,
             SettingsValidation.CheckInt,
-            TranslationHelper.GetString(LangKeys.PollIntervalRequired)
+            TranslationHelper.GetString(Language.PollIntervalRequired)
         );
     }
 

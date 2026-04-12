@@ -12,7 +12,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -21,6 +20,7 @@ using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
@@ -140,12 +140,12 @@ public class App : Application
         {
             var nmiExit = new NativeMenuItem
             {
-                Header = TranslationHelper.GetString(LangKeys.Exit),
+                Header = TranslationHelper.GetString(Language.Exit),
                 Command = _exitCommand
             };
             var nmiOpen = new NativeMenuItem
             {
-                Header = TranslationHelper.GetString(LangKeys.Open),
+                Header = TranslationHelper.GetString(Language.Open),
                 Command = _openCommand
             };
 
@@ -231,8 +231,8 @@ public class App : Application
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             splashLevel.Topmost = false;
-            var accept = TranslationHelper.GetString(LangKeys.Accept);
-            var deny = TranslationHelper.GetString(LangKeys.Deny);
+            var accept = TranslationHelper.GetString(Language.Accept);
+            var deny = TranslationHelper.GetString(Language.Deny);
             var clickResult = await msgBox.DoShowCustomMessageboxDialogAsync(new MessageBoxCustomParams
                 {
                     ButtonDefinitions = new[]
@@ -247,7 +247,7 @@ public class App : Application
                         }
                     },
                     ContentTitle = "User Agreement",
-                    ContentMessage = TranslationHelper.GetString(LangKeys.Disclaimer)
+                    ContentMessage = TranslationHelper.GetString(Language.Disclaimer)
                         .Replace("{1}", VersionInfo.Version),
                     Icon = Icon.Info,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -267,9 +267,7 @@ public class App : Application
     private void _applyCultureFromSettings()
     {
         var applicationSettingsService = _resolveRequiredService<IApplicationSettingsService>();
-        I18NExtension.Culture =
-            TranslationHelper.GetCultureInfo(applicationSettingsService.GetCurrentSettings().BasicSettings
-                .LanguageType);
+        TranslationHelper.ApplyCulture(applicationSettingsService.GetCurrentSettings().BasicSettings.LanguageType);
     }
 
     private void _warmupServices(Type[] servicesToWarmup)
@@ -297,7 +295,7 @@ public class App : Application
         Directory.CreateDirectory(ApplicationStartUpUtil.GetConfigDir());
         _mutex = new Mutex(true, DefaultConfigs.MutexId, out var createdNew);
         // check if init is allowed?
-        if (!createdNew) throw new DuplicateProcessException(TranslationHelper.GetString(LangKeys.DuplicateInstance));
+        if (!createdNew) throw new DuplicateProcessException(TranslationHelper.GetString(Language.DuplicateInstance));
 
         return Task.CompletedTask;
     }

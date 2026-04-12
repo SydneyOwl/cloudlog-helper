@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
@@ -14,7 +14,7 @@
         <userControls:UserBasicDataGroupboxUserControlViewModel />
     </Design.DataContext>
 
-    <HeaderedContentControl Header="{I18N {x:Static resources:LangKeys.BasicInfo}}" 
+    <HeaderedContentControl Header="{x:Static p:Language.BasicInfo}" 
                             Margin="10"
                             MaxWidth="480"
                             HorizontalAlignment="Stretch" 
@@ -35,7 +35,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="0" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.Operator}}"
+                           Text="{x:Static p:Language.Operator}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="0" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeAccentBrush}" 
@@ -50,7 +50,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="1" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.Grid}}"
+                           Text="{x:Static p:Language.Grid}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="1" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">
@@ -63,7 +63,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="2" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.DayQsos}}"
+                           Text="{x:Static p:Language.DayQsos}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="2" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">
@@ -76,7 +76,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="3" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.MonthQsos}}"
+                           Text="{x:Static p:Language.MonthQsos}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="3" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">
@@ -89,7 +89,7 @@
                                         Foreground="{DynamicResource ThemeForegroundBrush}" 
                                         Width="20" Height="20" Margin="0,0,12,0"/>
                 <TextBlock Grid.Row="4" Grid.Column="1"
-                           Text="{I18N {x:Static resources:LangKeys.YearQsos}}"
+                           Text="{x:Static p:Language.YearQsos}"
                            FontSize="14" VerticalAlignment="Center" />
                 <Border Grid.Row="4" Grid.Column="2" CornerRadius="8" Padding="10,6"
                         Background="{DynamicResource ThemeControlMidBrush}">

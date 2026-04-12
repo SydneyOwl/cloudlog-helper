@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
-        Title="{I18N {x:Static resources:LangKeys.ErrorOccurred}}"
+        xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
+        Title="{x:Static p:Language.ErrorOccurred}"
         Topmost="True"
         WindowStartupLocation="CenterScreen"
         Width="720" Height="520"
@@ -32,12 +32,12 @@
         <TextBlock Grid.Row="0" Grid.Column="1"
                    FontSize="26"
                    FontWeight="SemiBold"
-                   Text="{I18N {x:Static resources:LangKeys.ErrorOccurred}}" />
+                   Text="{x:Static p:Language.ErrorOccurred}" />
 
         <TextBlock Grid.Row="1" Grid.Column="1"
                    FontSize="16"
                    TextWrapping="Wrap"
-                   Text="{I18N {x:Static resources:LangKeys.HelpFeedback}}" />
+                   Text="{x:Static p:Language.HelpFeedback}" />
 
         <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                 CornerRadius="8"
@@ -57,11 +57,11 @@
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Spacing="12">
-            <Button Content="{I18N {x:Static resources:LangKeys.SaveLog}}"
+            <Button Content="{x:Static p:Language.SaveLog}"
                     HorizontalContentAlignment="Center"
                     MinWidth="100"
                     Click="LogSaveButton_OnClick" />
-            <Button Content="{I18N {x:Static resources:LangKeys.Close}}"
+            <Button Content="{x:Static p:Language.Close}"
                     HorizontalContentAlignment="Center"
                     MinWidth="100"
                     Click="ExitWindowButton_OnClick" />

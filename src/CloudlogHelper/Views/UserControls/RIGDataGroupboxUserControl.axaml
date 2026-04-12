@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userControls="clr-namespace:CloudlogHelper.ViewModels.UserControls"
-             xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+             xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
              xmlns:converters="clr-namespace:CloudlogHelper.Converters"
              xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -34,7 +34,7 @@
                             HorizontalContentAlignment="Center"
                             Margin="10"
                             VerticalAlignment="Center"
-                            Header="{I18N {x:Static resources:LangKeys.RigData}}">
+                            Header="{x:Static p:Language.RigData}">
         <Grid ColumnDefinitions="Auto,Auto"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
               ShowGridLines="False" RowSpacing="5" 
@@ -166,11 +166,11 @@
             </Border>
             
             <!-- <TextBlock Grid.Row="3" Grid.Column="0" Margin="10,10,0,5" -->
-            <!--            Text="{I18N {x:Static resources:LangKeys.UploadStatus}}" /> -->
+            <!--            Text="{x:Static p:Language.UploadStatus}" /> -->
             <!-- <TextBlock Grid.Row="3" Grid.Column="1" Margin="10,10,0,5" MinWidth="100" Text="{Binding UploadStatus}" /> -->
             <!-- -->
             <!-- <TextBlock Grid.Row="4" Grid.Column="0" Margin="10,0,0,5" -->
-            <!--            Text="{I18N {x:Static resources:LangKeys.NextUploadTime}}" /> -->
+            <!--            Text="{x:Static p:Language.NextUploadTime}" /> -->
             <!-- <TextBlock Grid.Row="4" Grid.Column="1" Margin="10,0,0,5" Text="{Binding NextUploadTime}" /> -->
         </Grid>
     </HeaderedContentControl>

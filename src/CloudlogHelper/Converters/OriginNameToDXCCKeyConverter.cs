@@ -9,11 +9,7 @@ public class OriginNameToDXCCKeyConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is null) return "Unknown";
-        var originName = value.ToString();
-        return originName is null ? 
-            "Unknown" : 
-            TranslationHelper.ParseToDXCCKey(originName);
+        return TranslationHelper.GetDxccDisplayName(value?.ToString());
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

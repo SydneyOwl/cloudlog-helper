@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.LogService.Attributes;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using Flurl.Http;
 
@@ -15,7 +16,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
 {
     private const string HamCQQsoUploadEndpoint = "https://api.hamcq.cn/v1/logbook?from=gridtracker";
 
-    [UserInput(nameof(LangKeys.ApiKey))] public string ApiKey { get; set; }
+    [UserInput(nameof(Language.ApiKey))] public string ApiKey { get; set; }
 
     public override Task TestConnectionAsync(CancellationToken token)
     {
@@ -43,9 +44,9 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
         var node = JsonNode.Parse(responseText);
         if (node is JsonObject obj)
         {
-            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.InvalidApiKey)} ({obj["message"]})");
+            throw new Exception($"HamCQ Error: {TranslationHelper.GetString(Language.InvalidApiKey)} ({obj["message"]})");
         }
 
-        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(LangKeys.InvalidApiKey)}({responseText})");
+        throw new Exception($"HamCQ Error: {TranslationHelper.GetString(Language.InvalidApiKey)}({responseText})");
     }
 }

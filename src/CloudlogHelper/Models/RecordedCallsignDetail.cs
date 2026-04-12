@@ -6,6 +6,7 @@ using Avalonia.Media;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Resources;
+using CloudlogHelper.Resources.Language;
 using CloudlogHelper.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -371,8 +372,8 @@ public class RecordedCallsignDetail : ReactiveObject
     public string FormatToReadableContent(bool concise = false)
     {
         var template = TranslationHelper.GetString(concise
-            ? LangKeys.QsoConciseTemplate
-            : LangKeys.QsoTemplate);
+            ? Language.QsoConciseTemplate
+            : Language.QsoTemplate);
 
         return string.Format(template,
             DXCall ?? "N/A",

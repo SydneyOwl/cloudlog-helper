@@ -1,10 +1,10 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
-        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
         x:DataType="viewModels:FloatingWindowViewModel"
         x:Class="CloudlogHelper.Views.FloatingWindow"
         Title="FloatingWindow"
@@ -21,7 +21,7 @@
 
     <Window.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="{I18N {x:Static resources:LangKeys.Transparency}}">
+            <MenuItem Header="{x:Static p:Language.Transparency}">
                 <MenuItem Header="10%" Click="TransparencyMenuItem_Click" />
                 <MenuItem Header="30%" Click="TransparencyMenuItem_Click" />
                 <MenuItem Header="50%" Click="TransparencyMenuItem_Click" />

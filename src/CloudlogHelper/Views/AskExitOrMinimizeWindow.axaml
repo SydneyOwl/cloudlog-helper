@@ -1,9 +1,9 @@
-﻿<!-- MinimizeOrCloseDialog.axaml -->
+<!-- MinimizeOrCloseDialog.axaml -->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         mc:Ignorable="d"
         SizeToContent="Height"
@@ -15,16 +15,16 @@
         Title="CloudlogHelper"
         CanResize="False">
     <StackPanel Margin="30">
-        <TextBlock Text="{I18N {x:Static resources:LangKeys.CloseOrMinimize}}" FontSize="20" TextWrapping="Wrap" />
+        <TextBlock Text="{x:Static p:Language.CloseOrMinimize}" FontSize="20" TextWrapping="Wrap" />
 
         <RadioButton Margin="0,10,0,0" GroupName="CloseOptions" IsChecked="{Binding MinimizeToTray}"
-                     Content="{I18N {x:Static resources:LangKeys.ToTray}}" />
+                     Content="{x:Static p:Language.ToTray}" />
 
         <RadioButton Margin="0,5,0,0" GroupName="CloseOptions"
-                     Content="{I18N {x:Static resources:LangKeys.Shutdown}}" />
+                     Content="{x:Static p:Language.Shutdown}" />
 
         <CheckBox Margin="0,30,0,0" IsChecked="{Binding RememberChoice}"
-                  Content="{I18N {x:Static resources:LangKeys.RememberMyChoice}}" />
+                  Content="{x:Static p:Language.RememberMyChoice}" />
 
         <Button Margin="0,10,0,0" x:Name="ConfirmButton" Width="100" HorizontalAlignment="Center"
                 HorizontalContentAlignment="Center"

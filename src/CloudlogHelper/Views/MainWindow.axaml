@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:resources="clr-namespace:CloudlogHelper.Resources"
+        xmlns:p="clr-namespace:CloudlogHelper.Resources.Language"
         xmlns:viewModels="clr-namespace:CloudlogHelper.ViewModels"
         xmlns:userControls1="clr-namespace:CloudlogHelper.Views.UserControls"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -23,24 +23,24 @@
     <Grid RowDefinitions="Auto,*">
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ShowGridLines="False">
             <Menu Grid.Column="0">
-                <MenuItem Header="{I18N {x:Static resources:LangKeys.Settings}}">
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.BasicSettings}}"
+                <MenuItem Header="{x:Static p:Language.Settings}">
+                    <MenuItem Header="{x:Static p:Language.BasicSettings}"
                               Command="{Binding OpenSettingsWindow}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="Settings" Width="32" Height="32" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.ThemeColor}}">
+                    <MenuItem Header="{x:Static p:Language.ThemeColor}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="ThemeLightDark" Width="32" Height="32" />
                         </MenuItem.Icon>
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.Light}}"
+                        <MenuItem Header="{x:Static p:Language.Light}"
                                   Command="{Binding SwitchLightTheme}">
                             <MenuItem.Icon>
                                 <avalonia:MaterialIcon Kind="WbSunny" Width="32" Height="32" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.Dark}}"
+                        <MenuItem Header="{x:Static p:Language.Dark}"
                                   Command="{Binding SwitchDarkTheme}">
                             <MenuItem.Icon>
                                 <avalonia:MaterialIcon Kind="MoonAndStars" Width="32" Height="32" />
@@ -48,24 +48,24 @@
                         </MenuItem>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{I18N {x:Static resources:LangKeys.Tools}}">
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.QsoAssistant}}"
+                <MenuItem Header="{x:Static p:Language.Tools}">
+                    <MenuItem Header="{x:Static p:Language.QsoAssistant}"
                               Command="{Binding OpenQSOAssistantWindow}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="FileUploadOutline" Width="32" Height="32" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.Charts}}">
+                    <MenuItem Header="{x:Static p:Language.Charts}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="ChartBar" Width="32" Height="32" />
                         </MenuItem.Icon>
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.SignalPolarChart}}"
+                        <MenuItem Header="{x:Static p:Language.SignalPolarChart}"
                                   Command="{Binding OpenSignalPolarChartWindow}">
                             <MenuItem.Icon>
                                 <avalonia:MaterialIcon Kind="ChartScatterPlot" Width="32" Height="32" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{I18N {x:Static resources:LangKeys.StationStatisticGraph}}"
+                        <MenuItem Header="{x:Static p:Language.StationStatisticGraph}"
                                   Command="{Binding OpenStationStatisticChartWindow}">
                             <MenuItem.Icon>
                                 <avalonia:MaterialIcon Kind="WidgetHistogram" Width="32" Height="32" />
@@ -73,14 +73,14 @@
                         </MenuItem>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{I18N {x:Static resources:LangKeys.Help}}">
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.RunWizard}}"
+                <MenuItem Header="{x:Static p:Language.Help}">
+                    <MenuItem Header="{x:Static p:Language.RunWizard}"
                               Command="{Binding OpenWizardWindow}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="WizardHat" Width="32" Height="32" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{I18N {x:Static resources:LangKeys.About}}"
+                    <MenuItem Header="{x:Static p:Language.About}"
                               Command="{Binding OpenAboutWindow}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="InfoCircleOutline" Width="32" Height="32" />
