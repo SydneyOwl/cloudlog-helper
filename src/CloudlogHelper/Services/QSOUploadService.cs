@@ -204,7 +204,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                     break;
                 }
 
-                using var uploadTimeoutSrc = new CancellationTokenSource(DefaultConfigs.QSOUploadTimeoutSec);
+                using var uploadTimeoutSrc = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.QSOUploadTimeoutSec));
                 
                 using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
                     cancellationToken, 
