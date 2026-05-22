@@ -1230,7 +1230,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请检查OmniRig是否已正确安装，另外OmniRIg目前仅在非AOT编译的Windows平台上支持。.
+        ///   Looks up a localized string similar to 请检查OmniRig是否已正确安装，另外OmniRig目前仅在Windows平台上支持。.
         /// </summary>
         public static string OmniRigInitFailed {
             get {

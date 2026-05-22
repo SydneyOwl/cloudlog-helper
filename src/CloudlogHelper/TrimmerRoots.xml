@@ -1,8 +1,0 @@
-﻿<linker>
-    <assembly fullname="CloudlogHelper">
-        <type fullname="CloudlogHelper.ViewModels*" preserve="all"/>
-        <type fullname="CloudlogHelper.LogService*" preserve="all"/>
-        <type fullname="CloudlogHelper.Models*" preserve="all"/>
-        <type fullname="SydneyOwl.CLHProto*" preserve="all"/>
-    </assembly>
-</linker>

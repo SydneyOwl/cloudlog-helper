@@ -382,7 +382,7 @@
         <value>此項不能為空！</value>
     </data>
     <data name="OmniRigInitFailed" xml:space="preserve">
-        <value>請檢查OmniRig是否已正確安裝。另外，OmniRig目前僅在非AOT編譯的Windows平台上支援。</value>
+        <value>請檢查OmniRig是否已正確安裝。另外，OmniRig目前僅在Windows平台上支援。</value>
     </data>
     <data name="MainDomainOnly" xml:space="preserve">
         <value>只需輸入主網域名稱，不允許以/api/qso結尾！</value>

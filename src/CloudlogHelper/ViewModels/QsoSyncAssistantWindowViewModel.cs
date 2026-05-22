@@ -63,7 +63,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         _windowManagerService = windowManagerService;
         _inAppNotification = winNotification;
         settingsService = ss;
-        Settings = settingsService.GetCurrentSettings().FastDeepClone();
+        Settings = settingsService.GetCurrentSettings().DeepClone();
 
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 

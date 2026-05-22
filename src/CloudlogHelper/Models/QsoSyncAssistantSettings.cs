@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.Validation;
@@ -18,7 +17,6 @@ public class QsoSyncAssistantSettings : ReactiveValidationObject
     [Reactive] public int CloudlogQSODayRange { get; set; } = 120;
     [Reactive] public int LocalQSOSampleCount { get; set; } = 50;
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<string>))]
     public QsoSyncAssistantSettings()
     {
         

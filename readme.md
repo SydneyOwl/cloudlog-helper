@@ -33,20 +33,10 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 
 ## 💻 Supported Platforms
 
-### non-AOT version (recommended)
+### Supported systems
 + Windows 7 SP1+
 + Debian 9+ / Ubuntu 18.04+ / Other distributions
 + macOS 10.14+
-
-### AOT version
-
-> [!TIP]
-> AOT version is still experimental. It can improve startup speed and reduce memory/CPU usage, 
-> but some functionalities have incomplete support (Known items include system native notifications, OmniRig, and multi-language). 
-> Unless your device has limited resources and you do not require the features mentioned above, it is recommended to download the non-AOT version.
-
-+ Windows 7 SP1+
-+ Debian 11+ / Ubuntu 22.04+ / Other distributions (glibc >= 2.34)
 
 ## ⚡️ Quick Start!
 
@@ -347,7 +337,6 @@ The program automatically discovers classes marked with `LogServiceAttribute`, a
 + Create a class inheriting from `ThirdPartyLogService` and mark it with `[LogService("Service Name")]`.
 + Add properties for each user-configurable field (e.g., API key, username) and mark them with `[UserInput("Display Name")]`.
 + Implement two methods: one to test the connection to the service backend and another to upload QSO data to the log service. You do not need to handle potential exceptions within these methods.
-+ Add attribute `[JsonDerivedType(typeof(YOURSERVICE), nameof(YOURSERVICE))]` to ThirdPartyLogService to ensure log service settings are correctly recognized and persisted in AOT environments.
 
 ### 📡 Custom Backend Support
 

@@ -720,7 +720,7 @@ By continuing, you acknowledge that you have read and agree to the above terms a
         <value>Target RIG</value>
     </data>
     <data name="OmniRigInitFailed" xml:space="preserve">
-        <value>Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms.</value>
+        <value>Please check if OmniRig has been installed correctly. OmniRig is currently only supported on Windows platforms.</value>
     </data>
     <data name="ConfigureOmniRigFirst" xml:space="preserve">
         <value>Please check OmniRig Settings!</value>

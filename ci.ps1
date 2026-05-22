@@ -1,7 +1,6 @@
 ﻿param(
     [string]$Version = "dev_build",
-    [string[]]$Platforms = @("win-x64", "win-x86", "win-arm64", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64", "osx-x64", "osx-arm64"),
-    [switch]$aot = $false
+    [string[]]$Platforms = @("win-x64", "win-x86", "win-arm64", "linux-x64", "linux-arm", "linux-arm64", "linux-musl-x64", "osx-x64", "osx-arm64")
 )
 
 
@@ -11,15 +10,10 @@ $ErrorActionPreference = "Stop"
 $commitHash = git rev-parse --short HEAD
 $buildTime = Get-Date -Format "yyyyMMdd HHmmss"
 
-Write-Host "Building version=$Version commit=$commitHash time=$buildTime AOT=$aot"
+Write-Host "Building version=$Version commit=$commitHash time=$buildTime"
 Set-Location src\CloudlogHelper
 $versionInfoPath = "Resources/VersionInfo.cs"
 $versionInfoPathBak = "Resources/VersionInfo.bak"
-
-if ($aot)
-{
-    $buildType="AOT"    
-}
 
 if (Test-Path $versionInfoPath)
 {
@@ -177,21 +171,15 @@ function Build-And-Package-MacOS
         [string]$runtime,
         [string]$archName,
         [string]$frameworkName,
-        [string]$exeName,
-        [bool]$doaot = $false
+        [string]$exeName
     )
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
-    if ($doaot) {
-        Write-Host "macos aot build is not supported by powershell!" -ForegroundColor Red
-        return
-    } else {
-        dotnet publish -c Release -r $runtime `
-        -f $frameworkName `
-        -t:BundleApp `
-        -p:UseAppHost=true
-    }
+    dotnet publish -c Release -r $runtime `
+    -f $frameworkName `
+    -t:BundleApp `
+    -p:UseAppHost=true
     
     $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
 
@@ -208,38 +196,26 @@ function Build-And-Package
         [string]$runtime,
         [string]$archName,
         [string]$frameworkName,
-        [string]$exeName,
-        [bool]$doaot = $false
+        [string]$exeName
     )
     
     if ($runtime -like "osx-*") {
         Build-And-Package-MacOS -runtime $runtime `
                           -archName $archName `
                           -frameworkName $frameworkName `
-                          -exeName $exeName `
-                          -doaot $doaot
+                          -exeName $exeName
         return
     }
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
 
-    if ($doaot) {
-        if ($runtime -notlike "win-*") {
-            Write-Host "non-windows aot build is not supported by powershell!" -ForegroundColor Red
-            return
-        }
-        $frameworkName = "net10.0-windows10.0.17763.0"
-        dotnet publish -c Release -r $runtime -f $frameworkName -p:TrimUnusedDependencies=true
-    } else { 
-        dotnet publish -c Release -r $runtime `
-        -f $frameworkName `
-        -p:PublishSingleFile=true `
-        --self-contained true `
-        -p:PublishReadyToRun=false `
-        -p:PublishTrimmed=false `
-        -p:TrimUnusedDependencies=true `
-        -p:IncludeNativeLibrariesForSelfExtract=true
-    }
+    dotnet publish -c Release -r $runtime `
+    -f $frameworkName `
+    -p:PublishSingleFile=true `
+    --self-contained true `
+    -p:PublishReadyToRun=false `
+    -p:PublishTrimmed=false `
+    -p:IncludeNativeLibrariesForSelfExtract=true
 
     $publish_path = "bin/Release/$frameworkName/$runtime/publish"
     Remove-Item "$publish_path/CloudlogHelper.pdb" -ErrorAction SilentlyContinue
@@ -248,21 +224,11 @@ function Build-And-Package
     $zipName = ""
     if ($Version)
     {
-        if ($doaot) {
-            $zipName = "bin/CloudlogHelper-v$Version-AOT-$archName.zip"
-        }
-        else
-        {
-            $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
-        }
+        $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
     }
     else
     {
-        if ($doaot){
-            $zipName = "bin/CloudlogHelper-AOT-$archName.zip"
-        }else{
-            $zipName = "bin/CloudlogHelper-$archName.zip"
-        }
+        $zipName = "bin/CloudlogHelper-$archName.zip"
     }
     
 
@@ -291,8 +257,7 @@ foreach ($p in $Platforms)
         Build-And-Package -runtime $p `
                           -archName $cfg.arch `
                           -frameworkName $cfg.fw `
-                          -exeName $cfg.exe `
-                          -doaot $aot.IsPresent
+                          -exeName $cfg.exe
     }
     else
     {

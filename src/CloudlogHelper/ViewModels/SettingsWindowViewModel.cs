@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -114,8 +113,6 @@ public class SettingsWindowViewModel : ViewModelBase
         // InitializeLogSystems();
     }
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<LogSystemConfig>))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<SupportedLanguageInfo>))]
     public SettingsWindowViewModel(CommandLineOptions cmd,
         IWindowManagerService windowManager,
         IApplicationSettingsService ss,
@@ -287,12 +284,7 @@ public class SettingsWindowViewModel : ViewModelBase
         try
         {
             if (_initSkipped) return;
-            if (VersionInfo.BuildType == "AOT")
-            {
-                OmniRigInited = false;
-                return;
-            }
-            
+
             if (!OperatingSystem.IsWindows())
             {
                 OmniRigInited = false;

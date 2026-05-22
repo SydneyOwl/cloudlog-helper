@@ -83,7 +83,7 @@
                                            Cursor="Hand"
                                            Background="Transparent">
                                     
-                                    <!-- fallback option for aot -->
+                                    <!-- fallback option -->
                                     <DockPanel.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Show Detail"

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -443,8 +442,6 @@ public class PluginService : IPluginService, IDisposable
     private readonly BasicSettings _basicSettings;
     private readonly CompositeDisposable _disp = new();
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<Decode>))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(List<PluginInfo>))]
     public PluginService(
         IApplicationSettingsService settingsService,
         IRigBackendManager rigBackendManager,
