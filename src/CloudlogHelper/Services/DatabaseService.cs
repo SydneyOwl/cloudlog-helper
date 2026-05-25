@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
+using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
@@ -89,6 +90,9 @@ public class DatabaseService : IDatabaseService, IDisposable
             
             db.CreateTable<CallsignDatabase>();
             db.CreateTable<CountryDatabase>();
+            
+            // check if we have already done the dxcc migration. (before v0.3.4 cc/ccc/flagimg does not exist in country table)
+            EnsureCountryAdditionalDXCCInfo(db);
             
             var callsignCount = db!.Table<CallsignDatabase>().Count();
             var countryCount = db!.Table<CountryDatabase>().Count();
@@ -303,6 +307,47 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
+    private void EnsureCountryAdditionalDXCCInfo(SQLiteConnection connection)
+    {
+        var validEntryCount = connection.Table<CountryDatabase>()
+            .Count(x => !string.IsNullOrEmpty(x.FlagImg) && x.FlagImg != "fallback.png");
+
+        // entries less then 50 is considered invalid for now
+        if (validEntryCount > 50)
+        {
+            _logger.Debug($"Backfilling additional DXCC info skipped");
+            return;
+        }
+
+        var dxccInfo = ReadDxccInfoMap();
+        var countries = connection.Table<CountryDatabase>().ToList();
+        var updatedCountries = new List<CountryDatabase>();
+
+        foreach (var country in countries)
+        {
+            var originalCc = country.Cc;
+            var originalCcc = country.Ccc;
+            var originalFlagImg = country.FlagImg;
+
+            ApplyDxccInfo(country, dxccInfo);
+
+            if (country.Cc != originalCc ||
+                country.Ccc != originalCcc ||
+                country.FlagImg != originalFlagImg)
+            {
+                updatedCountries.Add(country);
+            }
+        }
+
+        if (updatedCountries.Count == 0)
+        {
+            return;
+        }
+
+        _logger.Info($"Backfilling additional DXCC info for {updatedCountries.Count} countries");
+        connection.UpdateAll(updatedCountries);
+    }
+
     private async Task TryDeleteDatabaseFileAsync(string dbPath)
     {
         try
@@ -380,6 +425,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         var callsigns = new List<CallsignDatabase>();
         var countries = new List<CountryDatabase>();
+        var dxccInfo = ReadDxccInfoMap();
         
         ctyData ??= ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedCtyFilename);
         var entries = ctyData.Split(';', StringSplitOptions.RemoveEmptyEntries);
@@ -392,6 +438,7 @@ public class DatabaseService : IDatabaseService, IDisposable
             {
                 Id = i + 1
             };
+            ApplyDxccInfo(country, dxccInfo);
             countries.Add(country);
             
             var countryPrefixes = ExtractCallsignPrefixes(entries[i]);
@@ -414,6 +461,23 @@ public class DatabaseService : IDatabaseService, IDisposable
         var callsignRowAdded = connection.InsertAll(callsigns);
         
         return (countryRowAdded, callsignRowAdded);
+    }
+
+    private Dictionary<string, DxccInfoRecord> ReadDxccInfoMap()
+    {
+        var json = ReadEmbeddedResourceAsString(DefaultConfigs.DefaultDxccInfoFile);
+        return JsonSerializer.Deserialize<Dictionary<string, DxccInfoRecord>>(json)
+               ?? new Dictionary<string, DxccInfoRecord>();
+    }
+
+    private static void ApplyDxccInfo(CountryDatabase country, IReadOnlyDictionary<string, DxccInfoRecord> dxccInfo)
+    {
+        if (string.IsNullOrWhiteSpace(country.Dxcc)) return;
+        if (!dxccInfo.TryGetValue(country.Dxcc, out var info)) return;
+
+        country.Cc = string.IsNullOrWhiteSpace(info.Cc) ? country.Cc : info.Cc;
+        country.Ccc = string.IsNullOrWhiteSpace(info.Ccc) ? country.Ccc : info.Ccc;
+        country.FlagImg = string.IsNullOrWhiteSpace(info.FlagImg) ? country.FlagImg : info.FlagImg;
     }
 
     private IEnumerable<string> ExtractCallsignPrefixes(string ctyEntry)

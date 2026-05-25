@@ -1379,7 +1379,7 @@
   "BV": {
     "cc": "TW",
     "ccc": "TWN",
-    "flag": "tw.png"
+    "flag": "fallback.png"
   },
   "HS": {
     "cc": "TH",
@@ -1654,7 +1654,7 @@
   "BV9P": {
     "cc": "TW",
     "ccc": "TWN",
-    "flag": "tw.png"
+    "flag": "fallback.png"
   },
   "BS7": {
     "cc": "PH",
