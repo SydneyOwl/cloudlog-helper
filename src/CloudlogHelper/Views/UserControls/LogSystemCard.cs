@@ -164,7 +164,7 @@ public class LogSystemCard : UserControl
             DataContext = field,
             HorizontalAlignment = HorizontalAlignment.Left,
             MaxWidth = 200,
-            Watermark = field.Watermark ?? string.Empty,
+            PlaceholderText = field.Watermark ?? string.Empty,
             [!TextBox.TextProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,

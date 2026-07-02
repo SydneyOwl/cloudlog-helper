@@ -45,14 +45,14 @@
                         <TextBlock Text="Username:" VerticalAlignment="Center" Margin="0,0,10,0" />
                         <TextBox HorizontalAlignment="Right"
                                  Text="{Binding Settings.QsoSyncAssistantSettings.CloudlogUserName}"
-                                 Watermark="Cloudlog username" />
+                                 PlaceholderText="Cloudlog username" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
                         <TextBlock Text="Password:" VerticalAlignment="Center" Margin="0,0,10,0" />
                         <TextBox HorizontalAlignment="Right"
                                  Text="{Binding Settings.QsoSyncAssistantSettings.CloudlogPassword}" PasswordChar="•"
-                                 Watermark="Cloudlog password" />
+                                 PlaceholderText="Cloudlog password" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">

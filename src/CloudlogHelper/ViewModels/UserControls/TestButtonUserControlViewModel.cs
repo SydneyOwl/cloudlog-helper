@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using NLog;
@@ -31,7 +32,7 @@ public class TestButtonUserControlViewModel : ViewModelBase
                 {
                     CheckPassed = true;
                     Observable.Timer(TimeSpan.FromSeconds(5))
-                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(_ => CheckPassed = false)
                         .DisposeWith(disposables);
                 })
@@ -41,7 +42,7 @@ public class TestButtonUserControlViewModel : ViewModelBase
             TestCommand?
                 .ThrownExceptions
                 .Do(err => ClassLogger.Error(err, "Error when testing:"))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .SelectMany(ex => Observable.FromAsync(async () =>
                 {
                     CheckPassed = false;

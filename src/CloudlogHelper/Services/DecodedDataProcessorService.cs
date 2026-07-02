@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Database;
@@ -99,7 +100,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
 
         _decodedSignal
             .Throttle(TimeSpan.FromSeconds(3))
-            .ObserveOn(RxApp.TaskpoolScheduler)
+            .ObserveOn(RxSchedulers.TaskpoolScheduler)
             .Subscribe(r => _ = _processDecodedBatchAsync(),
                 ex => ClassLogger.Error(ex, "Error while scheduling decoded batch processing."))
             .DisposeWith(_compDisp);

@@ -8,13 +8,14 @@ using System.Linq;
 using System.Net;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml.MarkupExtensions;
+using Antelcat.I18N.Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
@@ -181,7 +182,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
             _heartbeatSubject
                 .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UDPClientExpiryInSeconds))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ =>
                 {
                     if (!_udpServerService.IsUdpServerEnabled() || WaitFirstConn) return;
@@ -232,7 +233,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private void SetupQsoRateCalculation(CompositeDisposable disposables)
     {
         Observable.Interval(TimeSpan.FromSeconds(10))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ =>
             {
                 var cutoffTime = DateTime.UtcNow.AddMinutes(-5);

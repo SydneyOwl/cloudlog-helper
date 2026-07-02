@@ -1,5 +1,5 @@
 ﻿using System;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using CloudlogHelper.ViewModels.Charts;
 
 namespace CloudlogHelper.Views.Charts;

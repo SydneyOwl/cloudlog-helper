@@ -8,7 +8,7 @@
         x:Class="CloudlogHelper.Views.SplashWindow"
         Width="450" Height="300"
         WindowStartupLocation="CenterScreen"
-        SystemDecorations="None"
+        WindowDecorations="None"
         Topmost="True"
         Focusable="True"
         Background="Transparent"

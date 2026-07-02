@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -461,13 +462,13 @@ public class PluginService : IPluginService, IDisposable
         _qsoUploadService = qsoUploadService;
 
         // high frequency msgs like deocded
-        MessageBus.Current.RegisterScheduler<PluginEvent>(RxApp.TaskpoolScheduler);
+        MessageBus.Current.RegisterScheduler<PluginEvent>(RxSchedulers.TaskpoolScheduler);
 
         // batch send decode
         _disp.Add(
             _wsjtxDecodeCache.ObserveCollectionChanges()
                 .Throttle(TimeSpan.FromSeconds(2))
-                .ObserveOn(RxApp.TaskpoolScheduler)
+                .ObserveOn(RxSchedulers.TaskpoolScheduler)
                 .Subscribe(async void (changes) =>
                 {
                     try

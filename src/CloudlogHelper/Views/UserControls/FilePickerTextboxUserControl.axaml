@@ -12,7 +12,7 @@
     </Design.DataContext>
     <Grid ColumnDefinitions="*,Auto">
         <TextBox Grid.Column="0" Name="FilePathTextBox" Height="30" MaxWidth="200"
-                 Watermark="Select a file..." Text="{Binding SelectedFilePath}" />
+                 PlaceholderText="Select a file..." Text="{Binding SelectedFilePath}" />
         <Button Grid.Column="1"
                 Click="FilePickerButton_OnClick"
                 Margin="10,0,0,0" Content="{avalonia:MaterialIconExt Kind=FolderOpen}" />
