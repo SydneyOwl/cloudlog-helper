@@ -9,6 +9,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.Charts;
 using Microsoft.Extensions.DependencyInjection;
@@ -91,6 +92,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
 
                 closedWindow.Content = null;
                 closedWindow.DataContext = null;
+                NativeMemoryTrimmer.TrimAfterWindowClosed(closedWindow.GetType().Name);
             }, DispatcherPriority.Background);
         }
     }

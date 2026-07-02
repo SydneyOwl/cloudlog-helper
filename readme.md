@@ -315,6 +315,17 @@ After compilation, you can find the compiled software in `src/CloudlogHelper/bin
 
 ## ✨ Miscellaneous
 
+### 🐧 Linux Memory Trimming
+
+On Linux, Cloudlog Helper performs an additional native memory trim after closing secondary windows
+to reduce RSS growth caused by native UI/runtime allocations. 
+
+If this causes compatibility issues on your distribution, disable it before startup:
+
+```bash
+DISABLE_MALLOC_TRIM_AFTER_WINDOW_CLOSED=1 ./CloudlogHelper
+```
+
 ### ⬆️ Upgrading Cloudlog Helper
 
 + v0.2.0 and later: No additional steps required. Simply download the latest version of Cloudlog Helper and open it.

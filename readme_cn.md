@@ -305,6 +305,15 @@ Options:
 
 ## ✨ 其他事项
 
+### 🐧 Linux 内存回收
+
+在 Linux 上，Cloudlog Helper 会在关闭子窗口后额外触发一次原生内存回收，以降低原生 UI / 运行时分配导致的 RSS 增长。
+若该行为在你的发行版上造成兼容性问题，可在启动前禁用：
+
+```bash
+DISABLE_MALLOC_TRIM_AFTER_WINDOW_CLOSED=1 ./CloudlogHelper
+```
+
 ### ⬆️ 升级 Cloudlog Helper
 
 + v0.2.0 及以后版本：无需额外步骤，直接下载最新版 Cloudlog Helper 并打开即可。

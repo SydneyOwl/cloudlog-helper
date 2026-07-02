@@ -35,14 +35,14 @@ public class LogSystemCard : UserControl
     public LogSystemCard()
     {
         _cancellationTokenSource = new CancellationTokenSource();
-        
+
         _disposables.Add(MessageBus.Current.Listen<SettingsChanged>()
             .Subscribe(res =>
             {
                 if (res.Part == ChangedPart.NothingJustClosed)
                     Dispose();
             }));
-            
+        
         InitializeComponent();
     }
 
