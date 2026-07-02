@@ -55,7 +55,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IQSOUploadService _qsoUploadService;
     private readonly IUdpServerService _udpServerService;
     private readonly IWindowManagerService _windowManagerService;
-    private readonly ICountryService _countryDxccService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
@@ -133,10 +132,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IQSOUploadService qu,
         IQsoQueueStore qsoQueueStore,
         INotificationManager nativeNotificationManager,
-        IDecodedDataProcessorService decodedDataProcessorService,
-        ICountryService cs)
+        IDecodedDataProcessorService decodedDataProcessorService)
     {
-        _countryDxccService = cs;
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
         _nativeNotificationManager = nativeNotificationManager;
@@ -352,7 +349,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     try
                     {
-                        rcd.CountryFlagAvares = _countryDxccService.GetFlagResourceByDXCC("__log");
+                        rcd.CountryFlagAvares = FlagImageUtil.GetLogFlagImage();
                         await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
                     }
                     catch (Exception ex)
@@ -527,7 +524,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall).ConfigureAwait(false);
         var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, message);
         
-        rcd.CountryFlagAvares = _countryDxccService.GetFlagResourceByDXCC(cty.Dxcc);
+        rcd.CountryFlagAvares = FlagImageUtil.GetFlagImage(cty.FlagImg);
             
         rcd.ParentMode = await _databaseService.GetParentModeAsync(rcd.Mode);
 

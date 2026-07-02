@@ -4,7 +4,7 @@ using System.Reflection;
 using CloudlogHelper.LogService;
 using CloudlogHelper.LogService.Attributes;
 
-namespace CloudlogHelper.Resources;
+namespace CloudlogHelper.Utils;
 
 public static class LogServiceTypeRegistry
 {

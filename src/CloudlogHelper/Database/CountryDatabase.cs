@@ -96,9 +96,27 @@ public class CountryDatabase
     [Column("dxcc")]
     public string Dxcc { get; set; } = "";
 
+    /// <summary>
+    ///     ISO 3166-1 alpha-2 country code.
+    /// </summary>
+    [Column("cc")]
+    public string Cc { get; set; } = "-";
+
+    /// <summary>
+    ///     ISO 3166-1 alpha-3 country code.
+    /// </summary>
+    [Column("ccc")]
+    public string Ccc { get; set; } = "-";
+
+    /// <summary>
+    ///     Flag image file name under Assets/Flags.
+    /// </summary>
+    [Column("flag_img")]
+    public string FlagImg { get; set; } = "fallback.png";
+
     public override string ToString()
     {
         return
-            $"{nameof(Id)}: {Id}, {nameof(CountryName)}: {CountryName}, {nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}";
+            $"{nameof(Id)}: {Id}, {nameof(CountryName)}: {CountryName}, {nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(Cc)}: {Cc}, {nameof(Ccc)}: {Ccc}, {nameof(FlagImg)}: {FlagImg}";
     }
 }
