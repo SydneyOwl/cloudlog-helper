@@ -7,6 +7,61 @@ namespace CloudlogHelper.Tests;
 public class ChartDataCacheServiceTests
 {
     [Fact]
+    public void Add_PublishesItemAddedNotification()
+    {
+        using var service = new ChartDataCacheService();
+        var received = new List<ChartQSOPoint>();
+        using var subscription = service.GetItemAddedObservable().Subscribe(received.Add);
+        var point = _createPoint(
+            callsign: "BG7AA",
+            band: "10m",
+            dxcc: "BY",
+            distance: 1000,
+            azimuth: 30,
+            latitude: 30,
+            longitude: 114,
+            isAccurate: true);
+
+        service.Add(point);
+
+        var receivedPoint = Assert.Single(received);
+        Assert.Equal(point.DxCallsign, receivedPoint.DxCallsign);
+        Assert.Equal(point.Band, receivedPoint.Band);
+        Assert.Equal(point.DXCC, receivedPoint.DXCC);
+    }
+
+    [Fact]
+    public void TakeLatestN_ReturnsNewestFirst_AndAppliesFilter()
+    {
+        using var service = new ChartDataCacheService();
+        var first = _createPoint("BG7AA", "10m", "BY", 1000, 30, 30, 114, true);
+        var second = _createPoint("K1ABC", "20m", "K", 8500, 75, 40, -74, true);
+        var third = _createPoint("JA1ABC", "10m", "JA", 2000, 120, 35, 139, true);
+
+        service.Add(first);
+        service.Add(second);
+        service.Add(third);
+
+        var latest10m = service.TakeLatestN(2, filterCondition: x => x.Band == "10m").ToList();
+
+        Assert.Equal(new[] { third, first }, latest10m);
+    }
+
+    [Fact]
+    public void Clear_RemovesPolarAndAccumulatedData()
+    {
+        using var service = new ChartDataCacheService();
+        service.Add(_createPoint("BG7AA", "10m", "BY", 1000, 30, 30, 114, true));
+
+        service.Clear();
+
+        Assert.Empty(service.TakeLatestN(10));
+        var snapshot = service.GetStationChartDataSnapshotByBand("10m");
+        Assert.Empty(snapshot.StationCountByDxcc);
+        Assert.Equal(0d, snapshot.DistanceHistogram.Counts.Sum());
+    }
+
+    [Fact]
     public void Add_WhenPointIsNotAccurate_ShouldSkipSpatialAccumulators()
     {
         var service = new ChartDataCacheService();
