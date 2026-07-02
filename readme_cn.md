@@ -265,11 +265,11 @@ powershell .\ci.ps1 -Platforms linux-x64,linux-arm64
 
 > [!NOTE]
 >
-> Linux 不支持交叉编译到 Windows 特定框架（net6.0-windows10.0.17763.0）。
-> 脚本将使用备用框架（net6.0）进行编译。编译产物将不支持系统原生通知和 OmniRig。
+> Linux 不支持交叉编译到 Windows 特定框架（net8.0-windows10.0.17763.0）。
+> 脚本将使用备用框架（net8.0）进行编译。编译产物将不支持系统原生通知和 OmniRig。
 
 请确保你的构建环境已安装以下工具：
-+ .net6
++ .net8
 + git
 + dotnet
 + curl

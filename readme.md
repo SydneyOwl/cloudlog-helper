@@ -276,10 +276,10 @@ After compilation, you can find the compiled software in `src/CloudlogHelper/bin
 
 > [!NOTE]
 >
-> Linux does not support cross-compilation to Windows-specific frameworks (net6.0-windows10.0.17763.0). 
+> Linux does not support cross-compilation to Windows-specific frameworks (net8.0-windows10.0.17763.0). 
 
 Please ensure your build environment has following tools installed:
-+ .net6
++ .net8
 + git
 + dotnet
 + curl

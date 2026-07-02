@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 set -e 
 TAG_NAME=""
 TARGET_PLATFORMS=""
@@ -34,7 +34,7 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  -t, --tag <version>       Application build version number, default is dev_build"
             echo "  -p, --platforms <list>    Target platforms (comma-separated, e.g., win-x64,linux-x64)"
-            echo "                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64,linux-musl-x64"
+            echo "                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64,linux-musl-x64,osx-x64,osx-arm64"
             echo "  -h, --help                Show this help message"
             exit 0
             ;;
@@ -145,6 +145,7 @@ sed -i "s/@INTERNAL_BUILDTYPE@/$BUILD_TYPE/g" "$VERSION_INFO_PATH"
 rm -rf bin/Release/* bin/*.zip 2>/dev/null || true
 rm -rf ./tmp
 mkdir -p tmp
+mkdir -p Resources/Dependencies/hamlib/{win-x86,win-x64,linux-x64,linux-armhf,linux-arm64,osx-x64,osx-arm64}
 
 # Download and prepare dependencies
 echo "Downloading Hamlib dependencies..."
@@ -259,6 +260,34 @@ if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"linux-arm64"* ]]; t
         "false"
 fi
 
+if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"osx-x64"* ]]; then
+    download_and_extract \
+        "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-macos-x86_64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-macos-x86_64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-macos-x86_64-$LATEST_HAMLIB_LINUX_VERSION"
+
+    prepare_hamlib "osx-x64" "$LATEST_HAMLIB_LINUX_VERSION" \
+        "./tmp/Hamlib-macos-x86_64-$LATEST_HAMLIB_LINUX_VERSION/bin" \
+        "./Resources/Dependencies/hamlib/osx-x64" \
+        "false"
+    cp "./tmp/Hamlib-macos-x86_64-$LATEST_HAMLIB_LINUX_VERSION/bin/libusb-1.0.0.dylib" \
+        "./Resources/Dependencies/hamlib/osx-x64" 2>/dev/null || true
+fi
+
+if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"osx-arm64"* ]]; then
+    download_and_extract \
+        "https://github.com/sydneyowl/hamlib-crossbuild/releases/download/$LATEST_HAMLIB_LINUX_VERSION/Hamlib-macos-arm64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-macos-arm64-$LATEST_HAMLIB_LINUX_VERSION.zip" \
+        "./tmp/Hamlib-macos-arm64-$LATEST_HAMLIB_LINUX_VERSION"
+
+    prepare_hamlib "osx-arm64" "$LATEST_HAMLIB_LINUX_VERSION" \
+        "./tmp/Hamlib-macos-arm64-$LATEST_HAMLIB_LINUX_VERSION/bin" \
+        "./Resources/Dependencies/hamlib/osx-arm64" \
+        "false"
+    cp "./tmp/Hamlib-macos-arm64-$LATEST_HAMLIB_LINUX_VERSION/bin/libusb-1.0.0.dylib" \
+        "./Resources/Dependencies/hamlib/osx-arm64" 2>/dev/null || true
+fi
+
 build_and_package() {
     local runtime="$1"
     local arch_name="$2"
@@ -276,11 +305,38 @@ build_and_package() {
         echo "         Windows targets require Windows build environment"
         echo "Using fallback runtime (system native notifications and omnirig not supported)"
         
-        framework_name="net6.0"
+        framework_name="net8.0"
     fi
     
     echo "Building for $runtime ($arch_name)..."
     echo "  Framework: $framework_name"
+
+    if [[ "$runtime" == osx-* ]]; then
+        dotnet publish -c Release -r "$runtime" \
+            -f "$framework_name" \
+            -t:BundleApp \
+            -p:UseAppHost=true
+
+        local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"
+        local bin_path="$(pwd)/bin"
+        cp Assets/icon.icns "$publish_path/CloudlogHelper.app/Contents/Resources" 2>/dev/null || true
+        chmod +x "$publish_path/CloudlogHelper.app/Contents/MacOS/CloudlogHelper" 2>/dev/null || true
+
+        local zip_name
+        if [ -n "$TAG_NAME" ]; then
+            zip_name="CloudlogHelper-v$TAG_NAME-$arch_name.zip"
+        else
+            zip_name="CloudlogHelper-$arch_name.zip"
+        fi
+
+        if [ -d "$publish_path/CloudlogHelper.app" ]; then
+            (cd "$publish_path" && zip -r "$bin_path/$zip_name" CloudlogHelper.app)
+            echo "Created: $zip_name"
+        else
+            echo "Warning: Publish app not found: $publish_path/CloudlogHelper.app"
+        fi
+        return
+    fi
 
     dotnet publish -c Release -r "$runtime" \
         -f "$framework_name" \
@@ -316,33 +372,41 @@ echo ""
 echo "Starting builds..."
 
 if [ -z "$TARGET_PLATFORMS" ]; then
-    build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
-    build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
-    build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
-    build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
-    build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
-    build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
+    build_and_package "win-x64" "windows-x64" "net8.0-windows10.0.17763.0"
+    build_and_package "win-x86" "windows-x86" "net8.0-windows10.0.17763.0"
+    build_and_package "linux-x64" "linux-x64" "net8.0" "CloudlogHelper"
+    build_and_package "linux-musl-x64" "linux-musl-x64" "net8.0" "CloudlogHelper"
+    build_and_package "linux-arm" "linux-arm" "net8.0" "CloudlogHelper"
+    build_and_package "linux-arm64" "linux-arm64" "net8.0" "CloudlogHelper"
+    build_and_package "osx-x64" "osx-x64" "net8.0" "CloudlogHelper"
+    build_and_package "osx-arm64" "osx-arm64" "net8.0" "CloudlogHelper"
 else
     IFS=',' read -ra PLATFORMS <<< "$TARGET_PLATFORMS"
     for platform in "${PLATFORMS[@]}"; do
         case "$platform" in
             "win-x86")
-                build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
+                build_and_package "win-x86" "windows-x86" "net8.0-windows10.0.17763.0"
                 ;;
             "win-x64")
-                build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
+                build_and_package "win-x64" "windows-x64" "net8.0-windows10.0.17763.0"
                 ;;
             "linux-x64")
-                build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
+                build_and_package "linux-x64" "linux-x64" "net8.0" "CloudlogHelper"
                 ;;
             "linux-musl-x64")
-                build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
+                build_and_package "linux-musl-x64" "linux-musl-x64" "net8.0" "CloudlogHelper"
                 ;;
             "linux-arm")
-                build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
+                build_and_package "linux-arm" "linux-arm" "net8.0" "CloudlogHelper"
                 ;;
             "linux-arm64")
-                build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
+                build_and_package "linux-arm64" "linux-arm64" "net8.0" "CloudlogHelper"
+                ;;
+            "osx-x64")
+                build_and_package "osx-x64" "osx-x64" "net8.0" "CloudlogHelper"
+                ;;
+            "osx-arm64")
+                build_and_package "osx-arm64" "osx-arm64" "net8.0" "CloudlogHelper"
                 ;;
             *)
                 echo "Warning: Unknown platform '$platform', skipping"

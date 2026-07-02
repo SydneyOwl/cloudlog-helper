@@ -238,15 +238,15 @@ function Build-And-Package
 }
 
 $PlatformMap = @{
-    "win-x64" = @{ arch = "windows-x64"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
-    "win-x86" = @{ arch = "windows-x86"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
-    "win-arm64" = @{ arch = "windows-arm64"; exe = "CloudlogHelper.exe"; fw = "net6.0-windows10.0.17763.0" }
-    "linux-x64" = @{ arch = "linux-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
-    "linux-musl-x64" = @{ arch = "linux-musl-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
-    "linux-arm" = @{ arch = "linux-arm"; exe = "CloudlogHelper"; fw = "net6.0" }
-    "linux-arm64" = @{ arch = "linux-arm64"; exe = "CloudlogHelper"; fw = "net6.0" }
-    "osx-x64" = @{ arch = "osx-x64"; exe = "CloudlogHelper"; fw = "net6.0" }
-    "osx-arm64" = @{ arch = "osx-arm64"; exe = "CloudlogHelper"; fw = "net6.0" }
+    "win-x64" = @{ arch = "windows-x64"; exe = "CloudlogHelper.exe"; fw = "net8.0-windows10.0.17763.0" }
+    "win-x86" = @{ arch = "windows-x86"; exe = "CloudlogHelper.exe"; fw = "net8.0-windows10.0.17763.0" }
+    "win-arm64" = @{ arch = "windows-arm64"; exe = "CloudlogHelper.exe"; fw = "net8.0-windows10.0.17763.0" }
+    "linux-x64" = @{ arch = "linux-x64"; exe = "CloudlogHelper"; fw = "net8.0" }
+    "linux-musl-x64" = @{ arch = "linux-musl-x64"; exe = "CloudlogHelper"; fw = "net8.0" }
+    "linux-arm" = @{ arch = "linux-arm"; exe = "CloudlogHelper"; fw = "net8.0" }
+    "linux-arm64" = @{ arch = "linux-arm64"; exe = "CloudlogHelper"; fw = "net8.0" }
+    "osx-x64" = @{ arch = "osx-x64"; exe = "CloudlogHelper"; fw = "net8.0" }
+    "osx-arm64" = @{ arch = "osx-arm64"; exe = "CloudlogHelper"; fw = "net8.0" }
 }
 
 foreach ($p in $Platforms)
