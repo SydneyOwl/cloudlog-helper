@@ -51,7 +51,7 @@ public class ConnectedPluginItem
     [Reactive] public ReactiveCommand<Unit, Unit> RemovePlugin { get; set; }
 }
 
-public class SettingsWindowViewModel : ViewModelBase
+public class SettingsWindowViewModel : ViewModelBase, IDisposable
 {
     /// <summary>
     ///     Logger for the class.
@@ -67,6 +67,7 @@ public class SettingsWindowViewModel : ViewModelBase
     private readonly IMessageBoxManagerService _messageBoxManagerService;
     private readonly ILogSystemManager _logSystemManager;
     private readonly IPluginService _pluginService;
+    private readonly CompositeDisposable _disposables = new();
     private IInAppNotificationService _notificationService;
 
     public SettingsWindowViewModel()
@@ -147,6 +148,10 @@ public class SettingsWindowViewModel : ViewModelBase
 
         var cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
         CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
+        hamlibCmd.DisposeWith(_disposables);
+        flrigCmd.DisposeWith(_disposables);
+        omniCmd.DisposeWith(_disposables);
+        cloudCmd.DisposeWith(_disposables);
         
         RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
         DiscardConf = ReactiveCommand.Create(_discardConf);
@@ -154,6 +159,12 @@ public class SettingsWindowViewModel : ViewModelBase
         OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
         OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
         UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
+        RefreshPort.DisposeWith(_disposables);
+        DiscardConf.DisposeWith(_disposables);
+        SaveAndApplyConf.DisposeWith(_disposables);
+        OpenConfDir.DisposeWith(_disposables);
+        OpenTempDir.DisposeWith(_disposables);
+        UpdateBigCty.DisposeWith(_disposables);
 
         _initSkipped = cmd.AutoUdpLogUploadOnly;
         _source = new CancellationTokenSource();
@@ -254,6 +265,15 @@ public class SettingsWindowViewModel : ViewModelBase
                     Part = ChangedPart.NothingJustOpened
                 });
             }));
+    }
+
+    public void Dispose()
+    {
+        if (!_source.IsCancellationRequested) _source.Cancel();
+        _source.Dispose();
+        _disposables.Dispose();
+        if (_notificationService is IDisposable disposable) disposable.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();

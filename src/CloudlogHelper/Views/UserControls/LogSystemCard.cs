@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -9,6 +10,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Layout;
+using Avalonia.VisualTree;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
@@ -26,20 +28,39 @@ public class LogSystemCard : UserControl
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly CompositeDisposable _disposables = new();
+    private bool _disposed;
     private LogSystemCardViewModel? ViewModel => DataContext as LogSystemCardViewModel;
 
     public LogSystemCard()
     {
         _cancellationTokenSource = new CancellationTokenSource();
         
-        MessageBus.Current.Listen<SettingsChanged>()
+        _disposables.Add(MessageBus.Current.Listen<SettingsChanged>()
             .Subscribe(res =>
             {
                 if (res.Part == ChangedPart.NothingJustClosed)
-                    _cancellationTokenSource.Cancel();
-            });
+                    Dispose();
+            }));
             
         InitializeComponent();
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        Dispose();
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    private void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        if (!_cancellationTokenSource.IsCancellationRequested)
+            _cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Dispose();
+        _disposables.Dispose();
     }
 
     private void InitializeComponent()
@@ -230,8 +251,8 @@ public class LogSystemCard : UserControl
             SelectedFilePath = field.Value as string ?? string.Empty
         };
 
-        viewModel.WhenAnyValue(vm => vm.SelectedFilePath)
-                .BindTo(field, f => f.Value);
+        _disposables.Add(viewModel.WhenAnyValue(vm => vm.SelectedFilePath)
+                .BindTo(field, f => f.Value));
 
         return new FilePickerTextboxUserControl
         {

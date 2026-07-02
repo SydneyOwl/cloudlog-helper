@@ -21,9 +21,12 @@ public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantWin
         InitializeComponent();
         this.WhenActivated(disposables =>
         {
+            var localLogPathCollection = ViewModel?.Settings.QsoSyncAssistantSettings.LocalLogPath;
+            if (localLogPathCollection is null) return;
+
             Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                    h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged += h,
-                    h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged -= h)
+                    h => localLogPathCollection.CollectionChanged += h,
+                    h => localLogPathCollection.CollectionChanged -= h)
                 .Subscribe(args => { localLogPath.SelectedIndex = args.EventArgs.NewStartingIndex; })
                 .DisposeWith(disposables);
             

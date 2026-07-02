@@ -25,7 +25,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels;
 
-public class QsoSyncAssistantWindowViewModel : ViewModelBase
+public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
 {
     /// <summary>
     ///     Logger for the class.
@@ -45,6 +45,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     private readonly IMapper _mapper;
 
     private CancellationTokenSource _source = new();
+
+    private bool _disposed;
 
     public QsoSyncAssistantWindowViewModel()
     {
@@ -113,6 +115,21 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     public void EnableExecuteOnStart()
     {
         _executeOnStart = true;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        if (!_source.IsCancellationRequested) _source.Cancel();
+        _source.Dispose();
+        SaveConf.Dispose();
+        StartSyncCommand.Dispose();
+        StopSyncCommand.Dispose();
+        AddLogPathCommand.Dispose();
+        RemoveLogPathCommand.Dispose();
+        GC.SuppressFinalize(this);
     }
 
 

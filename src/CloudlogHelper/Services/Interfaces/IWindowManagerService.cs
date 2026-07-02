@@ -9,7 +9,7 @@ namespace CloudlogHelper.Services.Interfaces;
 
 public interface IWindowManagerService
 {
-    string Track(Window window);
+    string Track(Window window, IDisposable? lifetime = null);
 
     Task<T?> CreateAndShowWindowByVm<T>(Type wType, Window? toplevel = null, bool dialog = true);
 
