@@ -720,7 +720,7 @@
         <value>目标电台</value>
     </data>
     <data name="OmniRigInitFailed" xml:space="preserve">
-        <value>请检查OmniRig是否已正确安装，另外OmniRIg目前仅在非AOT编译的Windows平台上支持。</value>
+        <value>请检查OmniRig是否已正确安装，另外OmniRig目前仅在Windows平台上支持。</value>
     </data>
     <data name="ConfigureOmniRigFirst" xml:space="preserve">
         <value>请检查OmniRig配置！</value>

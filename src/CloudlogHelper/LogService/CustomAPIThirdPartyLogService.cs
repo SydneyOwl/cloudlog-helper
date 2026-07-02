@@ -66,7 +66,7 @@ public class CustomAPIThirdPartyLogService : ThirdPartyLogService
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Select(x => x
                 .WithHeader("Content-Type", "application/json")
-                .PostStringAsync(JsonSerializer.Serialize(payload, SourceGenerationContext.Default.RadioApiCallV2), cancellationToken: token)
+                .PostStringAsync(JsonSerializer.Serialize(payload), cancellationToken: token)
             )
             .ToArray();
         

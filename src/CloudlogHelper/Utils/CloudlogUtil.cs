@@ -104,7 +104,7 @@ public class CloudlogUtil
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationStatisticsAPIEndpoint, key)
             .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
-        var rawResult = JsonSerializer.Deserialize(result, SourceGenerationContext.Default.StationStatistics);
+        var rawResult = JsonSerializer.Deserialize<StationStatistics>(result);
         return rawResult;
     }
 
@@ -119,7 +119,7 @@ public class CloudlogUtil
         var result = await url
             .AppendPathSegments(DefaultConfigs.CloudlogStationInfoAPIEndpoint, key)
             .GetStringAsync(cancellationToken: token).ConfigureAwait(false);
-        var rawResult = JsonSerializer.Deserialize(result, SourceGenerationContext.Default.ListStationInfo)
+        var rawResult = JsonSerializer.Deserialize<List<StationInfo>>(result)
                         ?? new List<StationInfo>();
         return rawResult;
     }
@@ -166,9 +166,9 @@ public class CloudlogUtil
         };
         var results = await url
             .AppendPathSegments(DefaultConfigs.CloudlogRadioAPICallV2Endpoint)
-            .PostStringAsync(JsonSerializer.Serialize(payloadI, SourceGenerationContext.Default.RadioApiCallV2), cancellationToken: token)
+            .PostStringAsync(JsonSerializer.Serialize(payloadI), cancellationToken: token)
             .ReceiveString().ConfigureAwait(false);
-        return JsonSerializer.Deserialize(results, SourceGenerationContext.Default.CommonCloudlogResp);
+        return JsonSerializer.Deserialize<CommonCloudlogResp>(results);
     }
 
     public static async Task<CommonCloudlogResp> UploadAdifLogAsync(string url, string key, string profileId,
@@ -187,9 +187,9 @@ public class CloudlogUtil
             var results = await url
                 .AppendPathSegments(DefaultConfigs.CloudlogQSOAPIEndpoint)
                 .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-                .PostStringAsync(JsonSerializer.Serialize(payloadI, SourceGenerationContext.Default.AdifQSOUploadCall), cancellationToken: token)
+                .PostStringAsync(JsonSerializer.Serialize(payloadI), cancellationToken: token)
                 .ReceiveString().ConfigureAwait(false);
-            return JsonSerializer.Deserialize(results, SourceGenerationContext.Default.CommonCloudlogResp);
+            return JsonSerializer.Deserialize<CommonCloudlogResp>(results);
         }
         catch (Exception e)
         {

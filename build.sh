@@ -3,7 +3,6 @@ set -e
 TAG_NAME=""
 TARGET_PLATFORMS=""
 BUILD_TYPE="NORMAL"
-AOT_BUILD=false
 INSTALL_ARM_CHAIN=false
 INSTALL_MUSL_CHAIN=false
 INSTALL_UBUNTU_CHAIN=false
@@ -17,10 +16,6 @@ while [[ $# -gt 0 ]]; do
         -p|--platforms)
             TARGET_PLATFORMS="$2"
             shift 2
-            ;;
-        --aot)
-            AOT_BUILD=true
-            shift
             ;;
         --install-ubuntu-chain)
           INSTALL_UBUNTU_CHAIN=true
@@ -40,7 +35,6 @@ while [[ $# -gt 0 ]]; do
             echo "  -t, --tag <version>       Application build version number, default is dev_build"
             echo "  -p, --platforms <list>    Target platforms (comma-separated, e.g., win-x64,linux-x64)"
             echo "                            You can choose from win-x86,win-x64,linux-x64,linux-arm,linux-arm64,linux-musl-x64"
-            echo "  --aot                     Build using AOT compilation"
             echo "  -h, --help                Show this help message"
             exit 0
             ;;
@@ -60,7 +54,6 @@ BUILD_TIME=$(date +"%Y%m%d %H%M%S")
 echo "Build Parameters:"
 echo "  Version: ${TAG_NAME:-Not specified}"
 echo "  Target Platforms: ${TARGET_PLATFORMS:-All}"
-echo "  AOT Build: $AOT_BUILD"
 echo "  Install Chain: $INSTALL_ARM_CHAIN"
 echo "  Commit Hash: $COMMIT_HASH"
 echo "  Build Time: $BUILD_TIME"
@@ -123,28 +116,6 @@ if [ "$INSTALL_ARM_CHAIN" = true ]; then
     echo "ARM crossbuild chains installed successfully!"
 fi
 
-# Validate AOT build constraints
-if [ "$AOT_BUILD" = true ]; then
-    if [ -n "$TARGET_PLATFORMS" ]; then
-        IFS=',' read -ra PLATFORMS <<< "$TARGET_PLATFORMS"
-        for platform in "${PLATFORMS[@]}"; do
-            case "$platform" in
-                "linux-arm"|"linux-arm64"|"linux-x64")
-                    BUILD_TYPE="AOT"
-                    # Valid AOT platforms
-                    ;;
-                "win-x86"|"win-x64")
-                    echo "Warning: AOT build is not supported for platform '$platform'. Ignoring --aot flag for this platform."
-                    AOT_BUILD=false
-                    ;;
-                *)
-                    echo "Warning: Unknown platform '$platform', skipping"
-                    ;;
-            esac
-        done
-    fi
-fi
-
 # Navigate to project directory
 cd src/CloudlogHelper || { echo "Error: Directory src/CloudlogHelper not found"; exit 1; }
 
@@ -171,7 +142,7 @@ sed -i "s/@INTERNAL_TIME@/$BUILD_TIME/g" "$VERSION_INFO_PATH"
 sed -i "s/@INTERNAL_BUILDTYPE@/$BUILD_TYPE/g" "$VERSION_INFO_PATH"
 
 # Clean previous builds
-rm -rf bin/Release/* bin/*.zip 2>/dev/null || tru
+rm -rf bin/Release/* bin/*.zip 2>/dev/null || true
 rm -rf ./tmp
 mkdir -p tmp
 
@@ -293,7 +264,6 @@ build_and_package() {
     local arch_name="$2"
     local framework_name="$3"
     local exe_name="${4:-CloudlogHelper.exe}"
-    local is_aot="${5:-false}"
     
     # Check if platform is in target list
     if [ -n "$TARGET_PLATFORMS" ] && [[ ! "$TARGET_PLATFORMS" == *"$runtime"* ]]; then
@@ -301,7 +271,7 @@ build_and_package() {
         return 0
     fi
     
-    if [[ "$framework_name" == *"windows"* ]] && [ "$is_aot" = false ]; then
+    if [[ "$framework_name" == *"windows"* ]]; then
         echo "Warning: Cannot build Windows target '$framework_name' on Linux system!"
         echo "         Windows targets require Windows build environment"
         echo "Using fallback runtime (system native notifications and omnirig not supported)"
@@ -311,26 +281,14 @@ build_and_package() {
     
     echo "Building for $runtime ($arch_name)..."
     echo "  Framework: $framework_name"
-    echo "  AOT: $is_aot"
-    
-    if [ "$is_aot" = true ]; then
-         # AOT build settings
-         # Note: IncludeNativeLibrariesForSelfExtract doesn't work for AOT builds
-         # See: https://github.com/dotnet/runtime/discussions/117986
-         dotnet publish -c Release -r "$runtime" \
-             -f "$framework_name" \
-             -p:TrimUnusedDependencies=true
-             #-p:IncludeNativeLibrariesForSelfExtract=true
-    else
-         dotnet publish -c Release -r "$runtime" \
-            -f "$framework_name" \
-            -p:PublishSingleFile=true \
-            --self-contained true \
-            -p:PublishReadyToRun=false \
-            -p:PublishTrimmed=false \
-            -p:TrimUnusedDependencies=true \
-            -p:IncludeNativeLibrariesForSelfExtract=true
-    fi
+
+    dotnet publish -c Release -r "$runtime" \
+        -f "$framework_name" \
+        -p:PublishSingleFile=true \
+        --self-contained true \
+        -p:PublishReadyToRun=false \
+        -p:PublishTrimmed=false \
+        -p:IncludeNativeLibrariesForSelfExtract=true
     
     
     local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"
@@ -340,17 +298,9 @@ build_and_package() {
     
     local zip_name
     if [ -n "$TAG_NAME" ]; then
-        if [ "$is_aot" = true ]; then
-            zip_name="CloudlogHelper-v$TAG_NAME-AOT-$arch_name.zip"
-        else
-            zip_name="CloudlogHelper-v$TAG_NAME-$arch_name.zip"
-        fi
+        zip_name="CloudlogHelper-v$TAG_NAME-$arch_name.zip"
     else
-        if [ "$is_aot" = true ]; then
-            zip_name="CloudlogHelper-AOT-$arch_name.zip"
-        else
-            zip_name="CloudlogHelper-$arch_name.zip"
-        fi
+        zip_name="CloudlogHelper-$arch_name.zip"
     fi
     
     if [ -f "$publish_path/CloudlogHelper" ]; then
@@ -364,65 +314,35 @@ build_and_package() {
 
 echo ""
 echo "Starting builds..."
-echo "AOT Build: $AOT_BUILD"
 
 if [ -z "$TARGET_PLATFORMS" ]; then
-    if [ "$AOT_BUILD" = true ]; then
-        echo "Warning: Must specify build platform when using aot build!"
-    else
-        # Regular builds for all platforms
-        build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
-        build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
-        build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
-        build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
-        build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
-        build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
-    fi
+    build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
+    build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
+    build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
+    build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
+    build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
+    build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
 else
     IFS=',' read -ra PLATFORMS <<< "$TARGET_PLATFORMS"
     for platform in "${PLATFORMS[@]}"; do
         case "$platform" in
             "win-x86")
-                if [ "$AOT_BUILD" = false ]; then
-                    build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
-                else
-                    echo "Warning: AOT build not supported for win-x86, skipping"
-                fi
+                build_and_package "win-x86" "windows-x86" "net6.0-windows10.0.17763.0"
                 ;;
             "win-x64")
-                if [ "$AOT_BUILD" = false ]; then
-                    build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
-                else
-                    echo "Warning: AOT build not supported for win-x64, skipping"
-                fi
+                build_and_package "win-x64" "windows-x64" "net6.0-windows10.0.17763.0"
                 ;;
             "linux-x64")
-                if [ "$AOT_BUILD" = false ]; then
-                    build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
-                else
-                    build_and_package "linux-x64" "linux-x64" "net10.0" "CloudlogHelper" "true"
-                fi
+                build_and_package "linux-x64" "linux-x64" "net6.0" "CloudlogHelper"
                 ;;
             "linux-musl-x64")
-                if [ "$AOT_BUILD" = false ]; then
-                    build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
-                else
-                    echo "Warning: AOT build not supported for linux-musl-x64, skipping"
-                fi
+                build_and_package "linux-musl-x64" "linux-musl-x64" "net6.0" "CloudlogHelper"
                 ;;
             "linux-arm")
-                if [ "$AOT_BUILD" = false ]; then
-                    build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
-                else
-                    build_and_package "linux-arm" "linux-arm" "net10.0" "CloudlogHelper" "true"
-                fi
+                build_and_package "linux-arm" "linux-arm" "net6.0" "CloudlogHelper"
                 ;;
             "linux-arm64")
-                if [ "$AOT_BUILD" = false ]; then
-                    build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
-                else
-                    build_and_package "linux-arm64" "linux-arm64" "net10.0" "CloudlogHelper" "true"
-                fi
+                build_and_package "linux-arm64" "linux-arm64" "net6.0" "CloudlogHelper"
                 ;;
             *)
                 echo "Warning: Unknown platform '$platform', skipping"

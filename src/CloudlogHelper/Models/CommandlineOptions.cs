@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using CommandLine;
 
 namespace CloudlogHelper.Models;

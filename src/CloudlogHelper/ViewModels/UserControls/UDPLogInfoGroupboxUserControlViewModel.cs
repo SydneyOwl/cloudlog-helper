@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -124,7 +123,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _appendTestData();
     }
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ReadOnlyObservableCollection<RecordedCallsignDetail>))]
     public UDPLogInfoGroupboxUserControlViewModel(
         IDatabaseService dbService,
         IInAppNotificationService inAppNotification,

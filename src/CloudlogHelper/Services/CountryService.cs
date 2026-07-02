@@ -76,10 +76,8 @@ public class CountryService : ICountryService, IDisposable
     
     private Dictionary<string, DXCCCountryInfo> _dxccCountryJsonParse(string json)
     {
-        return JsonSerializer.Deserialize(
-            json,
-            SourceGenerationContext.Default.DictionaryStringDXCCCountryInfo
-        ) ?? new Dictionary<string, DXCCCountryInfo>();
+        return JsonSerializer.Deserialize<Dictionary<string, DXCCCountryInfo>>(json)
+               ?? new Dictionary<string, DXCCCountryInfo>();
     }
 
     public void Dispose()

@@ -368,7 +368,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     private void InitializeAdifModesDatabase(SQLiteConnection connection)
     {
         var json = ReadEmbeddedResourceAsString(DefaultConfigs.EmbeddedeAdifModeFilename);
-        var adifModes = JsonSerializer.Deserialize(json, SourceGenerationContext.Default.ListAdifModesDatabase);
+        var adifModes = JsonSerializer.Deserialize<List<AdifModesDatabase>>(json);
         
         if (adifModes?.Count > 0)
         {

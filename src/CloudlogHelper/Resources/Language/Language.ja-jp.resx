@@ -380,7 +380,7 @@
         <value>この項目は必須です！</value>
     </data>
     <data name="OmniRigInitFailed" xml:space="preserve">
-        <value>OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在、AOTコンパイルされていないWindowsプラットフォームでのみサポートされています。</value>
+        <value>OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在Windowsプラットフォームでのみサポートされています。</value>
     </data>
     <data name="MainDomainOnly" xml:space="preserve">
         <value>メインドメインのみを入力してください。「/api/qso」で終わってはいけません！</value>
