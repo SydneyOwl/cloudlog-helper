@@ -55,7 +55,7 @@
         <PackageReference Include="Google.Protobuf" Version="3.33.2" />
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1"/>
         <PackageReference Include="Material.Icons.Avalonia" Version="3.0.2"/>
-        <PackageReference Include="MessageBox.Avalonia" Version="3.2.0"/>
+        <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
         <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0"/>
         <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
         <PackageReference Include="NLog" Version="5.4.0"/>
