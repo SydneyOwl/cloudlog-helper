@@ -38,6 +38,8 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 + Debian 9+ / Ubuntu 18.04+ / Other distributions
 + macOS 10.14+
 
+** Note: AOT build support and its corresponding artifacts have been deprecated and removed from the mainline as of v0.4.0 for practical and maintainability reasons.**
+
 ## ⚡️ Quick Start!
 
 > [!TIP]
