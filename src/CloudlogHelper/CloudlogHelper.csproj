@@ -88,31 +88,31 @@
         <EmbeddedResource Update="Resources\Language\Language.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Language\Language.en-us.resx">
+        <EmbeddedResource Update="Resources\Language\Language.en-US.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Language\Language.zh-hans.resx">
+        <EmbeddedResource Update="Resources\Language\Language.zh-Hans.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\DXCC\DXCC.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hans.resx">
+        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-Hans.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\DXCC\DXCC.en-us.resx">
+        <EmbeddedResource Update="Resources\DXCC\DXCC.en-US.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\DXCC\DXCC.ja-jp.resx">
+        <EmbeddedResource Update="Resources\DXCC\DXCC.ja-JP.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Language\Language.ja-jp.resx">
+        <EmbeddedResource Update="Resources\Language\Language.ja-JP.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-hant.resx">
+        <EmbeddedResource Update="Resources\DXCC\DXCC.zh-Hant.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Language\Language.zh-hant.resx">
+        <EmbeddedResource Update="Resources\Language\Language.zh-Hant.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
         <None Remove="Resources\dxcc_info.dat" />
@@ -176,3 +176,4 @@
     </ItemGroup>
 
 </Project>
+

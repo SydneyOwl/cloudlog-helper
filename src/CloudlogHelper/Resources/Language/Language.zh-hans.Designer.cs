@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources.Language {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.zh-hans", typeof(Language_zh_hans).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.zh-Hans", typeof(Language_zh_hans).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -2620,3 +2620,4 @@ namespace CloudlogHelper.Resources.Language {
         }
     }
 }
+
