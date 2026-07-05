@@ -1,7 +1,7 @@
-﻿{
+{
   "0": {
-    "version": 20250825,
-    "attribution": "Maidenhead(mh) data copyright 2018 Stephen Loomis (N0TTL) and Henry Forte (N2VFL), use is granted for others provided this attribution remains in the data",
+    "version": 20260627,
+    "attribution": "Maidenhead(mh) data copyright 2026 Stephen Loomis (N0TTL) and Henry Forte (N2VFL), use is granted for others provided this attribution remains in the data",
     "dxcc": "0",
     "cc": "-",
     "ccc": "-",
@@ -1379,7 +1379,7 @@
   "BV": {
     "cc": "TW",
     "ccc": "TWN",
-    "flag": "fallback.png"
+    "flag": "tw.png"
   },
   "HS": {
     "cc": "TH",
@@ -1654,7 +1654,7 @@
   "BV9P": {
     "cc": "TW",
     "ccc": "TWN",
-    "flag": "fallback.png"
+    "flag": "tw.png"
   },
   "BS7": {
     "cc": "PH",
