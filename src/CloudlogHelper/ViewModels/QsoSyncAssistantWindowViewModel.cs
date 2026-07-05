@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace CloudlogHelper.ViewModels;
 
-public class QsoSyncAssistantWindowViewModel : ViewModelBase
+public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
 {
     /// <summary>
     ///     Logger for the class.
@@ -45,6 +46,8 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
 
     private CancellationTokenSource _source = new();
 
+    private bool _disposed;
+
     public QsoSyncAssistantWindowViewModel()
     {
         if (!Design.IsDesignMode) throw new InvalidOperationException("This should be called from designer only.");
@@ -63,7 +66,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
         _windowManagerService = windowManagerService;
         _inAppNotification = winNotification;
         settingsService = ss;
-        Settings = settingsService.GetCurrentSettings().FastDeepClone();
+        Settings = settingsService.GetCurrentSettings().DeepClone();
 
         SaveConf = ReactiveCommand.Create(_saveAndApplyConf);
 
@@ -112,6 +115,21 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase
     public void EnableExecuteOnStart()
     {
         _executeOnStart = true;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        if (!_source.IsCancellationRequested) _source.Cancel();
+        _source.Dispose();
+        SaveConf.Dispose();
+        StartSyncCommand.Dispose();
+        StopSyncCommand.Dispose();
+        AddLogPathCommand.Dispose();
+        RemoveLogPathCommand.Dispose();
+        GC.SuppressFinalize(this);
     }
 
 

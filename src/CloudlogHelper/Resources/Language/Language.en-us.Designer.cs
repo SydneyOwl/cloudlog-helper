@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources.Language {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.en-us", typeof(Language_en_us).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.en-US", typeof(Language_en_us).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -1229,7 +1229,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please check if OmniRig has been installed correctly. Additionally, OmniRig is currently only supported on non-AOT compiled Windows platforms..
+        ///   Looks up a localized string similar to Please check if OmniRig has been installed correctly. OmniRig is currently only supported on Windows platforms..
         /// </summary>
         public static string OmniRigInitFailed {
             get {
@@ -2620,3 +2620,4 @@ namespace CloudlogHelper.Resources.Language {
         }
     }
 }
+

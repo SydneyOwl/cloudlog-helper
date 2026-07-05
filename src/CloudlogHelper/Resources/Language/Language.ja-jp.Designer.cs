@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources.Language {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.ja-jp", typeof(Language_ja_jp).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.ja-JP", typeof(Language_ja_jp).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -1229,7 +1229,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在、AOTコンパイルされていないWindowsプラットフォームでのみサポートされています。.
+        ///   Looks up a localized string similar to OmniRigが正しくインストールされているか確認してください。また、OmniRigは現在Windowsプラットフォームでのみサポートされています。.
         /// </summary>
         public static string OmniRigInitFailed {
             get {
@@ -2618,3 +2618,4 @@ namespace CloudlogHelper.Resources.Language {
         }
     }
 }
+

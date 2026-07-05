@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.Charts;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,7 +63,7 @@ public class WindowManagerService : IWindowManagerService, IDisposable
     /// </summary>
     /// <param name="window"></param>
     /// <returns></returns>
-    public string Track(Window window)
+    public string Track(Window window, IDisposable? lifetime = null)
     {
         AutoRemove();
         ClassLogger.Trace($"Tracking window {window.DataContext?.GetType()}.");
@@ -82,6 +84,16 @@ public class WindowManagerService : IWindowManagerService, IDisposable
             ClassLogger.Trace($"Window {window.DataContext?.GetType()} released.");
             closedWindow.Closed -= OnWindowClosed;
             _windows.RemoveAll(wr => !wr.Window.TryGetTarget(out var w) || w == closedWindow);
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                lifetime?.Dispose();
+                if (lifetime is null && closedWindow.DataContext is IDisposable disposable) disposable.Dispose();
+
+                closedWindow.Content = null;
+                closedWindow.DataContext = null;
+                NativeMemoryTrimmer.TrimAfterWindowClosed(closedWindow.GetType().Name);
+            }, DispatcherPriority.Background);
         }
     }
 
@@ -108,9 +120,10 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         var tl = toplevel ?? _desktop.MainWindow;
         if (tl is Window parentWindow)
         {
+            var scope = _provider.CreateScope();
             var newWindow = (Window)Activator.CreateInstance(winType)!;
-            newWindow.DataContext = _provider.GetRequiredService(vmType);
-            Track(newWindow);
+            newWindow.DataContext = scope.ServiceProvider.GetRequiredService(vmType);
+            Track(newWindow, scope);
 
             if (dialog) return await newWindow.ShowDialog<T>(parentWindow);
             newWindow.Show();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -25,7 +24,7 @@ public class LogSystemManager : ILogSystemManager, IDisposable
 
     public LogSystemManager()
     {
-        _cachedLogServices = _discoverLogServices();
+        _cachedLogServices = LogServiceTypeRegistry.CreateEmptyServices();
     }
 
     public async Task PreInitLogSystem(IEnumerable<ThirdPartyLogService> ls)
@@ -51,28 +50,6 @@ public class LogSystemManager : ILogSystemManager, IDisposable
     public ThirdPartyLogService[]? GetEmptySupportedLogServices()
     {
         return _cachedLogServices;
-    }
-
-    /// <summary>
-    /// Discovers all ThirdPartyLogService implementations in the assembly.
-    /// </summary>
-    private ThirdPartyLogService[] _discoverLogServices()
-    {
-        var lType = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t.GetCustomAttributes(typeof(LogServiceAttribute), false).Length > 0)
-            .ToList();
-
-        if (lType.GroupBy(n => n).Any(c => c.Count() > 1))
-            throw new InvalidOperationException("Duplicate log service found. This is not allowed!");
-
-        var logServices = lType.Select(x =>
-        {
-            if (!typeof(ThirdPartyLogService).IsAssignableFrom(x))
-                throw new TypeLoadException($"Log service must be assignable to {nameof(ThirdPartyLogService)}");
-            return (ThirdPartyLogService)Activator.CreateInstance(x)!;
-        }).ToArray();
-
-        return logServices;
     }
 
     /// <summary>
@@ -141,8 +118,6 @@ public class LogSystemManager : ILogSystemManager, IDisposable
     /// Applies LogSystemConfig changes to ThirdPartyLogService instances.
     /// Used by ApplicationSettingsService to persist field values.
     /// </summary>
-    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(ThirdPartyLogService))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(LogSystemConfig))]
     public void ApplyLogServiceChanges(List<ThirdPartyLogService> logServices, List<LogSystemConfig> rawConfigs)
     {
         if (rawConfigs is null) return;

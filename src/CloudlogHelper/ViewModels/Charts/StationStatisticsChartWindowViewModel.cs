@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -89,7 +90,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         {
             _chartDataCacheService.GetItemAddedObservable()
                 .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleSec))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => { UpdateChart(); })
                 .DisposeWith(disposable);
             
@@ -104,7 +105,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
                     x => x.ShowLocation,
                     x => x.FilterDupeCallsign)
                 .Throttle(TimeSpan.FromMilliseconds(200))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => UpdateChart())
                 .DisposeWith(disposable);
         });

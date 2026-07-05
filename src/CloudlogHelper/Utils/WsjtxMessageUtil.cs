@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.Json;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
@@ -31,7 +32,7 @@ public class WsjtxMessageUtil
     }
     public static string? ExtractGridFromMessage(string message)
     {
-        var messageInfo = message.Trim().Split(" ");
+        var messageInfo = message.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (messageInfo.Length < 3) return null;
 
         var grid = messageInfo[^1].Trim();
@@ -41,7 +42,7 @@ public class WsjtxMessageUtil
 
     public static string? ExtractDeFromMessage(string message)
     {
-        var messageInfo = message.Trim().Split(" ");
+        var messageInfo = message.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (messageInfo.Length < 3) return null;
 
         var de = messageInfo[^2].Trim();

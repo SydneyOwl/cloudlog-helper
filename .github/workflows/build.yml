@@ -1,4 +1,4 @@
-﻿name: Cloudlog Helper Cross Build
+name: Cloudlog Helper Cross Build
 
 permissions:
   contents: write
@@ -20,13 +20,13 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 8.0.x
 
       - name: Execute test
         run: |
           dotnet test
 
-  build-non-AOT:
+  build-windows-release:
     needs: exec-tests
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: windows-2022
@@ -39,9 +39,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.0.x'
       
-      - name: Build nonAOT application
+      - name: Build Windows application
         shell: pwsh
         run: |
           $tagName = "${{ github.ref_name }}"
@@ -50,38 +50,63 @@ jobs:
           }else{
             $tagName = $tagName -replace '^[vV]', ''
           }
-          ./ci.ps1 -Version "$tagName"
+          ./ci.ps1 -Version "$tagName" -Platforms win-x64,win-x86,win-arm64
           
-      - name: Upload all artifacts
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-outputs
+          name: build-outputs-windows
+          path: src/CloudlogHelper/bin/*.zip
+
+  build-nonwindows-release:
+    needs: exec-tests
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: 'true'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Linux and macOS application
+        shell: bash
+        run: |
+          tagName="${{ github.ref_name }}"
+          if [ -z "$tagName" ]; then
+            tagName="dev"
+          else
+            tagName="${tagName#[vV]}"
+          fi
+
+          chmod +x ./build.sh
+          ./build.sh \
+            --tag "$tagName" \
+            --platforms linux-x64,linux-arm,linux-arm64,linux-musl-x64,osx-x64,osx-arm64 \
+            --install-ubuntu-chain
+
+      - name: Upload Linux and macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs-nonwindows
           path: src/CloudlogHelper/bin/*.zip
           
-  do-chmod:
-    needs: build-non-AOT
+  release:
+    needs:
+      - build-windows-release
+      - build-nonwindows-release
     runs-on: ubuntu-22.04
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-outputs
+          pattern: build-outputs-*
+          merge-multiple: true
           path: ./downloaded-builds
-          
-      - name: unzip and repack
-        shell: bash
-        run: |
-          for zip_file in downloaded-builds/*.zip; do
-           [ -f "$zip_file" ] || continue
-           if [[ $(basename "$zip_file") =~ [Ll]inux|[Oo][Ss][Xx] ]]; then
-             temp_dir=$(mktemp -d)
-             unzip -q "$zip_file" -d "$temp_dir"
-             find "$temp_dir" -type f -name "CloudlogHelper" -exec chmod +x {} \;
-             rm -f "$zip_file"
-             (cd "$temp_dir" && zip -q -r "$OLDPWD/$zip_file" .)
-             rm -rf "$temp_dir"
-           fi
-          done
 
       - name: Release it
         uses: softprops/action-gh-release@v2
@@ -89,132 +114,3 @@ jobs:
         with:
           files: |
             downloaded-builds/*.zip
-
-  build-windows_x86_64-AOT:
-    needs: exec-tests
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: windows-2022
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: 'true'
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Build windows AOT application
-        shell: pwsh
-        run: |
-          $tagName = "${{ github.ref_name }}"
-          if ([string]::IsNullOrEmpty($tagName)) {
-            $tagName = "dev"
-          }else{
-            $tagName = $tagName -replace '^[vV]', ''
-          }
-          ./ci.ps1 -Version "$tagName" -Platforms win-x64,win-x86 -aot $true
-
-      - name: Release it
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            src/CloudlogHelper/bin/*.zip
-
-  build-windows_arm64-AOT:
-    needs: exec-tests
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: windows-11-arm
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: 'true'
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Build windows AOT application
-        shell: pwsh
-        run: |
-          $tagName = "${{ github.ref_name }}"
-          if ([string]::IsNullOrEmpty($tagName)) {
-            $tagName = "dev"
-          }else{
-            $tagName = $tagName -replace '^[vV]', ''
-          }
-          ./ci.ps1 -Version "$tagName" -Platforms win-arm64 -aot $true
-
-      - name: Release it
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            src/CloudlogHelper/bin/*.zip
-
-
-  build-linux-x64-AOT:
-    needs: exec-tests
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: 'true'
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-          
-      - name: Build linux AOT application
-        shell: bash
-        run: |
-          tagName="${GITHUB_REF_NAME:-dev}"
-          tagName="${tagName#v}"
-          tagName="${tagName#V}"
-          chmod +x ./build.sh
-          ./build.sh --tag "$tagName" --platforms linux-x64 --aot --install-ubuntu-chain
-
-      - name: Release it
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            src/CloudlogHelper/bin/*.zip
-            
-  build-linux-arm32_64-AOT:
-    needs: exec-tests
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-22.04-arm
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: 'true'
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Build linux AOT application
-        shell: bash
-        run: |
-          tagName="${GITHUB_REF_NAME:-dev}"
-          tagName="${tagName#v}"
-          tagName="${tagName#V}"
-          chmod +x ./build.sh
-          ./build.sh --tag "$tagName" --platforms linux-arm,linux-arm64 --aot --install-ubuntu-chain --install-arm-chain
-
-      - name: Release it
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            src/CloudlogHelper/bin/*.zip

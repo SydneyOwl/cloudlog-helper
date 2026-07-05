@@ -2,11 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -443,8 +443,6 @@ public class PluginService : IPluginService, IDisposable
     private readonly BasicSettings _basicSettings;
     private readonly CompositeDisposable _disp = new();
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ObservableCollection<Decode>))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(List<PluginInfo>))]
     public PluginService(
         IApplicationSettingsService settingsService,
         IRigBackendManager rigBackendManager,
@@ -464,13 +462,13 @@ public class PluginService : IPluginService, IDisposable
         _qsoUploadService = qsoUploadService;
 
         // high frequency msgs like deocded
-        MessageBus.Current.RegisterScheduler<PluginEvent>(RxApp.TaskpoolScheduler);
+        MessageBus.Current.RegisterScheduler<PluginEvent>(RxSchedulers.TaskpoolScheduler);
 
         // batch send decode
         _disp.Add(
             _wsjtxDecodeCache.ObserveCollectionChanges()
                 .Throttle(TimeSpan.FromSeconds(2))
-                .ObserveOn(RxApp.TaskpoolScheduler)
+                .ObserveOn(RxSchedulers.TaskpoolScheduler)
                 .Subscribe(async void (changes) =>
                 {
                     try

@@ -1,4 +1,4 @@
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using CloudlogHelper.ViewModels;
 
 namespace CloudlogHelper.Views;

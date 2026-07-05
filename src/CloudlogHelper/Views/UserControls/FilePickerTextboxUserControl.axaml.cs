@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using CloudlogHelper.ViewModels.UserControls;
 
 namespace CloudlogHelper.Views.UserControls;

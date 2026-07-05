@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using CloudlogHelper.Database;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;

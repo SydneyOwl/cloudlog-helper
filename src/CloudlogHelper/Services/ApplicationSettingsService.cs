@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using AutoMapper;
 using CloudlogHelper.Enums;
@@ -19,8 +15,6 @@ using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
 using ReactiveUI;
-using ReactiveUI.Validation.Contexts;
-using ReactiveUI.Validation.Helpers;
 
 namespace CloudlogHelper.Services;
 
@@ -63,7 +57,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         {
             ClassLogger.Trace($"Settings applied by {owner.GetType().FullName}");
 
-            _oldSettings = _currentSettings.FastDeepClone();
+            _oldSettings = _currentSettings.DeepClone();
             _mapper.Map(_draftSettings, _currentSettings);
             _applyLogServiceChanges(rawConfigs);
 
@@ -125,7 +119,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
                     { Part = ChangedPart.RigService });
             }
 
-            _draftSettings = _currentSettings!.FastDeepClone();
+            _draftSettings = _currentSettings!.DeepClone();
         }
         finally
         {
@@ -141,7 +135,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     public ApplicationSettings GetCurrentDraftSettingsSnapshot()
     {
-        return _draftSettings.FastDeepClone()!;
+        return _draftSettings.DeepClone()!;
     }
 
     public bool TryGetDraftSettings(object owner, out ApplicationSettings? draftSettings)
@@ -174,8 +168,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
         _draftSettings.BasicSettings.InstanceName = ApplicationStartUpUtil.GenerateRandomInstanceName(10);
         _draftSettings.BasicSettings.LanguageType = TranslationHelper.DetectDefaultLanguage();
         _draftSettings.LogServices.AddRange(logServices);
-        _currentSettings = _draftSettings.FastDeepClone();
-        _oldSettings = _draftSettings.FastDeepClone();
+        _currentSettings = _draftSettings.DeepClone();
+        _oldSettings = _draftSettings.DeepClone();
     }
 
     public static ApplicationSettingsService GenerateApplicationSettingsService(ILogSystemManager logSystemManager,
@@ -208,7 +202,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
             }
             
             applicationSettingsService._draftSettings =
-                JsonSerializer.Deserialize(defaultConf, SourceGenerationContext.Default.ApplicationSettings);
+                JsonSerializer.Deserialize<ApplicationSettings>(defaultConf, AppJsonSerializerOptions.Settings);
             if (applicationSettingsService._draftSettings is null)
             {
                 ClassLogger.Info("Settings file not found. creating a new one instead.");
@@ -237,8 +231,8 @@ public class ApplicationSettingsService : IApplicationSettingsService
                 applicationSettingsService._draftSettings.LogServices.Add(service);
             }
 
-            applicationSettingsService._currentSettings = applicationSettingsService._draftSettings.FastDeepClone();
-            applicationSettingsService._oldSettings = applicationSettingsService._draftSettings.FastDeepClone();
+            applicationSettingsService._currentSettings = applicationSettingsService._draftSettings.DeepClone();
+            applicationSettingsService._oldSettings = applicationSettingsService._draftSettings.DeepClone();
 
             ClassLogger.Trace("Config restored successfully.");
         }
@@ -332,13 +326,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         try
         {
             File.WriteAllText(DefaultConfigs.DefaultSettingsFile,
-                JsonSerializer.Serialize(settings, new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                    TypeInfoResolver = SourceGenerationContext.Default
-                        .WithAddedModifier(JsonExtensions.IgnorePropertiesDeclaredBy<ReactiveValidationObject>())
-                        .WithAddedModifier(JsonExtensions.IgnorePropertiesDeclaredBy<ReactiveObject>())
-                }));
+                JsonSerializer.Serialize(settings, AppJsonSerializerOptions.Settings));
             ClassLogger.Trace(
                 $"_writeCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
         }
@@ -347,8 +335,6 @@ public class ApplicationSettingsService : IApplicationSettingsService
             ClassLogger.Error(e1, "Failed to write settings. Ignored.");
         }
     }
-    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(ThirdPartyLogService))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(LogSystemConfig))]
     private void _applyLogServiceChanges(List<LogSystemConfig>? rawConfigs = null)
     {
         if (rawConfigs is null) return;

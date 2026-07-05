@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Avalonia.Markup.Xaml.MarkupExtensions;
+using Antelcat.I18N.Avalonia;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using NLog;

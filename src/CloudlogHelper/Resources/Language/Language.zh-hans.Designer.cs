@@ -38,7 +38,7 @@ namespace CloudlogHelper.Resources.Language {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.zh-hans", typeof(Language_zh_hans).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CloudlogHelper.Resources.Language.Language.zh-Hans", typeof(Language_zh_hans).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -1230,7 +1230,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请检查OmniRig是否已正确安装，另外OmniRIg目前仅在非AOT编译的Windows平台上支持。.
+        ///   Looks up a localized string similar to 请检查OmniRig是否已正确安装，另外OmniRig目前仅在Windows平台上支持。.
         /// </summary>
         public static string OmniRigInitFailed {
             get {
@@ -2620,3 +2620,4 @@ namespace CloudlogHelper.Resources.Language {
         }
     }
 }
+

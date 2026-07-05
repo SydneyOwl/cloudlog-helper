@@ -33,20 +33,12 @@ While providing first-class support for Cloudlog and Wavelog, it also functions 
 
 ## 💻 Supported Platforms
 
-### non-AOT version (recommended)
+### Supported systems
 + Windows 7 SP1+
 + Debian 9+ / Ubuntu 18.04+ / Other distributions
 + macOS 10.14+
 
-### AOT version
-
-> [!TIP]
-> AOT version is still experimental. It can improve startup speed and reduce memory/CPU usage, 
-> but some functionalities have incomplete support (Known items include system native notifications, OmniRig, and multi-language). 
-> Unless your device has limited resources and you do not require the features mentioned above, it is recommended to download the non-AOT version.
-
-+ Windows 7 SP1+
-+ Debian 11+ / Ubuntu 22.04+ / Other distributions (glibc >= 2.34)
+**Note: AOT build support and its corresponding artifacts have been deprecated and removed from the mainline as of v0.4.0 for practical and maintainability reasons.**
 
 ## ⚡️ Quick Start!
 
@@ -286,10 +278,10 @@ After compilation, you can find the compiled software in `src/CloudlogHelper/bin
 
 > [!NOTE]
 >
-> Linux does not support cross-compilation to Windows-specific frameworks (net6.0-windows10.0.17763.0). 
+> Linux does not support cross-compilation to Windows-specific frameworks (net8.0-windows10.0.17763.0). 
 
 Please ensure your build environment has following tools installed:
-+ .net6
++ .net8
 + git
 + dotnet
 + curl
@@ -325,6 +317,17 @@ After compilation, you can find the compiled software in `src/CloudlogHelper/bin
 
 ## ✨ Miscellaneous
 
+### 🐧 Linux Memory Trimming
+
+On Linux, Cloudlog Helper performs an additional native memory trim after closing secondary windows
+to reduce RSS growth caused by native UI/runtime allocations. 
+
+If this causes compatibility issues on your distribution, disable it before startup:
+
+```bash
+DISABLE_MALLOC_TRIM_AFTER_WINDOW_CLOSED=1 ./CloudlogHelper
+```
+
 ### ⬆️ Upgrading Cloudlog Helper
 
 + v0.2.0 and later: No additional steps required. Simply download the latest version of Cloudlog Helper and open it.
@@ -347,7 +350,6 @@ The program automatically discovers classes marked with `LogServiceAttribute`, a
 + Create a class inheriting from `ThirdPartyLogService` and mark it with `[LogService("Service Name")]`.
 + Add properties for each user-configurable field (e.g., API key, username) and mark them with `[UserInput("Display Name")]`.
 + Implement two methods: one to test the connection to the service backend and another to upload QSO data to the log service. You do not need to handle potential exceptions within these methods.
-+ Add attribute `[JsonDerivedType(typeof(YOURSERVICE), nameof(YOURSERVICE))]` to ThirdPartyLogService to ensure log service settings are correctly recognized and persisted in AOT environments.
 
 ### 📡 Custom Backend Support
 

@@ -3,10 +3,11 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Avalonia.Threading;
 using CloudlogHelper.ViewModels;
 using ReactiveUI;
@@ -20,9 +21,12 @@ public partial class QsoSyncAssistantWindow : ReactiveWindow<QsoSyncAssistantWin
         InitializeComponent();
         this.WhenActivated(disposables =>
         {
+            var localLogPathCollection = ViewModel?.Settings.QsoSyncAssistantSettings.LocalLogPath;
+            if (localLogPathCollection is null) return;
+
             Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                    h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged += h,
-                    h => ViewModel!.Settings.QsoSyncAssistantSettings.LocalLogPath!.CollectionChanged -= h)
+                    h => localLogPathCollection.CollectionChanged += h,
+                    h => localLogPathCollection.CollectionChanged -= h)
                 .Subscribe(args => { localLogPath.SelectedIndex = args.EventArgs.NewStartingIndex; })
                 .DisposeWith(disposables);
             

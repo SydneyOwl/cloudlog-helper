@@ -3,6 +3,7 @@ using System.Linq;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Platform.Storage;
@@ -76,7 +77,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
             _chartDataCacheService.GetItemAddedObservable()
                 .Throttle(TimeSpan.FromSeconds(DefaultConfigs.UpdateChartsThrottleSec))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => { UpdatePolar(); })
                 .DisposeWith(disposable);
 
@@ -88,7 +89,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
                     x => x.FilterDupeCallsign,
                     x => x.QSOSamples)
                 .Throttle(TimeSpan.FromMilliseconds(500))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => UpdatePolar())
                 .DisposeWith(disposable);
 
@@ -97,7 +98,7 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
                     x => x.SelectedMode,
                     x => x.UpdatePaused)
                 .Throttle(TimeSpan.FromMilliseconds(352))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => UpdatePolar())
                 .DisposeWith(disposable);
         });

@@ -18,7 +18,7 @@
                            Classes="page-hint" />
                 <TextBox Classes="input"
                          Text="{Binding BasicSettings.MyMaidenheadGrid}"
-                         Watermark="e.g. OM89" />
+                         PlaceholderText="e.g. OM89" />
             </StackPanel>
         </Border>
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
@@ -54,8 +54,6 @@ Inner Exception Stack(if any): {ex.InnerException?.StackTrace}");
 
     private static void HandleParseErrors(IEnumerable<Error> errors)
     {
-        // Handle command line parsing errors here
-        // For example, you might want to display help text or exit
         foreach (var error in errors) Console.WriteLine($@"Error while parsing args: {error}");
         Environment.Exit(1);
     }
@@ -67,7 +65,7 @@ Inner Exception Stack(if any): {ex.InnerException?.StackTrace}");
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseReactiveUI();
+            .UseReactiveUI(_ => { });
     }
 
     // Used by visual designer.
@@ -77,6 +75,6 @@ Inner Exception Stack(if any): {ex.InnerException?.StackTrace}");
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseReactiveUI();
+            .UseReactiveUI(_ => { });
     }
 }

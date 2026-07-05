@@ -34,7 +34,7 @@
                          Grid.Column="1"
                          Classes="setting-control"
                          Text="{Binding CloudlogSettings.CloudlogUrl}"
-                         Watermark="{I18N {x:Static resources:LangKeys.UrlExample}}" />
+                         PlaceholderText="{I18N {x:Static resources:LangKeys.UrlExample}}" />
 
                 <TextBlock Grid.Row="1"
                            Grid.Column="0"

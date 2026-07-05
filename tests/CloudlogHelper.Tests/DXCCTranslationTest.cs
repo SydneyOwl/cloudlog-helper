@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Avalonia.Markup.Xaml.MarkupExtensions;
+using Antelcat.I18N.Avalonia;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using Xunit.Abstractions;

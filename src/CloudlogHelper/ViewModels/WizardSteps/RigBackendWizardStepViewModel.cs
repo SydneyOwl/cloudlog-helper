@@ -147,7 +147,7 @@ public sealed class RigBackendWizardStepViewModel : WizardStepViewModelBase
     {
         try
         {
-            if (VersionInfo.BuildType == "AOT" || !OperatingSystem.IsWindows())
+            if (!OperatingSystem.IsWindows())
             {
                 await Dispatcher.UIThread.InvokeAsync(() => { OmniRigInited = false; });
                 return;

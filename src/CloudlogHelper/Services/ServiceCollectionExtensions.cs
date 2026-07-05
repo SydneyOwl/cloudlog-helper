@@ -42,7 +42,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
         services.AddSingleton<ILogSystemManager, LogSystemManager>();
-        services.AddSingleton<ICountryService, CountryService>();
         services.AddSingleton<IPluginService, PluginService>();
         return services;
     }
@@ -104,6 +103,10 @@ public static class ServiceCollectionExtensions
                 var windowsNotificationManager = new WindowsNotificationManager(context);
                 await windowsNotificationManager.Initialize();
                 services.AddSingleton<INotificationManager>(windowsNotificationManager);
+#else
+                // debug; e.g. build with net8.0 on windows instead of net8.0-windows10.0.17763.0
+                ClassLogger.Info("Using fallback notification.");
+                services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
 #endif
             }
             else if (OperatingSystem.IsLinux())

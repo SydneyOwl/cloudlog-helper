@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
 using CloudlogHelper.Converters;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
-using FastCloner.SourceGenerator.Shared;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Helpers;
 
@@ -13,7 +10,6 @@ namespace CloudlogHelper.Models;
 /// <summary>
 ///     Application-wide settings
 /// </summary>
-[FastClonerClonable]
 public class ApplicationSettings : ReactiveValidationObject
 {
     /// <summary>
@@ -68,7 +64,5 @@ public class ApplicationSettings : ReactiveValidationObject
     ///     QSA Settings
     /// </summary>
     public QsoSyncAssistantSettings QsoSyncAssistantSettings { get; set; } = new();
-    
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(List<ThirdPartyLogService>))]
     public ApplicationSettings(){}
 }
