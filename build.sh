@@ -199,6 +199,14 @@ prepare_hamlib() {
     ls -la "$dst_dir"
 }
 
+remove_debug_symbols() {
+    local target_dir="$1"
+
+    if [ -d "$target_dir" ]; then
+        find "$target_dir" -type f \( -name "*.pdb" -o -name "*.dbg" \) -delete
+    fi
+}
+
 # Download dependencies based on target platforms
 if [ -z "$TARGET_PLATFORMS" ] || [[ "$TARGET_PLATFORMS" == *"win-x86"* ]]; then
     download_and_extract \
@@ -321,6 +329,7 @@ build_and_package() {
         local bin_path="$(pwd)/bin"
         cp Assets/icon.icns "$publish_path/CloudlogHelper.app/Contents/Resources" 2>/dev/null || true
         chmod +x "$publish_path/CloudlogHelper.app/Contents/MacOS/CloudlogHelper" 2>/dev/null || true
+        remove_debug_symbols "$publish_path"
 
         local zip_name
         if [ -n "$TAG_NAME" ]; then
@@ -349,8 +358,7 @@ build_and_package() {
     
     local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"
     local bin_path="$(pwd)/bin"
-    rm -f "$publish_path/CloudlogHelper.pdb"
-    rm -f "$publish_path/CloudlogHelper.dbg"
+    remove_debug_symbols "$publish_path"
     
     local zip_name
     if [ -n "$TAG_NAME" ]; then

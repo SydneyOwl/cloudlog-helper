@@ -76,6 +76,19 @@ function Need($name)
     return $Platforms -contains $name
 }
 
+function Remove-DebugSymbols
+{
+    param(
+        [string]$Path
+    )
+
+    if (Test-Path $Path)
+    {
+        Get-ChildItem -Path $Path -Recurse -File -Include "*.pdb", "*.dbg" |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+    }
+}
+
 ### Windows x86
 if (Need "win-x86")
 {
@@ -186,6 +199,7 @@ function Build-And-Package-MacOS
     $publish_path = "bin/Release/$frameworkName/$runtime/publish"
 
     Copy-Item Assets/icon.icns $publish_path/CloudlogHelper.app/Contents/Resources
+    Remove-DebugSymbols -Path $publish_path
     Compress-Archive -Path $publish_path/CloudlogHelper.app -DestinationPath $zipName -Force
     Write-Host "Created: $zipName"
 }
@@ -218,8 +232,7 @@ function Build-And-Package
     -p:IncludeNativeLibrariesForSelfExtract=true
 
     $publish_path = "bin/Release/$frameworkName/$runtime/publish"
-    Remove-Item "$publish_path/CloudlogHelper.pdb" -ErrorAction SilentlyContinue
-    Remove-Item "$publish_path/CloudlogHelper.dbg" -ErrorAction SilentlyContinue
+    Remove-DebugSymbols -Path $publish_path
 
     $zipName = ""
     if ($Version)
