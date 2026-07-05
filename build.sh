@@ -323,6 +323,7 @@ build_and_package() {
         dotnet publish -c Release -r "$runtime" \
             -f "$framework_name" \
             -t:BundleApp \
+            --self-contained true \
             -p:UseAppHost=true
 
         local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"

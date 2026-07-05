@@ -192,6 +192,7 @@ function Build-And-Package-MacOS
     dotnet publish -c Release -r $runtime `
     -f $frameworkName `
     -t:BundleApp `
+    --self-contained true `
     -p:UseAppHost=true
     
     $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
