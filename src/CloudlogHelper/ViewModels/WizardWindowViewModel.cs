@@ -231,9 +231,9 @@ public class WizardWindowViewModel : ViewModelBase
 
         DraftSettings.SkipWizard = true;
         _cloudlogStep.ApplyCloudlogAutomationByChoice();
-
-        _settingsService.ApplySettings(this, LogSystems.ToList());
+        
         _isApplying = true;
+        _settingsService.ApplySettings(this, LogSystems.ToList());
         _source.Cancel();
         CloseRequested = true;
     }
@@ -242,8 +242,17 @@ public class WizardWindowViewModel : ViewModelBase
     {
         if (_isApplying) return;
 
-        _settingsService.RestoreSettings(this);
         _isApplying = true;
+        _settingsService.RestoreSettings(this);
+        if (_settingsService.TryGetDraftSettings(this, out var draftSettings))
+        {
+            if (draftSettings is not null)
+            {
+                draftSettings.SkipWizard = true;
+                _settingsService.ApplySettings(this);
+            }
+        }
+        
         _source.Cancel();
         CloseRequested = true;
         await Task.CompletedTask;
