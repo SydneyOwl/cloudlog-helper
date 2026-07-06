@@ -348,13 +348,18 @@ build_and_package() {
         return
     fi
 
+    local self_extract_arg="-p:IncludeNativeLibrariesForSelfExtract=true"
+    if [[ "$runtime" == linux-* ]]; then
+        self_extract_arg="-p:IncludeAllContentForSelfExtract=true"
+    fi
+
     dotnet publish -c Release -r "$runtime" \
         -f "$framework_name" \
         -p:PublishSingleFile=true \
         --self-contained true \
         -p:PublishReadyToRun=false \
         -p:PublishTrimmed=false \
-        -p:IncludeAllContentForSelfExtract=true
+        "$self_extract_arg"
     
     
     local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"

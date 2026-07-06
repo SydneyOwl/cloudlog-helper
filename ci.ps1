@@ -223,6 +223,10 @@ function Build-And-Package
     }
 
     Write-Host "Building for $runtime ..." -ForegroundColor Cyan
+    $selfExtractArg = "-p:IncludeNativeLibrariesForSelfExtract=true"
+    if ($runtime -like "linux-*") {
+        $selfExtractArg = "-p:IncludeAllContentForSelfExtract=true"
+    }
 
     dotnet publish -c Release -r $runtime `
     -f $frameworkName `
@@ -230,7 +234,7 @@ function Build-And-Package
     --self-contained true `
     -p:PublishReadyToRun=false `
     -p:PublishTrimmed=false `
-    -p:IncludeAllContentForSelfExtract=true
+    $selfExtractArg
 
     $publish_path = "bin/Release/$frameworkName/$runtime/publish"
     Remove-DebugSymbols -Path $publish_path
