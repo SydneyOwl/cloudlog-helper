@@ -230,7 +230,7 @@ function Build-And-Package
     --self-contained true `
     -p:PublishReadyToRun=false `
     -p:PublishTrimmed=false `
-    -p:IncludeNativeLibrariesForSelfExtract=true
+    -p:IncludeAllContentForSelfExtract=true
 
     $publish_path = "bin/Release/$frameworkName/$runtime/publish"
     Remove-DebugSymbols -Path $publish_path

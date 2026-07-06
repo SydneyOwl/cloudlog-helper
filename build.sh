@@ -354,7 +354,7 @@ build_and_package() {
         --self-contained true \
         -p:PublishReadyToRun=false \
         -p:PublishTrimmed=false \
-        -p:IncludeNativeLibrariesForSelfExtract=true
+        -p:IncludeAllContentForSelfExtract=true
     
     
     local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"
