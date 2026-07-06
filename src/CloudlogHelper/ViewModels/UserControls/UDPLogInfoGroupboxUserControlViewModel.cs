@@ -26,7 +26,6 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using DesktopNotifications;
 using DynamicData;
 using DynamicData.Binding;
 using MsBox.Avalonia.Enums;
@@ -36,7 +35,6 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
-using Notification = DesktopNotifications.Notification;
 
 namespace CloudlogHelper.ViewModels.UserControls;
 
@@ -541,11 +539,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         if (_udpServerService.IsNotifyOnQsoMade())
         {
-            _ = _nativeNotificationManager.ShowNotification(new Notification
-            {
-                Title = $"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
-                Body = rcd.FormatToReadableContent(true)
-            });
+            _ = _nativeNotificationManager.ShowNotification($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
+                rcd.FormatToReadableContent(true));
         }
     }
 

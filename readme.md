@@ -418,6 +418,7 @@ C# SDK: [clh-plugin-csharp-sdk](https://github.com/SydneyOwl/clh-plugin-csharp-s
 + [Cloudlog](https://github.com/magicbug/Cloudlog): Web-based amateur radio logging application. The icons in this software are modified from the icons of this project. (MIT)
 + [GridTracker](https://gridtracker.org/): GridTracker is a warehouse of amateur radio information presented in an easy to use interface. The logic for mapping DXCC entities to their respective countries is derived from this application.
 + [country-flags](https://github.com/hampusborgos/country-flags): This repository contains accurate renders of all the worlds flags in SVG and PNG format.
++ [OsNotifications](https://github.com/DemonExposer/OsNotifications): A cross-platform library triggering the native OS notification system to display a notification in C#. Notifcations from console and GUI can be made.
 
 ## 📝 License
 

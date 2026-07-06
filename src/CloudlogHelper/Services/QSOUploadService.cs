@@ -11,7 +11,6 @@ using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
-using DesktopNotifications;
 using NLog;
 
 namespace CloudlogHelper.Services;
@@ -458,17 +457,12 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     {
         try
         {
-            var notification = new Notification
-            {
-                Title = success 
-                    ? $"{TranslationHelper.GetString(LangKeys.QsoUploaded)} - {rcd.DXCall}"
-                    : $"{TranslationHelper.GetString(LangKeys.FailedQso)} - {rcd.DXCall}",
-                Body = success 
+            await _notificationManager.ShowNotification(success 
+                ? $"{TranslationHelper.GetString(LangKeys.QsoUploaded)} - {rcd.DXCall}"
+                : $"{TranslationHelper.GetString(LangKeys.FailedQso)} - {rcd.DXCall}",
+                success 
                     ? rcd.FormatToReadableContent(true)
-                    : rcd.FailReason ?? TranslationHelper.GetString(LangKeys.QsoUploadFailed)
-            };
-
-            await _notificationManager.ShowNotification(notification);
+                    : rcd.FailReason ?? TranslationHelper.GetString(LangKeys.QsoUploadFailed));
         }
         catch (Exception ex)
         {

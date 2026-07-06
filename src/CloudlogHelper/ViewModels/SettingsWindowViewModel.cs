@@ -24,7 +24,6 @@ using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.UserControls;
-using DesktopNotifications;
 using DynamicData;
 using Flurl.Http;
 using MsBox.Avalonia.Enums;

@@ -9,12 +9,6 @@ using CloudlogHelper.ViewModels;
 using CloudlogHelper.ViewModels.Charts;
 using CloudlogHelper.ViewModels.UserControls;
 using CloudlogHelper.Views;
-using DesktopNotifications;
-using DesktopNotifications.FreeDesktop;
-#if WINDOWS
-using System.Runtime.InteropServices;
-using DesktopNotifications.Windows;
-#endif
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 
@@ -93,45 +87,19 @@ public static class ServiceCollectionExtensions
     {
         try
         {
-            if (OperatingSystem.IsWindows() &&
-                Environment.OSVersion.Version >= new Version(10, 0))
-            {
-#if WINDOWS
-                // only enabled on win10 or later
-                ClassLogger.Info("Using windows native notification.");
-                var context = WindowsApplicationContext.FromCurrentProcess();
-                var windowsNotificationManager = new WindowsNotificationManager(context);
-                await windowsNotificationManager.Initialize();
-                services.AddSingleton<INotificationManager>(windowsNotificationManager);
-#else
-                // debug; e.g. build with net8.0 on windows instead of net8.0-windows10.0.17763.0
-                ClassLogger.Info("Using fallback notification.");
-                services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
-#endif
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                ClassLogger.Info("Using dbus native notification.");
-                var context = FreeDesktopApplicationContext.FromCurrentProcess();
-                var freeDesktopNotificationManager = new FreeDesktopNotificationManager(context);
-                await freeDesktopNotificationManager.Initialize();
-                services.AddSingleton<INotificationManager>(freeDesktopNotificationManager);
-            }
-            else if (OperatingSystem.IsMacOS())
-            {
-                ClassLogger.Info("Using fallback notification for macOS.");
-                services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
-            }
-            else
-            {
-                ClassLogger.Info("Using fallback notification.");
-                services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
-            }
+            var manager = new OsNotificationsManager();
+            await manager.Initialize();
+            
+            services.AddSingleton<INotificationManager>(manager);
+            ClassLogger.Debug("Using platform notification manager");
         }
         catch (Exception e)
         {
-            ClassLogger.Warn(e, "Failed to apply native notification - Using fallback options.");
-            services.AddSingleton<INotificationManager>(new DefaultDesktopNotificationManager());
+            var manager = new FallbackDesktopNotificationManager();
+            await manager.Initialize();
+            
+            services.AddSingleton<INotificationManager>(manager);
+            ClassLogger.Warn(e, "Failed to apply native notification - Using fallback options."); 
         }
         
         return services;
