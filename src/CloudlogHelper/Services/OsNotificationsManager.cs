@@ -10,14 +10,14 @@ public class OsNotificationsManager : INotificationManager
 {
     public Task Initialize()
     {
-        Notifications.BundleIdentifier = "com.sydneyowl.cloudloghelper";
+        Notifications.ApplicationIdentifier = "com.sydneyowl.cloudloghelper";
+        Notifications.ApplicationName = "CloudlogHelper";
         Notifications.SetGuiApplication(true);
         return Task.CompletedTask;
     }
 
-    public Task ShowNotification(string title, string message = "", string informativeText = "")
+    public async Task ShowNotification(string title, string message = "", string informativeText = "")
     {
-        Notifications.ShowNotification(title, message, informativeText);
-        return Task.CompletedTask;
+        await Notifications.ShowNotificationAsync(title, message, informativeText);
     }
 }

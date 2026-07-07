@@ -46,7 +46,7 @@
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="OsNotificationsNet6" Version="1.2.0" />
+        <PackageReference Include="OsNotificationsNet6" Version="1.2.1" />
         <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.3"/>
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
         <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.11.0"/>
