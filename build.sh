@@ -1,5 +1,21 @@
 #!/bin/bash
-set -e 
+set -e
+
+# Resolve script directory for absolute paths
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VERSION_INFO_PATH="$SCRIPT_DIR/src/CloudlogHelper/Resources/VersionInfo.cs"
+VERSION_INFO_BAK="$SCRIPT_DIR/src/CloudlogHelper/Resources/VersionInfo.bak"
+
+# Ensure VersionInfo.cs is restored on script exit (even on failure)
+cleanup() {
+    if [ -f "$VERSION_INFO_BAK" ]; then
+        rm -f "$VERSION_INFO_PATH"
+        mv "$VERSION_INFO_BAK" "$VERSION_INFO_PATH"
+        echo "Restored $VERSION_INFO_PATH"
+    fi
+}
+trap cleanup EXIT
+
 TAG_NAME=""
 TARGET_PLATFORMS=""
 BUILD_TYPE="NORMAL"
@@ -120,9 +136,6 @@ fi
 cd src/CloudlogHelper || { echo "Error: Directory src/CloudlogHelper not found"; exit 1; }
 
 # Backup and modify version info file
-VERSION_INFO_PATH="Resources/VersionInfo.cs"
-VERSION_INFO_BAK="Resources/VersionInfo.bak"
-
 if [ ! -f "$VERSION_INFO_PATH" ]; then
     echo "Error: Version info file $VERSION_INFO_PATH not found"
     exit 1
@@ -320,11 +333,14 @@ build_and_package() {
     echo "  Framework: $framework_name"
 
     if [[ "$runtime" == osx-* ]]; then
+        local version_str="${TAG_NAME:-0.0.0}"
         dotnet publish -c Release -r "$runtime" \
             -f "$framework_name" \
             -t:BundleApp \
             --self-contained true \
-            -p:UseAppHost=true
+            -p:UseAppHost=true \
+            -p:CFBundleVersion="$version_str" \
+            -p:CFBundleShortVersionString="$version_str"
 
         local publish_path="$(pwd)/bin/Release/$framework_name/$runtime/publish"
         local bin_path="$(pwd)/bin"
@@ -428,10 +444,6 @@ else
         esac
     done
 fi
-
-# Restore original version info file
-rm -f "$VERSION_INFO_PATH"
-mv "$VERSION_INFO_BAK" "$VERSION_INFO_PATH"
 
 echo ""
 echo "Build completed successfully!"

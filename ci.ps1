@@ -15,18 +15,19 @@ Set-Location src\CloudlogHelper
 $versionInfoPath = "Resources/VersionInfo.cs"
 $versionInfoPathBak = "Resources/VersionInfo.bak"
 
-if (Test-Path $versionInfoPath)
-{
-    $content = Get-Content $versionInfoPath -Raw
-    Copy-Item $versionInfoPath $versionInfoPathBak -Force
+try {
+    if (Test-Path $versionInfoPath)
+    {
+        $content = Get-Content $versionInfoPath -Raw
+        Copy-Item $versionInfoPath $versionInfoPathBak -Force
 
-    $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
-                          -replace '@INTERNAL_TIME@', $buildTime `
-                          -replace '@INTERNAL_VERSION@', $Version `
-                          -replace '@INTERNAL_BUILDTYPE@', $buildType
+        $content = $content -replace '@INTERNAL_COMMIT@', $commitHash `
+                              -replace '@INTERNAL_TIME@', $buildTime `
+                              -replace '@INTERNAL_VERSION@', $Version `
+                              -replace '@INTERNAL_BUILDTYPE@', $buildType
 
-    Set-Content $versionInfoPath -Value $content -NoNewline
-}
+        Set-Content $versionInfoPath -Value $content -NoNewline
+    }
 
 Remove-Item -Path "bin\Release\*" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "bin\*.zip" -Force -ErrorAction SilentlyContinue
@@ -193,7 +194,9 @@ function Build-And-Package-MacOS
     -f $frameworkName `
     -t:BundleApp `
     --self-contained true `
-    -p:UseAppHost=true
+    -p:UseAppHost=true `
+    -p:CFBundleVersion=$Version `
+    -p:CFBundleShortVersionString=$Version
     
     $zipName = "bin/CloudlogHelper-v$Version-$archName.zip"
 
@@ -284,9 +287,13 @@ foreach ($p in $Platforms)
 }
 
 
-if (Test-Path $versionInfoPathBak)
-{
-    Move-Item $versionInfoPathBak $versionInfoPath -Force
+}
+finally {
+    if (Test-Path $versionInfoPathBak)
+    {
+        Move-Item $versionInfoPathBak $versionInfoPath -Force
+        Write-Host "Restored $versionInfoPath"
+    }
 }
 
 Write-Host "--------------------------> Build completed successfully!"
