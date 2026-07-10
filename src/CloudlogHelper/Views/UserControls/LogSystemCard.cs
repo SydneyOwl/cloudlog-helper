@@ -127,7 +127,6 @@ public class LogSystemCard : UserControl
 
         AddFieldControls(grid, config);
         AddUploadCheckbox(grid, config);
-        AddSkipTlsValidationCheckbox(grid, config);
         AddTestButton(grid, config);
 
         return grid;
@@ -280,6 +279,12 @@ public class LogSystemCard : UserControl
     {
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
+        var panel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 15
+        };
+
         var uploadCheckbox = new CheckBox
         {
             Content = TranslationHelper.GetString(LangKeys.AutoQsoUpload),
@@ -291,46 +296,33 @@ public class LogSystemCard : UserControl
             },
             MinWidth = 150,
         };
-        Grid.SetRow(uploadCheckbox, config.Fields.Count);
-        Grid.SetColumn(uploadCheckbox, 0);
-        grid.Children.Add(uploadCheckbox);
-    }
+        panel.Children.Add(uploadCheckbox);
 
-    private void AddSkipTlsValidationCheckbox(Grid grid, LogSystemConfig config)
-    {
         // LoTW is a local CLI tool, no HTTP involved — skip TLS checkbox
-        if (config.RawType == typeof(LoTWThirdPartyLogService)) return;
-
-        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var row = config.Fields.Count + 1;
-
-        var panel = new StackPanel
+        if (config.RawType != typeof(LoTWThirdPartyLogService))
         {
-            Orientation = Orientation.Horizontal,
-            Spacing = 5
-        };
-
-        var skipTlsCheckbox = new CheckBox
-        {
-            Content = TranslationHelper.GetString(LangKeys.SkipTlsValidation),
-            Classes = { "setting-label" },
-            [!ToggleButton.IsCheckedProperty] = new Binding("SkipTlsValidation")
+            var skipTlsCheckbox = new CheckBox
             {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            },
-            MinWidth = 150,
-        };
-        panel.Children.Add(skipTlsCheckbox);
+                Content = TranslationHelper.GetString(LangKeys.SkipTlsValidation),
+                Classes = { "setting-label" },
+                [!ToggleButton.IsCheckedProperty] = new Binding("SkipTlsValidation")
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                },
+                MinWidth = 150,
+            };
+            panel.Children.Add(skipTlsCheckbox);
 
-        var tipIcon = new TipIconUserControl
-        {
-            Margin = new Thickness(5, 0, 0, 0),
-            TooltipText = TranslationHelper.GetString(LangKeys.SkipTlsValidationTip)
-        };
-        panel.Children.Add(tipIcon);
+            var tipIcon = new TipIconUserControl
+            {
+                Margin = new Thickness(5, 0, 0, 0),
+                TooltipText = TranslationHelper.GetString(LangKeys.SkipTlsValidationTip)
+            };
+            panel.Children.Add(tipIcon);
+        }
 
-        Grid.SetRow(panel, row);
+        Grid.SetRow(panel, config.Fields.Count);
         Grid.SetColumn(panel, 0);
         Grid.SetColumnSpan(panel, 3);
         grid.Children.Add(panel);
