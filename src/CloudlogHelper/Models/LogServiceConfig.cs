@@ -14,6 +14,11 @@ public class LogSystemConfig : ReactiveObject
 
     public bool UploadEnabled { get; set; }
 
+    /// <summary>
+    ///     Skip TLS certificate validation for this log service.
+    /// </summary>
+    public bool SkipTlsValidation { get; set; }
+
     [Reactive] public List<LogSystemField> Fields { get; set; } = new();
 }
 

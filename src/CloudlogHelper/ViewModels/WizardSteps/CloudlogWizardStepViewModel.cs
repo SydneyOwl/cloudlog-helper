@@ -165,6 +165,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
 
             var instanceType = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(
                 CloudlogSettings.CloudlogUrl,
+                CloudlogSettings.SkipTlsValidation,
                 _cancellationToken);
 
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -176,6 +177,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
             var testResultMessage = await CloudlogUtil.TestCloudlogConnectionAsync(
                 CloudlogSettings.CloudlogUrl,
                 CloudlogSettings.CloudlogApiKey,
+                CloudlogSettings.SkipTlsValidation,
                 _cancellationToken);
 
             if (!string.IsNullOrEmpty(testResultMessage))
@@ -186,6 +188,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
             var stationInfo = await CloudlogUtil.GetStationInfoAsync(
                 CloudlogSettings.CloudlogUrl,
                 CloudlogSettings.CloudlogApiKey,
+                CloudlogSettings.SkipTlsValidation,
                 _cancellationToken);
 
             if (stationInfo.Count == 0)

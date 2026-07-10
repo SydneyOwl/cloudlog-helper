@@ -400,6 +400,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 _cloudlogSettings.CloudlogApiKey,
                 _cloudlogSettings.CloudlogStationInfo?.StationId!,
                 adif,
+                _cloudlogSettings.SkipTlsValidation,
                 cancellationToken).ConfigureAwait(false);
 
             var success = result.Status == "created";

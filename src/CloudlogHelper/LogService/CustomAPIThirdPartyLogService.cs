@@ -35,7 +35,7 @@ public class CustomAPIThirdPartyLogService : ThirdPartyLogService
 
         var eps = QSOEndpoint.Split(";")
             .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.WithHeader("Content-Type", "application/json")
+            .Select(x => CreateRequest(x).WithHeader("Content-Type", "application/json")
                 .PostJsonAsync(new
                 {
                     adif = adif,
@@ -64,7 +64,7 @@ public class CustomAPIThirdPartyLogService : ThirdPartyLogService
         
         var eps = RIGEndpoint.Split(";")
             .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x
+            .Select(x => CreateRequest(x)
                 .WithHeader("Content-Type", "application/json")
                 .PostStringAsync(JsonSerializer.Serialize(payload), cancellationToken: token)
             )

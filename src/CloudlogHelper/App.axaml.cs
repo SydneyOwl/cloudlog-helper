@@ -89,10 +89,6 @@ public class App : Application
                         .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
                         .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout));
                 })
-                .ConfigureInnerHandler(handler =>
-                {
-                    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-                })
         );
     }
 

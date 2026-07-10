@@ -329,6 +329,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             _cloudlogSettings.CloudlogUrl,
             _cloudlogSettings.CloudlogApiKey,
             allInfo,
+            _cloudlogSettings.SkipTlsValidation,
             CancellationToken.None);
 
 

@@ -19,7 +19,7 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
 
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        var result = await QRZQsoUploadEndpoint
+        var result = await CreateRequest(QRZQsoUploadEndpoint)
             .PostUrlEncodedAsync(new
             {
                 KEY = ApiKey,
@@ -33,7 +33,7 @@ public class QRZThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
-        var result = await QRZQsoUploadEndpoint
+        var result = await CreateRequest(QRZQsoUploadEndpoint)
             .PostUrlEncodedAsync(new
             {
                 KEY = ApiKey,

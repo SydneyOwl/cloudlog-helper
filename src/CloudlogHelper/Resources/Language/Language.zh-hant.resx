@@ -891,4 +891,10 @@
     <data name="PluginRestartHint" xml:space="preserve">
         <value>請儲存設定並關閉設定頁面，使對外掛程式的更改生效。</value>
     </data>
+    <data name="SkipTlsValidation" xml:space="preserve">
+        <value>跳過 TLS 憑證驗證</value>
+    </data>
+    <data name="SkipTlsValidationTip" xml:space="preserve">
+        <value>啟用後，憑證驗證錯誤（如自簽名或過期憑證）將被忽略。僅對受信任的伺服器啟用。</value>
+    </data>
 </root>

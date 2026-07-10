@@ -308,6 +308,14 @@
                                         <CheckBox Content="{I18N {x:Static resources:LangKeys.AutoPollStatus}}"
                                                   IsChecked="{Binding DraftSettings.CloudlogSettings.AutoPollStationStatus}" />
                                     </StackPanel>
+
+                                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                                Orientation="Horizontal" Spacing="5">
+                                        <CheckBox Content="{I18N {x:Static resources:LangKeys.SkipTlsValidation}}"
+                                                  IsChecked="{Binding DraftSettings.CloudlogSettings.SkipTlsValidation}" />
+                                        <userControls1:TipIconUserControl
+                                            TooltipText="{I18N {x:Static resources:LangKeys.SkipTlsValidationTip}}" />
+                                    </StackPanel>
                                 </Grid>
                             </StackPanel>
                         </Border>

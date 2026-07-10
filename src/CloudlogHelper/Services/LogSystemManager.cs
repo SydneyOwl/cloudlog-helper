@@ -105,7 +105,8 @@ public class LogSystemManager : ILogSystemManager, IDisposable
             DisplayName = classAttr.ServiceName,
             Fields = fields,
             RawType = logService.GetType(),
-            UploadEnabled = logService.AutoQSOUploadEnabled
+            UploadEnabled = logService.AutoQSOUploadEnabled,
+            SkipTlsValidation = logService.SkipTlsValidation
         };
     }
 
@@ -138,6 +139,7 @@ public class LogSystemManager : ILogSystemManager, IDisposable
             }
 
             servType.GetProperty("AutoQSOUploadEnabled")?.SetValue(logService, logSystemConfig.UploadEnabled);
+            servType.GetProperty("SkipTlsValidation")?.SetValue(logService, logSystemConfig.SkipTlsValidation);
 
             foreach (var logSystemField in logSystemConfig.Fields)
             {
