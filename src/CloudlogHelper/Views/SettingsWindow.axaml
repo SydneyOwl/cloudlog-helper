@@ -15,8 +15,7 @@
         SizeToContent="Width"
         CanResize="False"
         Icon="avares://CloudlogHelper/Assets/icon.png"
-        WindowStartupLocation="CenterScreen"
-        FontFamily="Segoe UI">
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <viewModels:SettingsWindowViewModel />

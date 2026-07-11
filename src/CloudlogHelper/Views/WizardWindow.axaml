@@ -19,7 +19,6 @@
         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
-        FontFamily="Segoe UI"
         Icon="avares://CloudlogHelper/Assets/icon.png">
 
     <Window.Styles>

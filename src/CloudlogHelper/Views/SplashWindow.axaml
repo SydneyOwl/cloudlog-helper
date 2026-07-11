@@ -22,13 +22,11 @@
                             VerticalAlignment="Center">
                     <Image Source="avares://CloudlogHelper/Assets/icon.png" Width="60" Height="60" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock FontFamily="Segoe UI, Arial"
-                                   FontWeight="SemiBold"
+                        <TextBlock FontWeight="SemiBold"
                                    FontSize="28"
                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                    Text="CloudlogHelper" />
-                        <TextBlock FontFamily="Segoe UI, Arial"
-                                   FontSize="12"
+                        <TextBlock FontSize="12"
                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                    Margin="0,5,0,0"
                                    Text="Lightweight Cloudlog/Wavelog tool☁️" />
@@ -43,7 +41,6 @@
                             IsActive="True"
                             Foreground="{DynamicResource SystemControlHighlightAccentBrush}" />
                         <TextBlock x:Name="statusText"
-                                   FontFamily="Segoe UI, Arial"
                                    FontSize="12"
                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
                                    HorizontalAlignment="Center"
@@ -54,15 +51,13 @@
                 <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                         CornerRadius="0,0,6,6" Height="30">
                     <Grid>
-                        <TextBlock FontFamily="Segoe UI, Arial"
-                                   FontSize="10"
+                        <TextBlock FontSize="10"
                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                    VerticalAlignment="Center"
                                    Margin="10,0,0,0"
                                    x:Name="statusTextDetailed"
                                    Text="Loading components..." />
-                        <TextBlock FontFamily="Segoe UI, Arial"
-                                   FontSize="10"
+                        <TextBlock FontSize="10"
                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
