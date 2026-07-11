@@ -32,12 +32,6 @@ public class CloudlogSettings : ReactiveValidationObject
     [Reactive] public bool AutoRigUploadEnabled { get; set; } = false;
     [Reactive] public bool AutoPollStationStatus { get; set; } = false;
 
-    /// <summary>
-    ///     Skip TLS certificate validation for the Cloudlog server.
-    ///     Defaults to true since many self-hosted Cloudlog instances use self-signed certificates.
-    /// </summary>
-    [Reactive] public bool SkipTlsValidation { get; set; } = true;
-
     [Reactive]
     public ObservableCollection<StationInfo> AvailableCloudlogStationInfo { get; set; } = new();
 

@@ -898,10 +898,4 @@ By continuing, you acknowledge that you have read and agree to the above terms a
         <value>Please save the settings and close the settings page for the changes to the plugin to take effect.
 </value>
     </data>
-    <data name="SkipTlsValidation" xml:space="preserve">
-        <value>Skip TLS Verification</value>
-    </data>
-    <data name="SkipTlsValidationTip" xml:space="preserve">
-        <value>When enabled, certificate validation errors (e.g., self-signed or expired certificates) will be ignored. Only enable for trusted servers.</value>
-    </data>
 </root>

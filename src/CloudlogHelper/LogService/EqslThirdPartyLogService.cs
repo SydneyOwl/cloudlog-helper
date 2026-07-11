@@ -32,7 +32,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        var result = CreateRequest(EqslTestEndpoint)
+        var result = EqslTestEndpoint
             .AppendQueryParam("UserName", Username, isEncoded: false)
             .AppendQueryParam("Password", Password, isEncoded: false)
             .AppendQueryParam("LimitDateHi", "01/01/1990", isEncoded: false);
@@ -63,7 +63,7 @@ public class EqslThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
-        var results = await CreateRequest(EqslQsoUploadEndpoint)
+        var results = await EqslQsoUploadEndpoint
             .SetQueryParam("ADIFData", adif, isEncoded:false)
             .PostUrlEncodedAsync(new
             {

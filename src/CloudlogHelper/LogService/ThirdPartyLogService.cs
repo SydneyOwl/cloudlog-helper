@@ -1,10 +1,6 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Models;
-using CloudlogHelper.Resources;
-using Flurl.Http;
 
 namespace CloudlogHelper.LogService;
 
@@ -14,11 +10,6 @@ public abstract class ThirdPartyLogService
     ///     Determines whether to upload this qso automatically.
     /// </summary>
     public virtual bool AutoQSOUploadEnabled { get; set; } = false;
-
-    /// <summary>
-    ///     Determines whether to skip TLS certificate validation for this service.
-    /// </summary>
-    public virtual bool SkipTlsValidation { get; set; } = false;
 
     /// <summary>
     ///     Test connection of specified log service.
@@ -43,30 +34,5 @@ public abstract class ThirdPartyLogService
     public virtual Task PreInitAsync(CancellationToken token)
     {
         return Task.CompletedTask;
-    }
-
-    /// <summary>
-    ///     Creates a Flurl request configured with TLS validation settings.
-    ///     When SkipTlsValidation is true, certificate errors are ignored.
-    /// </summary>
-    /// <param name="url">The endpoint URL.</param>
-    /// <returns>A configured IFlurlRequest.</returns>
-    protected IFlurlRequest CreateRequest(string url)
-    {
-        if (SkipTlsValidation)
-        {
-            var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (_, _, _, _) => true
-            };
-            var client = new FlurlClient(new HttpClient(handler));
-            return client.Request(url)
-                .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-                .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout));
-        }
-
-        return url
-            .WithHeader("User-Agent", DefaultConfigs.DefaultHTTPUserAgent)
-            .WithTimeout(TimeSpan.FromSeconds(DefaultConfigs.DefaultRequestTimeout));
     }
 }

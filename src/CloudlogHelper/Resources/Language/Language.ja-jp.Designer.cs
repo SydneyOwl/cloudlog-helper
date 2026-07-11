@@ -1805,25 +1805,7 @@ namespace CloudlogHelper.Resources.Language {
                 return ResourceManager.GetString("ShowFailedOnly", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to TLS証明書検証をスキップ.
-        /// </summary>
-        public static string SkipTlsValidation {
-            get {
-                return ResourceManager.GetString("SkipTlsValidation", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to 有効にすると、証明書の検証エラー（自己署名証明書や期限切れ証明書など）が無視されます。信頼できるサーバーにのみ使用してください。.
-        /// </summary>
-        public static string SkipTlsValidationTip {
-            get {
-                return ResourceManager.GetString("SkipTlsValidationTip", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to プログラムを閉じる.
         /// </summary>

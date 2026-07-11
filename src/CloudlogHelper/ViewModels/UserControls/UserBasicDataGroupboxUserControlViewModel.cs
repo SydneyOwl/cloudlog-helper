@@ -105,8 +105,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
         }
         
         using var source = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.CloudlogInfoPollTimeout));
-        var info = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(_settings.CloudlogUrl,
-            _settings.SkipTlsValidation, source.Token);
+        var info = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(_settings.CloudlogUrl, source.Token);
         
         ClassLogger.Trace($"Detected {info}");
 
@@ -133,7 +132,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
             throw new Exception(TranslationHelper.GetString(LangKeys.ConfigureCloudlogFirst));
 
         var info = await CloudlogUtil.GetStationInfoAsync(_settings.CloudlogUrl, _settings.CloudlogApiKey,
-            _settings.CloudlogStationInfo?.StationId!, _settings.SkipTlsValidation, source.Token);
+            _settings.CloudlogStationInfo?.StationId!, source.Token);
         if (info is null) throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
 
         OP = info.StationCallsign;
@@ -141,7 +140,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
 
         // polling statstics
         var statistic = await CloudlogUtil.GetStationStatisticsAsync(_settings.CloudlogUrl,
-            _settings.CloudlogApiKey, _settings.SkipTlsValidation, source.Token);
+            _settings.CloudlogApiKey, source.Token);
         if (statistic is null)
         {
             throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationStatistics));

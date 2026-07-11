@@ -890,10 +890,4 @@
     <data name="PluginRestartHint" xml:space="preserve">
         <value>プラグインの変更を有効にするには、設定を保存して設定ページを閉じてください。</value>
     </data>
-    <data name="SkipTlsValidation" xml:space="preserve">
-        <value>TLS証明書検証をスキップ</value>
-    </data>
-    <data name="SkipTlsValidationTip" xml:space="preserve">
-        <value>有効にすると、証明書の検証エラー（自己署名証明書や期限切れ証明書など）が無視されます。信頼できるサーバーにのみ使用してください。</value>
-    </data>
 </root>

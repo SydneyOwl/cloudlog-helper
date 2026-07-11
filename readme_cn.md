@@ -1,7 +1,7 @@
 # Cloudlog Helper [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SydneyOwl/cloudlog-helper)
 
-![dotnet](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat)
-![avalonia](https://img.shields.io/badge/AvaloniaUI-12.0.5-0d6efd?style=flat)
+![dotnet](https://img.shields.io/badge/.NET-6.0-512BD4?style=flat)
+![avalonia](https://img.shields.io/badge/AvaloniaUI-11.2.6-0d6efd?style=flat)
 ![license](https://img.shields.io/badge/license-The_Unlicense-3451b2?style=flat&logo=none)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sydneyowl/cloudlog-helper/build.yml?style=flat)
 ![GitHub Release](https://img.shields.io/github/v/release/sydneyowl/cloudlog-helper?style=flat)

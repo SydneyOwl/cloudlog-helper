@@ -898,10 +898,4 @@
     <data name="PluginRestartHint" xml:space="preserve">
         <value>请保存设置并关闭设置窗口使对插件的更改生效</value>
     </data>
-    <data name="SkipTlsValidation" xml:space="preserve">
-        <value>跳过 TLS 证书验证</value>
-    </data>
-    <data name="SkipTlsValidationTip" xml:space="preserve">
-        <value>启用后，证书验证错误（如自签名或过期证书）将被忽略。仅对受信任的服务器启用。</value>
-    </data>
 </root>

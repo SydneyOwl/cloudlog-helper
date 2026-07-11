@@ -27,7 +27,7 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
 
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        var result = await CreateRequest(HRDLOGUploadEndpoint)
+        var result = await HRDLOGUploadEndpoint
             .PostUrlEncodedAsync(new
             {
                 Callsign,
@@ -46,7 +46,7 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
 
     public override async Task UploadQSOAsync(string? adif, CancellationToken token)
     {
-        var result = await CreateRequest(HRDLOGUploadEndpoint)
+        var result = await HRDLOGUploadEndpoint
             .PostUrlEncodedAsync(new
             {
                 Callsign,
@@ -79,7 +79,7 @@ public class HRDLogThirdPartyLogService : ThirdPartyLogService
     {
         if (!AllowUploadRigInfo) return;
 
-        var result = await CreateRequest(HRDLOGOnAirEndpoint)
+        var result = await HRDLOGOnAirEndpoint
             .PostUrlEncodedAsync(new
             {
                 Frequency = rigData.FrequencyTx,

@@ -34,11 +34,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
         var handler = new HttpClientHandler {
             SslProtocols = SslProtocols.Tls12
         };
-        if (SkipTlsValidation)
-        {
-            handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
-        }
-
+        
         var client = new FlurlClient(new HttpClient(handler));
         
         // using tls11 will fail here - seems like clublog server has dropped support of tls1.1?
@@ -71,11 +67,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
         var handler = new HttpClientHandler {
             SslProtocols = SslProtocols.Tls12
         };
-        if (SkipTlsValidation)
-        {
-            handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
-        }
-
+        
         var client = new FlurlClient(new HttpClient(handler));
         
         var result = await client.Request(ClublogQsoUploadEndpoint)

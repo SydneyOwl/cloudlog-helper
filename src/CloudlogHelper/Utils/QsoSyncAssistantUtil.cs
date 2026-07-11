@@ -79,7 +79,7 @@ public class QsoSyncAssistantUtil
         int stationId, int qsoCount, IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
     {
         // check for instance
-        var instance = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(baseurl, false, CancellationToken.None).ConfigureAwait(false);
+        var instance = await CloudlogUtil.GetCurrentServerInstanceTypeAsync(baseurl, CancellationToken.None).ConfigureAwait(false);
         var tmp = new JsonObject();
         if (instance == ServerInstanceType.Wavelog)
         {

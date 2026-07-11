@@ -362,14 +362,12 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         try
         {
             var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                DraftSettings.CloudlogSettings.CloudlogApiKey, DraftSettings.CloudlogSettings.SkipTlsValidation,
-                _source.Token);
+                DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
 
             if (!string.IsNullOrEmpty(msg)) throw new Exception(msg);
 
             var stationInfo = await CloudlogUtil.GetStationInfoAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                DraftSettings.CloudlogSettings.CloudlogApiKey, DraftSettings.CloudlogSettings.SkipTlsValidation,
-                _source.Token);
+                DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
             if (stationInfo.Count == 0)
             {
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
@@ -385,7 +383,7 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
             
             var instType =
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                    DraftSettings.CloudlogSettings.SkipTlsValidation, _source.Token);
+                    _source.Token);
             ClassLogger.Info($"Detected instance {instType}");
         }
         catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException &&

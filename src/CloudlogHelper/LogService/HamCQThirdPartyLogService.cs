@@ -31,7 +31,7 @@ public class HamCQThirdPartyLogService : ThirdPartyLogService
             reqJson.Add("app", DefaultConfigs.DefaultApplicationName);
         }
 
-        var result = await CreateRequest(HamCQQsoUploadEndpoint)
+        var result = await HamCQQsoUploadEndpoint
             .AllowHttpStatus(406)
             .WithHeader("Content-Type", "application/json")
             .PostStringAsync(reqJson.ToString(), cancellationToken: token).ConfigureAwait(false);
