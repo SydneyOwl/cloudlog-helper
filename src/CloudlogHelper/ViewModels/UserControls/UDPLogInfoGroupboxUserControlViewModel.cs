@@ -539,7 +539,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         if (_udpServerService.IsNotifyOnQsoMade())
         {
-            _ = _nativeNotificationManager.ShowNotification($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
+            _ = _nativeNotificationManager.ShowNotificationAsync($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
                 rcd.FormatToReadableContent(true));
         }
     }

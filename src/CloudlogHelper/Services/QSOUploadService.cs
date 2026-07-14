@@ -457,7 +457,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     {
         try
         {
-            await _notificationManager.ShowNotification(success 
+            await _notificationManager.ShowNotificationAsync(success 
                 ? $"{TranslationHelper.GetString(LangKeys.QsoUploaded)} - {rcd.DXCall}"
                 : $"{TranslationHelper.GetString(LangKeys.FailedQso)} - {rcd.DXCall}",
                 success 

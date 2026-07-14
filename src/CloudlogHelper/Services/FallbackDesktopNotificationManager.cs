@@ -15,7 +15,7 @@ public class FallbackDesktopNotificationManager : INotificationManager
         return Task.CompletedTask;
     }
 
-    public Task ShowNotification(string title, string message = "", string informativeText = "")
+    public Task ShowNotificationAsync(string title, string message = "", string informativeText = "")
     {
         return Task.CompletedTask;
     }
