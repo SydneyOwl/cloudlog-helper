@@ -982,9 +982,9 @@
     "flag": "mt.png"
   },
   "1S": {
-    "cc": "PH",
-    "ccc": "PHL",
-    "flag": "ph.png"
+    "cc": "CN",
+    "ccc": "CHN",
+    "flag": "cn.png"
   },
   "I": {
     "cc": "IT",
@@ -1657,9 +1657,9 @@
     "flag": "tw.png"
   },
   "BS7": {
-    "cc": "PH",
-    "ccc": "PHL",
-    "flag": "ph.png"
+    "cc": "CN",
+    "ccc": "CHN",
+    "flag": "cn.png"
   },
   "H40": {
     "cc": "SB",
