@@ -10,7 +10,7 @@ using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ADIFLib;
+using AdifParser;
 using Avalonia.Threading;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Messages;
@@ -1096,16 +1096,16 @@ public class PluginService : IPluginService, IDisposable
                 case PipeEnvelopeTopic.CommandUploadExternalQso:
                     if (!envelope.Attributes.TryGetValue("adifLogs", out var adif)) break;
                     if (string.IsNullOrEmpty(adif)) break;
-                    var localParser = new ADIF();
+                    var localParser = new AdifDocument();
                     localParser.ReadFromString(adif, token);
-                    if (localParser.TheQSOs.Count == 0)
+                    if (localParser.Qsos.Count == 0)
                     {
                         response.Success = false;
                         response.Message = "Failed to parse QSO";
                         break;
                     }
 
-                    var cloudParsed = localParser.TheQSOs
+                    var cloudParsed = localParser.Qsos
                         .AsParallel()
                         .WithCancellation(token)
                         .Select(x => RecordedCallsignDetail.Parse(AdifLog.Parse(x), DXCCKeys.externallog))

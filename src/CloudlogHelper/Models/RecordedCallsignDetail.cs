@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using ADIFLib;
+using AdifParser;
 using Avalonia.Media;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
@@ -172,7 +172,7 @@ public class RecordedCallsignDetail : ReactiveObject
     /// <summary>
     ///     Original adif data.
     /// </summary>
-    public ADIFQSO? RawData { get; set; }
+    public AdifQso? RawData { get; set; }
 
     /// <summary>
     ///     The fail reason of current upload.

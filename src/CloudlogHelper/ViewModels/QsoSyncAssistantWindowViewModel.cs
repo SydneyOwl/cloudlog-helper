@@ -7,7 +7,7 @@ using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ADIFLib;
+using AdifParser;
 using AutoMapper;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -222,12 +222,12 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
                 _source.Token);
             _logProgress("Qsos downloaded. Analysing...", 30);
 
-            var cloudParser = new ADIF();
+            var cloudParser = new AdifDocument();
             await Task.Run(() => { cloudParser.ReadFromString(cloudAdif, _source.Token); });
 
-            _logProgress($"{cloudParser.QSOCount} Qsos from cloud parsed successfully.", 30);
+            _logProgress($"{cloudParser.QsoCount} Qsos from cloud parsed successfully.", 30);
 
-            var cloudParsed = cloudParser.TheQSOs
+            var cloudParsed = cloudParser.Qsos
                 .AsParallel()
                 .WithCancellation(_source.Token)
                 .Select(AdifLog.Parse)
@@ -247,7 +247,7 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
                     _logProgress($"Try reading qso data from {localLog}, this may take sometime...", CurrentProgress);
 
                     // not elegant for large files...
-                    var localParser = new ADIF();
+                    var localParser = new AdifDocument();
                     await Task.Run(() =>
                     {
                         // read last n lines
@@ -257,10 +257,10 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
                     });
 
                     _logProgress(
-                        $"Parsing qso data from {localLog} successfully. Read {localParser.QSOCount} Qsos. Checking qsos not uploaded...",
+                        $"Parsing qso data from {localLog} successfully. Read {localParser.QsoCount} Qsos. Checking qsos not uploaded...",
                         CurrentProgress);
 
-                    var localParsed = localParser.TheQSOs
+                    var localParsed = localParser.Qsos
                         .AsParallel()
                         .WithCancellation(_source.Token)
                         .Select(AdifLog.Parse)

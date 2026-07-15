@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using ADIFLib;
+using AdifParser;
 using CloudlogHelper.Resources;
 
 namespace CloudlogHelper.Models;
@@ -24,11 +24,11 @@ public class AdifLog
     public string MyGridSquare { get; set; }
     public string Comment { get; set; }
 
-    public ADIFQSO RawData { get; set; }
+    public AdifQso RawData { get; set; }
 
     public static IEqualityComparer<AdifLog> AdifLogComparer { get; } = new AdifLogEqualityComparer();
 
-    public static AdifLog Parse(ADIFQSO adif)
+    public static AdifLog Parse(AdifQso adif)
     {
         var tmp = new AdifLog();
         tmp.RawData = adif;
