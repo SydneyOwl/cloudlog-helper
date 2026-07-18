@@ -1650,5 +1650,12 @@
         "submode": "M17",
         "qrgmode": "DATA",
         "active": 1
+    },
+    {
+        "id": 237,
+        "mode": "MFSK",
+        "submode": "FT2",
+        "qrgmode": "DATA",
+        "active": 1
     }
 ]
