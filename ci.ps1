@@ -90,6 +90,19 @@ function Remove-DebugSymbols
     }
 }
 
+function Remove-MarkdownFiles
+{
+    param(
+        [string]$Path
+    )
+
+    if (Test-Path $Path)
+    {
+        Get-ChildItem -Path $Path -Recurse -File -Include "*.md" |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+    }
+}
+
 ### Windows x86
 if (Need "win-x86")
 {
@@ -204,6 +217,7 @@ function Build-And-Package-MacOS
 
     Copy-Item Assets/icon.icns $publish_path/CloudlogHelper.app/Contents/Resources
     Remove-DebugSymbols -Path $publish_path
+    Remove-MarkdownFiles -Path $publish_path
     Compress-Archive -Path $publish_path/CloudlogHelper.app -DestinationPath $zipName -Force
     Write-Host "Created: $zipName"
 }
@@ -241,6 +255,7 @@ function Build-And-Package
 
     $publish_path = "bin/Release/$frameworkName/$runtime/publish"
     Remove-DebugSymbols -Path $publish_path
+    Remove-MarkdownFiles -Path $publish_path
 
     $zipName = ""
     if ($Version)
