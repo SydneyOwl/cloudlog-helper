@@ -471,8 +471,8 @@
 • アップロード状態: {28}
 • 失敗理由: {29}</value>
     </data>
-    <data name="QsoUploadDisabled" xml:space="preserve">
-        <value>QSO自動アップロード機能が有効になっていません。</value>
+    <data name="QsoUploadDisabledOrCancelled" xml:space="preserve">
+        <value>QSOアップロード機能が有効になっていないか、このQSOのアップロードがキャンセルされました。</value>
     </data>
     <data name="NotifyOnQsoUploaded" xml:space="preserve">
         <value>QSOアップロード完了時</value>

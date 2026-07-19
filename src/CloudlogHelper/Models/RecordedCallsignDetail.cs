@@ -196,6 +196,11 @@ public class RecordedCallsignDetail : ReactiveObject
     ///     Whether this QSO is in upload queue or not.
     /// </summary>
     public bool IsInUploadQueue = false;
+    
+    /// <summary>
+    ///     Whether this QSO is marked as calceled.
+    /// </summary>
+    public bool IsMarkedCancelled = false;
 
     /// <summary>
     ///     Whether to force-upload this qso or not, even if auto upload function is not enabled.

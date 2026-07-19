@@ -473,8 +473,8 @@
 • 上傳狀態: {28}
 • 失敗原因: {29}</value>
     </data>
-    <data name="QsoUploadDisabled" xml:space="preserve">
-        <value>QSO自動上傳功能未啟用。</value>
+    <data name="QsoUploadDisabledOrCancelled" xml:space="preserve">
+        <value>QSO上傳功能未啟用，或此QSO上傳已被取消</value>
     </data>
     <data name="NotifyOnQsoUploaded" xml:space="preserve">
         <value>QSO上傳完成時</value>

@@ -47,24 +47,42 @@ public class QsoQueueStore : IQsoQueueStore, IDisposable
     {
         if (qso == null) throw new ArgumentNullException(nameof(qso));
         if (string.IsNullOrWhiteSpace(qso.Uuid)) return;
+        qso.IsMarkedCancelled = true;
         _cache.Remove(qso.Uuid);
     }
 
     public void RemoveRange(IEnumerable<RecordedCallsignDetail> qsos)
     {
         if (qsos == null) throw new ArgumentNullException(nameof(qsos));
-        var keys = qsos
+        
+        var rcdList = qsos.ToList();
+        
+        var keys = rcdList
             .Where(x => !string.IsNullOrWhiteSpace(x.Uuid))
             .Select(x => x.Uuid)
             .ToList();
         if (keys.Count == 0) return;
+        
+        rcdList.ForEach(x => x.IsMarkedCancelled = true);
         _cache.RemoveKeys(keys);
     }
 
     public void RemoveByUuids(IEnumerable<string> ids)
     {
         if (ids == null) throw new ArgumentNullException(nameof(ids));
-        _cache.RemoveKeys(ids);
+        
+        var rcdIdList = ids.ToList();
+        
+        foreach (var se in rcdIdList)
+        {
+            var hv = _cache.Lookup(se);
+            if (hv.HasValue)
+            {
+                hv.Value.IsMarkedCancelled = true;
+            }
+        }
+            
+        _cache.RemoveKeys(rcdIdList);
     }
 
     private void TrimIfNeeded()

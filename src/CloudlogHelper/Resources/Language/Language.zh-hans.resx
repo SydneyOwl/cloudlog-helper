@@ -318,8 +318,8 @@
     <data name="RetryCountRequired" xml:space="preserve">
         <value>重试次数应为大于0的整数！</value>
     </data>
-    <data name="QsoUploadDisabled" xml:space="preserve">
-        <value>QSO自动上传功能未启用。</value>
+    <data name="QsoUploadDisabledOrCancelled" xml:space="preserve">
+        <value>QSO上传功能未启用,或此QSO上传已被取消</value>
     </data>
     <data name="UploadStatusUploading" xml:space="preserve">
         <value>上传中..</value>

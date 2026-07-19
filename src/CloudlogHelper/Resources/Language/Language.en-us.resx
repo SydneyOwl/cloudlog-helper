@@ -318,8 +318,8 @@
     <data name="RetryCountRequired" xml:space="preserve">
         <value>Retry count should be an integer and larger than 0!</value>
     </data>
-    <data name="QsoUploadDisabled" xml:space="preserve">
-        <value>QSO auto upload is disabled.</value>
+    <data name="QsoUploadDisabledOrCancelled" xml:space="preserve">
+        <value>QSO upload function is not enabled, or this QSO upload has been cancelled.</value>
     </data>
     <data name="UploadStatusUploading" xml:space="preserve">
         <value>Uploading...</value>

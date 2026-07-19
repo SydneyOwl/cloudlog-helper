@@ -316,7 +316,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             SelectAllCommand,
             ReuploadSelectedCommand,
             IgnoreSelectedPermanentlyCommand,
-            ExportSelectedToAdiCommand
+            ExportSelectedToAdiCommand,
+            DeleteSelectedCommand
         };
 
         foreach (var command in commands)

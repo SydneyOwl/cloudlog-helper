@@ -248,8 +248,8 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             if (!ShouldUpload(rcd))
             {
                 rcd.UploadStatus = UploadStatus.Ignored;
-                rcd.FailReason = TranslationHelper.GetString(LangKeys.QsoUploadDisabled);
-                ClassLogger.Debug($"Auto upload not enabled, ignoring: {rcd.DXCall}");
+                rcd.FailReason = TranslationHelper.GetString(LangKeys.QsoUploadDisabledOrCancelled);
+                ClassLogger.Debug($"Auto upload not enabled or called cancelled, ignoring: {rcd.DXCall}");
                 return;
             }
 
@@ -284,7 +284,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     {
         return (_cloudlogSettings.AutoQSOUploadEnabled || 
                 _logServices.Any(x => x.AutoQSOUploadEnabled) || 
-                rcd.ForcedUpload);
+                rcd.ForcedUpload) && !rcd.IsMarkedCancelled;
     }
 
     private async Task<bool> UploadWithRetryAsync(

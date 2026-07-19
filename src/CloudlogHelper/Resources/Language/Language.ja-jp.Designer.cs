@@ -1483,11 +1483,11 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO自動アップロード機能が有効になっていません。.
+        ///   Looks up a localized string similar to QSOアップロード機能が有効になっていないか、このQSOのアップロードがキャンセルされました。.
         /// </summary>
-        public static string QsoUploadDisabled {
+        public static string QsoUploadDisabledOrCancelled {
             get {
-                return ResourceManager.GetString("QsoUploadDisabled", resourceCulture);
+                return ResourceManager.GetString("QsoUploadDisabledOrCancelled", resourceCulture);
             }
         }
         
@@ -2618,4 +2618,3 @@ namespace CloudlogHelper.Resources.Language {
         }
     }
 }
-
