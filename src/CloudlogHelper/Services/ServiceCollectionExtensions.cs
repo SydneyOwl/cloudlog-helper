@@ -87,6 +87,12 @@ public static class ServiceCollectionExtensions
     {
         try
         {
+            if (OperatingSystem.IsWindows() &&
+                Environment.OSVersion.Version < new Version(10, 0))
+            {
+                 throw new PlatformNotSupportedException("Unsupported windows version.");
+            }
+            
             var manager = new OsNotificationsManager();
             await manager.Initialize();
             
