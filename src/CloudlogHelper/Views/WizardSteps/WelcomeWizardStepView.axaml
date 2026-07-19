@@ -9,8 +9,10 @@
              d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.WizardSteps.WelcomeWizardStepView"
              x:DataType="stepVm:WelcomeWizardStepViewModel">
-    <StackPanel Spacing="16">
-        <Border Classes="highlight-card" Padding="20">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Border Classes="highlight-card"
+                Padding="20"
+                VerticalAlignment="Top">
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
                 <Border Width="76"
                         Height="76"
@@ -24,14 +26,20 @@
                            Source="avares://CloudlogHelper/Assets/icon.png" />
                 </Border>
 
-                <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1"
+                            MinWidth="0"
+                            Spacing="8"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch">
                     <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardHiThere}}"
                                Classes="section-title" />
                     <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardWelcomeMessage}}"
                                Classes="page-hint"
+                               HorizontalAlignment="Stretch"
+                               TextWrapping="Wrap"
                                FontSize="15" />
                 </StackPanel>
             </Grid>
         </Border>
-    </StackPanel>
+    </Grid>
 </UserControl>

@@ -82,8 +82,8 @@
                         VerticalAlignment="Center"
                         IsVisible="{Binding ShowDetectedServerInstance}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock FontWeight="SemiBold"
-                                   Text="{I18N {x:Static resources:LangKeys.WizardCloudlogDetectedInstance}}" />
+                        <!-- <TextBlock FontWeight="SemiBold" -->
+                        <!--            Text="{I18N {x:Static resources:LangKeys.WizardCloudlogDetectedInstance}}" /> -->
                         <TextBlock FontWeight="SemiBold"
                                    Text="{Binding DetectedServerInstanceDisplayName}" />
                     </StackPanel>
