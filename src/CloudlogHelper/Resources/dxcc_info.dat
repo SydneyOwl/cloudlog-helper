@@ -2,6 +2,7 @@
   "0": {
     "version": 20260627,
     "attribution": "Maidenhead(mh) data copyright 2026 Stephen Loomis (N0TTL) and Henry Forte (N2VFL), use is granted for others provided this attribution remains in the data",
+    "cloudloghelper_adjustments": "This file was extracted from the GridTracker source code and structurally modified for use with Cloudlog Helper. Island affiliations have also been partially adjusted based on the original JSON.",
     "dxcc": "0",
     "cc": "-",
     "ccc": "-",
