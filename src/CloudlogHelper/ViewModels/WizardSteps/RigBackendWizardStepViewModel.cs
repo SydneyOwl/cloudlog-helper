@@ -116,15 +116,9 @@ public sealed class RigBackendWizardStepViewModel : WizardStepViewModelBase
     {
         try
         {
-            HamlibVersion = await _rigBackendManager
-                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetServiceVersion();
-
-            var options = await _rigBackendManager
-                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetSupportedRigModels();
-
-            SupportedHamlibModels = options
-                .OrderBy(x => x.Model)
-                .ToList();
+            var (version, models) = await _rigBackendManager.GetHamlibCatalogAsync();
+            HamlibVersion = version;
+            SupportedHamlibModels = models;
 
             var oldSelection = _draftSettings.HamlibSettings.SelectedRigInfo;
             _draftSettings.HamlibSettings.SelectedRigInfo = oldSelection is null
@@ -147,14 +141,13 @@ public sealed class RigBackendWizardStepViewModel : WizardStepViewModelBase
     {
         try
         {
-            if (!OperatingSystem.IsWindows())
+            if (!RigUtils.IsOmniRigPlatformAvailable())
             {
                 await Dispatcher.UIThread.InvokeAsync(() => { OmniRigInited = false; });
                 return;
             }
 
-            var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
-            OmniRigInited = omniRigType is not null;
+            OmniRigInited = true;
         }
         catch (Exception ex)
         {

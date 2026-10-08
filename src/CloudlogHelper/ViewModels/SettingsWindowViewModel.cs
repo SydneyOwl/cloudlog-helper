@@ -304,19 +304,10 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         {
             if (_initSkipped) return;
 
-            if (!OperatingSystem.IsWindows())
+            if (!RigUtils.IsOmniRigPlatformAvailable())
             {
                 OmniRigInited = false;
                 return;
-                // throw new Exception("OmniRig is only supported on Windows.");
-            }
-
-            var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
-            if (omniRigType is null)
-            {
-                OmniRigInited = false;
-                return;
-                // throw new Exception("OmniRig COM not found!");
             }
         }
         catch (Exception e)
@@ -332,16 +323,9 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         try
         {
             if (_initSkipped) return;
-            var output = await _rigBackendManager
-                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetServiceVersion();
-            HamlibVersion = output;
-
-            var opt = await _rigBackendManager
-                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetSupportedRigModels();
-
-            SupportedModels = opt
-                .OrderBy(x => x.Model)
-                .ToList();
+            var (version, models) = await _rigBackendManager.GetHamlibCatalogAsync();
+            HamlibVersion = version;
+            SupportedModels = models;
 
             var selection = DraftSettings.HamlibSettings.SelectedRigInfo;
             DraftSettings.HamlibSettings.SelectedRigInfo = null;
@@ -360,13 +344,10 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
+            var stationInfo = await CloudlogUtil.TestConnectionAndGetStationInfoAsync(
+                DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
 
-            if (!string.IsNullOrEmpty(msg)) throw new Exception(msg);
-
-            var stationInfo = await CloudlogUtil.GetStationInfoAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
             if (stationInfo.Count == 0)
             {
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
@@ -375,18 +356,16 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
                 throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
             }
 
-
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
             ShowCloudlogStationIdCombobox = true;
-            
+
             var instType =
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                     _source.Token);
             ClassLogger.Info($"Detected instance {instType}");
         }
-        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException &&
-                                            _source.IsCancellationRequested)
+        catch (FlurlHttpException ex) when (ex.IsCancelledByUser(_source.Token))
         {
             ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }

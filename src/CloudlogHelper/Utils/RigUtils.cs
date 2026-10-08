@@ -10,6 +10,15 @@ namespace CloudlogHelper.Utils;
 
 public static class RigUtils
 {
+    /// <summary>
+    ///     True when the OmniRig COM engine is present on this platform.
+    ///     Short-circuits on non-Windows so the ProgID lookup is never reached.
+    /// </summary>
+    public static bool IsOmniRigPlatformAvailable()
+    {
+        return OperatingSystem.IsWindows() && Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId) is not null;
+    }
+
     public static string GetDescriptionFromReturnCode(string code)
     {
         var codeDesMap = new Dictionary<string, string>

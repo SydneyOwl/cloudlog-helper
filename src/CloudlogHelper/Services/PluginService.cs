@@ -1433,55 +1433,31 @@ public class PluginService : IPluginService, IDisposable
                 draft.BasicSettings.MyMaidenheadGrid = value;
                 break;
             case "basic.enable_plugin":
-                if (bool.TryParse(value, out var enablePlugin))
-                    draft.BasicSettings.EnablePlugin = enablePlugin;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.BasicSettings.EnablePlugin = v, errors);
                 break;
             case "basic.disable_all_charts":
-                if (bool.TryParse(value, out var disableCharts))
-                    draft.BasicSettings.DisableAllCharts = disableCharts;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.BasicSettings.DisableAllCharts = v, errors);
                 break;
             case "cloudlog.auto_qso_upload_enabled":
-                if (bool.TryParse(value, out var autoQso))
-                    draft.CloudlogSettings.AutoQSOUploadEnabled = autoQso;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.CloudlogSettings.AutoQSOUploadEnabled = v, errors);
                 break;
             case "cloudlog.auto_rig_upload_enabled":
-                if (bool.TryParse(value, out var autoRig))
-                    draft.CloudlogSettings.AutoRigUploadEnabled = autoRig;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.CloudlogSettings.AutoRigUploadEnabled = v, errors);
                 break;
             case "udp.enable_udp_server":
-                if (bool.TryParse(value, out var enableUdp))
-                    draft.UDPSettings.EnableUDPServer = enableUdp;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.EnableUDPServer = v, errors);
                 break;
             case "udp.enable_connection_from_outside":
-                if (bool.TryParse(value, out var allowOutside))
-                    draft.UDPSettings.EnableConnectionFromOutside = allowOutside;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.EnableConnectionFromOutside = v, errors);
                 break;
             case "udp.retry_count":
                 draft.UDPSettings.RetryCount = value;
                 break;
             case "udp.push_notification_on_qso_made":
-                if (bool.TryParse(value, out var notifyQsoMade))
-                    draft.UDPSettings.PushNotificationOnQSOMade = notifyQsoMade;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.PushNotificationOnQSOMade = v, errors);
                 break;
             case "udp.push_notification_on_qso_uploaded":
-                if (bool.TryParse(value, out var notifyQsoUploaded))
-                    draft.UDPSettings.PushNotificationOnQSOUploaded = notifyQsoUploaded;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.PushNotificationOnQSOUploaded = v, errors);
                 break;
             case "rig.enable_polling":
                 var raw = value.Split(";;;");
@@ -1491,31 +1467,10 @@ public class PluginService : IPluginService, IDisposable
                     break;
                 }
 
-                var backend = raw[1];
-
-                if (Enum.TryParse<RigBackendServiceEnum>(backend, out var backendService) &&
+                if (Enum.TryParse<RigBackendServiceEnum>(raw[1], out var backendService) &&
                     bool.TryParse(raw[0], out var enablePolling))
                 {
-                    draft.FLRigSettings.PollAllowed = false;
-                    draft.OmniRigSettings.PollAllowed = false;
-                    draft.HamlibSettings.PollAllowed = false;
-
-                    if (enablePolling)
-                        switch (backendService)
-                        {
-                            case RigBackendServiceEnum.Hamlib:
-                                draft.HamlibSettings.PollAllowed = true;
-                                break;
-                            case RigBackendServiceEnum.FLRig:
-                                draft.FLRigSettings.PollAllowed = true;
-                                break;
-                            case RigBackendServiceEnum.OmniRig:
-                                draft.OmniRigSettings.PollAllowed = true;
-                                break;
-                            default:
-                                errors.Add($"unsupported backend: {backendService}");
-                                break;
-                        }
+                    SetRigPollingPatch(draft, backendService, enablePolling, errors);
                 }
                 else
                 {
@@ -1526,25 +1481,7 @@ public class PluginService : IPluginService, IDisposable
             case "rig.backend":
                 if (Enum.TryParse<RigBackendServiceEnum>(value, out var rBackend))
                 {
-                    draft.FLRigSettings.PollAllowed = false;
-                    draft.OmniRigSettings.PollAllowed = false;
-                    draft.HamlibSettings.PollAllowed = false;
-
-                    switch (rBackend)
-                    {
-                        case RigBackendServiceEnum.Hamlib:
-                            draft.HamlibSettings.PollAllowed = true;
-                            break;
-                        case RigBackendServiceEnum.FLRig:
-                            draft.FLRigSettings.PollAllowed = true;
-                            break;
-                        case RigBackendServiceEnum.OmniRig:
-                            draft.OmniRigSettings.PollAllowed = true;
-                            break;
-                        default:
-                            errors.Add($"unsupported backend: {rBackend}");
-                            break;
-                    }
+                    SetRigPollingPatch(draft, rBackend, true, errors);
                 }
                 else
                 {
@@ -1554,6 +1491,45 @@ public class PluginService : IPluginService, IDisposable
                 break;
             default:
                 errors.Add($"unsupported patch key: {key}");
+                break;
+        }
+    }
+
+    private static void ApplyBoolPatchValue(
+        string key,
+        string value,
+        Action<bool> setter,
+        List<string> errors)
+    {
+        if (bool.TryParse(value, out var parsed))
+            setter(parsed);
+        else
+            errors.Add($"invalid bool value for {key}");
+    }
+
+    private static void SetRigPollingPatch(
+        ApplicationSettings draft,
+        RigBackendServiceEnum backend,
+        bool enablePolling,
+        List<string> errors)
+    {
+        draft.HamlibSettings.PollAllowed = false;
+        draft.FLRigSettings.PollAllowed = false;
+        draft.OmniRigSettings.PollAllowed = false;
+
+        switch (backend)
+        {
+            case RigBackendServiceEnum.Hamlib:
+                draft.HamlibSettings.PollAllowed = enablePolling;
+                break;
+            case RigBackendServiceEnum.FLRig:
+                draft.FLRigSettings.PollAllowed = enablePolling;
+                break;
+            case RigBackendServiceEnum.OmniRig:
+                draft.OmniRigSettings.PollAllowed = enablePolling;
+                break;
+            default:
+                errors.Add($"unsupported backend: {backend}");
                 break;
         }
     }

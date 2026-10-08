@@ -356,6 +356,14 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         return await _currentService.GetServiceVersion();
     }
 
+    public async Task<(string Version, List<RigInfo> Models)> GetHamlibCatalogAsync()
+    {
+        var hamlib = GetServiceByName(RigBackendServiceEnum.Hamlib);
+        var version = await hamlib.GetServiceVersion();
+        var models = (await hamlib.GetSupportedRigModels()).OrderBy(x => x.Model).ToList();
+        return (version, models);
+    }
+
     public int GetPollingInterval()
     {
         var settingsCache = GetSettingsCache();

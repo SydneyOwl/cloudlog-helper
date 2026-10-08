@@ -251,43 +251,42 @@ public class ApplicationSettingsService : IApplicationSettingsService
     }
     
     /// <summary>
+    ///     Check if a settings section differs between the last saved and the current settings.
+    /// </summary>
+    private bool IsSectionChanged(Func<ApplicationSettings, object?> section)
+    {
+        if (_oldSettings is null) return false;
+        return !Equals(section(_oldSettings), section(_currentSettings!));
+    }
+
+    /// <summary>
     ///     Check if basic configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsBasicConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.BasicSettings;
-        var newI = _currentSettings!.BasicSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsBasicConfChanged() => IsSectionChanged(s => s.BasicSettings);
 
     /// <summary>
     ///     Check if cloudlog configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsCloudlogConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.CloudlogSettings;
-        var newI = _currentSettings!.CloudlogSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsCloudlogConfChanged() => IsSectionChanged(s => s.CloudlogSettings);
 
     /// <summary>
     ///     Check if hamlib configs has been changed.
     /// </summary>
     /// <returns></returns>
+    // NOTE: intentionally flag-based (draft touched) rather than old-vs-current comparison, see IsConfOnceChanged.
     public bool IsHamlibConfChanged()
     {
         if (_oldSettings is null) return false;
         return _draftSettings!.HamlibSettings.IsConfOnceChanged();
     }
-    
+
     /// <summary>
     ///     Check if omnirig configs has been changed.
     /// </summary>
     /// <returns></returns>
+    // NOTE: intentionally flag-based (draft touched) rather than old-vs-current comparison, see IsConfOnceChanged.
     public bool IsOmniRigConfChanged()
     {
         if (_oldSettings is null) return false;
@@ -298,25 +297,13 @@ public class ApplicationSettingsService : IApplicationSettingsService
     ///     Check if firig configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsFlrigConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.FLRigSettings;
-        var newI = _currentSettings!.FLRigSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsFlrigConfChanged() => IsSectionChanged(s => s.FLRigSettings);
 
     /// <summary>
     ///     Check if udp server configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsUDPConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.UDPSettings;
-        var newI = _currentSettings!.UDPSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsUDPConfChanged() => IsSectionChanged(s => s.UDPSettings);
 
     /// <summary>
     ///     write settings to default position.

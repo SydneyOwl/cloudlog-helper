@@ -173,17 +173,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
                 ShowDetectedServerInstance = true;
             });
 
-            var testResultMessage = await CloudlogUtil.TestCloudlogConnectionAsync(
-                CloudlogSettings.CloudlogUrl,
-                CloudlogSettings.CloudlogApiKey,
-                _cancellationToken);
-
-            if (!string.IsNullOrEmpty(testResultMessage))
-            {
-                throw new Exception(testResultMessage);
-            }
-
-            var stationInfo = await CloudlogUtil.GetStationInfoAsync(
+            var stationInfo = await CloudlogUtil.TestConnectionAndGetStationInfoAsync(
                 CloudlogSettings.CloudlogUrl,
                 CloudlogSettings.CloudlogApiKey,
                 _cancellationToken);
@@ -208,8 +198,7 @@ public sealed class CloudlogWizardStepViewModel : WizardStepViewModelBase
             });
             ClassLogger.Info($"Detected instance {instanceType}");
         }
-        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException &&
-                                            _cancellationToken.IsCancellationRequested)
+        catch (FlurlHttpException ex) when (ex.IsCancelledByUser(_cancellationToken))
         {
             ClassLogger.Trace("Wizard cloudlog test cancelled.");
         }

@@ -140,10 +140,7 @@ public class MainWindowViewModel : ViewModelBase
                      };
                      floatWin.SizeToContent = SizeToContent.Width;
                      floatWin.Height = 600;
-                     floatWin.Show();
-                     var track = _windowManager.Track(floatWin);
-                     ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
-                     UDPLogBoxEnabled = false;
+                     _showFloatingAndDisableBox(floatWin, res, () => UDPLogBoxEnabled = false);
                      break;
                  }
                  case UserBasicDataGroupboxUserControlViewModel:
@@ -152,14 +149,10 @@ public class MainWindowViewModel : ViewModelBase
                      {
                          DataContext = res.Sender
                      };
-                     var floatWin = new FloatingWindow
+                     _showFloatingAndDisableBox(new FloatingWindow
                      {
                          DataContext = new FloatingWindowViewModel(k)
-                     };
-                     floatWin.Show();
-                     var track = _windowManager.Track(floatWin);
-                     ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
-                     UserBasicBoxEnabled = false;
+                     }, res, () => UserBasicBoxEnabled = false);
                      break;
                  }
                  case RIGDataGroupboxUserControlViewModel:
@@ -168,14 +161,10 @@ public class MainWindowViewModel : ViewModelBase
                      {
                          DataContext = res.Sender
                      };
-                     var floatWin = new FloatingWindow
+                     _showFloatingAndDisableBox(new FloatingWindow
                      {
                          DataContext = new FloatingWindowViewModel(k)
-                     };
-                     floatWin.Show();
-                     var track = _windowManager.Track(floatWin);
-                     ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
-                     RigDataBoxEnabled = false;
+                     }, res, () => RigDataBoxEnabled = false);
                      break;
                  }
              }
@@ -196,6 +185,14 @@ public class MainWindowViewModel : ViewModelBase
                      break;
              }
          }
+    }
+
+    private void _showFloatingAndDisableBox(FloatingWindow floatWin, WindowSplitChanged res, Action disableBox)
+    {
+        floatWin.Show();
+        var track = _windowManager.Track(floatWin);
+        ((FloatableViewModelBase)res.Sender).SplitUserControlViewModel!.WindowSeq = track;
+        disableBox();
     }
 
     private async Task _showWizard()
