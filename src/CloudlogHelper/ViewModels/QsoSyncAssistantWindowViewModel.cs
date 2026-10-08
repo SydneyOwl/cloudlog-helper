@@ -84,12 +84,15 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
 
         this.WhenActivated(disposable =>
         {
-            Disposable.Create(async void () =>
+            Disposable.Create(() =>
             {
                 try
                 {
-                    await StopSyncCommand.Execute();
-                    await SaveConf.Execute();
+                    // stop sync first, then save conf (same order as the previous async cleanup)
+                    StopSyncCommand.Execute().Subscribe(
+                        _ => SaveConf.Execute().Subscribe(_ => { },
+                            ex => ClassLogger.Error(ex, "Saving QSO Assistant conf on deactivation failed.")),
+                        ex => ClassLogger.Error(ex, "Stopping sync on deactivation failed."));
                 }
                 catch (Exception ex)
                 {

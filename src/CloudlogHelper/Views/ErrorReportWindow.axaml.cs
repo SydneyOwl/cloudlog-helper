@@ -6,6 +6,8 @@ using ReactiveUI.Avalonia;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 
 namespace CloudlogHelper.Views;
 
@@ -43,19 +45,28 @@ public partial class ErrorReportWindow : ReactiveWindow<ErrorReportWindowViewMod
 
     public async void LogSaveButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        var ts = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
-        var file = await GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(
-            new FilePickerSaveOptions
-            {
-                SuggestedFileName = "CrashLog-" + ts + ".log",
-                Title = TranslationHelper.GetString(LangKeys.SaveLogTo)
-            });
-        if (file is not null)
+        try
         {
-            var openWriteStream = await file.OpenWriteAsync();
-            var st = new StreamWriter(openWriteStream);
-            await st.WriteAsync(_errorMessage);
-            st.Close();
+            var ts = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+            var file = await GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(
+                new FilePickerSaveOptions
+                {
+                    SuggestedFileName = "CrashLog-" + ts + ".log",
+                    Title = TranslationHelper.GetString(LangKeys.SaveLogTo)
+                });
+            if (file is not null)
+            {
+                var openWriteStream = await file.OpenWriteAsync();
+                var st = new StreamWriter(openWriteStream);
+                await st.WriteAsync(_errorMessage);
+                st.Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            await MessageBoxManager.GetMessageBoxStandard(TranslationHelper.GetString(LangKeys.Error),
+                ex.Message, ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error).ShowWindowDialogAsync(this);
         }
     }
 }

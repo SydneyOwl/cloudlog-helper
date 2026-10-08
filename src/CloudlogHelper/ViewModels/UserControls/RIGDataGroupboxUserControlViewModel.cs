@@ -108,7 +108,7 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                 return true;
             }
         ));
-        _ = rs.InitializeAsync();
+        rs.InitializeAsync().SafeFireAndForget();
         if (!InitSkipped) Initialize();
     }
 

@@ -76,14 +76,14 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
                     
-                    _ = _refreshBackendType();
+                    _refreshBackendType().SafeFireAndForget();
                 })
                 .DisposeWith(disposables);
 
-            _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
+            _pollCommand.ThrownExceptions.Subscribe(err =>
                 {
                     _setStatusToUnknown();
-                    await _inAppNotification.SendErrorNotificationAsync(err.Message);
+                    _inAppNotification.SendErrorNotificationAsync(err.Message).SafeFireAndForget();
                 })
                 .DisposeWith(disposables);
 
@@ -92,7 +92,7 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 .InvokeCommand(this, x => x._pollCommand)
                 .DisposeWith(disposables);
             
-            _ = _refreshBackendType();
+            _refreshBackendType().SafeFireAndForget();
         });
     }
 

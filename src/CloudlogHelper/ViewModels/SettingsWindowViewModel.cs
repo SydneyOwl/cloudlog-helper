@@ -250,19 +250,31 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
 
         FullyInitialized = false;
 
-        Task.WhenAll(_initializeLogSystemsAsync(), _initializeHamlibAsync(), _initializeOmniRigAsync())
-            .ContinueWith((async task =>
-            { 
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    FullyInitialized = true;
-                });
+        _initializeSettingsAsync().SafeFireAndForget();
+    }
 
-                MessageBus.Current.SendMessage(new SettingsChanged
-                {
-                    Part = ChangedPart.NothingJustOpened
-                });
-            }));
+    /// <summary>
+    ///     Runs all settings-page initializers, then flags the page as fully initialized.
+    ///     Initialization faults are logged and the page is still flagged, mirroring the
+    ///     previous ContinueWith(run-on-any-completion) behavior.
+    /// </summary>
+    private async Task _initializeSettingsAsync()
+    {
+        try
+        {
+            await Task.WhenAll(_initializeLogSystemsAsync(), _initializeHamlibAsync(), _initializeOmniRigAsync());
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to initialize settings page.");
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() => { FullyInitialized = true; });
+
+        MessageBus.Current.SendMessage(new SettingsChanged
+        {
+            Part = ChangedPart.NothingJustOpened
+        });
     }
 
     public void Dispose()

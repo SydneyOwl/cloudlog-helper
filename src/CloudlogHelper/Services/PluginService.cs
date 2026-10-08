@@ -469,52 +469,28 @@ public class PluginService : IPluginService, IDisposable
             _wsjtxDecodeCache.ObserveCollectionChanges()
                 .Throttle(TimeSpan.FromSeconds(2))
                 .ObserveOn(RxSchedulers.TaskpoolScheduler)
-                .Subscribe(async void (changes) =>
-                {
-                    try
-                    {
-                        await HandleDecodeCacheChanged();
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Error handling decode cache changes");
-                    }
-                })
+                .Subscribe(changes => HandleDecodeCacheChanged()
+                    .SafeFireAndForget(nameof(HandleDecodeCacheChanged)))
         );
 
         // push settings'changed
         _disp.Add(MessageBus.Current
             .Listen<SettingsChanged>()
-            .Subscribe(async void (x) =>
-            {
-                try
-                {
-                    await HandleSettingsChange(x);
-                }
-                catch (Exception ex)
-                {
-                    ClassLogger.Error(ex, "Error handling plugin service settings change");
-                }
-            }));
+            .Subscribe(x => HandleSettingsChange(x)
+                .SafeFireAndForget(nameof(HandleSettingsChange))));
 
         // receive IMessage
         _disp.Add(
             MessageBus.Current
                 .Listen<PluginEvent>()
-                .Subscribe(async void (x) =>
+                .Subscribe(x =>
                 {
-                    try
-                    {
-                        if (x.Message is null) return;
-                        await BroadcastMessageAsync(x.Message, CancellationToken.None);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Error handling plugin service settings change");
-                    }
+                    if (x.Message is null) return;
+                    BroadcastMessageAsync(x.Message, CancellationToken.None)
+                        .SafeFireAndForget(nameof(BroadcastMessageAsync));
                 }));
 
-        if (_basicSettings.EnablePlugin) _ = StartPluginServiceAsync();
+        if (_basicSettings.EnablePlugin) StartPluginServiceAsync().SafeFireAndForget(nameof(StartPluginServiceAsync));
     }
 
     private async Task HandleDecodeCacheChanged()
@@ -987,8 +963,9 @@ public class PluginService : IPluginService, IDisposable
                     var tryParse = Enum.TryParse<PluginControllableWindow>(window, out var pCtWindow);
                     if (!tryParse) break;
 
-                    _ = Dispatcher.UIThread.InvokeAsync(async () =>
-                        await _windowManagerService.CreateAndShowWindowByVm(pCtWindow, null, dialog == "true"));
+                    Dispatcher.UIThread.InvokeAsync(async () =>
+                            await _windowManagerService.CreateAndShowWindowByVm(pCtWindow, null, dialog == "true"))
+                        .SafeFireAndForget(nameof(_windowManagerService.CreateAndShowWindowByVm));
 
                     response.Success = true;
                     response.Message = "window-opened";

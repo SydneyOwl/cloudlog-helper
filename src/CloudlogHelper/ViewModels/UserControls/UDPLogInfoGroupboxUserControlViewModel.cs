@@ -146,7 +146,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         WaitFirstConn = _udpServerService.IsUdpServerEnabled();
 
-        _ = _qsoUploadService.StartAsync();
+        _qsoUploadService.StartAsync().SafeFireAndForget();
 
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {
@@ -203,7 +203,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             SetupErrorHandling(compositeDisposable);
             SetupMessageBusListeners(compositeDisposable);
 
-            _ = _udpServerService.InitializeAsync(_wsjtxMsgHandler, _wsjtxMsgLogger);
+            _udpServerService.InitializeAsync(_wsjtxMsgHandler, _wsjtxMsgLogger).SafeFireAndForget();
         });
     }
 
@@ -253,16 +253,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         _qsoQueueStore.Connect()
             .WhenPropertyChanged(p => p.UploadStatus)
-            .Subscribe(async void (x) =>
+            .Subscribe(x =>
             {
                 try
                 {
-
                     MessageBus.Current.SendMessage(new PluginEvent()
                     {
                         Message = PbMsgConverter.ToPbQSOUploadStatusChanged(x.Sender),
                     });
-                    
+
                     if (x.Value == UploadStatus.Success) UploadedQsosCount += 1;
                 }
                 catch (Exception ex)
@@ -273,7 +272,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
 
         _qsoQueueStore.Connect()
-            .OnItemAdded(async void (x) =>
+            .OnItemAdded(x =>
             {
                 try
                 {
@@ -323,8 +322,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         foreach (var command in commands)
         {
             command.ThrownExceptions
-                .Subscribe(async err => 
-                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
+                .Subscribe(err =>
+                    _inAppNotification.SendErrorNotificationAsync(err.Message).SafeFireAndForget())
                 .DisposeWith(disposables);
         }
     }
@@ -540,8 +539,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         if (_udpServerService.IsNotifyOnQsoMade())
         {
-            _ = _nativeNotificationManager.ShowNotificationAsync($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
-                rcd.FormatToReadableContent(true));
+            _nativeNotificationManager.ShowNotificationAsync($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
+                rcd.FormatToReadableContent(true)).SafeFireAndForget();
         }
     }
 

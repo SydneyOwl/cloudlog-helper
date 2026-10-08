@@ -95,12 +95,12 @@ public class WizardWindowViewModel : ViewModelBase
             command.ThrownExceptions.Subscribe(ex =>
             {
                 ClassLogger.Error(ex, "Wizard command failed.");
-                _ = _showErrorAsync(ex.Message);
+                _showErrorAsync(ex.Message).SafeFireAndForget();
             });
         }
 
         _updateStepState(WelcomeStepIndex);
-        _ = _rigBackendStep.InitializeAsync();
+        _rigBackendStep.InitializeAsync().SafeFireAndForget();
     }
 
     [Reactive] public ApplicationSettings DraftSettings { get; set; }
