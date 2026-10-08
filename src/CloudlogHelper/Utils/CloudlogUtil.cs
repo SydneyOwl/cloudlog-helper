@@ -200,11 +200,4 @@ public class CloudlogUtil
             };
         }
     }
-
-    /// <summary>
-    ///     Just some tests.
-    /// </summary>
-    public static void Test()
-    {
-    }
 }

@@ -83,15 +83,11 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     {
         ClassLogger.Debug("Stopping all rig services now");
         var tasks = new List<Task>();
-        
-        // if (!_appSettings.HamlibSettings.PollAllowed)
-            tasks.Add(_services[RigBackendServiceEnum.Hamlib].StopService(_getNewCancellationProcessToken()));
-        
-        // if (!_appSettings.FLRigSettings.PollAllowed)
-            tasks.Add(_services[RigBackendServiceEnum.FLRig].StopService(_getNewCancellationProcessToken()));
-        
-        // if (!_appSettings.OmniRigSettings.PollAllowed && 
-            if (_services.TryGetValue(RigBackendServiceEnum.OmniRig, out var omniRigService))
+
+        tasks.Add(_services[RigBackendServiceEnum.Hamlib].StopService(_getNewCancellationProcessToken()));
+        tasks.Add(_services[RigBackendServiceEnum.FLRig].StopService(_getNewCancellationProcessToken()));
+
+        if (_services.TryGetValue(RigBackendServiceEnum.OmniRig, out var omniRigService))
         {
             tasks.Add(omniRigService.StopService(_getNewCancellationProcessToken()));
         }

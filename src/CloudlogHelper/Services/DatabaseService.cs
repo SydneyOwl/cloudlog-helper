@@ -234,26 +234,6 @@ public class DatabaseService : IDatabaseService, IDisposable
         }
     }
 
-    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
-    {
-        try
-        {
-            return await _connection!.Table<IgnoredQsoDatabase>()
-                .Where(x => x.De == ignoredQso.De &&
-                           x.Dx == ignoredQso.Dx &&
-                           x.FinalMode == ignoredQso.FinalMode &&
-                           x.RstSent == ignoredQso.RstSent &&
-                           x.RstRecv == ignoredQso.RstRecv)
-                .ToListAsync()
-                .ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.Warn(ex, "Failed to find ignored QSO");
-            return null;
-        }
-    }
-
     public async Task<(int, int)> UpdateCallsignAndCountry(string ctyDat)
     {
         using var readerLock = await _callsignCountryUpdateLock.WriterLockAsync();

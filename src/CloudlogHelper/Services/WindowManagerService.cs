@@ -205,20 +205,6 @@ public class WindowManagerService : IWindowManagerService, IDisposable
         return false;
     }
 
-    private bool TryGetWindowByVm(Type vmType, out Window? targetWindow)
-    {
-        AutoRemove();
-        foreach (var weakRef in _windows)
-            if (weakRef.Window.TryGetTarget(out var window) && window.DataContext?.GetType() == vmType)
-            {
-                targetWindow = window;
-                return true;
-            }
-
-        targetWindow = null;
-        return false;
-    }
-
     private Window? GetWindowBySeq(string seq)
     {
         AutoRemove();

@@ -335,20 +335,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         if (result.Status != "success") throw new Exception($"Cloudlog upload failed: {result.Reason}");
     }
 
-    private static ulong SafeConvertToUlong(double value)
-    {
-        if (value <= 0) return 0;
-        if (value > ulong.MaxValue) return ulong.MaxValue;
-        return (ulong)value;
-    }
-
-    private static uint SafeConvertToUint(double value)
-    {
-        if (value <= 0) return 0;
-        if (value > uint.MaxValue) return uint.MaxValue;
-        return (uint)value;
-    }
-
     private async Task HandlePollExceptionAsync(Exception exception)
     {
         if (exception is InvalidPollException) // or InvalidConfigurationException)
@@ -497,14 +483,6 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
                                 {
                                     if (innerCancellationToken.IsCancellationRequested) break;
 
-                                    // if (remaining <= 0)
-                                    // {
-                                    //     UploadStatus = RigUploadStatus.Uploading;
-                                    // }
-                                    // NextUploadTime = remaining > 0 
-                                    //     ? remaining.ToString()
-                                    //     : TranslationHelper.GetString(LangKeys.GettingInfo);
-
                                     RefreshAfter = $"{remaining}s";
                                     
                                     if (remaining == 0)
@@ -573,13 +551,4 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
         _timerDisposables.Clear();
         _cancelSubject.OnNext(Unit.Default);
     }
-
-    // public void Dispose()
-    // {
-    //     _cloudlogSettings.Dispose();
-    //     _cancelSubject.Dispose();
-    //     _pollCommand.Dispose();
-    //     _timerDisposables.Dispose();
-    //     _pollLock.Dispose();
-    // }
 }

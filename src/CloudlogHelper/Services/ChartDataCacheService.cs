@@ -119,42 +119,6 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
         }
     }
 
-    public double[,]? GetGridStationCountByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.GridStationCount;
-        }
-    }
-
-    public Histogram? GetDistanceHistogramByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.DistanceHistogram;
-        }
-    }
-
-    public Histogram? GetBearingHistogramByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.BearingHistogram;
-        }
-    }
-
-    public Dictionary<string, double?>? GetStationCountByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.StationCountByDxcc;
-        }
-    }
-
     public StationChartDataSnapshot GetStationChartDataSnapshotByBand(string? band, bool filterDupeByCallsign = false)
     {
         lock (_lock)

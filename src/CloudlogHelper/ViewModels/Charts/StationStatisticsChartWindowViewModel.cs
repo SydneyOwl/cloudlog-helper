@@ -110,7 +110,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
                 .DisposeWith(disposable);
         });
 
-        // _ = _addFake();
         UpdateChart();
     }
 
@@ -509,38 +508,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
     }
 
-    private async Task _addFake()
-    {
-        var ranBand = new[] { "6m", "10m", "15m", "20m", "40m" };
-        var ranDxcc = new[]
-            { "BY", "JA", "K", "P5", "VK", "VE", "PY", "DL", "G", "F", "I", "EA" };
-
-        try
-        {
-            for (;;)
-            {
-                _chartDataCacheService.Add(new ChartQSOPoint
-                {
-                    DxCallsign = null,
-                    DXCC = ranDxcc[new Random().Next(0, ranDxcc.Length)],
-                    Azimuth = new Random().NextDouble() * 360,
-                    Distance = new Random().NextDouble() * 20000,
-                    Mode = "FT8",
-                    Snr = new Random().Next(-20, 10),
-                    Latitude = new Random().NextDouble() * 180 - 90, // 纬度范围：-90 到 90
-                    Longitude = new Random().NextDouble() * 360 - 180, // 经度范围：-180 到 180
-                    Band = "10m",
-                    Client = "TEST"
-                });
-                await Task.Delay(TimeSpan.FromMilliseconds(1));
-            }
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Error(e, "Error adding fake data");
-        }
-    }
-    
     private bool TryLoadWorldMapImage()
     {
         if (_worldMapImage is not null) return true;

@@ -111,7 +111,6 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
             LastRoundtripMs = 35,
             RemovePlugin = ReactiveCommand.Create(()=>{})
         });
-        // InitializeLogSystems();
     }
 
     public SettingsWindowViewModel(CommandLineOptions cmd,
@@ -411,13 +410,6 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
     private async Task _refreshPort()
     {
         Ports = SerialPort.GetPortNames().ToList();
-        // var tmp = DraftSettings.HamlibSettings.SelectedPort;
-        // if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
-        // if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.SelectedPort))
-        //     DraftSettings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
-        // reset port name
-        // DraftSettings.HamlibSettings.SelectedPort = "";
-        // DraftSettings.HamlibSettings.SelectedPort = tmp;
     }
 
     private async Task<Unit> _refreshConnectedPluginsAsync()

@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -120,11 +118,6 @@ public class HamlibSettings : ReactiveValidationObject
         }).DisposeWith(_disposable);;
     }
 
-
-    private bool IsPropertyHasErrors(string propertyName)
-    {
-        return GetErrors(propertyName).Cast<string>().Any();
-    }
 
     public bool IsHamlibHasErrors()
     {

@@ -64,12 +64,6 @@ public class OmniRigSettings : ReactiveValidationObject
         }).DisposeWith(_disposable);;
     }
 
-
-    private bool IsPropertyHasErrors(string propertyName)
-    {
-        return GetErrors(propertyName).Cast<string>().Any();
-    }
-
     public bool IsOmniRigHasErrors()
     {
         return HasErrors;
