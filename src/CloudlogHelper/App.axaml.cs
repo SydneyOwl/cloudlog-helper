@@ -91,6 +91,9 @@ public class App : Application
                 })
                 .ConfigureInnerHandler(handler =>
                 {
+                    // deliberately accepts any TLS certificate (user request): this bypasses
+                    // server certificate validation for ALL Flurl HTTP traffic, so a MITM can
+                    // intercept Cloudlog credentials. Keep only if self-signed certs must work.
                     handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
                 })
         );

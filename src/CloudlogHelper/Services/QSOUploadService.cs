@@ -2,29 +2,35 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using NLog;
+using ReactiveUI;
 
 namespace CloudlogHelper.Services;
 public class QSOUploadService : IQSOUploadService, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-    
-    private readonly CloudlogSettings _cloudlogSettings;
-    private readonly List<ThirdPartyLogService> _logServices;
+
+    private readonly IApplicationSettingsService _settingsService;
+    private CloudlogSettings _cloudlogSettings;
+    private List<ThirdPartyLogService> _logServices;
     private readonly INotificationManager _notificationManager;
     private readonly IUdpServerService _udpService;
-    
+
+    private readonly IDisposable? _settingsChangedSubscription;
+
     private readonly BlockingCollection<UploadItem> _uploadQueue = new();
-    
+
     private readonly CancellationTokenSource _serviceCts = new();
     private Task? _processingTask;
     private readonly SemaphoreSlim _processingLock = new(1, 1);
@@ -40,11 +46,35 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         if (udpService == null) throw new ArgumentNullException(nameof(udpService));
         if (notificationManager == null) throw new ArgumentNullException(nameof(notificationManager));
 
+        _settingsService = settingsService;
         var settings = settingsService.GetCurrentSettings();
         _logServices = settings.LogServices;
         _cloudlogSettings = settings.CloudlogSettings ?? throw new InvalidOperationException("Cloudlog settings not configured");
         _udpService = udpService;
         _notificationManager = notificationManager;
+
+        // Cloudlog fires from any apply path where the Cloudlog section changed;
+        // NothingJustClosed fires on every settings-window save (covers third-party-only changes,
+        // which have no dedicated message). In-flight uploads finish with the old snapshot.
+        _settingsChangedSubscription = MessageBus.Current.Listen<SettingsChanged>()
+            .Where(x => x.Part == ChangedPart.Cloudlog || x.Part == ChangedPart.NothingJustClosed)
+            .Subscribe(_ => _refreshSettingsSnapshot());
+    }
+
+    private void _refreshSettingsSnapshot()
+    {
+        try
+        {
+            var settings = _settingsService.GetCurrentSettings();
+            _cloudlogSettings =
+                settings.CloudlogSettings ?? throw new InvalidOperationException("Cloudlog settings not configured");
+            _logServices = settings.LogServices;
+            ClassLogger.Debug("QSO upload settings snapshot refreshed.");
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to refresh QSO upload settings snapshot.");
+        }
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -195,6 +225,10 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         var rcd = uploadItem.RecordedCallsignDetail;
         ClassLogger.Debug($"Processing QSO: {rcd.DXCall}");
 
+        // capture the snapshot once per item so an in-flight upload is not torn by a concurrent refresh
+        var cloudlogSettings = _cloudlogSettings;
+        var logServices = _logServices;
+
         try
         {
             var adif = GetAdifData(rcd);
@@ -206,7 +240,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 return;
             }
 
-            if (!ShouldUpload(rcd))
+            if (!ShouldUpload(rcd, cloudlogSettings, logServices))
             {
                 rcd.UploadStatus = UploadStatus.Ignored;
                 rcd.FailReason = TranslationHelper.GetString(LangKeys.QsoUploadDisabledOrCancelled);
@@ -214,7 +248,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 return;
             }
 
-            var result = await UploadWithRetryAsync(rcd, adif, cancellationToken).ConfigureAwait(false);
+            var result = await UploadWithRetryAsync(rcd, adif, cancellationToken, cloudlogSettings, logServices).ConfigureAwait(false);
 
             if (_udpService.IsNotifyOnQsoUploaded())
             {
@@ -241,17 +275,20 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         return rcd.RawData?.ToString()?.Trim() ?? rcd.GenerateAdif()?.Trim();
     }
 
-    private bool ShouldUpload(RecordedCallsignDetail rcd)
+    private bool ShouldUpload(RecordedCallsignDetail rcd, CloudlogSettings cloudlogSettings,
+        List<ThirdPartyLogService> logServices)
     {
-        return (_cloudlogSettings.AutoQSOUploadEnabled || 
-                _logServices.Any(x => x.AutoQSOUploadEnabled) || 
+        return (cloudlogSettings.AutoQSOUploadEnabled ||
+                logServices.Any(x => x.AutoQSOUploadEnabled) ||
                 rcd.ForcedUpload) && !rcd.IsMarkedCancelled;
     }
 
     private async Task<bool> UploadWithRetryAsync(
-        RecordedCallsignDetail rcd, 
-        string adif, 
-        CancellationToken cancellationToken)
+        RecordedCallsignDetail rcd,
+        string adif,
+        CancellationToken cancellationToken,
+        CloudlogSettings cloudlogSettings,
+        List<ThirdPartyLogService> logServices)
     {
         var maxRetries = _udpService.QSOUploadRetryCount();
         var result = false;
@@ -270,13 +307,13 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             {
                 var uploadTasks = new List<Task<ServiceUploadResult>>();
                 
-                if (_cloudlogSettings.AutoQSOUploadEnabled && 
+                if (cloudlogSettings.AutoQSOUploadEnabled &&
                     !rcd.UploadedServices.GetValueOrDefault("CloudlogService", false))
                 {
-                    uploadTasks.Add(UploadToCloudlogAsync(rcd, adif, cancellationToken));
+                    uploadTasks.Add(UploadToCloudlogAsync(rcd, adif, cancellationToken, cloudlogSettings));
                 }
 
-                foreach (var service in _logServices.Where(s => s.AutoQSOUploadEnabled))
+                foreach (var service in logServices.Where(s => s.AutoQSOUploadEnabled))
                 {
                     var serviceName = service.GetType().Name;
                     if (!rcd.UploadedServices.GetValueOrDefault(serviceName, false))
@@ -350,16 +387,17 @@ public class QSOUploadService : IQSOUploadService, IDisposable
     }
 
     private async Task<ServiceUploadResult> UploadToCloudlogAsync(
-        RecordedCallsignDetail rcd, 
-        string adif, 
-        CancellationToken cancellationToken)
+        RecordedCallsignDetail rcd,
+        string adif,
+        CancellationToken cancellationToken,
+        CloudlogSettings cloudlogSettings)
     {
         try
         {
             var result = await CloudlogUtil.UploadAdifLogAsync(
-                _cloudlogSettings.CloudlogUrl,
-                _cloudlogSettings.CloudlogApiKey,
-                _cloudlogSettings.CloudlogStationInfo?.StationId!,
+                cloudlogSettings.CloudlogUrl,
+                cloudlogSettings.CloudlogApiKey,
+                cloudlogSettings.CloudlogStationInfo?.StationId!,
                 adif,
                 cancellationToken).ConfigureAwait(false);
 
@@ -456,6 +494,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
         try
         {
+            _settingsChangedSubscription?.Dispose();
             StopAsync().GetAwaiter().GetResult();
             _uploadQueue.Dispose();
             _serviceCts.Dispose();
