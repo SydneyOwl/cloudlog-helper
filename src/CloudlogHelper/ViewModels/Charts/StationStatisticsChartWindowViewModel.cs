@@ -442,65 +442,54 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
     }
 
+    private readonly record struct PlotThemeColors(
+        Color Theme,
+        Color FigureBg,
+        Color DataBg,
+        Color Grid,
+        Color LegendBg,
+        Color LegendFont,
+        Color LegendOutline);
+
+    private static readonly PlotThemeColors DarkPlotTheme = new(
+        Color.FromHex("#d7d7d7"),
+        Color.FromHex("#181818"),
+        Color.FromHex("#1f1f1f"),
+        Color.FromHex("#404040"),
+        Color.FromHex("#404040"),
+        Color.FromHex("#d7d7d7"),
+        Color.FromHex("#d7d7d7"));
+
+    private static readonly PlotThemeColors LightPlotTheme = new(
+        Color.FromHex("#34495E"),
+        Color.FromHex("#FDFDFD"),
+        Color.FromHex("#F5F7FA"),
+        Color.FromHex("#E3E8ED"),
+        Color.FromHex("#FFFFFF"),
+        Color.FromHex("#2C3E50"),
+        Color.FromHex("#BDC3C7"));
+
     private void _refreshTheme()
     {
-        if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
-            _setDarkTheme();
-        else
-            _setLightTheme();
+        _applyPlotTheme(Application.Current!.ActualThemeVariant == ThemeVariant.Dark
+            ? DarkPlotTheme
+            : LightPlotTheme);
     }
 
-    private void _setDarkTheme()
+    private void _applyPlotTheme(PlotThemeColors theme)
     {
-        var themeColor = Color.FromHex("#d7d7d7");
-        var figureBgColor = Color.FromHex("#181818");
-        var dataBgColor = Color.FromHex("#1f1f1f");
-        var gridColor = Color.FromHex("#404040");
-        var legendBgColor = Color.FromHex("#404040");
-        var legendFontColor = Color.FromHex("#d7d7d7");
-        var legendOutlineColor = Color.FromHex("#d7d7d7");
-
         for (var i = 0; i < PlotControl.Multiplot.GetPlots().Length; i++)
         {
             var plot = PlotControl.Multiplot.GetPlot(i);
-            plot.FigureBackground.Color = figureBgColor;
-            plot.DataBackground.Color = dataBgColor;
-            plot.Axes.Color(themeColor);
-            plot.Grid.MajorLineColor = gridColor;
-            plot.Grid.MinorLineColor = gridColor.WithAlpha(0.3);
+            plot.FigureBackground.Color = theme.FigureBg;
+            plot.DataBackground.Color = theme.DataBg;
+            plot.Axes.Color(theme.Theme);
+            plot.Grid.MajorLineColor = theme.Grid;
+            plot.Grid.MinorLineColor = theme.Grid.WithAlpha(0.3);
 
-            plot.Legend.BackgroundColor = legendBgColor;
-            plot.Legend.FontColor = legendFontColor;
-            plot.Legend.OutlineColor = legendOutlineColor;
-
-            plot.Axes.Title.Label.FontSize = 14;
-            plot.Axes.Left.Label.FontSize = 11;
-            plot.Axes.Bottom.Label.FontSize = 11;
-        }
-    }
-
-    private void _setLightTheme()
-    {
-        var themeColor = Color.FromHex("#34495E");
-        var figureBgColor = Color.FromHex("#FDFDFD");
-        var dataBgColor = Color.FromHex("#F5F7FA");
-        var gridColor = Color.FromHex("#E3E8ED");
-        var legendBgColor = Color.FromHex("#FFFFFF");
-        var legendFontColor = Color.FromHex("#2C3E50");
-        var legendOutlineColor = Color.FromHex("#BDC3C7");
-
-        for (var i = 0; i < PlotControl.Multiplot.GetPlots().Length; i++)
-        {
-            var plot = PlotControl.Multiplot.GetPlot(i);
-            plot.FigureBackground.Color = figureBgColor;
-            plot.DataBackground.Color = dataBgColor;
-            plot.Axes.Color(themeColor);
-            plot.Grid.MajorLineColor = gridColor;
-            plot.Grid.MinorLineColor = gridColor.WithAlpha(0.3);
-
-            plot.Legend.BackgroundColor = legendBgColor;
-            plot.Legend.FontColor = legendFontColor;
-            plot.Legend.OutlineColor = legendOutlineColor;
+            plot.Legend.BackgroundColor = theme.LegendBg;
+            plot.Legend.FontColor = theme.LegendFont;
+            plot.Legend.OutlineColor = theme.LegendOutline;
 
             plot.Axes.Title.Label.FontSize = 14;
             plot.Axes.Left.Label.FontSize = 11;

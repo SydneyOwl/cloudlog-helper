@@ -169,7 +169,7 @@ public class LogSystemCard : UserControl
         return field.Type switch
         {
             FieldType.Text => CreateTextInput(field),
-            FieldType.Password => CreatePasswordInput(field),
+            FieldType.Password => CreateTextInput(field, '•'),
             FieldType.CheckBox => CreateCheckboxInput(field),
             FieldType.ComboBox => CreateComboBoxInput(field),
             FieldType.FilePicker => CreateFilePickerInput(field),
@@ -177,29 +177,11 @@ public class LogSystemCard : UserControl
         };
     }
 
-    private TextBox CreateTextInput(LogSystemField field)
+    private TextBox CreateTextInput(LogSystemField field, char? passwordChar = null)
     {
-        return new TextBox
+        var textBox = new TextBox
         {
             Classes = { "setting-control" },
-            DataContext = field,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            MaxWidth = 200,
-            PlaceholderText = field.Watermark ?? string.Empty,
-            [!TextBox.TextProperty] = new Binding("Value")
-            {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            }
-        };
-    }
-
-    private TextBox CreatePasswordInput(LogSystemField field)
-    {
-        return new TextBox
-        {
-            Classes = { "setting-control" },
-            PasswordChar = '•',
             DataContext = field,
             HorizontalAlignment = HorizontalAlignment.Left,
             MaxWidth = 200,
@@ -209,6 +191,11 @@ public class LogSystemCard : UserControl
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
             }
         };
+        if (passwordChar is null)
+            textBox.PlaceholderText = field.Watermark ?? string.Empty;
+        else
+            textBox.PasswordChar = passwordChar.Value;
+        return textBox;
     }
 
     private CheckBox CreateCheckboxInput(LogSystemField field)

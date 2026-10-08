@@ -68,45 +68,6 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         }
     }
 
-    public void StopSync()
-    {
-        _processingLock.Wait();
-        try
-        {
-            if (!_isStarted)
-            {
-                return;
-            }
-
-            ClassLogger.Info("Stopping QSO upload service...");
-            _uploadQueue.CompleteAdding();
-            _serviceCts.Cancel();
-            
-            if (_processingTask is { IsCompleted: false })
-            {
-                try
-                {
-                    _processingTask.GetAwaiter().GetResult();
-                }
-                catch (OperationCanceledException)
-                {
-                    //ignored
-                }
-                catch (Exception ex)
-                {
-                    ClassLogger.Error(ex, "Error during service shutdown");
-                }
-            }
-
-            _isStarted = false;
-            ClassLogger.Info("QSO upload service stopped successfully.");
-        }
-        finally
-        {
-            _processingLock.Release();
-        }
-    }
-
     public async Task StopAsync()
     {
         await _processingLock.WaitAsync();
@@ -128,7 +89,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                 }
                 catch (OperationCanceledException)
                 {
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -495,7 +456,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
         try
         {
-            StopSync();
+            StopAsync().GetAwaiter().GetResult();
             _uploadQueue.Dispose();
             _serviceCts.Dispose();
             _processingLock.Dispose();

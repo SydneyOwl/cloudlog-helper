@@ -158,7 +158,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         try
         {
-            if (!await GetIsQsoIgnoredAsync(ignoredQso).ConfigureAwait(false))
+            if (!await IsQsoIgnored(ignoredQso).ConfigureAwait(false))
             {
                 ignoredQso.UpdatedAt = DateTime.Now;
                 await _connection!.InsertAsync(ignoredQso).ConfigureAwait(false);
@@ -362,12 +362,6 @@ public class DatabaseService : IDatabaseService, IDisposable
         
         return float.TryParse(freqA, out parsedA) && 
                float.TryParse(freqB, out parsedB);
-    }
-
-    private async Task<bool> GetIsQsoIgnoredAsync(IgnoredQsoDatabase ignoredQso)
-    {
-        var existingEntries = await FindIgnoredQsoAsync(ignoredQso).ConfigureAwait(false);
-        return existingEntries?.Any(entry => IsSimilarIgnoredQso(entry, ignoredQso)) ?? false;
     }
 
     private async Task<List<IgnoredQsoDatabase>?> FindIgnoredQsoAsync(IgnoredQsoDatabase ignoredQso)
