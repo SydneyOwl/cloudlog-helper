@@ -211,7 +211,8 @@ public class UdpServerService : IUdpServerService, IDisposable
             
             // Small delay to ensure OS releases resources
             await Task.Delay(500);
-            
+
+            _cts.Dispose();
             _cts = new CancellationTokenSource();
             ClassLogger.Trace("Asking udpserver to start.");
 

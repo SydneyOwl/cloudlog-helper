@@ -48,36 +48,51 @@ public class LoTWThirdPartyLogService : ThirdPartyLogService
         var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
         adifWithHeader.AppendLine(adif);
         var tempFileName = Path.Join(DefaultConfigs.DefaultTempFilePath, Guid.NewGuid().ToString().Replace("-", ""));
-        await File.WriteAllTextAsync(tempFileName, adifWithHeader.ToString(), token).ConfigureAwait(false);
 
-        var args = new List<string>();
-        args.Add("-a");
-        args.Add("all");
-        args.Add("-l");
-        args.Add(StationName);
-        if (!string.IsNullOrWhiteSpace(TqslPassword))
+        try
         {
-            args.Add("-p");
-            args.Add(TqslPassword);
+            await File.WriteAllTextAsync(tempFileName, adifWithHeader.ToString(), token).ConfigureAwait(false);
+
+            var args = new List<string>();
+            args.Add("-a");
+            args.Add("all");
+            args.Add("-l");
+            args.Add(StationName);
+            if (!string.IsNullOrWhiteSpace(TqslPassword))
+            {
+                args.Add("-p");
+                args.Add(TqslPassword);
+            }
+
+            args.Add("-q");
+            args.Add("-x");
+            args.Add("-d");
+            args.Add("-u");
+            args.Add(tempFileName);
+
+            var result = string.Empty;
+
+            await ProcessUtil.ExecFile(LotwFilePath, args.ToArray(), (stdout, stderr) =>
+            {
+                result = stderr;
+                ClassLogger.Trace($"Lotw stderr detected: {stderr}");
+                ClassLogger.Trace($"Lotw stdout detected: {stdout}");
+            }, token).ConfigureAwait(false);
+
+            if (result.Contains("Final Status: Success(0)")) return;
+            throw new Exception($"Upload failed: {result}");
         }
-
-        args.Add("-q");
-        args.Add("-x");
-        args.Add("-d");
-        args.Add("-u");
-        args.Add(tempFileName);
-
-        var result = string.Empty;
-
-        await ProcessUtil.ExecFile(LotwFilePath, args.ToArray(), (stdout, stderr) =>
+        finally
         {
-            result = stderr;
-            ClassLogger.Trace($"Lotw stderr detected: {stderr}");
-            ClassLogger.Trace($"Lotw stdout detected: {stdout}");
-        }, token).ConfigureAwait(false);
-
-        if (result.Contains("Final Status: Success(0)")) return;
-        throw new Exception($"Upload failed: {result}");
+            // tqsl may still hold the file briefly; deletion is best-effort
+            try
+            {
+                File.Delete(tempFileName);
+            }
+            catch (IOException)
+            {
+            }
+        }
     }
 
     public override async Task PreInitAsync(CancellationToken token)

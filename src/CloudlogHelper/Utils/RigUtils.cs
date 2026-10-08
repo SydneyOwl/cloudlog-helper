@@ -19,35 +19,36 @@ public static class RigUtils
         return OperatingSystem.IsWindows() && Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId) is not null;
     }
 
+    private static readonly Dictionary<string, string> RigctldReturnCodeMap = new()
+    {
+        { "0", "Command completed successfully" },
+        { "1", "Invalid parameter" },
+        { "2", "Invalid configuration" },
+        { "3", "Memory shortage" },
+        { "4", "Feature not implemented" },
+        { "5", "Communication timed out" },
+        { "6", "IO error" },
+        { "7", "Internal Hamlib error" },
+        { "8", "Protocol error" },
+        { "9", "Command rejected by the rig" },
+        { "10", "Command performed, but arg truncated, result not guaranteed" },
+        { "11", "Feature not available" },
+        { "12", "Target VFO unaccessible" },
+        { "13", "Communication bus error" },
+        { "14", "Communication bus collision" },
+        { "15", "NULL RIG handle or invalid pointer parameter" },
+        { "16", "Invalid VFO" },
+        { "17", "Argument out of domain of func" },
+        { "18", "Function deprecated" },
+        { "19", "Security error password not provided or crypto failure" },
+        { "20", "Rig is not powered on" },
+        { "21", "Limit exceeded" },
+        { "22", "Access denied" }
+    };
+
     public static string GetDescriptionFromReturnCode(string code)
     {
-        var codeDesMap = new Dictionary<string, string>
-        {
-            { "0", "Command completed successfully" },
-            { "1", "Invalid parameter" },
-            { "2", "Invalid configuration" },
-            { "3", "Memory shortage" },
-            { "4", "Feature not implemented" },
-            { "5", "Communication timed out" },
-            { "6", "IO error" },
-            { "7", "Internal Hamlib error" },
-            { "8", "Protocol error" },
-            { "9", "Command rejected by the rig" },
-            { "10", "Command performed, but arg truncated, result not guaranteed" },
-            { "11", "Feature not available" },
-            { "12", "Target VFO unaccessible" },
-            { "13", "Communication bus error" },
-            { "14", "Communication bus collision" },
-            { "15", "NULL RIG handle or invalid pointer parameter" },
-            { "16", "Invalid VFO" },
-            { "17", "Argument out of domain of func" },
-            { "18", "Function deprecated" },
-            { "19", "Security error password not provided or crypto failure" },
-            { "20", "Rig is not powered on" },
-            { "21", "Limit exceeded" },
-            { "22", "Access denied" }
-        };
-        if (codeDesMap.TryGetValue(code, out var result)) return "Hamlib error:" + result;
+        if (RigctldReturnCodeMap.TryGetValue(code, out var result)) return "Hamlib error:" + result;
         return "Failed to init hamlib!";
     }
 
