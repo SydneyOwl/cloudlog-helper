@@ -13,4 +13,9 @@ public class ClientTabItem : ReactiveObject
     public string? Key { get; init; }
 
     [Reactive] public string Label { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     True while this client is on air. For the aggregate tab, true when any client transmits.
+    /// </summary>
+    [Reactive] public bool Transmitting { get; set; }
 }

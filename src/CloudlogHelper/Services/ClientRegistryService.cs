@@ -132,6 +132,7 @@ public class ClientRegistryService : IClientRegistryService, IDisposable
                     continue;
 
                 client.IsAlive = false;
+                client.Transmitting = false;
                 ClassLogger.Info($"Client expired: {client.DisplayName} ({client.Id})");
             }
         }

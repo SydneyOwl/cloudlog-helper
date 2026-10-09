@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -203,8 +204,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     if (!_udpServerService.IsUdpServerEnabled() || WaitFirstConn) return;
                     TimeoutStatus = true;
-                    TxStatus = false;
+                    UpdateTxStatusCore();
                 })
+                .DisposeWith(compositeDisposable);
+
+            // A client that goes silent is expired by the registry without any further UDP message,
+            // so nothing would otherwise re-run the transmit recompute. Poll once a second on the UI
+            // thread to clear a stuck dot / banner once its session is no longer alive.
+            Observable.Interval(TimeSpan.FromSeconds(1))
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ => UpdateTxStatusCore())
                 .DisposeWith(compositeDisposable);
 
             SetupQsoRateCalculation(compositeDisposable);
@@ -385,6 +394,47 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         if (SelectedClientTab is null || !_clientTabs.Contains(SelectedClientTab))
             SelectedClientTab = allTab;
+    }
+
+    /// <summary>
+    ///     Recompute which clients are currently transmitting, so each client tab can light up
+    ///     independently and the banner can show a combined view. A single global flag would let
+    ///     one client's status overwrite another's while both are on air.
+    ///     Safe to call from any thread; the work is marshalled to the UI thread because it
+    ///     mutates bound tab state and reads the tab lookup dictionary that the UI thread owns.
+    /// </summary>
+    private void UpdateTxStatus()
+    {
+        RxSchedulers.MainThreadScheduler.Schedule(UpdateTxStatusCore);
+    }
+
+    private void UpdateTxStatusCore()
+    {
+        var transmitting = _clientRegistryService.Sessions
+            .Where(session => session.IsAlive && session.Transmitting)
+            .ToList();
+
+        var anyTransmitting = transmitting.Count > 0;
+
+        foreach (var (id, tab) in _clientTabsById)
+            tab.Transmitting = id == AllClientsTabId
+                ? anyTransmitting
+                : transmitting.Any(session => session.Id == id);
+
+        TxStatus = anyTransmitting;
+        MsgSending = transmitting.Count switch
+        {
+            0 => string.Empty,
+            1 => _formatTxMessage(transmitting[0]),
+            _ => string.Join("  |  ", transmitting.Select(session => $"{session.DisplayName}: {_formatTxMessage(session)}"))
+        };
+    }
+
+    private static string _formatTxMessage(ClientSession session)
+    {
+        return string.IsNullOrEmpty(session.TXMessage)
+            ? TranslationHelper.GetString(LangKeys.Transmitting)
+            : session.TXMessage;
     }
 
     private void SetupFilteringAndSorting(CompositeDisposable disposables)
@@ -582,6 +632,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         try
         {
             _clientRegistryService.Touch(message);
+            UpdateTxStatus();
 
             switch (message.MessageType)
             {
@@ -664,11 +715,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private async Task HandleStatusMessage(Status status)
     {
-        TxStatus = status.Transmitting;
-        MsgSending = string.IsNullOrEmpty(status.TXMessage)
-            ? TranslationHelper.GetString(LangKeys.Transmitting)
-            : status.TXMessage;
-            
         _decodedDataProcessorService.UpdateClientBand(
             status.Id,
             FreqHelper.GetMeterFromFreq(status.DialFrequencyInHz));

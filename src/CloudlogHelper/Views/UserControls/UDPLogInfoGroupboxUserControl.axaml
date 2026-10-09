@@ -65,17 +65,39 @@
                     <TabStrip Grid.Row="0" Grid.Column="0"
                               ItemsSource="{Binding ClientTabs}"
                               SelectedItem="{Binding SelectedClientTab, Mode=TwoWay}"
-                              Padding="0"
-                              Margin="0,0,0,0">
+                              Padding="0">
                         <TabStrip.Styles>
                             <Style Selector="TabStripItem">
-                                <Setter Property="Padding" Value="16,5" />
-                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                                <Setter Property="Padding" Value="10,0" />
                             </Style>
                         </TabStrip.Styles>
                         <TabStrip.ItemTemplate>
                             <DataTemplate x:DataType="userControls:ClientTabItem">
-                                <TextBlock FontSize="15" Text="{Binding Label}" />
+                                <!-- The dot hangs into the tab's right padding (negative margin) so the
+                                     label stays centered and the tab width never changes when it toggles -->
+                                <Panel>
+                                    <TextBlock FontSize="15" Text="{Binding Label}" />
+                                    <Ellipse Width="5" Height="5" Fill="#FF3B30"
+                                             HorizontalAlignment="Right" VerticalAlignment="Top"
+                                             Margin="0,2,-8,0"
+                                             IsVisible="{Binding Transmitting}">
+                                        <Ellipse.Styles>
+                                            <Style Selector="Ellipse">
+                                                <Style.Animations>
+                                                    <Animation Duration="0:0:0.8" IterationCount="Infinite"
+                                                               PlaybackDirection="Alternate">
+                                                        <KeyFrame Cue="0%">
+                                                            <Setter Property="Opacity" Value="0.25" />
+                                                        </KeyFrame>
+                                                        <KeyFrame Cue="100%">
+                                                            <Setter Property="Opacity" Value="1.0" />
+                                                        </KeyFrame>
+                                                    </Animation>
+                                                </Style.Animations>
+                                            </Style>
+                                        </Ellipse.Styles>
+                                    </Ellipse>
+                                </Panel>
                             </DataTemplate>
                         </TabStrip.ItemTemplate>
                     </TabStrip>
