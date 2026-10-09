@@ -7,6 +7,32 @@ namespace CloudlogHelper.Utils;
 
 public class WsjtxMessageUtil
 {
+    /// <summary>
+    ///     Bucket used when a client sends an empty/missing Id.
+    /// </summary>
+    public const string UnknownClient = "Unknown";
+
+    /// <summary>
+    ///     Canonical registry key for a client, based on the full UDP Id so that
+    ///     e.g. "WSJT-X - 20m" and "WSJT-X - 40m" never collide.
+    /// </summary>
+    public static string GetClientKey(string? id)
+    {
+        return string.IsNullOrWhiteSpace(id) ? UnknownClient : id;
+    }
+
+    /// <summary>
+    ///     Short, human friendly label for a client. Mirrors gridtracker's short-instance
+    ///     naming: take the last " - " segment when present, otherwise the raw Id.
+    /// </summary>
+    public static string GetClientDisplayName(string? id)
+    {
+        if (string.IsNullOrWhiteSpace(id)) return UnknownClient;
+
+        var parts = id.Split(" - ", StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length > 1 ? parts[^1].Trim() : id;
+    }
+
     public static string? SerializeWsjtxMessageToJson(WsjtxMessage message)
     {
         return message.MessageType switch

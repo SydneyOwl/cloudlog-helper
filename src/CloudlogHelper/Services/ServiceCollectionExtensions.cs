@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IQsoQueueStore, QsoQueueStore>();
         services.AddSingleton<IChartDataCacheService, ChartDataCacheService>();
         services.AddSingleton<IDecodedDataProcessorService, DecodedDataProcessorService>();
+        services.AddSingleton<IClientRegistryService, ClientRegistryService>();
         services.AddSingleton<ILogSystemManager, LogSystemManager>();
         services.AddSingleton<IPluginService, PluginService>();
         return services;

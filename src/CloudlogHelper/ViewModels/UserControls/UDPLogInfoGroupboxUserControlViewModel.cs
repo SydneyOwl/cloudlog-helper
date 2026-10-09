@@ -46,6 +46,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly ObservableCollectionExtended<RecordedCallsignDetail> _designFilteredQsos = new();
     private readonly IDatabaseService _databaseService;
     private readonly IDecodedDataProcessorService _decodedDataProcessorService;
+    private readonly IClientRegistryService _clientRegistryService;
     private readonly Subject<Unit> _heartbeatSubject = new();
     private readonly IInAppNotificationService _inAppNotification;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
@@ -131,10 +132,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IQSOUploadService qu,
         IQsoQueueStore qsoQueueStore,
         INotificationManager nativeNotificationManager,
-        IDecodedDataProcessorService decodedDataProcessorService)
+        IDecodedDataProcessorService decodedDataProcessorService,
+        IClientRegistryService clientRegistryService)
     {
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
+        _clientRegistryService = clientRegistryService;
         _nativeNotificationManager = nativeNotificationManager;
         _qsoUploadService = qu;
         _qsoQueueStore = qsoQueueStore;
@@ -476,6 +479,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         try
         {
+            _clientRegistryService.Touch(message);
+
             switch (message.MessageType)
             {
                 case MessageType.QSOLogged:
