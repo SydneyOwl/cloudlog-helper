@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -40,7 +41,13 @@ public class ClientRegistryService : IClientRegistryService, IDisposable
         return _cache.Connect();
     }
 
-    public IEnumerable<ClientSession> Sessions => _cache.Items;
+    public IEnumerable<ClientSession> Sessions
+    {
+        get
+        {
+            lock (_sync) return _cache.Items.ToList();
+        }
+    }
 
     public ClientSession? GetSession(string id)
     {

@@ -27,6 +27,9 @@
     <data name="About" xml:space="preserve">
         <value>关于</value>
     </data>
+    <data name="AllClients" xml:space="preserve">
+        <value>全部</value>
+    </data>
     <data name="Help" xml:space="preserve">
         <value>帮助</value>
     </data>

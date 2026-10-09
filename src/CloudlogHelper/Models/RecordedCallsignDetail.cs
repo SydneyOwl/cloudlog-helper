@@ -253,9 +253,7 @@ public class RecordedCallsignDetail : ReactiveObject
             ExchangeSent = qlo.ExchangeSent,
             ExchangeReceived = qlo.ExchangeReceived,
             AdifPropagationMode = qlo.AdifPropagationMode,
-            ClientId = string.IsNullOrEmpty(qlo.Id)
-                ? string.Empty
-                : qlo.Id[..(qlo.Id.Length > 6 ? 6 : qlo.Id.Length)],
+            ClientId = WsjtxMessageUtil.GetClientKey(qlo.Id),
             UploadStatus = UploadStatus.Pending
         };
     }

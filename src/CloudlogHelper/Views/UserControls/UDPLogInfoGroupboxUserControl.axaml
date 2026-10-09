@@ -61,8 +61,25 @@
                         Margin="20,0,0,0" />
                 </StackPanel>
 
-                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                    <ListBox Grid.Row="0" Grid.Column="0" AutoScrollToSelectedItem="True" x:Name="QsoBox"
+                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" RowDefinitions="Auto,*">
+                    <TabStrip Grid.Row="0" Grid.Column="0"
+                              ItemsSource="{Binding ClientTabs}"
+                              SelectedItem="{Binding SelectedClientTab, Mode=TwoWay}"
+                              Padding="0"
+                              Margin="0,0,0,0">
+                        <TabStrip.Styles>
+                            <Style Selector="TabStripItem">
+                                <Setter Property="Padding" Value="16,5" />
+                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                            </Style>
+                        </TabStrip.Styles>
+                        <TabStrip.ItemTemplate>
+                            <DataTemplate x:DataType="userControls:ClientTabItem">
+                                <TextBlock FontSize="15" Text="{Binding Label}" />
+                            </DataTemplate>
+                        </TabStrip.ItemTemplate>
+                    </TabStrip>
+                    <ListBox Grid.Row="1" Grid.Column="0" AutoScrollToSelectedItem="True" x:Name="QsoBox"
                              ItemsSource="{Binding FilteredQsos}"
                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              Background="{DynamicResource ThemeControlTransparentBrush}"
@@ -173,17 +190,6 @@
                                                                FontWeight="SemiBold"
                                                                Foreground="White" />
                                                 </Border>
-
-                                                <Border Background="#4CAF50" CornerRadius="4"
-                                                        Padding="6 3">
-                                                    <TextBlock Text="{Binding ClientId}"
-                                                               MaxWidth="40"
-                                                               TextTrimming="CharacterEllipsis"
-                                                               ToolTip.Tip="{Binding ClientId}"
-                                                               FontSize="10"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="White" />
-                                                </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                                                         Spacing="5">
@@ -220,7 +226,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
+                    <StackPanel Grid.Row="1" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 147, 0, 0.7)" IsVisible="{Binding TxStatus}">
                         <StackPanel.Styles>
                             <Style Selector="StackPanel">
@@ -244,7 +250,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
+                    <StackPanel Grid.Row="1" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(255, 69, 0, 0.8)"
                                 IsVisible="{Binding TimeoutStatus}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
@@ -254,7 +260,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" Height="25" VerticalAlignment="Top"
+                    <StackPanel Grid.Row="1" Grid.Column="0" Height="25" VerticalAlignment="Top"
                                 Background="rgba(100, 149, 237, 0.8)" IsVisible="{Binding WaitFirstConn}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                             <avalonia:MaterialIcon Kind="Sleep" Foreground="White" Margin="0,3,0,0"/>

@@ -26,6 +26,29 @@ public class WsjtxMessageUtilTests
         Assert.Equal(expected, WsjtxMessageUtil.ExtractDeFromMessage(message));
     }
 
+    [Theory]
+    [InlineData("WSJT-X - 20m", "WSJT-X - 20m")]
+    [InlineData("JTDX", "JTDX")]
+    [InlineData("  WSJT-X  ", "  WSJT-X  ")]
+    [InlineData(null, WsjtxMessageUtil.UnknownClient)]
+    [InlineData("", WsjtxMessageUtil.UnknownClient)]
+    [InlineData("   ", WsjtxMessageUtil.UnknownClient)]
+    public void GetClientKey_ReturnsFullIdOrUnknown(string? id, string expected)
+    {
+        Assert.Equal(expected, WsjtxMessageUtil.GetClientKey(id));
+    }
+
+    [Theory]
+    [InlineData("WSJT-X - 20m", "20m")]
+    [InlineData("WSJT-X - 40m", "40m")]
+    [InlineData("JTDX", "JTDX")]
+    [InlineData(null, WsjtxMessageUtil.UnknownClient)]
+    [InlineData("", WsjtxMessageUtil.UnknownClient)]
+    public void GetClientDisplayName_UsesLastSegmentOrRawId(string? id, string expected)
+    {
+        Assert.Equal(expected, WsjtxMessageUtil.GetClientDisplayName(id));
+    }
+
     [Fact]
     public void SerializeWsjtxMessageToJson_SerializesConcreteMessagePayload()
     {

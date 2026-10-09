@@ -1,11 +1,37 @@
+using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
 using CloudlogHelper.Utils;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
 namespace CloudlogHelper.Tests;
 
 public class AdifAndRecordedCallsignTests
 {
+    [Theory]
+    [InlineData("WSJT-X - 20m", "WSJT-X - 20m")]
+    [InlineData("WSJT-X - 40m", "WSJT-X - 40m")]
+    [InlineData("JTDX", "JTDX")]
+    [InlineData("", WsjtxMessageUtil.UnknownClient)]
+    [InlineData(null, WsjtxMessageUtil.UnknownClient)]
+    public void GenerateCallsignDetail_KeepsFullClientKey(string? id, string expectedClientId)
+    {
+        var qlo = new QsoLogged
+        {
+            Id = id!,
+            DXCall = "K1ABC",
+            DXGrid = "FN42",
+            TXFrequencyInHz = 14_074_000,
+            Mode = "FT8",
+            DateTimeOn = new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc),
+            DateTimeOff = new DateTime(2026, 1, 2, 3, 5, 5, DateTimeKind.Utc)
+        };
+
+        var detail = RecordedCallsignDetail.GenerateCallsignDetail(new CountryDatabase(), qlo);
+
+        Assert.Equal(expectedClientId, detail.ClientId);
+    }
+
     [Fact]
     public void GenerateAdifLog_IncludesSubModeAndCommentOnlyWhenPresent()
     {

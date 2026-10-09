@@ -58,6 +58,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
+    private const string AllClientsTabId = "__all__";
+
+    private readonly Dictionary<string, ClientTabItem> _clientTabsById = new();
+    private readonly ObservableCollection<ClientTabItem> _clientTabs = new();
+
     private void _appendTestData()
     {
         var testQso = new RecordedCallsignDetail
@@ -120,6 +125,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         I18NExtension.Culture = new CultureInfo("ja-JP");
 
         _appendTestData();
+
+        var designAllTab = new ClientTabItem { Key = null, Label = TranslationHelper.GetString(LangKeys.AllClients) };
+        _clientTabsById[AllClientsTabId] = designAllTab;
+        _clientTabs.Add(designAllTab);
+
+        var designClientTab = new ClientTabItem { Key = "WSJT-X 50MHZ", Label = "WSJT-X 50MHZ" };
+        _clientTabsById["WSJT-X 50MHZ"] = designClientTab;
+        _clientTabs.Add(designClientTab);
+
+        SelectedClientTab = designAllTab;
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(
@@ -194,6 +209,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
             SetupQsoRateCalculation(compositeDisposable);
             SetupQsoList(compositeDisposable);
+            SetupClientTabs(compositeDisposable);
             SetupFilteringAndSorting(compositeDisposable);
 
             this.WhenAnyValue(
@@ -211,6 +227,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     }
 
     public ReadOnlyObservableCollection<RecordedCallsignDetail> FilteredQsos => _filteredQsosView;
+
+    /// <summary>
+    ///     Tabs shown above the QSO list, one per known client plus a leading "all" tab.
+    /// </summary>
+    public ObservableCollection<ClientTabItem> ClientTabs => _clientTabs;
+
     public ReactiveCommand<Unit, Unit> SelectAllCommand { get; set; }
     public ReactiveCommand<Unit, Unit> DeleteSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
@@ -230,6 +252,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public long UploadedQsosCount { get; set; }
     [Reactive] public bool SelectAll { get; set; }
     [Reactive] public bool ShowFailedOnly { get; set; }
+    [Reactive] public ClientTabItem? SelectedClientTab { get; set; }
 
     private void SetupQsoRateCalculation(CompositeDisposable disposables)
     {
@@ -293,12 +316,91 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
     }
 
+    private void SetupClientTabs(CompositeDisposable disposables)
+    {
+        _clientRegistryService.Connect()
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => RebuildClientTabs())
+            .DisposeWith(disposables);
+
+        _qsoQueueStore.Connect()
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => RebuildClientTabs())
+            .DisposeWith(disposables);
+
+        // Re-translate the aggregate tab when the app language changes.
+        MessageBus.Current.Listen<SettingsChanged>()
+            .Where(x => x.Part == ChangedPart.BasicSettings)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => RebuildClientTabs())
+            .DisposeWith(disposables);
+
+        RebuildClientTabs();
+    }
+
+    private void RebuildClientTabs()
+    {
+        var ids = new SortedSet<string>(StringComparer.Ordinal);
+        foreach (var session in _clientRegistryService.Sessions) ids.Add(session.Id);
+        foreach (var qso in _qsoQueueStore.Items)
+            if (!string.IsNullOrWhiteSpace(qso.ClientId))
+                ids.Add(qso.ClientId);
+
+        // Drop tabs whose client is gone (e.g. all of its QSOs were deleted).
+        var stale = _clientTabsById.Keys
+            .Where(k => k != AllClientsTabId && !ids.Contains(k))
+            .ToList();
+        foreach (var key in stale)
+        {
+            _clientTabs.Remove(_clientTabsById[key]);
+            _clientTabsById.Remove(key);
+        }
+
+        if (!_clientTabsById.TryGetValue(AllClientsTabId, out var allTab))
+        {
+            allTab = new ClientTabItem { Key = null };
+            _clientTabsById[AllClientsTabId] = allTab;
+        }
+
+        allTab.Label = TranslationHelper.GetString(LangKeys.AllClients);
+
+        var desired = new List<ClientTabItem> { allTab };
+        foreach (var id in ids)
+        {
+            if (!_clientTabsById.TryGetValue(id, out var tab))
+            {
+                tab = new ClientTabItem { Key = id, Label = WsjtxMessageUtil.GetClientDisplayName(id) };
+                _clientTabsById[id] = tab;
+            }
+
+            desired.Add(tab);
+        }
+
+        for (var i = 0; i < desired.Count; i++)
+        {
+            var current = _clientTabs.IndexOf(desired[i]);
+            if (current < 0) _clientTabs.Insert(i, desired[i]);
+            else if (current != i) _clientTabs.Move(current, i);
+        }
+
+        if (SelectedClientTab is null || !_clientTabs.Contains(SelectedClientTab))
+            SelectedClientTab = allTab;
+    }
+
     private void SetupFilteringAndSorting(CompositeDisposable disposables)
     {
-        var filterObservable = this.WhenAnyValue(x => x.ShowFailedOnly)
+        var filterObservable = this.WhenAnyValue(
+                x => x.ShowFailedOnly,
+                x => x.SelectedClientTab)
             .Throttle(TimeSpan.FromMilliseconds(200))
-            .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail =>
-                !showFailed || detail.UploadStatus != UploadStatus.Success));
+            .Select(selector =>
+            {
+                var (showFailedOnly, selectedTab) = selector;
+                var clientKey = selectedTab?.Key;
+                return (Func<RecordedCallsignDetail, bool>)(detail =>
+                    (!showFailedOnly || detail.UploadStatus != UploadStatus.Success) &&
+                    (clientKey is null || detail.ClientId == clientKey));
+            });
 
         _qsoQueueStore.Connect()
             .Filter(filterObservable)
