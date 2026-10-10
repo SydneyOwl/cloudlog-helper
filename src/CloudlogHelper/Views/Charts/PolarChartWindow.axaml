@@ -1,6 +1,7 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:charts1="clr-namespace:CloudlogHelper.ViewModels.Charts"
+        xmlns:models="clr-namespace:CloudlogHelper.Models"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         Width="950" Height="750"
         CanResize="True"
@@ -213,7 +214,14 @@
 
                     <ComboBox ItemsSource="{Binding Clients}"
                               SelectedValue="{Binding SelectedClient}"
-                              Width="100" />
+                              SelectedValueBinding="{Binding Id}"
+                              Width="100">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:ClientSession">
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
             </Grid>
         </Border>

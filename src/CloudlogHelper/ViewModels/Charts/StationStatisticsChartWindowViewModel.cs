@@ -66,7 +66,8 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     }
 
     public StationStatisticsChartWindowViewModel(IChartDataCacheService chartDataCacheService,
-        IApplicationSettingsService applicationSettingsService)
+        IApplicationSettingsService applicationSettingsService,
+        IClientRegistryService clientRegistryService) : base(clientRegistryService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;

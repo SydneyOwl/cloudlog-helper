@@ -47,7 +47,8 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
     public PolarChartWindowViewModel(IChartDataCacheService chartDataCacheService,
         IApplicationSettingsService applicationSettingsService,
-        IWindowManagerService windowManagerService)
+        IWindowManagerService windowManagerService,
+        IClientRegistryService clientRegistryService) : base(clientRegistryService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;

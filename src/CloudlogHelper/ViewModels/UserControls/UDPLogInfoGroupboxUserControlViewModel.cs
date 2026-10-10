@@ -714,12 +714,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         _decodedDataProcessorService.UpdateClientBand(
             status.Id,
             FreqHelper.GetMeterFromFreq(status.DialFrequencyInHz));
-            
-        MessageBus.Current.SendMessage(new ClientStatusChanged
-        {
-            CurrStatus = status
-        });
-        
+
         ClassLogger.Trace(
             $"Status changed: {status.DialFrequencyInHz} {status.ConfigurationName} {status.Mode}");
     }
