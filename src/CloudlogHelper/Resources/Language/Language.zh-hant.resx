@@ -27,9 +27,6 @@
     <data name="AdvancedSettings" xml:space="preserve">
         <value>進階設定</value>
     </data>
-    <data name="AllClients" xml:space="preserve">
-        <value>全部</value>
-    </data>
     <data name="AllowExternalControl" xml:space="preserve">
         <value>允許外部控制</value>
     </data>

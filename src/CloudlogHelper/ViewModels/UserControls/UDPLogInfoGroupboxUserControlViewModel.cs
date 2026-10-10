@@ -59,8 +59,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
 
-    private const string AllClientsTabId = "__all__";
-
     private readonly Dictionary<string, ClientTabItem> _clientTabsById = new();
     private readonly ObservableCollection<ClientTabItem> _clientTabs = new();
 
@@ -345,13 +343,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .Subscribe(_ => RebuildClientTabs())
             .DisposeWith(disposables);
 
-        // Re-translate the aggregate tab when the app language changes.
-        MessageBus.Current.Listen<SettingsChanged>()
-            .Where(x => x.Part == ChangedPart.BasicSettings)
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Subscribe(_ => RebuildClientTabs())
-            .DisposeWith(disposables);
-
         RebuildClientTabs();
     }
 
@@ -363,14 +354,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             if (!string.IsNullOrWhiteSpace(qso.ClientId))
                 ids.Add(qso.ClientId);
 
-        // The aggregate tab only exists (at the end) when more than one client is known.
-        var showAllTab = ids.Count > 1;
-        ShowClientTabs = showAllTab;
+        // The tab strip only shows with two or more known clients.
+        ShowClientTabs = ids.Count > 1;
 
-        // Drop tabs whose client is gone (e.g. all of its QSOs were deleted), and the
-        // aggregate tab when there is nothing to aggregate.
+        // Drop tabs whose client is gone (e.g. all of its QSOs were deleted).
         var stale = _clientTabsById.Keys
-            .Where(k => k == AllClientsTabId ? !showAllTab : !ids.Contains(k))
+            .Where(k => !ids.Contains(k))
             .ToList();
         foreach (var key in stale)
         {
@@ -390,18 +379,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             desired.Add(tab);
         }
 
-        if (showAllTab)
-        {
-            if (!_clientTabsById.TryGetValue(AllClientsTabId, out var allTab))
-            {
-                allTab = new ClientTabItem { Key = null };
-                _clientTabsById[AllClientsTabId] = allTab;
-            }
-
-            allTab.Label = TranslationHelper.GetString(LangKeys.AllClients);
-            desired.Add(allTab);
-        }
-
         for (var i = 0; i < desired.Count; i++)
         {
             var current = _clientTabs.IndexOf(desired[i]);
@@ -415,8 +392,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     /// <summary>
     ///     Recompute which clients are currently transmitting, so each client tab can light up
-    ///     independently. The banner follows the selected tab: a client tab shows only that
-    ///     client's message, the aggregate tab shows no banner.
+    ///     independently. The banner follows the selected tab: it shows only that client's message.
     ///     Safe to call from any thread; the work is marshalled to the UI thread because it
     ///     mutates bound tab state and reads the tab lookup dictionary that the UI thread owns.
     /// </summary>
@@ -431,12 +407,10 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .Where(session => session.IsAlive && session.Transmitting)
             .ToList();
 
-        // Aggregate tab never lights up: "__all__" matches no session id, so only
-        // per-client tabs show their dot.
         foreach (var (id, tab) in _clientTabsById)
             tab.Transmitting = transmitting.Any(session => session.Id == id);
 
-        // Aggregate / null key matches no session id, hiding the banner.
+        // No selection (empty strip) matches no session id, hiding the banner.
         var selected = transmitting.FirstOrDefault(session => session.Id == SelectedClientTab?.Key);
         TxStatus = selected is not null;
         MsgSending = selected is null ? string.Empty : _formatTxMessage(selected);

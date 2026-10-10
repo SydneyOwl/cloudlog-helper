@@ -27,9 +27,6 @@
     <data name="About" xml:space="preserve">
         <value>About</value>
     </data>
-    <data name="AllClients" xml:space="preserve">
-        <value>All</value>
-    </data>
     <data name="Help" xml:space="preserve">
         <value>Help</value>
     </data>

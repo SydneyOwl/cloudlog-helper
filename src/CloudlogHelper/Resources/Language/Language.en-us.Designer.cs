@@ -87,15 +87,6 @@ namespace CloudlogHelper.Resources.Language {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to All.
-        /// </summary>
-        public static string AllClients {
-            get {
-                return ResourceManager.GetString("AllClients", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Allow external control.
         /// </summary>
         public static string AllowExternalControl {
