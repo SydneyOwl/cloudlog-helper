@@ -79,7 +79,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        await _processingLock.WaitAsync(cancellationToken);
+        await _processingLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (_isStarted)
@@ -100,7 +100,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
     public async Task StopAsync()
     {
-        await _processingLock.WaitAsync();
+        await _processingLock.WaitAsync().ConfigureAwait(false);
         try
         {
             if (!_isStarted)
@@ -115,7 +115,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
             {
                 try
                 {
-                    await _processingTask;
+                    await _processingTask.ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
