@@ -275,7 +275,7 @@ public class RecordedCallsignDetail : ReactiveObject
             DateTimeOn = DateTime.ParseExact($"{info.QsoDate} {info.TimeOn}", "yyyyMMdd HHmmss",
                 CultureInfo.InvariantCulture),
             Mode = string.IsNullOrEmpty(info.SubMode) ? info.Mode : info.SubMode,
-            ClientId = "LOCAL",
+            ClientId = WsjtxMessageUtil.LocalClient,
             RawData = info.RawData,
             FailReason = null,
             Checked = false,

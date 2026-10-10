@@ -203,6 +203,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 })
                 .DisposeWith(compositeDisposable);
 
+            // hmmmmm not that elegant
             // A client that goes silent is expired by the registry without any further UDP message,
             // so nothing would otherwise re-run the transmit recompute. Poll once a second on the UI
             // thread to clear a stuck dot / banner once its session is no longer alive.
@@ -357,7 +358,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         // The tab strip only shows with two or more known clients.
         ShowClientTabs = ids.Count > 1;
 
-        // Drop tabs whose client is gone (e.g. all of its QSOs were deleted).
+        // Drop tabs whose client is gone (local logs).
         var stale = _clientTabsById.Keys
             .Where(k => !ids.Contains(k))
             .ToList();
@@ -377,6 +378,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             }
 
             desired.Add(tab);
+        }
+
+        // Keep the synthetic LOCAL tab (imported/local-log QSOs) pinned after every real client.
+        var localIndex = desired.FindIndex(t => t.Key == WsjtxMessageUtil.LocalClient);
+        if (localIndex >= 0 && localIndex != desired.Count - 1)
+        {
+            var local = desired[localIndex];
+            desired.RemoveAt(localIndex);
+            desired.Add(local);
         }
 
         for (var i = 0; i < desired.Count; i++)

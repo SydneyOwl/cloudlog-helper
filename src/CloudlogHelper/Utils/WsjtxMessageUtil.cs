@@ -13,6 +13,12 @@ public class WsjtxMessageUtil
     public const string UnknownClient = "Unknown";
 
     /// <summary>
+    ///     Synthetic client key for QSOs that were not received over UDP (e.g. imported by the
+    ///     QSO sync assistant). Kept separate from real WSJT-X client ids.
+    /// </summary>
+    public const string LocalClient = "LOCAL";
+
+    /// <summary>
     ///     Canonical registry key for a client, based on the full UDP Id so that
     ///     e.g. "WSJT-X - 20m" and "WSJT-X - 40m" never collide.
     /// </summary>
