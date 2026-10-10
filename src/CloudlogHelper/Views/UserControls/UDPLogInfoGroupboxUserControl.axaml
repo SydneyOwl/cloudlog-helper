@@ -65,6 +65,7 @@
                     <TabStrip Grid.Row="0" Grid.Column="0"
                               ItemsSource="{Binding ClientTabs}"
                               SelectedItem="{Binding SelectedClientTab, Mode=TwoWay}"
+                              IsVisible="{Binding ShowClientTabs}"
                               Padding="0">
                         <TabStrip.Styles>
                             <Style Selector="TabStripItem">

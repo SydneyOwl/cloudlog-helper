@@ -127,15 +127,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         _appendTestData();
 
-        var designAllTab = new ClientTabItem { Key = null, Label = TranslationHelper.GetString(LangKeys.AllClients) };
-        _clientTabsById[AllClientsTabId] = designAllTab;
-        _clientTabs.Add(designAllTab);
-
         var designClientTab = new ClientTabItem { Key = "WSJT-X 50MHZ", Label = "WSJT-X 50MHZ" };
         _clientTabsById["WSJT-X 50MHZ"] = designClientTab;
         _clientTabs.Add(designClientTab);
 
-        SelectedClientTab = designAllTab;
+        ShowClientTabs = true;
+        SelectedClientTab = designClientTab;
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(
@@ -216,6 +213,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 .Subscribe(_ => UpdateTxStatusCore())
                 .DisposeWith(compositeDisposable);
 
+            // The banner shows the selected client's message, so recompute on tab switch
+            // instead of waiting for the next poll.
+            this.WhenAnyValue(x => x.SelectedClientTab)
+                .Subscribe(_ => UpdateTxStatusCore())
+                .DisposeWith(compositeDisposable);
+
             SetupQsoRateCalculation(compositeDisposable);
             SetupQsoList(compositeDisposable);
             SetupClientTabs(compositeDisposable);
@@ -262,6 +265,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public bool SelectAll { get; set; }
     [Reactive] public bool ShowFailedOnly { get; set; }
     [Reactive] public ClientTabItem? SelectedClientTab { get; set; }
+
+    /// <summary>
+    ///     The tab strip only shows with two or more known clients.
+    /// </summary>
+    [Reactive] public bool ShowClientTabs { get; set; }
 
     private void SetupQsoRateCalculation(CompositeDisposable disposables)
     {
@@ -355,9 +363,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             if (!string.IsNullOrWhiteSpace(qso.ClientId))
                 ids.Add(qso.ClientId);
 
-        // Drop tabs whose client is gone (e.g. all of its QSOs were deleted).
+        // The aggregate tab only exists (at the end) when more than one client is known.
+        var showAllTab = ids.Count > 1;
+        ShowClientTabs = showAllTab;
+
+        // Drop tabs whose client is gone (e.g. all of its QSOs were deleted), and the
+        // aggregate tab when there is nothing to aggregate.
         var stale = _clientTabsById.Keys
-            .Where(k => k != AllClientsTabId && !ids.Contains(k))
+            .Where(k => k == AllClientsTabId ? !showAllTab : !ids.Contains(k))
             .ToList();
         foreach (var key in stale)
         {
@@ -365,15 +378,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             _clientTabsById.Remove(key);
         }
 
-        if (!_clientTabsById.TryGetValue(AllClientsTabId, out var allTab))
-        {
-            allTab = new ClientTabItem { Key = null };
-            _clientTabsById[AllClientsTabId] = allTab;
-        }
-
-        allTab.Label = TranslationHelper.GetString(LangKeys.AllClients);
-
-        var desired = new List<ClientTabItem> { allTab };
+        var desired = new List<ClientTabItem>();
         foreach (var id in ids)
         {
             if (!_clientTabsById.TryGetValue(id, out var tab))
@@ -385,6 +390,18 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             desired.Add(tab);
         }
 
+        if (showAllTab)
+        {
+            if (!_clientTabsById.TryGetValue(AllClientsTabId, out var allTab))
+            {
+                allTab = new ClientTabItem { Key = null };
+                _clientTabsById[AllClientsTabId] = allTab;
+            }
+
+            allTab.Label = TranslationHelper.GetString(LangKeys.AllClients);
+            desired.Add(allTab);
+        }
+
         for (var i = 0; i < desired.Count; i++)
         {
             var current = _clientTabs.IndexOf(desired[i]);
@@ -393,13 +410,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         }
 
         if (SelectedClientTab is null || !_clientTabs.Contains(SelectedClientTab))
-            SelectedClientTab = allTab;
+            SelectedClientTab = _clientTabs.FirstOrDefault();
     }
 
     /// <summary>
     ///     Recompute which clients are currently transmitting, so each client tab can light up
-    ///     independently and the banner can show a combined view. A single global flag would let
-    ///     one client's status overwrite another's while both are on air.
+    ///     independently. The banner follows the selected tab: a client tab shows only that
+    ///     client's message, the aggregate tab shows no banner.
     ///     Safe to call from any thread; the work is marshalled to the UI thread because it
     ///     mutates bound tab state and reads the tab lookup dictionary that the UI thread owns.
     /// </summary>
@@ -414,20 +431,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .Where(session => session.IsAlive && session.Transmitting)
             .ToList();
 
-        var anyTransmitting = transmitting.Count > 0;
-
+        // Aggregate tab never lights up: "__all__" matches no session id, so only
+        // per-client tabs show their dot.
         foreach (var (id, tab) in _clientTabsById)
-            tab.Transmitting = id == AllClientsTabId
-                ? anyTransmitting
-                : transmitting.Any(session => session.Id == id);
+            tab.Transmitting = transmitting.Any(session => session.Id == id);
 
-        TxStatus = anyTransmitting;
-        MsgSending = transmitting.Count switch
-        {
-            0 => string.Empty,
-            1 => _formatTxMessage(transmitting[0]),
-            _ => string.Join("  |  ", transmitting.Select(session => $"{session.DisplayName}: {_formatTxMessage(session)}"))
-        };
+        // Aggregate / null key matches no session id, hiding the banner.
+        var selected = transmitting.FirstOrDefault(session => session.Id == SelectedClientTab?.Key);
+        TxStatus = selected is not null;
+        MsgSending = selected is null ? string.Empty : _formatTxMessage(selected);
     }
 
     private static string _formatTxMessage(ClientSession session)
