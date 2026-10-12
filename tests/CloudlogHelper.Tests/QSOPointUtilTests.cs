@@ -77,4 +77,53 @@ public class QSOPointUtilTests
         Assert.True(densities[0] > densities[2]);
         Assert.True(densities[1] > densities[2]);
     }
+
+    [Fact]
+    public void CalculateDensitiesKNN_TreatsDuplicateDistancesAsDistinctNeighbours()
+    {
+        // C (5000/0) has A and B at equal distance plus a farther E; with k=2 its
+        // 2nd nearest neighbour is that equal distance. R (5000/90) has F at the
+        // same distance and a closer G, so its 2nd nearest is also that distance
+        // via two distinct values. Both points must end up with equal density.
+        var points = new[]
+        {
+            new ChartQSOPoint { Distance = 5000, Azimuth = 0 },
+            new ChartQSOPoint { Distance = 4000, Azimuth = 0 },
+            new ChartQSOPoint { Distance = 6000, Azimuth = 0 },
+            new ChartQSOPoint { Distance = 8000, Azimuth = 0 },
+            new ChartQSOPoint { Distance = 5000, Azimuth = 90 },
+            new ChartQSOPoint { Distance = 4000, Azimuth = 90 },
+            new ChartQSOPoint { Distance = 5100, Azimuth = 90 }
+        };
+
+        var densities = QSOPointUtil.CalculateDensitiesKNN(points, maxDistance: 20000, k: 2);
+
+        Assert.True(densities[0] > 0);
+        Assert.Equal(densities[4], densities[0]);
+    }
+
+    [Fact]
+    public void CalculateDensitiesKNN_WithFewerNeighboursThanK_UsesLargestValidNeighbour()
+    {
+        var points = new[]
+        {
+            new ChartQSOPoint { Distance = 1000, Azimuth = 0 },
+            new ChartQSOPoint { Distance = 2000, Azimuth = 45 }
+        };
+
+        var densities = QSOPointUtil.CalculateDensitiesKNN(points, maxDistance: 20000, k: 5);
+
+        Assert.True(densities[0] > 0);
+        Assert.Equal(densities[0], densities[1]);
+    }
+
+    [Fact]
+    public void CalculateDensitiesKNN_WithSinglePoint_ReturnsZeroDensity()
+    {
+        var points = new[] { new ChartQSOPoint { Distance = 1000, Azimuth = 0 } };
+
+        var densities = QSOPointUtil.CalculateDensitiesKNN(points, maxDistance: 20000, k: 5);
+
+        Assert.Equal(0d, densities[0]);
+    }
 }

@@ -240,8 +240,6 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
             DxCallsign = callsign,
             Band = band,
             Client = clientId,
-            // there's some bug here; for example ft4 messages will be recognized as q65 here;
-            // so we just simply cancel filter of modes...
             Mode = decodedData.Decode.DecodeModeNotationsToString(),
             Snr = decodedData.Decode.Snr
         };

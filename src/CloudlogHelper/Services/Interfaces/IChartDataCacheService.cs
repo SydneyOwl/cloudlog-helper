@@ -11,7 +11,8 @@ public interface IChartDataCacheService
     IEnumerable<ChartQSOPoint> TakeLatestN(int count, IEqualityComparer<ChartQSOPoint>? comparer = null,
         Func<ChartQSOPoint, bool>? filterCondition = null);
 
-    StationChartDataSnapshot GetStationChartDataSnapshotByBand(string? band, bool filterDupeByCallsign = false);
+    StationChartDataSnapshot GetStationChartDataSnapshot(string? band, string? mode,
+        bool filterDupeByCallsign = false);
     void Add(ChartQSOPoint item);
     void Clear();
     void ClearPolarBuffer();

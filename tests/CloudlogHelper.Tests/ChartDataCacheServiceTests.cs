@@ -56,7 +56,7 @@ public class ChartDataCacheServiceTests
         service.Clear();
 
         Assert.Empty(service.TakeLatestN(10));
-        var snapshot = service.GetStationChartDataSnapshotByBand("10m");
+        var snapshot = service.GetStationChartDataSnapshot("10m", "FT8");
         Assert.Empty(snapshot.StationCountByDxcc);
         Assert.Equal(0d, snapshot.DistanceHistogram.Counts.Sum());
     }
@@ -76,7 +76,7 @@ public class ChartDataCacheServiceTests
             longitude: 114,
             isAccurate: false));
 
-        var snapshot = service.GetStationChartDataSnapshotByBand("10m");
+        var snapshot = service.GetStationChartDataSnapshot("10m", "FT8");
 
         Assert.Equal(1d, snapshot.StationCountByDxcc["BY"] ?? 0d);
         Assert.Equal(0d, snapshot.DistanceHistogram.Counts.Sum());
@@ -119,8 +119,8 @@ public class ChartDataCacheServiceTests
             longitude: -74,
             isAccurate: true));
 
-        var accumulated = service.GetStationChartDataSnapshotByBand("10m", filterDupeByCallsign: false);
-        var deduped = service.GetStationChartDataSnapshotByBand("10m", filterDupeByCallsign: true);
+        var accumulated = service.GetStationChartDataSnapshot("10m", "FT8", filterDupeByCallsign: false);
+        var deduped = service.GetStationChartDataSnapshot("10m", "FT8", filterDupeByCallsign: true);
 
         Assert.Equal(2d, accumulated.StationCountByDxcc["BY"] ?? 0d);
         Assert.Equal(1d, accumulated.StationCountByDxcc["K"] ?? 0d);
@@ -133,6 +133,72 @@ public class ChartDataCacheServiceTests
         Assert.Equal(2d, deduped.GridStationCount.Cast<double>().Sum());
     }
 
+    [Fact]
+    public void Snapshot_WhenModeSelected_OnlyCountsThatMode()
+    {
+        var service = new ChartDataCacheService();
+
+        service.Add(_createPoint("BG7AA", "10m", "BY", 1000, 30, 30, 114, true));
+        service.Add(_createPoint("K1ABC", "10m", "K", 8500, 75, 40, -74, true));
+        service.Add(_createPoint("JA1ABC", "10m", "JA", 2000, 120, 35, 139, true, "FT4"));
+
+        var ft8 = service.GetStationChartDataSnapshot("10m", "FT8");
+        var ft4 = service.GetStationChartDataSnapshot("10m", "FT4");
+        var merged = service.GetStationChartDataSnapshot("10m", null);
+        var unknown = service.GetStationChartDataSnapshot("10m", "Q65");
+
+        Assert.Equal(1d, ft8.StationCountByDxcc["BY"] ?? 0d);
+        Assert.Equal(1d, ft8.StationCountByDxcc["K"] ?? 0d);
+        Assert.False(ft8.StationCountByDxcc.ContainsKey("JA"));
+        Assert.Equal(2d, ft8.DistanceHistogram.Counts.Sum());
+
+        Assert.Equal(1d, ft4.StationCountByDxcc["JA"] ?? 0d);
+        Assert.Single(ft4.StationCountByDxcc);
+        Assert.Equal(1d, ft4.DistanceHistogram.Counts.Sum());
+
+        // empty mode falls back to merging every mode bucket of the band
+        Assert.Equal(3d, merged.StationCountByDxcc.Values.Sum(x => x ?? 0d));
+        Assert.Equal(3d, merged.DistanceHistogram.Counts.Sum());
+
+        Assert.Empty(unknown.StationCountByDxcc);
+    }
+
+    [Fact]
+    public void Snapshot_WhenModeSelected_MatchesCaseInsensitively()
+    {
+        var service = new ChartDataCacheService();
+        service.Add(_createPoint("BG7AA", "10m", "BY", 1000, 30, 30, 114, true));
+
+        var lowercase = service.GetStationChartDataSnapshot("10m", "ft8");
+
+        Assert.Equal(1d, lowercase.StationCountByDxcc["BY"] ?? 0d);
+        Assert.Equal(1d, lowercase.DistanceHistogram.Counts.Sum());
+    }
+
+    [Fact]
+    public void Snapshot_WhenModeChangesOnSameBand_DedupKeepsLatestPointPerMode()
+    {
+        var service = new ChartDataCacheService();
+
+        // the same callsign shows up in two modes on the same band
+        service.Add(_createPoint("BG7AA", "10m", "BY", 1000, 30, 30, 114, true));
+        service.Add(_createPoint("BG7AA", "10m", "BY", 1200, 60, 31, 115, true, "FT4"));
+
+        var ft8 = service.GetStationChartDataSnapshot("10m", "FT8", filterDupeByCallsign: true);
+        var ft4 = service.GetStationChartDataSnapshot("10m", "FT4", filterDupeByCallsign: true);
+        var merged = service.GetStationChartDataSnapshot("10m", null, filterDupeByCallsign: true);
+
+        Assert.Equal(1d, ft8.StationCountByDxcc["BY"] ?? 0d);
+        Assert.Equal(1d, ft8.DistanceHistogram.Counts.Sum());
+
+        Assert.Equal(1d, ft4.StationCountByDxcc["BY"] ?? 0d);
+        Assert.Equal(1d, ft4.DistanceHistogram.Counts.Sum());
+
+        // the merged view sees one latest point per mode bucket
+        Assert.Equal(2d, merged.StationCountByDxcc["BY"] ?? 0d);
+        Assert.Equal(2d, merged.DistanceHistogram.Counts.Sum());
+    }
+
     private static ChartQSOPoint _createPoint(
         string callsign,
         string band,
@@ -141,7 +207,8 @@ public class ChartDataCacheServiceTests
         double azimuth,
         double latitude,
         double longitude,
-        bool isAccurate)
+        bool isAccurate,
+        string mode = "FT8")
     {
         return new ChartQSOPoint
         {
@@ -154,7 +221,7 @@ public class ChartDataCacheServiceTests
             Longitude = longitude,
             IsAccurate = isAccurate,
             Client = "test",
-            Mode = "FT8",
+            Mode = mode,
             Snr = -10
         };
     }

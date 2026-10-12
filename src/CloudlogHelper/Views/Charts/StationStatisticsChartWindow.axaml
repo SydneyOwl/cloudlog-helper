@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:charts="clr-namespace:CloudlogHelper.ViewModels.Charts"
-        xmlns:models="clr-namespace:CloudlogHelper.Models"
         xmlns:resources="clr-namespace:CloudlogHelper.Resources"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
@@ -97,17 +96,13 @@
             <ComboBox ItemsSource="{Binding Bands}"
                       SelectedValue="{Binding SelectedBand}"
                       VerticalAlignment="Center" Width="80" />
-            
-            <ComboBox ItemsSource="{Binding Clients}"
-                      SelectedValue="{Binding SelectedClient}"
-                      SelectedValueBinding="{Binding Id}"
-                      VerticalAlignment="Center" Width="100">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:ClientSession">
-                        <TextBlock Text="{Binding DisplayName}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+
+            <!-- The statistics chart is a cross-client band view, so there is no
+                 per-client selector here; the client registry only feeds
+                 band/mode auto-switching. -->
+            <ComboBox ItemsSource="{Binding Modes}"
+                      SelectedValue="{Binding SelectedMode}"
+                      VerticalAlignment="Center" Width="80" />
 
             <!-- <TextBlock Margin="10,0,0,0" -->
             <!--            Text="{I18N {x:Static resources:LangKeys.SampleCount}}" -->

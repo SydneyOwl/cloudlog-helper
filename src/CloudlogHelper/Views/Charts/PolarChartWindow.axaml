@@ -210,7 +210,7 @@
 
                     <ComboBox ItemsSource="{Binding Modes}"
                               SelectedValue="{Binding SelectedMode}"
-                              Width="80" IsVisible="False" />
+                              Width="80" />
 
                     <ComboBox ItemsSource="{Binding Clients}"
                               SelectedValue="{Binding SelectedClient}"

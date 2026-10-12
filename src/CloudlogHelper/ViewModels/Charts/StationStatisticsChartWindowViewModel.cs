@@ -100,7 +100,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
                 .BindTo(this, x => x.ShouldShowLocationButton);
             
             this.WhenAnyValue(x => x.SelectedBand,
-                    x => x.SelectedClient,
                     x => x.SelectedMode,
                     x => x.UpdatePaused,
                     x => x.ShowLocation,
@@ -178,7 +177,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (!orderedData.Any())
         {
-            plot1.Title($"Top 10 DXCCs - {SelectedBand} Band\n(No data available)");
+            plot1.Title($"Top 10 DXCCs - {_bandModeTitle()}\n(No data available)");
             return;
         }
 
@@ -208,7 +207,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             bar.LineWidth = 0;
         }
 
-        plot1.Title($"Top 10 DXCCs - {SelectedBand} Band");
+        plot1.Title($"Top 10 DXCCs - {_bandModeTitle()}");
         plot1.YLabel("Signal Count");
         plot1.Axes.Bottom.TickGenerator = new NumericManual(ticks.ToArray());
         plot1.Axes.Bottom.MajorTickStyle.Length = 0;
@@ -233,7 +232,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (bandData.Counts.Sum() == 0)
         {
-            plot2.Title($"Station Distance Distribution - {SelectedBand} Band\n(No data available)");
+            plot2.Title($"Station Distance Distribution - {_bandModeTitle()}\n(No data available)");
             return;
         }
 
@@ -245,7 +244,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             histogramBarsBar.LineColor = barColor;
         }
 
-        plot2.Title($"Station Distance Distribution - {SelectedBand} Band");
+        plot2.Title($"Station Distance Distribution - {_bandModeTitle()}");
         plot2.XLabel("Distance (km)");
         plot2.YLabel("Signal Count");
         plot2.Axes.Margins(bottom: 0, top: 0.15, left: 0.05, right: 0.05);
@@ -268,7 +267,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (bandData.Counts.Sum() == 0)
         {
-            plot3.Title($"Station Bearing Distribution - {SelectedBand} Band\n(No data available)");
+            plot3.Title($"Station Bearing Distribution - {_bandModeTitle()}\n(No data available)");
             return;
         }
 
@@ -282,7 +281,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
 
         plot3.Axes.Margins(bottom: 0, top: 0.18, left: 0.05, right: 0.1);
-        plot3.Title($"Station Bearing Distribution - {SelectedBand} Band");
+        plot3.Title($"Station Bearing Distribution - {_bandModeTitle()}");
         plot3.XLabel("Bearing (degrees)");
         plot3.YLabel("Signal Count");
 
@@ -318,7 +317,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         var plot4 = _plotCache[PlotType.WorldHeatmap];
         plot4.Clear();
 
-        plot4.Title($"World Heatmap - {SelectedBand} Band");
+        plot4.Title($"World Heatmap - {_bandModeTitle()}");
 
         plot4.XLabel("Longitude");
         plot4.YLabel("Latitude");
@@ -336,7 +335,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (!TryLoadWorldMapImage())
         {
-            plot4.Title($"World heatmap(No map available) - {SelectedBand} Band");
+            plot4.Title($"World heatmap(No map available) - {_bandModeTitle()}");
             return;
         }
 
@@ -355,9 +354,9 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
 
         var gridStationCountByBand = chartData.GridStationCount;
-        if (gridStationCountByBand.Cast<double>().All(x => x == 0))
+        if (_isAllZero(gridStationCountByBand))
         {
-            plot4.Title($"World heatmap(No data available) - {SelectedBand} Band");
+            plot4.Title($"World heatmap(No data available) - {_bandModeTitle()}");
             return;
         }
 
@@ -371,6 +370,21 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         heatmap.Opacity = 0.35;
         heatmap.FlipVertically = true;
         heatmap.Smooth = true;
+    }
+
+    private string _bandModeTitle()
+    {
+        return string.IsNullOrWhiteSpace(SelectedMode)
+            ? $"{SelectedBand} Band"
+            : $"{SelectedBand} Band ({SelectedMode})";
+    }
+
+    private static bool _isAllZero(double[,] grid)
+    {
+        for (var y = 0; y < grid.GetLength(0); y++)
+        for (var x = 0; x < grid.GetLength(1); x++)
+            if (grid[y, x] != 0) return false;
+        return true;
     }
 
     private void ClearData()
@@ -402,8 +416,11 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ShowErrorMsg = false;
             IsExecutingChartUpdate = true;
             ClassLogger.Debug("Updating statistic");
+            // The statistics chart is a cross-client view of the selected band and mode:
+            // the accumulators never split by client, so every client's decodes on the
+            // band are aggregated together.
             var chartDataSnapshot =
-                _chartDataCacheService.GetStationChartDataSnapshotByBand(SelectedBand, FilterDupeCallsign);
+                _chartDataCacheService.GetStationChartDataSnapshot(SelectedBand, SelectedMode, FilterDupeCallsign);
             switch (SelectedChart)
             {
                 case 1:
