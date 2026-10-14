@@ -90,13 +90,24 @@ public class AdifAndRecordedCallsignTests
         var detail = new RecordedCallsignDetail();
         const int callers = 64;
         var winners = 0;
-        using var barrier = new Barrier(callers);
 
-        Parallel.For(0, callers, _ =>
+        // Dedicated threads, not Parallel.For: a Barrier of 64 participants on the thread pool
+        // starves it (slow thread injection) and turns this into a multi-second test.
+        using var start = new ManualResetEventSlim(false);
+        var threads = new Thread[callers];
+
+        for (var i = 0; i < callers; i++)
         {
-            barrier.SignalAndWait();
-            if (detail.TryMarkInUploadQueue()) Interlocked.Increment(ref winners);
-        });
+            threads[i] = new Thread(() =>
+            {
+                start.Wait();
+                if (detail.TryMarkInUploadQueue()) Interlocked.Increment(ref winners);
+            });
+            threads[i].Start();
+        }
+
+        start.Set();
+        foreach (var thread in threads) thread.Join();
 
         Assert.Equal(1, winners);
     }
