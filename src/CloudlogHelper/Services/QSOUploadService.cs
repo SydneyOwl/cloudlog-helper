@@ -189,19 +189,35 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         {
             foreach (var uploadItem in _uploadQueue.GetConsumingEnumerable(cancellationToken))
             {
-                if (cancellationToken.IsCancellationRequested)
+                cancellationToken.ThrowIfCancellationRequested();
+
+                try
                 {
-                    break;
+                    using var uploadTimeoutSrc = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.QSOUploadTimeoutSec));
+
+                    using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+                        cancellationToken,
+                        uploadTimeoutSrc.Token);
+
+                    await ProcessUploadItemAsync(uploadItem, linkedCts.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    // Never let one item tear down the consumer loop: it is started once and never
+                    // restarted, so an escaped exception would leave every later QSO stuck at
+                    // Pending for the rest of the process, silently.
+                    ClassLogger.Error(ex,
+                        $"Unhandled error while processing QSO {uploadItem.RecordedCallsignDetail.DXCall}; continuing.");
+                }
+                finally
+                {
+                    uploadItem.RecordedCallsignDetail.ClearInUploadQueue();
                 }
 
-                using var uploadTimeoutSrc = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultConfigs.QSOUploadTimeoutSec));
-                
-                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
-                    cancellationToken, 
-                    uploadTimeoutSrc.Token);
-
-                await ProcessUploadItemAsync(uploadItem, linkedCts.Token).ConfigureAwait(false);
-                uploadItem.RecordedCallsignDetail.ClearInUploadQueue();
                 await Task.Delay(1000, cancellationToken);
             }
         }
@@ -212,7 +228,6 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         catch (Exception ex)
         {
             ClassLogger.Error(ex, "Fatal error in upload queue processing");
-            throw;
         }
         finally
         {
