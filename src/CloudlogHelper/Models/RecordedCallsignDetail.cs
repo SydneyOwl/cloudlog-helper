@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
@@ -17,10 +18,11 @@ namespace CloudlogHelper.Models;
 public class RecordedCallsignDetail : ReactiveObject
 {
     /// <summary>
-    ///     Upload status of log services.
+    ///     Upload status of log services. Concurrent: written by the upload thread and read from the
+    ///     plugin pipe thread and the UI.
     /// </summary>
-    public Dictionary<string, bool> UploadedServices = new();
-    public Dictionary<string, string> UploadedServicesErrorMessage = new();
+    public ConcurrentDictionary<string, bool> UploadedServices = new();
+    public ConcurrentDictionary<string, string> UploadedServicesErrorMessage = new();
     
     public string Uuid { get; set; }
     
