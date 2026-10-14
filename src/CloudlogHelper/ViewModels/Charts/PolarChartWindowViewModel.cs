@@ -220,11 +220,11 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         }
         finally
         {
+            IsExecutingChartUpdate = false;
             _refreshTheme();
             PlotControl.Plot.Axes.AutoScale();
             PlotControl.Refresh();
             LastDataUpdatedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
-            IsExecutingChartUpdate = false;
         }
     }
 
@@ -425,6 +425,9 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
     private void _refreshTheme()
     {
+        // UpdatePolar can fail before the polar axis is created; there is nothing to style then.
+        if (_polarAxis is null) return;
+
         if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
             _setDarkTheme();
         else
