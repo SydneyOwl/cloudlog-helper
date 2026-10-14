@@ -450,6 +450,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         _qsoQueueStore.Connect()
             .Filter(filterObservable)
+            // Downstream of Filter so predicate-driven re-emissions are marshalled too.
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SortAndBind(out ReadOnlyObservableCollection<RecordedCallsignDetail> filteredQsosView, SortExpressionComparer<RecordedCallsignDetail>
                 .Ascending(x => x.DateTimeOff))
             .Subscribe()
