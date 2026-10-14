@@ -71,6 +71,36 @@ public class AdifAndRecordedCallsignTests
         Assert.Equal(expected, detail.IsUploadable());
     }
 
+    [Fact]
+    public void TryMarkInUploadQueue_IsExclusiveUntilCleared()
+    {
+        var detail = new RecordedCallsignDetail();
+
+        Assert.True(detail.TryMarkInUploadQueue());
+        Assert.False(detail.TryMarkInUploadQueue());
+
+        detail.ClearInUploadQueue();
+
+        Assert.True(detail.TryMarkInUploadQueue());
+    }
+
+    [Fact]
+    public void TryMarkInUploadQueue_UnderConcurrentCallers_OnlyOneWins()
+    {
+        var detail = new RecordedCallsignDetail();
+        const int callers = 64;
+        var winners = 0;
+        using var barrier = new Barrier(callers);
+
+        Parallel.For(0, callers, _ =>
+        {
+            barrier.SignalAndWait();
+            if (detail.TryMarkInUploadQueue()) Interlocked.Increment(ref winners);
+        });
+
+        Assert.Equal(1, winners);
+    }
+
     private static AdifLog CreateAdifLog(string subMode, string comment)
     {
         return new AdifLog

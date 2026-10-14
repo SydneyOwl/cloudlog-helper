@@ -148,17 +148,15 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
         // reserved
         var itemKey = GenerateItemKey(rcd);
-        
-        // now we check whether this qso is already in upload queue instead of if it is uploaded 
-        // todo add lock here?
-        // todo same qsos from difference sources will cause dupe upload
 
-        if (rcd.IsInUploadQueue)
+        // claim the QSO in one atomic step: check-then-set let the UDP, plugin-pipe and UI callers
+        // all observe "not queued" and enqueue the same QSO more than once.
+        // todo same qsos from difference sources will cause dupe upload
+        if (!rcd.TryMarkInUploadQueue())
         {
             ClassLogger.Trace($"Skipping {rcd.DXCall}; It's already in queue");
             return Task.CompletedTask;
         }
-        rcd.IsInUploadQueue = true;
 
         rcd.UploadStatus = UploadStatus.Pending;
         var uploadItem = new UploadItem(rcd, itemKey);
@@ -170,11 +168,13 @@ public class QSOUploadService : IQSOUploadService, IDisposable
         }
         catch (InvalidOperationException ex) when (_uploadQueue.IsAddingCompleted)
         {
+            rcd.ClearInUploadQueue();
             ClassLogger.Warn($"Failed to enqueue QSO - service is stopping: {rcd.DXCall}");
             throw new InvalidOperationException("Upload service is stopping", ex);
         }
         catch (Exception ex)
         {
+            rcd.ClearInUploadQueue();
             ClassLogger.Error(ex, $"Failed to enqueue QSO: {rcd.DXCall}");
             throw;
         }
@@ -201,7 +201,7 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                     uploadTimeoutSrc.Token);
 
                 await ProcessUploadItemAsync(uploadItem, linkedCts.Token).ConfigureAwait(false);
-                uploadItem.RecordedCallsignDetail.IsInUploadQueue = false;
+                uploadItem.RecordedCallsignDetail.ClearInUploadQueue();
                 await Task.Delay(1000, cancellationToken);
             }
         }

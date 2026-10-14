@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using AdifParser;
 using Avalonia.Media;
 using CloudlogHelper.Database;
@@ -192,11 +193,25 @@ public class RecordedCallsignDetail : ReactiveObject
     [Reactive]
     public UploadStatus UploadStatus { get; set; } = UploadStatus.Pending;
 
+    private int _inUploadQueueFlag;
+
     /// <summary>
-    ///     Whether this QSO is in upload queue or not.
+    ///     Atomically claims this QSO for the upload queue. Returns false when another caller already
+    ///     holds the claim, so concurrent enqueues cannot double-upload the same QSO.
     /// </summary>
-    public bool IsInUploadQueue = false;
-    
+    public bool TryMarkInUploadQueue()
+    {
+        return Interlocked.CompareExchange(ref _inUploadQueueFlag, 1, 0) == 0;
+    }
+
+    /// <summary>
+    ///     Releases the upload-queue claim after the item is processed, or when the enqueue fails.
+    /// </summary>
+    public void ClearInUploadQueue()
+    {
+        Interlocked.Exchange(ref _inUploadQueueFlag, 0);
+    }
+
     /// <summary>
     ///     Whether this QSO is marked as calceled.
     /// </summary>
