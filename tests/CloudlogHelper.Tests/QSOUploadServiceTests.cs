@@ -79,6 +79,27 @@ public class QSOUploadServiceTests
         await service.StopAsync();
     }
 
+    [Fact]
+    public async Task Enqueue_WhenServiceStopped_ThrowsAndReleasesTheQueueClaim()
+    {
+        var settings = new ApplicationSettings();
+
+        using var service = new QSOUploadService(
+            new FakeApplicationSettingsService(settings),
+            new FakeUdpServerService(),
+            new FakeNotificationManager());
+        await service.StartAsync();
+        await service.StopAsync();
+
+        var rcd = CreateRecordedCallsignDetail("K1EEE");
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            async () => await service.EnqueueQSOForUploadAsync(rcd));
+
+        // A failed enqueue must give the claim back, or this QSO can never be enqueued again.
+        Assert.True(rcd.TryMarkInUploadQueue());
+    }
+
     private static async Task WaitForStatusAsync(RecordedCallsignDetail rcd, UploadStatus expected,
         int timeoutMs = 30000)
     {
