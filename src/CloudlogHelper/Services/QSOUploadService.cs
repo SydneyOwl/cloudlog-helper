@@ -347,7 +347,10 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                         
                         if (!serviceUploadResult.Success)
                         {
-                            rcd.UploadedServicesErrorMessage[serviceUploadResult.ServiceName] = serviceUploadResult.ErrorMessage;
+                            // ConcurrentDictionary rejects null values; a Cloudlog failure response
+                            // without a reason field leaves ErrorMessage null.
+                            rcd.UploadedServicesErrorMessage[serviceUploadResult.ServiceName] =
+                                serviceUploadResult.ErrorMessage ?? "Failed";
                         }
                     }
 
