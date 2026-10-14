@@ -635,7 +635,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             switch (message.MessageType)
             {
                 case MessageType.QSOLogged:
-                    AllDecodedCount += 1;
                     await HandleQsoLogged((QsoLogged)message);
                     break;
                     
