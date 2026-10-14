@@ -373,7 +373,7 @@
         <value>Seems like you're using {replace01} instead of Cloudlog as the backend service. Some features may not be fully supported.</value>
     </data>
     <data name="DisablePtt" xml:space="preserve">
-        <value>Disable PTT Control</value>
+        <value>Disable RTS/DTR Lines</value>
     </data>
     <data name="AllowExternalControl" xml:space="preserve">
         <value>Allow external control</value>
@@ -382,7 +382,7 @@
         <value>If this field is not empty, the software will use the entered content as the default parameters for launching rigctld, and all other configurations will be ignored.</value>
     </data>
     <data name="DisablePttHelp" xml:space="preserve">
-        <value>In some Linux distributions, if rts/dtr is not disabled, it may prevent PTT from initializing correctly, manifesting as the PTT remaining in a triggered state.</value>
+        <value>Holds the serial RTS and DTR handshaking lines low so hamlib never asserts them. On some Linux distributions an asserted RTS/DTR keeps the radio busy and stops PTT from releasing.</value>
     </data>
     <data name="AllowProxy" xml:space="preserve">
         <value>Allow proxy requests</value>

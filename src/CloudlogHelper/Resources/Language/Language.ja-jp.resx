@@ -172,10 +172,10 @@
         <value>チャート機能を無効にする（低性能デバイス向け）</value>
     </data>
     <data name="DisablePtt" xml:space="preserve">
-        <value>PTT制御を無効にする</value>
+        <value>RTS/DTR を無効にする</value>
     </data>
     <data name="DisablePttHelp" xml:space="preserve">
-        <value>一部のLinuxディストリビューションでは、rts/dtrを無効にしないとPTTが正しく初期化されず、常にトリガー状態になることがあります。</value>
+        <value>hamlib がシリアル RTS/DTR ハンドシェイク線をアサートしないよう、常にローに保持します。一部の Linux ディストリビューションでは RTS/DTR がアサートされると無線機がビジー状態のままになり、PTT が解除されません。</value>
     </data>
     <data name="Discard" xml:space="preserve">
         <value>キャンセル</value>

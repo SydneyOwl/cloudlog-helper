@@ -29,6 +29,12 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] public bool UseRigAdvanced { get; set; }
 
+    /// <summary>
+    ///     Holds rigctld's rts_state/dtr_state OFF. Historical name: on some Linux distros an
+    ///     asserted RTS/DTR keeps the radio busy and shows up as PTT that never releases.
+    ///     Not renamed because the property name is the persisted settings.json key and the
+    ///     settings window's draft diffing compares it by name.
+    /// </summary>
     [Reactive] public bool DisablePTT { get; set; }
 
     [Reactive] public bool AllowExternalControl { get; set; }

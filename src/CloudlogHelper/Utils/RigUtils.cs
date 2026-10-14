@@ -52,6 +52,13 @@ public static class RigUtils
         return "Failed to init hamlib!";
     }
 
+    /// <summary>
+    ///     Builds the command line handed to rigctld.
+    /// </summary>
+    /// <param name="disablePtt">
+    ///     Holds rigctld's rts_state/dtr_state OFF so hamlib never asserts the serial handshaking
+    ///     lines. The name is historical and kept because it is the persisted settings.json key.
+    /// </param>
     public static string GenerateRigctldCmdArgs(string radioId, string port, bool disablePtt = false,
         bool allowExternal = false)
     {
@@ -63,7 +70,14 @@ public static class RigUtils
         if (allowExternal) defaultHost = IPAddress.Any.ToString();
         args.Append($"-T {defaultHost} -t {DefaultConfigs.RigctldDefaultPort} ");
 
-        if (disablePtt) args.Append(@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" ");
+        if (disablePtt)
+        {
+            // Both lines go in ONE comma-separated --set-conf: rigctld splits the value on
+            // ',' (Hamlib tests/rigctld.c) and its man page requires '=' for long options.
+            // The space-separated form parses only on getopt implementations that tolerate
+            // it, so the comma form is the portable one.
+            args.Append("--set-conf=rts_state=OFF,dtr_state=OFF ");
+        }
 
         args.Append("-vvvvv");
         return args.ToString();

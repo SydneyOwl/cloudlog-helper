@@ -483,7 +483,7 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             if (string.IsNullOrEmpty(hamlibSettings.OverrideCommandlineArg))
                 defaultArgs = RigUtils.GenerateRigctldCmdArgs(hamlibSettings.SelectedRigInfo.Id!,
                     hamlibSettings.SelectedPort,
-                    hamlibSettings.DisablePTT,
+                    hamlibSettings.DisablePTT, // keeps RTS/DTR low; name is historical, see HamlibSettings.DisablePTT
                     hamlibSettings.AllowExternalControl);
             else
                 defaultArgs = hamlibSettings.OverrideCommandlineArg;
