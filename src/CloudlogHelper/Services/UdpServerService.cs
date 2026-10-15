@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Channels;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.Json;
@@ -40,14 +41,28 @@ public class UdpServerService : IUdpServerService, IDisposable
     private UdpClient? _forwardedClient;
     private WsjtxUdpServer? _udpServer;
 
+    // The receive loop dispatches handlers without awaiting them, so every forwarded message
+    // used to start its own HTTP POST with nothing bounding how many were in flight. One hung
+    // endpoint therefore stacked up a request per decode for as long as it stayed dead.
+    private readonly Channel<WsjtxMessage> _forwardChannel =
+        Channel.CreateBounded<WsjtxMessage>(
+            new BoundedChannelOptions(DefaultConfigs.DefaultForwardingQueueCapacity)
+            {
+                FullMode = BoundedChannelFullMode.DropOldest,
+                SingleReader = true
+            });
+
     private IApplicationSettingsService _applicationSettingsService;
+
     public UdpServerService(IApplicationSettingsService applicationSettingsService)
     {
         _applicationSettingsService = applicationSettingsService;
+        _ = Task.Run(_forwardMessagesAsync);
     }
 
     public void Dispose()
     {
+        _forwardChannel.Writer.TryComplete();
         _udpServer?.Dispose();
         _forwardedClient?.Dispose();
         _cts.Dispose();
@@ -114,18 +129,36 @@ public class UdpServerService : IUdpServerService, IDisposable
             try
             {
                 await handler(msg).ConfigureAwait(false);
-        
+
                 var udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
                 if (udpSettings.ForwardMessageToHttp)
                 {
-                    await _forwardTCPMessageAsync(
-                        msg,
-                        udpSettings.ForwardHttpAddress).ConfigureAwait(false);
+                    // Queue only: a stalled endpoint costs us the oldest queued messages,
+                    // not one unbounded in-flight POST per decode.
+                    _forwardChannel.Writer.TryWrite(msg);
                 }
             }
             catch (Exception ex)
             {
                 ClassLogger.Debug(ex, "Error while handling message. ignored.");
+            }
+        }
+    }
+
+    private async Task _forwardMessagesAsync()
+    {
+        await foreach (var message in _forwardChannel.Reader.ReadAllAsync().ConfigureAwait(false))
+        {
+            try
+            {
+                await _forwardTCPMessageAsync(message,
+                    _applicationSettingsService.GetCurrentSettings().UDPSettings.ForwardHttpAddress)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                // Every later forward depends on this loop surviving.
+                ClassLogger.Debug(ex, "Error while forwarding message. ignored.");
             }
         }
     }

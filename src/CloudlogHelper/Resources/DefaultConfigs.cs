@@ -35,6 +35,13 @@ public class DefaultConfigs
     public const int DefaultForwardingRequestTimeout = 3;
 
     /// <summary>
+    ///     How many messages the HTTP forwarding path may keep queued. Decodes arrive far
+    ///     faster than a slow endpoint drains, so the queue drops the oldest instead of
+    ///     growing without bound.
+    /// </summary>
+    public const int DefaultForwardingQueueCapacity = 64;
+
+    /// <summary>
     ///     Default timeout (in seconds) for QSODownload HTTP(s) requests.
     /// </summary>
     public const int QSODownloadRequestTimeout = 30;
