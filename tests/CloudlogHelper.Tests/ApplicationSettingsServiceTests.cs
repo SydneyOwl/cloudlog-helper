@@ -106,6 +106,44 @@ public class ApplicationSettingsServiceTests
     }
 
     [Fact]
+    public void Mapper_CopiesLogServiceInstancesByReference()
+    {
+        var draft = new ApplicationSettings();
+        var current = new ApplicationSettings();
+        var draftService = new QRZThirdPartyLogService();
+        draft.LogServices.Add(draftService);
+        var currentBasicSettings = current.BasicSettings;
+        draft.BasicSettings.InstanceName = "draft-instance";
+
+        CreateMapper().Map(draft, current);
+
+        // AutoMapper cannot construct the abstract element type, so it moves the very same
+        // service object into the destination list. Nested members that *do* have a map
+        // (BasicSettings, CloudlogSettings) are mapped in place instead.
+        Assert.NotSame(draft.LogServices, current.LogServices);
+        Assert.Same(draftService, current.LogServices[0]);
+        Assert.Same(currentBasicSettings, current.BasicSettings);
+        Assert.Equal("draft-instance", current.BasicSettings.InstanceName);
+    }
+
+    [Fact]
+    public void ApplySettings_SharesTheDraftLogServiceInstanceWithCurrentSettings()
+    {
+        var service = CreateService();
+        var owner = new object();
+
+        Assert.True(service.TryGetDraftSettings(owner, out var draft));
+        var draftService = new QRZThirdPartyLogService();
+        draft!.LogServices.Add(draftService);
+
+        service.ApplySettings(owner);
+
+        // The live settings and the settings window edit the same ThirdPartyLogService
+        // object, so credentials edited while an upload is in flight tear the request.
+        Assert.Same(draftService, service.GetCurrentSettings().LogServices[0]);
+    }
+
+    [Fact]
     public void ApplySettings_PublishesBasicSettingsChanged_WhenBasicSettingsChanged()
     {
         var service = CreateService();
