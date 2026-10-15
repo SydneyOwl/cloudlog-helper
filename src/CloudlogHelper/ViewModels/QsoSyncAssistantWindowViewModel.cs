@@ -138,11 +138,21 @@ public class QsoSyncAssistantWindowViewModel : ViewModelBase, IDisposable
 
     private void _saveAndApplyConf()
     {
-        if (settingsService.TryGetDraftSettings(this, out var draft))
+        if (!settingsService.TryGetDraftSettings(this, out var draft)) return;
+
+        // ApplySettings clears the claim on its own, but _mapper.Map runs before it: a throw in
+        // the mapping would otherwise hold the draft and block every other settings window.
+        try
         {
             _mapper.Map(Settings, draft);
-            settingsService.ApplySettings(this);
         }
+        catch
+        {
+            settingsService.RestoreSettings(this);
+            throw;
+        }
+
+        settingsService.ApplySettings(this);
     }
 
     private async Task AddLogPath()

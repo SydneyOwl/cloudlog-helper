@@ -132,42 +132,61 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
-        DraftSettings = settings!;
-        LogSystemCard = new LogSystemCardViewModel(LogSystems, _handleLogSystemTestErrorAsync);
-        
-        var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
-        HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
 
-        var flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
-        FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
+        // hoisted out of the try below because WhenActivated closes over them
+        ReactiveCommand<Unit, Unit>? hamlibCmd = null;
+        ReactiveCommand<Unit, Unit>? flrigCmd = null;
+        ReactiveCommand<Unit, Unit>? omniCmd = null;
+        ReactiveCommand<Unit, Unit>? cloudCmd = null;
 
-        var omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
-        OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
+        // Everything below runs while this viewmodel owns the draft. A constructor that dies
+        // part-way has to hand the claim back, or the settings window is dead until restart.
+        try
+        {
+            DraftSettings = settings!;
+            LogSystemCard = new LogSystemCardViewModel(LogSystems, _handleLogSystemTestErrorAsync);
 
-        var cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
-        CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
-        hamlibCmd.DisposeWith(_disposables);
-        flrigCmd.DisposeWith(_disposables);
-        omniCmd.DisposeWith(_disposables);
-        cloudCmd.DisposeWith(_disposables);
-        
-        RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
-        DiscardConf = ReactiveCommand.Create(_discardConf);
-        SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
-        OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
-        OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
-        UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
-        RefreshPort.DisposeWith(_disposables);
-        DiscardConf.DisposeWith(_disposables);
-        SaveAndApplyConf.DisposeWith(_disposables);
-        OpenConfDir.DisposeWith(_disposables);
-        OpenTempDir.DisposeWith(_disposables);
-        UpdateBigCty.DisposeWith(_disposables);
+            hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
+            HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
 
-        _initSkipped = cmd.AutoUdpLogUploadOnly;
-        _source = new CancellationTokenSource();
-        ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
-        LanguageInfos.AddRange(TranslationHelper.GetSupportedLanguageInfos());
+            flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
+            FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
+
+            omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
+            OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
+
+            cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection,
+                DraftSettings.CloudlogSettings.IsCloudlogValid);
+            CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
+            hamlibCmd.DisposeWith(_disposables);
+            flrigCmd.DisposeWith(_disposables);
+            omniCmd.DisposeWith(_disposables);
+            cloudCmd.DisposeWith(_disposables);
+
+            RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
+            DiscardConf = ReactiveCommand.Create(_discardConf);
+            SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
+            OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
+            OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
+            UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
+            RefreshPort.DisposeWith(_disposables);
+            DiscardConf.DisposeWith(_disposables);
+            SaveAndApplyConf.DisposeWith(_disposables);
+            OpenConfDir.DisposeWith(_disposables);
+            OpenTempDir.DisposeWith(_disposables);
+            UpdateBigCty.DisposeWith(_disposables);
+
+            _initSkipped = cmd.AutoUdpLogUploadOnly;
+            _source = new CancellationTokenSource();
+            ShowCloudlogStationIdCombobox =
+                DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
+            LanguageInfos.AddRange(TranslationHelper.GetSupportedLanguageInfos());
+        }
+        catch
+        {
+            _settingsService.RestoreSettings(this);
+            throw;
+        }
 
         this.WhenActivated(disposables =>
         {

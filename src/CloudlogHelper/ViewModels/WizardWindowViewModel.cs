@@ -65,42 +65,52 @@ public class WizardWindowViewModel : ViewModelBase
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
 
-        DraftSettings = settings!;
-
-        _initializeLogSystems();
-
-        _welcomeStep = new WelcomeWizardStepViewModel();
-        _basicStep = new BasicWizardStepViewModel(DraftSettings.BasicSettings);
-        _cloudlogStep = new CloudlogWizardStepViewModel(DraftSettings.CloudlogSettings, _source.Token);
-        _thirdPartyStep = new ThirdPartyWizardStepViewModel(LogSystems, _handleLogSystemTestErrorAsync);
-        _rigBackendStep = new RigBackendWizardStepViewModel(DraftSettings, rigBackendManager);
-
-        NextCommand = ReactiveCommand.CreateFromTask(_goNextAsync);
-        PreviousCommand = ReactiveCommand.Create(_goPreviousStep);
-        NavigateCommand = ReactiveCommand.CreateFromTask<object?>(_navigateAsync);
-        OpenGithubProfileCommand = ReactiveCommand.CreateFromTask(_openGithubProfileAsync);
-        SkipWizardCommand = ReactiveCommand.CreateFromTask(_skipWizardAndPersistAsync);
-        FinishCommand = ReactiveCommand.CreateFromTask(_finishWizardAsync);
-
-        foreach (var command in new[]
-                 {
-                     NextCommand,
-                     OpenGithubProfileCommand,
-                     SkipWizardCommand,
-                     FinishCommand,
-                     _cloudlogStep.TestCloudlogConnectionCommand,
-                     _rigBackendStep.RefreshPortCommand
-                 })
+        // Everything below runs while this viewmodel owns the draft. A constructor that dies
+        // part-way has to hand the claim back, or the wizard can never be reopened.
+        try
         {
-            command.ThrownExceptions.Subscribe(ex =>
-            {
-                ClassLogger.Error(ex, "Wizard command failed.");
-                _showErrorAsync(ex.Message).SafeFireAndForget();
-            });
-        }
+            DraftSettings = settings!;
 
-        _updateStepState(WelcomeStepIndex);
-        _rigBackendStep.InitializeAsync().SafeFireAndForget();
+            _initializeLogSystems();
+
+            _welcomeStep = new WelcomeWizardStepViewModel();
+            _basicStep = new BasicWizardStepViewModel(DraftSettings.BasicSettings);
+            _cloudlogStep = new CloudlogWizardStepViewModel(DraftSettings.CloudlogSettings, _source.Token);
+            _thirdPartyStep = new ThirdPartyWizardStepViewModel(LogSystems, _handleLogSystemTestErrorAsync);
+            _rigBackendStep = new RigBackendWizardStepViewModel(DraftSettings, rigBackendManager);
+
+            NextCommand = ReactiveCommand.CreateFromTask(_goNextAsync);
+            PreviousCommand = ReactiveCommand.Create(_goPreviousStep);
+            NavigateCommand = ReactiveCommand.CreateFromTask<object?>(_navigateAsync);
+            OpenGithubProfileCommand = ReactiveCommand.CreateFromTask(_openGithubProfileAsync);
+            SkipWizardCommand = ReactiveCommand.CreateFromTask(_skipWizardAndPersistAsync);
+            FinishCommand = ReactiveCommand.CreateFromTask(_finishWizardAsync);
+
+            foreach (var command in new[]
+                     {
+                         NextCommand,
+                         OpenGithubProfileCommand,
+                         SkipWizardCommand,
+                         FinishCommand,
+                         _cloudlogStep.TestCloudlogConnectionCommand,
+                         _rigBackendStep.RefreshPortCommand
+                     })
+            {
+                command.ThrownExceptions.Subscribe(ex =>
+                {
+                    ClassLogger.Error(ex, "Wizard command failed.");
+                    _showErrorAsync(ex.Message).SafeFireAndForget();
+                });
+            }
+
+            _updateStepState(WelcomeStepIndex);
+            _rigBackendStep.InitializeAsync().SafeFireAndForget();
+        }
+        catch
+        {
+            _settingsService.RestoreSettings(this);
+            throw;
+        }
     }
 
     [Reactive] public ApplicationSettings DraftSettings { get; set; }
