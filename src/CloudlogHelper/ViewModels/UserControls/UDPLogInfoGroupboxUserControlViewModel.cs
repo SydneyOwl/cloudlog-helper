@@ -493,24 +493,43 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
 
         MessageBus.Current.Listen<QsoUploadRequested>()
-            .Subscribe(async x =>
-            {
-                _qsoQueueStore.AddRange(x.QsoData);
-                
-                foreach (var rcd in x.QsoData)
-                {
-                    try
-                    {
-                        rcd.CountryFlagAvares = FlagImageUtil.GetLogFlagImage();
-                        await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
-                    }
-                }
-            })
+            .Subscribe(x => _handleQsoUploadRequestedAsync(x)
+                .SafeFireAndForget(nameof(_handleQsoUploadRequestedAsync)))
             .DisposeWith(disposables);
+    }
+
+    private async Task _handleQsoUploadRequestedAsync(QsoUploadRequested request)
+    {
+        try
+        {
+            _qsoQueueStore.AddRange(request.QsoData);
+
+            foreach (var rcd in request.QsoData)
+            {
+                try
+                {
+                    rcd.CountryFlagAvares = FlagImageUtil.GetLogFlagImage();
+                }
+                catch (Exception ex)
+                {
+                    // cosmetic only: a missing flag must not cost us the upload itself
+                    ClassLogger.Warn(ex, "Failed to load the log flag image. Ignored.");
+                }
+
+                try
+                {
+                    await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to handle QSO upload request.");
+        }
     }
 
     private void UpdateSelectionState()
