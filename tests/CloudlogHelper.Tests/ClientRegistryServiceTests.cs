@@ -1,3 +1,4 @@
+using CloudlogHelper.Resources;
 using CloudlogHelper.Services;
 using CloudlogHelper.Utils;
 using DynamicData;
@@ -120,5 +121,56 @@ public class ClientRegistryServiceTests
         registry.Touch(_status("WSJT-X"));
 
         Assert.Contains(ChangeReason.Add, reasons);
+    }
+
+    [Fact]
+    public async Task StaleSessions_AreExpired_WhileFreshOnesStayAlive()
+    {
+        using var registry = new ClientRegistryService();
+        registry.Touch(_status("WSJT-X - 20m"));
+        registry.Touch(_status("WSJT-X - 40m"));
+
+        // Fake the last-seen time instead of sleeping past the window: expiry runs on the
+        // registry's own one-second tick, so the wait below only covers that tick.
+        registry.GetSession("WSJT-X - 20m")!.LastSeenUtc =
+            DateTime.UtcNow.AddSeconds(-DefaultConfigs.UDPClientExpiryInSeconds - 30);
+
+        await WaitUntilAsync(() => !registry.GetSession("WSJT-X - 20m")!.IsAlive);
+
+        Assert.False(registry.GetSession("WSJT-X - 20m")!.IsAlive);
+        Assert.False(registry.GetSession("WSJT-X - 20m")!.Transmitting);
+        Assert.True(registry.GetSession("WSJT-X - 40m")!.IsAlive);
+    }
+
+    [Fact]
+    public async Task ExpiredSession_IsRevivedByALaterTouch()
+    {
+        using var registry = new ClientRegistryService();
+        registry.Touch(_status("WSJT-X"));
+        registry.GetSession("WSJT-X")!.LastSeenUtc =
+            DateTime.UtcNow.AddSeconds(-DefaultConfigs.UDPClientExpiryInSeconds - 30);
+
+        await WaitUntilAsync(() => !registry.GetSession("WSJT-X")!.IsAlive);
+        registry.Touch(_status("WSJT-X"));
+
+        Assert.True(registry.GetSession("WSJT-X")!.IsAlive);
+    }
+
+    [Fact]
+    public void Dispose_StopsExpiry()
+    {
+        var registry = new ClientRegistryService();
+        registry.Touch(_status("WSJT-X"));
+        registry.Dispose();
+
+        registry.GetSession("WSJT-X")!.LastSeenUtc = DateTime.UtcNow.AddMinutes(-10);
+
+        Assert.True(registry.GetSession("WSJT-X")!.IsAlive);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (!condition() && DateTime.UtcNow < deadline) await Task.Delay(20);
     }
 }
