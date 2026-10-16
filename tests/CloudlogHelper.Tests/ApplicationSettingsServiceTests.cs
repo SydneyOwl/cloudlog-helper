@@ -1,4 +1,5 @@
 using AutoMapper;
+using System.IO;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
@@ -11,6 +12,10 @@ namespace CloudlogHelper.Tests;
 
 public class ApplicationSettingsServiceTests
 {
+    // Fixed path, not a unique one per test: the tests in this class run sequentially, and this
+    // way a test run leaves at most one file behind in temp instead of one per test.
+    private static readonly string TestSettingsFile =
+        Path.Combine(Path.GetTempPath(), "clh-test-settings-ApplicationSettingsService.json");
     [Fact]
     public void TryGetDraftSettings_AllowsOnlyOneOwner_UntilRestore()
     {
@@ -94,7 +99,8 @@ public class ApplicationSettingsServiceTests
             logSystemManager,
             reinit: true,
             version: new Version(0, 0, 0),
-            CreateMapper());
+            CreateMapper(),
+            TestSettingsFile);
         var owner = new object();
         var rawConfigs = new List<LogSystemConfig> { new() };
 
@@ -162,11 +168,14 @@ public class ApplicationSettingsServiceTests
 
     private static ApplicationSettingsService CreateService()
     {
+        // Without a path of its own, ApplySettings writes to the developer's real settings.json
+        // and turns SkipWizard off - the wizard then comes back after every test run.
         return ApplicationSettingsService.GenerateApplicationSettingsService(
             new FakeLogSystemManager(),
             reinit: true,
             version: new Version(0, 0, 0),
-            CreateMapper());
+            CreateMapper(),
+            TestSettingsFile);
     }
 
     private static IMapper CreateMapper()

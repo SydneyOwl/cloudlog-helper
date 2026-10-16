@@ -42,6 +42,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
     
     private ApplicationSettings? _oldSettings;
 
+    /// <summary>
+    ///     Where settings are persisted. Injectable so tests cannot overwrite the real file.
+    /// </summary>
+    private string _settingsFilePath = DefaultConfigs.DefaultSettingsFile;
+
     public void InjectMockSettings(ApplicationSettings settings)
     {
         _currentSettings = settings;
@@ -174,9 +179,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     public static ApplicationSettingsService GenerateApplicationSettingsService(ILogSystemManager logSystemManager,
         bool reinit, Version version,
-        IMapper mapper)
+        IMapper mapper, string? settingsFilePath = null)
     {
-        var applicationSettingsService = new ApplicationSettingsService();
+        var applicationSettingsService = new ApplicationSettingsService
+        {
+            _settingsFilePath = settingsFilePath ?? DefaultConfigs.DefaultSettingsFile
+        };
         applicationSettingsService._mapper = mapper;
         applicationSettingsService._logSystemManager = logSystemManager;
         var spLogServices = logSystemManager.GetEmptySupportedLogServices();
@@ -189,7 +197,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
         try
         {
-            var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
+            var defaultConf = File.ReadAllText(applicationSettingsService._settingsFilePath);
 
             ClassLogger.Debug($"Got current version {version}");
             if (version != Version.Parse("0.0.0"))
@@ -244,7 +252,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
         finally
         {
             _ = logSystemManager.PreInitLogSystem(applicationSettingsService._draftSettings!.LogServices);
-            _writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
+            applicationSettingsService._writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
         }
 
         return applicationSettingsService;
@@ -308,14 +316,14 @@ public class ApplicationSettingsService : IApplicationSettingsService
     /// <summary>
     ///     write settings to default position.
     /// </summary>
-    private static void _writeCurrentSettingsToFile(ApplicationSettings settings)
+    private void _writeCurrentSettingsToFile(ApplicationSettings settings)
     {
         try
         {
-            File.WriteAllText(DefaultConfigs.DefaultSettingsFile,
+            File.WriteAllText(_settingsFilePath,
                 JsonSerializer.Serialize(settings, AppJsonSerializerOptions.Settings));
             ClassLogger.Trace(
-                $"_writeCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
+                $"_writeCurrentSettingsToFile successfully: {_settingsFilePath}");
         }
         catch (Exception e1)
         {
