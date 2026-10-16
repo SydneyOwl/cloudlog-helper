@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Google.Protobuf;
@@ -229,7 +230,7 @@ public class PluginServiceTests
         public bool IsNotifyOnQsoMade() => false;
         public bool IsNotifyOnQsoUploaded() => false;
         public int QSOUploadRetryCount() => 1;
-        public Task InitializeAsync(Func<QSOTestValues.WsjtxMessage, Task> handler,
+        public Task InitializeAsync(Func<QSOTestValues.WsjtxMessage, EndPoint, Task> handler,
             Action<Microsoft.Extensions.Logging.LogLevel, string> logger) => Task.CompletedTask;
     }
 

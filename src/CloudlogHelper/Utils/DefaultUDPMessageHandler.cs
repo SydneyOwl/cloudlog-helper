@@ -10,14 +10,15 @@ namespace CloudlogHelper.Utils;
 
 public sealed class DefaultUDPMessageHandler : WsjtxUdpServerBaseAsyncMessageHandler
 {
-    private Func<WsjtxMessage, Task>? _onMessageReceived;
+    private Func<WsjtxMessage, EndPoint, Task>? _onMessageReceived;
     private Func<Memory<byte>, Task>? _onRawMessageReceived;
 
     private DefaultUDPMessageHandler()
     {
     }
 
-    public static DefaultUDPMessageHandler GenerateDefaultUDPMessageHandlerWithCallback(Func<WsjtxMessage, Task>? callback,
+    public static DefaultUDPMessageHandler GenerateDefaultUDPMessageHandlerWithCallback(
+        Func<WsjtxMessage, EndPoint, Task>? callback,
         Func<Memory<byte>, Task>? rawCallback)
     {
         var defHandler = new DefaultUDPMessageHandler
@@ -34,56 +35,56 @@ public sealed class DefaultUDPMessageHandler : WsjtxUdpServerBaseAsyncMessageHan
     public override async Task HandleClearMessageAsync(WsjtxUdpServer server, Clear message, EndPoint endPoint,
         CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleClearMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleClosedMessageAsync(WsjtxUdpServer server, Close message, EndPoint endPoint,
         CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleClosedMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleDecodeMessageAsync(WsjtxUdpServer server, Decode message, EndPoint endPoint,
         CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleDecodeMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleHeartbeatMessageAsync(WsjtxUdpServer server, Heartbeat message, EndPoint endPoint,
         CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleHeartbeatMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleLoggedAdifMessageAsync(WsjtxUdpServer server, LoggedAdif message,
         EndPoint endPoint, CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleLoggedAdifMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleQsoLoggedMessageAsync(WsjtxUdpServer server, QsoLogged message, EndPoint endPoint,
         CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleQsoLoggedMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleStatusMessageAsync(WsjtxUdpServer server, Status message, EndPoint endPoint,
         CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleStatusMessageAsync(server, message, endPoint, cancellationToken);
     }
 
     public override async Task HandleWSPRDecodeMessageAsync(WsjtxUdpServer server, WSPRDecode message,
         EndPoint endPoint, CancellationToken cancellationToken = default)
     {
-        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message);
+        if (_onMessageReceived is not null) await _onMessageReceived.Invoke(message, endPoint);
         await base.HandleWSPRDecodeMessageAsync(server, message, endPoint, cancellationToken);
     }
 

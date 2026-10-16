@@ -126,15 +126,15 @@ public class UdpServerService : IUdpServerService, IDisposable
         return int.TryParse(_applicationSettingsService.GetCurrentSettings().UDPSettings.RetryCount, out var ret) ? ret : 1;
     }
 
-    private Func<WsjtxMessage, Task> _handlerWrapper(Func<WsjtxMessage, Task> handler)
+    private Func<WsjtxMessage, EndPoint, Task> _handlerWrapper(Func<WsjtxMessage, EndPoint, Task> handler)
     {
         return Wrapped;
 
-        async Task Wrapped(WsjtxMessage msg)
+        async Task Wrapped(WsjtxMessage msg, EndPoint source)
         {
             try
             {
-                await handler(msg).ConfigureAwait(false);
+                await handler(msg, source).ConfigureAwait(false);
 
                 var udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
                 if (udpSettings.ForwardMessageToHttp)
@@ -169,7 +169,7 @@ public class UdpServerService : IUdpServerService, IDisposable
         }
     }
 
-    public async Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger)
+    public async Task InitializeAsync(Func<WsjtxMessage, EndPoint, Task> handler, Action<LogLevel, string> logger)
     {
         await _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
 
@@ -236,7 +236,7 @@ public class UdpServerService : IUdpServerService, IDisposable
             throw new Exception($"Result does not return as expected: expect \"OK\" but we got {receiveString}");
     }
 
-    private async Task _restartUDPServerAsync(Func<WsjtxMessage, Task> handler,
+    private async Task _restartUDPServerAsync(Func<WsjtxMessage, EndPoint, Task> handler,
         Func<Memory<byte>, Task> rawhandler,
         Action<LogLevel, string>? udpLogger = null)
     {

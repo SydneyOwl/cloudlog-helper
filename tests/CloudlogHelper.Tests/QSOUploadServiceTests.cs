@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CloudlogHelper.Enums;
@@ -193,7 +194,7 @@ public class QSOUploadServiceTests
 
         public int QSOUploadRetryCount() => 1;
 
-        public Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger)
+        public Task InitializeAsync(Func<WsjtxMessage, EndPoint, Task> handler, Action<LogLevel, string> logger)
         {
             throw new NotSupportedException();
         }
