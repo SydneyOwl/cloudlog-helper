@@ -633,17 +633,17 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         await writer.WriteAsync(adif.ToString());
     }
 
-    private async Task _wsjtxMsgHandler(WsjtxMessage message)
+    private async Task _wsjtxMsgHandler(WsjtxMessage message, EndPoint source)
     {
         try
         {
-            _clientRegistryService.Touch(message);
+            _clientRegistryService.Touch(message, source);
             UpdateTxStatus();
 
             switch (message.MessageType)
             {
                 case MessageType.QSOLogged:
-                    await HandleQsoLogged((QsoLogged)message);
+                    await HandleQsoLogged((QsoLogged)message, source);
                     break;
                     
                 case MessageType.Decode:
@@ -678,13 +678,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         }
     }
 
-    private async Task HandleQsoLogged(QsoLogged message)
+    private async Task HandleQsoLogged(QsoLogged message, EndPoint source)
     {
         RecordedQsosCount += 1;
         _qsoTimestamps.Enqueue(DateTime.UtcNow);
 
         var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall).ConfigureAwait(false);
-        var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, message);
+        var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, message, source);
         
         rcd.CountryFlagAvares = FlagImageUtil.GetFlagImage(cty.FlagImg);
             

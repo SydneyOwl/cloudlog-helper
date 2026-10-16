@@ -1,3 +1,4 @@
+using System.Net;
 using CloudlogHelper.Database;
 using CloudlogHelper.Enums;
 using CloudlogHelper.Models;
@@ -9,12 +10,14 @@ namespace CloudlogHelper.Tests;
 public class AdifAndRecordedCallsignTests
 {
     [Theory]
-    [InlineData("WSJT-X - 20m", "WSJT-X - 20m")]
-    [InlineData("WSJT-X - 40m", "WSJT-X - 40m")]
-    [InlineData("JTDX", "JTDX")]
-    [InlineData("", WsjtxMessageUtil.UnknownClient)]
-    [InlineData(null, WsjtxMessageUtil.UnknownClient)]
-    public void GenerateCallsignDetail_KeepsFullClientKey(string? id, string expectedClientId)
+    [InlineData("WSJT-X - 20m", "10.0.0.7", "WSJT-X - 20m")]
+    [InlineData("WSJT-X - 40m", "10.0.0.7", "WSJT-X - 40m")]
+    [InlineData("JTDX", "10.0.0.7", "JTDX")]
+    [InlineData("", "10.0.0.7", "10.0.0.7")]
+    [InlineData(null, "10.0.0.7", "10.0.0.7")]
+    [InlineData("", null, WsjtxMessageUtil.UnknownClient)]
+    [InlineData(null, null, WsjtxMessageUtil.UnknownClient)]
+    public void GenerateCallsignDetail_KeepsFullClientKey(string? id, string? sourceAddress, string expectedClientId)
     {
         var qlo = new QsoLogged
         {
@@ -27,10 +30,64 @@ public class AdifAndRecordedCallsignTests
             DateTimeOff = new DateTime(2026, 1, 2, 3, 5, 5, DateTimeKind.Utc)
         };
 
-        var detail = RecordedCallsignDetail.GenerateCallsignDetail(new CountryDatabase(), qlo);
+        var detail = RecordedCallsignDetail.GenerateCallsignDetail(new CountryDatabase(), qlo,
+            Source(sourceAddress));
 
         Assert.Equal(expectedClientId, detail.ClientId);
     }
+
+    [Fact]
+    public void GenerateCallsignDetail_BlankId_RecordsSourceAddressAlongsideTheFallbackKey()
+    {
+        var source = Source("10.0.0.7");
+        var detail = Generate("", source);
+
+        Assert.Equal("10.0.0.7", detail.ClientId);
+        Assert.Equal("10.0.0.7", detail.SourceAddress);
+    }
+
+    [Fact]
+    public void GenerateCallsignDetail_NonBlankId_KeepsTheIdButStillRecordsSourceAddress()
+    {
+        var detail = Generate("WSJT-X - 20m", Source("10.0.0.7"));
+
+        Assert.Equal("WSJT-X - 20m", detail.ClientId);
+        Assert.Equal("10.0.0.7", detail.SourceAddress);
+    }
+
+    [Fact]
+    public void GenerateCallsignDetail_IgnoresSourcePort()
+    {
+        var fromLowPort = Generate("", new IPEndPoint(IPAddress.Parse("10.0.0.7"), 1));
+        var fromHighPort = Generate("", new IPEndPoint(IPAddress.Parse("10.0.0.7"), 6999));
+
+        // A WSJT-X instance picks a new ephemeral source port every start, so the port must not
+        // fragment one machine into two sessions.
+        Assert.Equal(fromLowPort.ClientId, fromHighPort.ClientId);
+        Assert.Equal("10.0.0.7", fromHighPort.SourceAddress);
+    }
+
+    [Fact]
+    public void GenerateCallsignDetail_NoSource_LeavesSourceAddressNull()
+    {
+        Assert.Null(Generate("WSJT-X - 20m", null).SourceAddress);
+    }
+
+    private static RecordedCallsignDetail Generate(string? id, EndPoint? source) =>
+        RecordedCallsignDetail.GenerateCallsignDetail(new CountryDatabase(),
+            new QsoLogged
+            {
+                Id = id!,
+                DXCall = "K1ABC",
+                DXGrid = "FN42",
+                TXFrequencyInHz = 14_074_000,
+                Mode = "FT8",
+                DateTimeOn = new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc),
+                DateTimeOff = new DateTime(2026, 1, 2, 3, 5, 5, DateTimeKind.Utc)
+            }, source);
+
+    private static IPEndPoint? Source(string? address) =>
+        address is null ? null : new IPEndPoint(IPAddress.Parse(address), 5000);
 
     [Fact]
     public void GenerateAdifLog_IncludesSubModeAndCommentOnlyWhenPresent()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -49,20 +50,20 @@ public class ClientRegistryService : IClientRegistryService, IDisposable
         }
     }
 
-    public ClientSession? GetSession(string id)
+    public ClientSession? GetSession(string id, EndPoint? source = null)
     {
         lock (_sync)
         {
-            var lookup = _cache.Lookup(WsjtxMessageUtil.GetClientKey(id));
+            var lookup = _cache.Lookup(WsjtxMessageUtil.GetClientKey(id, source));
             return lookup.HasValue ? lookup.Value : null;
         }
     }
 
-    public void Touch(WsjtxMessage message)
+    public void Touch(WsjtxMessage message, EndPoint? source = null)
     {
         if (_disposed) return;
 
-        var key = WsjtxMessageUtil.GetClientKey(message.Id);
+        var key = WsjtxMessageUtil.GetClientKey(message.Id, source);
 
         lock (_sync)
         {
@@ -75,13 +76,19 @@ public class ClientRegistryService : IClientRegistryService, IDisposable
             }
             else
             {
-                client = new ClientSession(key, WsjtxMessageUtil.GetClientDisplayName(message.Id));
+                // Derived from the key, not the raw Id: an empty Id is keyed by source address,
+                // so labelling it from the Id would print "Unknown" for a session keyed "10.0.0.5".
+                client = new ClientSession(key, WsjtxMessageUtil.GetClientDisplayName(key));
                 _cache.AddOrUpdate(client);
                 ClassLogger.Info($"New client registered: {client.DisplayName} ({client.Id})");
             }
 
             client.LastSeenUtc = DateTime.UtcNow;
             client.IsAlive = true;
+
+            // Don't let a touch that carried no endpoint erase provenance we already have.
+            var sourceAddress = WsjtxMessageUtil.GetSourceAddress(source);
+            if (sourceAddress is not null) client.SourceAddress = sourceAddress;
 
             switch (message)
             {

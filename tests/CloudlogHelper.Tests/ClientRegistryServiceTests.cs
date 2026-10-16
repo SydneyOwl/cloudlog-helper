@@ -1,3 +1,4 @@
+using System.Net;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Services;
 using CloudlogHelper.Utils;
@@ -86,7 +87,7 @@ public class ClientRegistryServiceTests
     }
 
     [Fact]
-    public void Touch_EmptyId_GoesToUnknownBucket()
+    public void Touch_EmptyIdWithoutEndpoint_GoesToUnknownBucket()
     {
         using var registry = new ClientRegistryService();
 
@@ -122,6 +123,94 @@ public class ClientRegistryServiceTests
 
         Assert.Contains(ChangeReason.Add, reasons);
     }
+
+    [Fact]
+    public void Touch_EmptyIdWithEndpoint_KeysAndLabelsSessionBySourceAddress()
+    {
+        using var registry = new ClientRegistryService();
+
+        registry.Touch(new Decode { Id = string.Empty }, Source("10.0.0.5"));
+
+        var session = Assert.Single(registry.Sessions);
+        Assert.Equal("10.0.0.5", session.Id);
+        Assert.Equal("10.0.0.5", session.DisplayName);
+        Assert.Equal("10.0.0.5", session.SourceAddress);
+    }
+
+    [Fact]
+    public void Touch_BlankIdsFromDifferentMachines_KeepSeparateSessions()
+    {
+        using var registry = new ClientRegistryService();
+
+        registry.Touch(new Decode { Id = string.Empty }, Source("10.0.0.5"));
+        registry.Touch(new Decode { Id = string.Empty }, Source("10.0.0.6"));
+
+        Assert.Equal(2, registry.Sessions.Count());
+        Assert.NotNull(registry.GetSession(string.Empty, Source("10.0.0.5")));
+        Assert.NotNull(registry.GetSession(string.Empty, Source("10.0.0.6")));
+    }
+
+    [Fact]
+    public void Touch_SameMachineDifferentPort_ReusesOneSession()
+    {
+        using var registry = new ClientRegistryService();
+
+        // A WSJT-X instance picks a new ephemeral source port on every start.
+        registry.Touch(new Decode { Id = string.Empty }, Source("10.0.0.5", 5000));
+        registry.Touch(new Decode { Id = string.Empty }, Source("10.0.0.5", 6000));
+
+        var session = Assert.Single(registry.Sessions);
+        Assert.Equal("10.0.0.5", session.Id);
+    }
+
+    [Fact]
+    public void Touch_NonBlankId_KeepsTheIdButRecordsSourceAddress()
+    {
+        using var registry = new ClientRegistryService();
+
+        registry.Touch(_status("WSJT-X - 20m"), Source("10.0.0.5"));
+
+        var session = registry.GetSession("WSJT-X - 20m")!;
+        Assert.Equal("WSJT-X - 20m", session.Id);
+        Assert.Equal("20m", session.Band);
+        Assert.Equal("10.0.0.5", session.SourceAddress);
+    }
+
+    [Fact]
+    public void Touch_WithoutEndpoint_KeepsProvenanceAlreadyRecorded()
+    {
+        using var registry = new ClientRegistryService();
+        registry.Touch(_status("WSJT-X - 20m"), Source("10.0.0.5"));
+
+        registry.Touch(_status("WSJT-X - 20m"));
+
+        Assert.Equal("10.0.0.5", registry.GetSession("WSJT-X - 20m")!.SourceAddress);
+    }
+
+    [Fact]
+    public void GetSession_BlankIdWithoutEndpoint_StillFindsTheUnknownSession()
+    {
+        using var registry = new ClientRegistryService();
+        registry.Touch(new Decode { Id = string.Empty });
+
+        Assert.NotNull(registry.GetSession(string.Empty));
+
+        // Passing an endpoint changes the derived key, so this is a different lookup - the
+        // Unknown bucket is only reachable without one.
+        Assert.Null(registry.GetSession(string.Empty, Source("10.0.0.9")));
+    }
+
+    [Fact]
+    public void GetSession_BlankIdWithEndpoint_FindsTheFallbackSession()
+    {
+        using var registry = new ClientRegistryService();
+        registry.Touch(new Decode { Id = string.Empty }, Source("10.0.0.5"));
+
+        Assert.Equal("10.0.0.5", registry.GetSession(string.Empty, Source("10.0.0.5"))!.Id);
+    }
+
+    private static IPEndPoint Source(string address, int port = 5000) =>
+        new(IPAddress.Parse(address), port);
 
     [Fact]
     public async Task StaleSessions_AreExpired_WhileFreshOnesStayAlive()

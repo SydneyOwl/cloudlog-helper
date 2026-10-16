@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Threading;
 using AdifParser;
 using Avalonia.Media;
@@ -167,6 +168,13 @@ public class RecordedCallsignDetail : ReactiveObject
     public string ClientId { get; set; }
 
     /// <summary>
+    ///     IP address this QSO was received from over UDP. Falls back to the client key when the
+    ///     client sent no Id; null for QSOs that did not arrive over UDP (imported ADIF, the
+    ///     QSO sync assistant) - <see cref="Parse" /> leaving this null is deliberate.
+    /// </summary>
+    public string? SourceAddress { get; set; }
+
+    /// <summary>
     ///     Flag of dxcall
     /// </summary>
     [Reactive] 
@@ -229,8 +237,14 @@ public class RecordedCallsignDetail : ReactiveObject
     /// </summary>
     /// <param name="cdb"></param>
     /// <param name="qlo"></param>
+    /// <param name="source">
+    ///     UDP endpoint the message arrived from. Required so the compiler forbids building a QSO
+    ///     whose <see cref="ClientId" /> could disagree with the registry key - both come from
+    ///     <see cref="WsjtxMessageUtil.GetClientKey(string?, System.Net.EndPoint?)" />.
+    /// </param>
     /// <returns></returns>
-    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo)
+    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo,
+        EndPoint? source)
     {
         var latLonByDxGrid = MaidenheadGridUtil.GridToLatLng(qlo.DXGrid);
         var lat = cdb.Latitude;
@@ -270,7 +284,8 @@ public class RecordedCallsignDetail : ReactiveObject
             ExchangeSent = qlo.ExchangeSent,
             ExchangeReceived = qlo.ExchangeReceived,
             AdifPropagationMode = qlo.AdifPropagationMode,
-            ClientId = WsjtxMessageUtil.GetClientKey(qlo.Id),
+            ClientId = WsjtxMessageUtil.GetClientKey(qlo.Id, source),
+            SourceAddress = WsjtxMessageUtil.GetSourceAddress(source),
             UploadStatus = UploadStatus.Pending
         };
     }
@@ -339,7 +354,7 @@ public class RecordedCallsignDetail : ReactiveObject
     public override string ToString()
     {
         return
-            $"{nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(DateTimeOff)}: {DateTimeOff}, {nameof(DXCall)}: {DXCall}, {nameof(DXGrid)}: {DXGrid}, {nameof(TXFrequencyInHz)}: {TXFrequencyInHz}, {nameof(TXFrequencyInMeters)}: {TXFrequencyInMeters}, {nameof(Mode)}: {Mode}, {nameof(ParentMode)}: {ParentMode}, {nameof(ReportSent)}: {ReportSent}, {nameof(ReportReceived)}: {ReportReceived}, {nameof(TXPower)}: {TXPower}, {nameof(Comments)}: {Comments}, {nameof(Name)}: {Name}, {nameof(DateTimeOn)}: {DateTimeOn}, {nameof(OperatorCall)}: {OperatorCall}, {nameof(MyCall)}: {MyCall}, {nameof(MyGrid)}: {MyGrid}, {nameof(ExchangeSent)}: {ExchangeSent}, {nameof(ExchangeReceived)}: {ExchangeReceived}, {nameof(AdifPropagationMode)}: {AdifPropagationMode}, {nameof(ClientId)}: {ClientId}, {nameof(Checked)}: {Checked}, {nameof(UploadStatus)}: {UploadStatus}";
+            $"{nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(DateTimeOff)}: {DateTimeOff}, {nameof(DXCall)}: {DXCall}, {nameof(DXGrid)}: {DXGrid}, {nameof(TXFrequencyInHz)}: {TXFrequencyInHz}, {nameof(TXFrequencyInMeters)}: {TXFrequencyInMeters}, {nameof(Mode)}: {Mode}, {nameof(ParentMode)}: {ParentMode}, {nameof(ReportSent)}: {ReportSent}, {nameof(ReportReceived)}: {ReportReceived}, {nameof(TXPower)}: {TXPower}, {nameof(Comments)}: {Comments}, {nameof(Name)}: {Name}, {nameof(DateTimeOn)}: {DateTimeOn}, {nameof(OperatorCall)}: {OperatorCall}, {nameof(MyCall)}: {MyCall}, {nameof(MyGrid)}: {MyGrid}, {nameof(ExchangeSent)}: {ExchangeSent}, {nameof(ExchangeReceived)}: {ExchangeReceived}, {nameof(AdifPropagationMode)}: {AdifPropagationMode}, {nameof(ClientId)}: {ClientId}, {nameof(SourceAddress)}: {SourceAddress ?? "N/A"}, {nameof(Checked)}: {Checked}, {nameof(UploadStatus)}: {UploadStatus}";
     }
 
     protected bool Equals(RecordedCallsignDetail other)

@@ -36,6 +36,12 @@ public class ClientSession : ReactiveObject
     /// </summary>
     [Reactive] public DateTime LastSeenUtc { get; set; }
 
+    /// <summary>
+    ///     IP address the last message from this client arrived from. Same value the fallback
+    ///     client key is derived from; null when the registry was fed without provenance.
+    /// </summary>
+    [Reactive] public string? SourceAddress { get; set; }
+
     [Reactive] public ulong DialFrequencyInHz { get; set; }
     [Reactive] public string Band { get; set; } = string.Empty;
     [Reactive] public string Mode { get; set; } = string.Empty;

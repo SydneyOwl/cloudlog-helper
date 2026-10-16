@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 
@@ -22,9 +23,26 @@ public class WsjtxMessageUtil
     ///     Canonical registry key for a client, based on the full UDP Id so that
     ///     e.g. "WSJT-X - 20m" and "WSJT-X - 40m" never collide.
     /// </summary>
-    public static string GetClientKey(string? id)
+    /// <remarks>
+    ///     The single place a client key is derived: both <see cref="ClientSession.Id"/> and
+    ///     <see cref="RecordedCallsignDetail.ClientId"/> come from here, so the tab filter's key
+    ///     and the QSO's own key can never disagree. An empty Id falls back to the UDP source
+    ///     address, so clients that send no Id are still told apart by machine.
+    /// </remarks>
+    public static string GetClientKey(string? id, EndPoint? source = null)
     {
-        return string.IsNullOrWhiteSpace(id) ? UnknownClient : id;
+        if (!string.IsNullOrWhiteSpace(id)) return id;
+        return GetSourceAddress(source) ?? UnknownClient;
+    }
+
+    /// <summary>
+    ///     IP address of a UDP source endpoint, port excluded. A WSJT-X instance picks a fresh
+    ///     ephemeral source port on every start, so including the port would turn one machine
+    ///     into a new session on each restart.
+    /// </summary>
+    public static string? GetSourceAddress(EndPoint? source)
+    {
+        return source is IPEndPoint ip ? ip.Address.ToString() : null;
     }
 
     /// <summary>

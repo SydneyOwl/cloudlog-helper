@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using CloudlogHelper.Models;
 using DynamicData;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
@@ -23,13 +24,14 @@ public interface IClientRegistryService
     IEnumerable<ClientSession> Sessions { get; }
 
     /// <summary>
-    ///     Look up a client by id (empty ids map to the unknown bucket).
+    ///     Look up a client by id. An empty id resolves to the source-address fallback when
+    ///     <paramref name="source" /> is given, so fallback sessions stay findable.
     /// </summary>
-    ClientSession? GetSession(string id);
+    ClientSession? GetSession(string id, EndPoint? source = null);
 
     /// <summary>
     ///     Record that a message was received from a client. Creates the session on first
     ///     sight and refreshes its liveness/bookkeeping on every call.
     /// </summary>
-    void Touch(WsjtxMessage message);
+    void Touch(WsjtxMessage message, EndPoint? source = null);
 }
