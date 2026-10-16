@@ -648,11 +648,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                     
                 case MessageType.Decode:
                     AllDecodedCount += 1;
-                    await HandleDecode((Decode)message);
+                    await HandleDecode((Decode)message, source);
                     break;
                     
                 case MessageType.Status:
-                    await HandleStatusMessage((Status)message);
+                    await HandleStatusMessage((Status)message, source);
                     break;
                 
                 case MessageType.WSPRDecode:
@@ -708,9 +708,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     }
 
 
-    private async Task HandleDecode(Decode message)
+    private async Task HandleDecode(Decode message, EndPoint source)
     {
-        _decodedDataProcessorService.ProcessDecoded(message);
+        _decodedDataProcessorService.ProcessDecoded(message, source);
     }
     
     private async Task HandleWSPRDecode(WSPRDecode message)
@@ -718,11 +718,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
        // todo...
     }
 
-    private async Task HandleStatusMessage(Status status)
+    private async Task HandleStatusMessage(Status status, EndPoint source)
     {
         _decodedDataProcessorService.UpdateClientBand(
             status.Id,
-            FreqHelper.GetMeterFromFreq(status.DialFrequencyInHz));
+            FreqHelper.GetMeterFromFreq(status.DialFrequencyInHz),
+            source);
 
         ClassLogger.Trace(
             $"Status changed: {status.DialFrequencyInHz} {status.ConfigurationName} {status.Mode}");
