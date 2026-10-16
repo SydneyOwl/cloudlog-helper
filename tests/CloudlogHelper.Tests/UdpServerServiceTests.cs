@@ -2,6 +2,9 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using CloudlogHelper.Enums;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
@@ -9,6 +12,7 @@ using CloudlogHelper.Utils;
 using WsjtxUtilsPatch.WsjtxMessages;
 using WsjtxUtilsPatch.WsjtxMessages.Messages;
 using WsjtxUtilsPatch.WsjtxUdpServer;
+using ReactiveUI;
 
 namespace CloudlogHelper.Tests;
 
@@ -80,6 +84,35 @@ public class UdpServerServiceTests
 
         Assert.False(service.IsUdpServerRunning());
         Assert.DoesNotContain(Microsoft.Extensions.Logging.LogLevel.Error, logs);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_CalledOnEveryActivation_RestartsTheSocketOnlyOnce()
+    {
+        // The view calls InitializeAsync from WhenActivated and the service is a singleton, so
+        // a subscription per activation would turn one settings change into N socket rebuilds
+        // racing for the same port. Every restart here fails on purpose, so the error count is
+        // a direct read of how many restarts ran.
+        var settings = new ApplicationSettings();
+        settings.UDPSettings.EnableUDPServer = true;
+        settings.UDPSettings.UDPPort = "not-a-port";
+        var restartCount = 0;
+
+        using var service = new UdpServerService(new FakeApplicationSettingsService(settings));
+        await service.InitializeAsync(_ => Task.CompletedTask, Count);
+        await service.InitializeAsync(_ => Task.CompletedTask, Count);
+        await service.InitializeAsync(_ => Task.CompletedTask, Count);
+        var afterInitialization = restartCount;
+
+        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.UDPServer });
+        await Task.Delay(1200);
+
+        Assert.Equal(afterInitialization + 1, restartCount);
+
+        void Count(Microsoft.Extensions.Logging.LogLevel level, string message)
+        {
+            if (level == Microsoft.Extensions.Logging.LogLevel.Error) Interlocked.Increment(ref restartCount);
+        }
     }
 
     [Fact]

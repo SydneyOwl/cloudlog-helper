@@ -41,6 +41,11 @@ public class UdpServerService : IUdpServerService, IDisposable
     private UdpClient? _forwardedClient;
     private WsjtxUdpServer? _udpServer;
 
+    // InitializeAsync runs from the view's WhenActivated and this service is a singleton, so
+    // the settings subscription has to replace the previous one: one per activation would
+    // restart the socket N times per change and rewire it to a stale handler.
+    private IDisposable? _settingsSubscription;
+
     // The receive loop dispatches handlers without awaiting them, so every forwarded message
     // used to start its own HTTP POST with nothing bounding how many were in flight. One hung
     // endpoint therefore stacked up a request per decode for as long as it stayed dead.
@@ -63,6 +68,7 @@ public class UdpServerService : IUdpServerService, IDisposable
     public void Dispose()
     {
         _forwardChannel.Writer.TryComplete();
+        _settingsSubscription?.Dispose();
         _udpServer?.Dispose();
         _forwardedClient?.Dispose();
         _cts.Dispose();
@@ -166,14 +172,15 @@ public class UdpServerService : IUdpServerService, IDisposable
     public async Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger)
     {
         await _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
-        
-        MessageBus.Current.Listen<SettingsChanged>()
+
+        _settingsSubscription?.Dispose();
+        _settingsSubscription = MessageBus.Current.Listen<SettingsChanged>()
             .Where(x => x.Part == ChangedPart.UDPServer)
             .Throttle(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ =>
             {
                 ClassLogger.Trace("UDP settings changed!");
-                _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
+                _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger).SafeFireAndForget();
             });
     }
 
