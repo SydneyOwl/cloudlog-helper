@@ -349,18 +349,16 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
     private void RebuildClientTabs()
     {
-        var ids = new SortedSet<string>(StringComparer.Ordinal);
-        foreach (var session in _clientRegistryService.Sessions) ids.Add(session.Id);
-        foreach (var qso in _qsoQueueStore.Items)
-            if (!string.IsNullOrWhiteSpace(qso.ClientId))
-                ids.Add(qso.ClientId);
+        var layout = ClientTabLayout.Compute(
+            _clientRegistryService.Sessions.Select(session => session.Id),
+            _qsoQueueStore.Items.Select(qso => qso.ClientId));
 
         // The tab strip only shows with two or more known clients.
-        ShowClientTabs = ids.Count > 1;
+        ShowClientTabs = layout.ShouldShowStrip;
 
         // Drop tabs whose client is gone (local logs).
         var stale = _clientTabsById.Keys
-            .Where(k => !ids.Contains(k))
+            .Where(k => !layout.Keys.Contains(k))
             .ToList();
         foreach (var key in stale)
         {
@@ -369,7 +367,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         }
 
         var desired = new List<ClientTabItem>();
-        foreach (var id in ids)
+        foreach (var id in layout.Keys)
         {
             if (!_clientTabsById.TryGetValue(id, out var tab))
             {
@@ -378,15 +376,6 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             }
 
             desired.Add(tab);
-        }
-
-        // Keep the synthetic LOCAL tab (imported/local-log QSOs) pinned after every real client.
-        var localIndex = desired.FindIndex(t => t.Key == WsjtxMessageUtil.LocalClient);
-        if (localIndex >= 0 && localIndex != desired.Count - 1)
-        {
-            var local = desired[localIndex];
-            desired.RemoveAt(localIndex);
-            desired.Add(local);
         }
 
         for (var i = 0; i < desired.Count; i++)
