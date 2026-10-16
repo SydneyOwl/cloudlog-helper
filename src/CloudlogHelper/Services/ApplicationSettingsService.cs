@@ -152,17 +152,35 @@ public class ApplicationSettingsService : IApplicationSettingsService
             return false;
         }
 
-        // We own the draft now
-        _draftOwner = owner;
+        // The semaphore is already held from here on, so a failure below has to hand it back:
+        // otherwise _draftOwner stays set and every settings window is dead until restart.
+        try
+        {
+            _draftOwner = owner;
 
-        _draftSettings!.CloudlogSettings.ReinitRules();
-        _draftSettings!.HamlibSettings.ReinitRules();
-        _draftSettings!.FLRigSettings.ReinitRules();
-        _draftSettings!.OmniRigSettings.ReinitRules();
-        _draftSettings!.UDPSettings.ReinitRules();
-        _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
-        draftSettings = _draftSettings;
-        return true;
+            _draftSettings!.CloudlogSettings.ReinitRules();
+            _draftSettings!.HamlibSettings.ReinitRules();
+            _draftSettings!.FLRigSettings.ReinitRules();
+            _draftSettings!.OmniRigSettings.ReinitRules();
+            _draftSettings!.UDPSettings.ReinitRules();
+            _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
+            draftSettings = _draftSettings;
+            return true;
+        }
+        catch
+        {
+            _draftOwner = null;
+            try
+            {
+                _draftSemaphore.Release();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            throw;
+        }
     }
 
 

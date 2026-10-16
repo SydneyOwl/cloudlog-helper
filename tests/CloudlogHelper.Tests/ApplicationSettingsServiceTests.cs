@@ -34,6 +34,31 @@ public class ApplicationSettingsServiceTests
     }
 
     [Fact]
+    public void TryGetDraftSettings_WhenRuleReinitThrows_HandsTheDraftBack()
+    {
+        // The semaphore is taken before ReinitRules runs, so a failure in there used to leave
+        // the draft claimed forever and every settings window dead until restart.
+        var service = CreateService();
+        service.InjectMockSettings(BrokenSettings());
+
+        Assert.Throws<NullReferenceException>(() => service.TryGetDraftSettings(new object(), out _));
+
+        // If the claim had not been handed back this would still be refused.
+        service.InjectMockSettings(new ApplicationSettings());
+
+        Assert.True(service.TryGetDraftSettings(new object(), out var reclaimed));
+        Assert.NotNull(reclaimed);
+    }
+
+    private static ApplicationSettings BrokenSettings()
+    {
+        var settings = new ApplicationSettings();
+        // A partially deserialized config can leave a section null
+        settings.CloudlogSettings = null!;
+        return settings;
+    }
+
+    [Fact]
     public void RestoreSettings_DiscardsDraftChanges_AndReleasesDraftLock()
     {
         var service = CreateService();
