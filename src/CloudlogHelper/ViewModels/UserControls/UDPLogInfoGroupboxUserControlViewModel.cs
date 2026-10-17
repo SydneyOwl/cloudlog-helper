@@ -122,17 +122,24 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
         PreviousClientCommand = ReactiveCommand.Create(() => { });
         NextClientCommand = ReactiveCommand.Create(() => { });
+        SelectClientCommand = ReactiveCommand.Create<ClientTabItem, Unit>(_ => Unit.Default);
 
         I18NExtension.Culture = new CultureInfo("ja-JP");
 
         _appendTestData();
 
         var designClientTab = new ClientTabItem { Key = "WSJT-X 50MHZ", Label = "WSJT-X 50MHZ" };
+        var designTxClientTab = new ClientTabItem { Key = "WSJT-X 144MHZ", Label = "WSJT-X 144MHZ" };
         _clientTabsById["WSJT-X 50MHZ"] = designClientTab;
+        _clientTabsById["WSJT-X 144MHZ"] = designTxClientTab;
         _clientTabs.Add(designClientTab);
+        _clientTabs.Add(designTxClientTab);
 
         ShowClientTabs = true;
         SelectedClientTab = designClientTab;
+        // No subscription keeps these flags in design mode - seed them for the preview.
+        designClientTab.IsSelected = true;
+        designTxClientTab.Transmitting = true;
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(
@@ -190,6 +197,11 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         DeleteSelectedCommand = ReactiveCommand.Create(_deleteSelectedQsos);
         PreviousClientCommand = ReactiveCommand.Create(() => StepClient(-1));
         NextClientCommand = ReactiveCommand.Create(() => StepClient(1));
+        SelectClientCommand = ReactiveCommand.Create<ClientTabItem, Unit>(tab =>
+        {
+            SelectedClientTab = tab;
+            return Unit.Default;
+        });
 
         this.WhenActivated(disposables =>
         {
@@ -217,9 +229,14 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 .DisposeWith(compositeDisposable);
 
             // The banner shows the selected client's message, so recompute on tab switch
-            // instead of waiting for the next poll.
+            // instead of waiting for the next poll. Selection changes also move the pill
+            // in the dot row.
             this.WhenAnyValue(x => x.SelectedClientTab)
-                .Subscribe(_ => UpdateTxStatusCore())
+                .Subscribe(_ =>
+                {
+                    SyncClientTabSelection();
+                    UpdateTxStatusCore();
+                })
                 .DisposeWith(compositeDisposable);
 
             SetupQsoRateCalculation(compositeDisposable);
@@ -256,6 +273,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     public ReactiveCommand<RecordedCallsignDetail, Unit> ShowQSODetailCommand { get; set; }
     public ReactiveCommand<Unit, Unit> PreviousClientCommand { get; set; }
     public ReactiveCommand<Unit, Unit> NextClientCommand { get; set; }
+    public ReactiveCommand<ClientTabItem, Unit> SelectClientCommand { get; set; }
 
     [Reactive] public bool TimeoutStatus { get; set; }
     [Reactive] public bool WaitFirstConn { get; set; }
@@ -409,6 +427,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         var index = SelectedClientTab is null ? 0 : _clientTabs.IndexOf(SelectedClientTab);
         if (index < 0) index = 0;
         SelectedClientTab = _clientTabs[(index + delta + count) % count];
+    }
+
+    /// <summary>
+    ///     Push the current selection into the tab items so the dot row can render the selected
+    ///     client as the pill. Runs on the UI thread - the same thread that owns the tabs.
+    /// </summary>
+    private void SyncClientTabSelection()
+    {
+        foreach (var tab in _clientTabs) tab.IsSelected = ReferenceEquals(tab, SelectedClientTab);
     }
 
     /// <summary>

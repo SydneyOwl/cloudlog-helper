@@ -17,4 +17,10 @@ public class ClientTabItem : ReactiveObject
     ///     True while this client is on air.
     /// </summary>
     [Reactive] public bool Transmitting { get; set; }
+
+    /// <summary>
+    ///     True while this tab is the selected client. The dot row renders the selected client
+    ///     as a wide pill instead of a small dot.
+    /// </summary>
+    [Reactive] public bool IsSelected { get; set; }
 }

@@ -64,41 +64,93 @@
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" RowDefinitions="Auto,*">
                     <!-- Compact client selector: arrow buttons cycle the clients instead of a
                          full-height tab strip, so the QSO list keeps its vertical space. -->
-                    <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="Auto,*,Auto"
+                    <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="Auto,Auto,*,Auto"
                           IsVisible="{Binding ShowClientTabs}" VerticalAlignment="Center">
-                        <Button Grid.Column="0" Width="20" Height="20" MinWidth="0" MinHeight="0"
+                        <!-- One indicator per client, parked outside the arrows so the TX status
+                             zone keeps a fixed position; only the pill slides between dots
+                             (it marks the selected client). Blinking red marks anyone
+                             transmitting, selected or not. A dot click jumps straight to that
+                             client. Layers rely on plain positive bindings only: the pill
+                             overlays the dot, the blinking red shape overlays the steady one. -->
+                        <ItemsControl Grid.Column="0" ItemsSource="{Binding ClientTabs}"
+                                      VerticalAlignment="Center" Margin="0,0,6,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- Fixed 16x16 slot per client: uniform hit area and no
+                                         layout shift when the pill moves between dots -->
+                                    <Button Width="16" Height="16" MinWidth="0" MinHeight="0"
+                                            Padding="0" Background="Transparent" BorderThickness="0"
+                                            Cursor="Hand" ToolTip.Tip="{Binding Label}"
+                                            Command="{Binding ElementName=ThisControl, Path=DataContext.SelectClientCommand}"
+                                            CommandParameter="{Binding}">
+                                        <Panel>
+                                            <Ellipse Width="7" Height="7" HorizontalAlignment="Center"
+                                                     VerticalAlignment="Center"
+                                                     Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                            <Ellipse Width="7" Height="7" HorizontalAlignment="Center"
+                                                     VerticalAlignment="Center" Fill="#FF3B30"
+                                                     IsVisible="{Binding Transmitting}">
+                                                <Ellipse.Styles>
+                                                    <Style Selector="Ellipse">
+                                                        <Style.Animations>
+                                                            <Animation Duration="0:0:0.8" IterationCount="Infinite"
+                                                                       PlaybackDirection="Alternate">
+                                                                <KeyFrame Cue="0%">
+                                                                    <Setter Property="Opacity" Value="0.25" />
+                                                                </KeyFrame>
+                                                                <KeyFrame Cue="100%">
+                                                                    <Setter Property="Opacity" Value="1.0" />
+                                                                </KeyFrame>
+                                                            </Animation>
+                                                        </Style.Animations>
+                                                    </Style>
+                                                </Ellipse.Styles>
+                                            </Ellipse>
+                                            <Panel IsVisible="{Binding IsSelected}">
+                                                <Border Width="16" Height="7" CornerRadius="3.5"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                        Background="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                                <Border Width="16" Height="7" CornerRadius="3.5"
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                        Background="#FF3B30" IsVisible="{Binding Transmitting}">
+                                                    <Border.Styles>
+                                                        <Style Selector="Border">
+                                                            <Style.Animations>
+                                                                <Animation Duration="0:0:0.8" IterationCount="Infinite"
+                                                                           PlaybackDirection="Alternate">
+                                                                    <KeyFrame Cue="0%">
+                                                                        <Setter Property="Opacity" Value="0.25" />
+                                                                    </KeyFrame>
+                                                                    <KeyFrame Cue="100%">
+                                                                        <Setter Property="Opacity" Value="1.0" />
+                                                                    </KeyFrame>
+                                                                </Animation>
+                                                            </Style.Animations>
+                                                        </Style>
+                                                    </Border.Styles>
+                                                </Border>
+                                            </Panel>
+                                        </Panel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Grid.Column="1" Width="20" Height="20" MinWidth="0" MinHeight="0"
                                 Padding="0" Margin="0,0,4,0"
                                 Command="{Binding PreviousClientCommand}">
                             <avalonia:MaterialIcon Kind="ChevronLeft" Width="12" Height="12" />
                         </Button>
-                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" HorizontalAlignment="Center">
-                            <!-- Dot marks the selected client being on air; tooltip carries the
-                                 untrimmed name when a long label gets ellipsized -->
-                            <Ellipse Grid.Column="0" Width="5" Height="5" Fill="#FF3B30"
-                                     VerticalAlignment="Center" Margin="0,0,5,0"
-                                     IsVisible="{Binding SelectedClientTab.Transmitting}">
-                                <Ellipse.Styles>
-                                    <Style Selector="Ellipse">
-                                        <Style.Animations>
-                                            <Animation Duration="0:0:0.8" IterationCount="Infinite"
-                                                       PlaybackDirection="Alternate">
-                                                <KeyFrame Cue="0%">
-                                                    <Setter Property="Opacity" Value="0.25" />
-                                                </KeyFrame>
-                                                <KeyFrame Cue="100%">
-                                                    <Setter Property="Opacity" Value="1.0" />
-                                                </KeyFrame>
-                                            </Animation>
-                                        </Style.Animations>
-                                    </Style>
-                                </Ellipse.Styles>
-                            </Ellipse>
-                            <TextBlock Grid.Column="1" FontSize="13" VerticalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis" MaxWidth="240"
-                                       ToolTip.Tip="{Binding SelectedClientTab.Label}"
-                                       Text="{Binding SelectedClientTab.Label}" />
-                        </Grid>
-                        <Button Grid.Column="2" Width="20" Height="20" MinWidth="0" MinHeight="0"
+                        <TextBlock Grid.Column="2" FontSize="13" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center" Margin="8,0,8,0"
+                                   TextTrimming="CharacterEllipsis" MaxWidth="240"
+                                   ToolTip.Tip="{Binding SelectedClientTab.Label}"
+                                   Text="{Binding SelectedClientTab.Label}" />
+                        <Button Grid.Column="3" Width="20" Height="20" MinWidth="0" MinHeight="0"
                                 Padding="0" Margin="4,0,0,0"
                                 Command="{Binding NextClientCommand}">
                             <avalonia:MaterialIcon Kind="ChevronRight" Width="12" Height="12" />
