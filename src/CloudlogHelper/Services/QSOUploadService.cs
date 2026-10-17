@@ -311,6 +311,11 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
         for (var attempt = 0; attempt < maxRetries; attempt++)
         {
+            // attempt only ever satisfies the loop condition, so testing it against maxRetries
+            // inside the body is always true and the last attempt would still sleep before
+            // giving up, blocking the single-consumer upload queue for up to 30s.
+            var isLastAttempt = attempt == maxRetries - 1;
+
             cancellationToken.ThrowIfCancellationRequested();
 
             rcd.UploadStatus = attempt == 0 ? UploadStatus.Uploading : UploadStatus.Retrying;
@@ -387,13 +392,13 @@ public class QSOUploadService : IQSOUploadService, IDisposable
                         rcd.UploadedServices.Where(kv => !kv.Value)
                             .Select(kv => $"{kv.Key}: {rcd.UploadedServicesErrorMessage.GetValueOrDefault(kv.Key, "Failed")}"));
                     
-                    if (attempt < maxRetries)
+                    if (!isLastAttempt)
                     {
                         await Task.Delay(CalculateRetryDelay(attempt), cancellationToken);
                     }
                 }
             }
-            catch (Exception ex) when (attempt < maxRetries)
+            catch (Exception ex) when (!isLastAttempt)
             {
                 lastException = ex;
                 ClassLogger.Warn(ex, $"Upload attempt {attempt + 1} failed for QSO: {rcd.DXCall}");
