@@ -182,6 +182,9 @@ public class RIGDataGroupboxUserControlViewModel : FloatableViewModelBase
             MessageBus.Current.Listen<SettingsChanged>()
                 .Where(x => x.Part == ChangedPart.RigService)
                 .Delay(TimeSpan.FromMilliseconds(500))
+                // Delay delivers on the thread pool; _createNewTimer must start the polling
+                // loop on the UI thread so RefreshAfter updates marshal correctly.
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(x =>
                 {
                     _createNewTimer().DisposeWith(disposables);

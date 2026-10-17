@@ -73,6 +73,8 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     Observable.Return(Unit.Default)
                         .Delay(TimeSpan.FromMilliseconds(500))
+                        // Delay delivers on the thread pool; the command writes bound properties.
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
                     
@@ -89,6 +91,8 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
 
             Observable.Timer(TimeSpan.FromSeconds(1), interval)
                 .Select(_ => Unit.Default)
+                // InvokeCommand does not marshal; the command writes bound properties.
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .InvokeCommand(this, x => x._pollCommand)
                 .DisposeWith(disposables);
             

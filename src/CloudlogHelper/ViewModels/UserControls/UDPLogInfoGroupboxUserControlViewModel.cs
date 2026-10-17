@@ -295,6 +295,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         _qsoQueueStore.Connect()
             .WhenPropertyChanged(p => p.UploadStatus)
+            // UploadStatus is written by the QSO upload consumer thread; marshal the
+            // notification (and the bound-counter update below) to the UI thread.
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(x =>
             {
                 try
