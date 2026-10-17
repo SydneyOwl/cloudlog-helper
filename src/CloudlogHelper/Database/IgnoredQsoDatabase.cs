@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using CloudlogHelper.Models;
 using SQLite;
 
@@ -50,7 +51,7 @@ public class IgnoredQsoDatabase
         {
             De = detail.DXCall,
             Dx = detail.MyCall,
-            Freq = (detail.TXFrequencyInHz / 1_000_000.0).ToString("0.000000"),
+            Freq = (detail.TXFrequencyInHz / 1_000_000.0).ToString("0.000000", CultureInfo.InvariantCulture),
             FinalMode = detail.Mode,
             RstSent = detail.ReportSent,
             RstRecv = detail.ReportReceived,

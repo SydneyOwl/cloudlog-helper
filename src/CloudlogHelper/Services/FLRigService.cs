@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -81,7 +82,7 @@ public class FLRigService : IRigService, IDisposable
         if (reportRfPower)
         {
             var powerStr = _getResultValue(await _sendXMLCmd(ip, port, "rig.get_power"));
-            if (!float.TryParse(powerStr, out var power))
+            if (!float.TryParse(powerStr, CultureInfo.InvariantCulture, out var power))
                 throw new RigCommException("Invalid rig power!");
 
             testbk.Power = power;

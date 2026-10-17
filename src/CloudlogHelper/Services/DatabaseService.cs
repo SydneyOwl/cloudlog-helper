@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -360,8 +361,8 @@ public class DatabaseService : IDatabaseService, IDisposable
         parsedA = 0;
         parsedB = 0;
         
-        return float.TryParse(freqA, out parsedA) && 
-               float.TryParse(freqB, out parsedB);
+        return float.TryParse(freqA, CultureInfo.InvariantCulture, out parsedA) &&
+               float.TryParse(freqB, CultureInfo.InvariantCulture, out parsedB);
     }
 
     private async Task<List<IgnoredQsoDatabase>?> FindIgnoredQsoAsync(IgnoredQsoDatabase ignoredQso)

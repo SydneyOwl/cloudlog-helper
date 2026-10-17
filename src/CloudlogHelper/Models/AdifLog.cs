@@ -103,7 +103,9 @@ public class AdifLog
             return x.Call == y.Call &&
                    ((x.Mode == y.Mode && x.SubMode == y.SubMode) || x.Mode == y.SubMode || x.SubMode == y.Mode) &&
                    x.RstSent == y.RstSent && x.RstRcvd == y.RstRcvd && x.QsoDate == y.QsoDate && x.Band == y.Band &&
-                   Math.Abs(float.Parse(x.Freq) - float.Parse(y.Freq)) < DefaultConfigs.AllowedFreqOffsetMHz &&
+                   Math.Abs(float.Parse(x.Freq, CultureInfo.InvariantCulture) -
+                            float.Parse(y.Freq, CultureInfo.InvariantCulture)) <
+                   DefaultConfigs.AllowedFreqOffsetMHz &&
                    Math.Abs((DateTime.ParseExact(x.TimeOn, "HHmmss", CultureInfo.InvariantCulture) -
                              DateTime.ParseExact(y.TimeOn, "HHmmss", CultureInfo.InvariantCulture)).Minutes) <
                    DefaultConfigs.AllowedTimeOffsetMinutes;

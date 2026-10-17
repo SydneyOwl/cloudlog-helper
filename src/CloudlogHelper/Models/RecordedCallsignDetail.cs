@@ -293,7 +293,8 @@ public class RecordedCallsignDetail : ReactiveObject
     public static RecordedCallsignDetail Parse(AdifLog info, string sourceIdentifier)
     {
         ulong hzValue = 0;
-        if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
+        if (double.TryParse(info.Freq, CultureInfo.InvariantCulture, out var mhzValue))
+            hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
             Uuid = Guid.NewGuid().ToString(),
@@ -333,12 +334,14 @@ public class RecordedCallsignDetail : ReactiveObject
                 SubMode = string.IsNullOrEmpty(rcd.ParentMode) ? string.Empty : rcd.Mode,
                 RstSent = rcd.ReportSent,
                 RstRcvd = rcd.ReportReceived,
-                QsoDate = rcd.DateTimeOn.ToString("yyyyMMdd"),
-                TimeOn = rcd.DateTimeOn.ToString("HHmmss"),
-                QsoDateOff = rcd.DateTimeOff.ToString("yyyyMMdd"),
-                TimeOff = rcd.DateTimeOff.ToString("HHmmss"),
+                QsoDate = rcd.DateTimeOn.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
+                TimeOn = rcd.DateTimeOn.ToString("HHmmss", CultureInfo.InvariantCulture),
+                QsoDateOff = rcd.DateTimeOff.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
+                TimeOff = rcd.DateTimeOff.ToString("HHmmss", CultureInfo.InvariantCulture),
                 Band = rcd.TXFrequencyInMeters,
-                Freq = (rcd.TXFrequencyInHz / 1_000_000.0).ToString("0.000000"),
+                // ADIF fields are consumed by Cloudlog/LoTW/eQSL, not read back by this UI, so a
+                // culture-dependent comma here would produce a malformed FREQ token.
+                Freq = (rcd.TXFrequencyInHz / 1_000_000.0).ToString("0.000000", CultureInfo.InvariantCulture),
                 StationCallsign = rcd.MyCall,
                 MyGridSquare = rcd.MyGrid,
                 Comment = rcd.Comments

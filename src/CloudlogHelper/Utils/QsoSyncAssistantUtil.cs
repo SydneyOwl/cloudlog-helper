@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,11 +38,26 @@ public class QsoSyncAssistantUtil
         return result.Cookies;
     }
 
+    /// <summary>
+    ///     Builds the [from, to] range sent to Cloudlog when exporting QSOs.
+    /// </summary>
+    /// <remarks>
+    ///     The format is explicit but the calendar is not: a culture whose default calendar is not
+    ///     Gregorian (th-TH uses the Buddhist calendar) shifts the year by 543, so the exported
+    ///     range no longer covers any real QSO. Formatting is pinned to the invariant culture.
+    /// </remarks>
+    public static (string From, string To) GetExportDateRange(int dateRangeDays)
+    {
+        var today = DateTime.Today;
+
+        return (today.AddDays(dateRangeDays * -1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+    }
+
     public static async Task<string> DownloadQSOFile(string baseurl, string stationId, int dateRange,
         IEnumerable<FlurlCookie> cookies, CancellationToken cancellationToken)
     {
-        var today = DateTime.Today.ToString("yyyy-MM-dd");
-        var nDaysBefore = DateTime.Today.AddDays(dateRange * -1).ToString("yyyy-MM-dd");
+        var (nDaysBefore, today) = GetExportDateRange(dateRange);
 
         var response = await baseurl
             .AppendPathSegments(DefaultConfigs.ExportCustomAdifLogs)

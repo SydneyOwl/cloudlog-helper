@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using System.Globalization;
+using SQLite;
 
 namespace CloudlogHelper.Database;
 
@@ -13,13 +14,16 @@ public class CountryDatabase
     {
         var info = s.Split(":");
         if (info.Length < 9) return;
+        // cty.dat is a fixed-format file with '.' as the decimal separator, so the parse must not
+        // follow the current culture: de-DE reads "41.90" as 4190 and fr-FR/ru-RU throw outright.
         CountryName = info[0].Replace("\n", "").Trim();
-        CqZone = int.Parse(info[1].Replace("\n", "").Replace(" ", ""));
-        ItuZone = int.Parse(info[2].Replace("\n", "").Replace(" ", ""));
+        CqZone = int.Parse(info[1].Replace("\n", "").Replace(" ", ""), CultureInfo.InvariantCulture);
+        ItuZone = int.Parse(info[2].Replace("\n", "").Replace(" ", ""), CultureInfo.InvariantCulture);
         Continent = info[3].Replace("\n", "").Replace(" ", "");
-        Latitude = float.Parse(info[4].Replace("\n", "").Replace(" ", ""));
-        Longitude = float.Parse(info[5].Replace("\n", "").Replace(" ", "")) * -1;
-        GmtOffset = float.Parse(info[6].Replace("\n", "").Replace(" ", ""));
+        Latitude = float.Parse(info[4].Replace("\n", "").Replace(" ", ""), CultureInfo.InvariantCulture);
+        Longitude =
+            float.Parse(info[5].Replace("\n", "").Replace(" ", ""), CultureInfo.InvariantCulture) * -1;
+        GmtOffset = float.Parse(info[6].Replace("\n", "").Replace(" ", ""), CultureInfo.InvariantCulture);
         Dxcc = info[7].Replace("\n", "").Replace(" ", "");
     }
 

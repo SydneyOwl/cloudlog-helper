@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -81,6 +82,18 @@ public static class RigUtils
 
         args.Append("-vvvvv");
         return args.ToString();
+    }
+
+    /// <summary>
+    ///     Builds the rigctld <c>\power2mW</c> query.
+    /// </summary>
+    /// <remarks>
+    ///     rigctld reads the arguments with C's strtof, so a decimal comma produced by the current
+    ///     culture (de-DE, fr-FR, ru-RU) would terminate the number and silently yield 0 mW.
+    /// </remarks>
+    public static string BuildPowerToMilliwattCommand(float power, long frequencyTx, string modeTx)
+    {
+        return $"\\power2mW {power.ToString(CultureInfo.InvariantCulture)} {frequencyTx} {modeTx}";
     }
 
     public static List<(int Start, int End)> GetColumnBounds(string header)
