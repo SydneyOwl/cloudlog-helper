@@ -107,7 +107,7 @@ public class AdifLog
                             float.Parse(y.Freq, CultureInfo.InvariantCulture)) <
                    DefaultConfigs.AllowedFreqOffsetMHz &&
                    Math.Abs((DateTime.ParseExact(x.TimeOn, "HHmmss", CultureInfo.InvariantCulture) -
-                             DateTime.ParseExact(y.TimeOn, "HHmmss", CultureInfo.InvariantCulture)).Minutes) <
+                             DateTime.ParseExact(y.TimeOn, "HHmmss", CultureInfo.InvariantCulture)).TotalMinutes) <
                    DefaultConfigs.AllowedTimeOffsetMinutes;
         }
 

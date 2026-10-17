@@ -180,6 +180,25 @@ public class CultureInvariantParsingTests
     }
 
     [Theory]
+    [InlineData(0, true)]
+    [InlineData(5, true)]
+    [InlineData(10, false)] // tolerance is strictly less than
+    [InlineData(65, false)] // .Minutes would read this as 5 and wrongly match
+    [InlineData(60, false)] // .Minutes would read this as 0 and wrongly match
+    [InlineData(120, false)] // .Minutes would read this as 0 and wrongly match
+    public void AdifLogComparer_UsesTotalMinutesNotTheWrappingMinutes(int minutesApart, bool expectedEqual)
+    {
+        // TimeSpan's "hh" is the 00-23 hour component, so this stays a 6-digit 24-hour stamp and
+        // survives the comparer's DateTime.ParseExact(..., "HHmmss").
+        var other = CreateAdifLog();
+        other.TimeOn = (new TimeSpan(3, 4, 5) + TimeSpan.FromMinutes(minutesApart)).ToString("hhmmss");
+
+        var equal = AdifLog.AdifLogComparer.Equals(CreateAdifLog(), other);
+
+        Assert.Equal(expectedEqual, equal);
+    }
+
+    [Theory]
     [InlineData("en-US")]
     [InlineData("de-DE")]
     [InlineData("fr-FR")]
