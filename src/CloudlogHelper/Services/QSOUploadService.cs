@@ -356,9 +356,21 @@ public class QSOUploadService : IQSOUploadService, IDisposable
 
                     if (results.All(x => x.Success)) result = true;
                 }
+                else if (cloudlogSettings.AutoQSOUploadEnabled ||
+                         logServices.Any(x => x.AutoQSOUploadEnabled))
+                {
+                    // Every enabled target already accepted this QSO in an earlier attempt.
+                    result = true;
+                }
                 else
                 {
-                    result = true;
+                    // Nothing was sent: no target has auto upload on. `ForcedUpload` only
+                    // satisfied ShouldUpload, so without this the QSO would be marked
+                    // Success without a single byte leaving the machine.
+                    rcd.UploadStatus = UploadStatus.Ignored;
+                    rcd.FailReason = TranslationHelper.GetString(LangKeys.QsoUploadDisabledOrCancelled);
+                    ClassLogger.Warn($"No upload target is enabled for QSO: {rcd.DXCall}; marked as ignored.");
+                    break;
                 }
 
                 if (result)
