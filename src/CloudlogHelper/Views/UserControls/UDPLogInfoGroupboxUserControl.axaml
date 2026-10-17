@@ -62,46 +62,48 @@
                 </StackPanel>
 
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" RowDefinitions="Auto,*">
-                    <TabStrip Grid.Row="0" Grid.Column="0"
-                              ItemsSource="{Binding ClientTabs}"
-                              SelectedItem="{Binding SelectedClientTab, Mode=TwoWay}"
-                              IsVisible="{Binding ShowClientTabs}"
-                              Padding="0">
-                        <TabStrip.Styles>
-                            <Style Selector="TabStripItem">
-                                <Setter Property="Padding" Value="10,0" />
-                            </Style>
-                        </TabStrip.Styles>
-                        <TabStrip.ItemTemplate>
-                            <DataTemplate x:DataType="userControls:ClientTabItem">
-                                <!-- The dot hangs into the tab's right padding (negative margin) so the
-                                     label stays centered and the tab width never changes when it toggles -->
-                                <Panel>
-                                    <TextBlock FontSize="15" Text="{Binding Label}" />
-                                    <Ellipse Width="5" Height="5" Fill="#FF3B30"
-                                             HorizontalAlignment="Right" VerticalAlignment="Top"
-                                             Margin="0,2,-8,0"
-                                             IsVisible="{Binding Transmitting}">
-                                        <Ellipse.Styles>
-                                            <Style Selector="Ellipse">
-                                                <Style.Animations>
-                                                    <Animation Duration="0:0:0.8" IterationCount="Infinite"
-                                                               PlaybackDirection="Alternate">
-                                                        <KeyFrame Cue="0%">
-                                                            <Setter Property="Opacity" Value="0.25" />
-                                                        </KeyFrame>
-                                                        <KeyFrame Cue="100%">
-                                                            <Setter Property="Opacity" Value="1.0" />
-                                                        </KeyFrame>
-                                                    </Animation>
-                                                </Style.Animations>
-                                            </Style>
-                                        </Ellipse.Styles>
-                                    </Ellipse>
-                                </Panel>
-                            </DataTemplate>
-                        </TabStrip.ItemTemplate>
-                    </TabStrip>
+                    <!-- Compact client selector: arrow buttons cycle the clients instead of a
+                         full-height tab strip, so the QSO list keeps its vertical space. -->
+                    <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="Auto,*,Auto"
+                          IsVisible="{Binding ShowClientTabs}" VerticalAlignment="Center">
+                        <Button Grid.Column="0" Width="20" Height="20" MinWidth="0" MinHeight="0"
+                                Padding="0" Margin="0,0,4,0"
+                                Command="{Binding PreviousClientCommand}">
+                            <avalonia:MaterialIcon Kind="ChevronLeft" Width="12" Height="12" />
+                        </Button>
+                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" HorizontalAlignment="Center">
+                            <!-- Dot marks the selected client being on air; tooltip carries the
+                                 untrimmed name when a long label gets ellipsized -->
+                            <Ellipse Grid.Column="0" Width="5" Height="5" Fill="#FF3B30"
+                                     VerticalAlignment="Center" Margin="0,0,5,0"
+                                     IsVisible="{Binding SelectedClientTab.Transmitting}">
+                                <Ellipse.Styles>
+                                    <Style Selector="Ellipse">
+                                        <Style.Animations>
+                                            <Animation Duration="0:0:0.8" IterationCount="Infinite"
+                                                       PlaybackDirection="Alternate">
+                                                <KeyFrame Cue="0%">
+                                                    <Setter Property="Opacity" Value="0.25" />
+                                                </KeyFrame>
+                                                <KeyFrame Cue="100%">
+                                                    <Setter Property="Opacity" Value="1.0" />
+                                                </KeyFrame>
+                                            </Animation>
+                                        </Style.Animations>
+                                    </Style>
+                                </Ellipse.Styles>
+                            </Ellipse>
+                            <TextBlock Grid.Column="1" FontSize="13" VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" MaxWidth="240"
+                                       ToolTip.Tip="{Binding SelectedClientTab.Label}"
+                                       Text="{Binding SelectedClientTab.Label}" />
+                        </Grid>
+                        <Button Grid.Column="2" Width="20" Height="20" MinWidth="0" MinHeight="0"
+                                Padding="0" Margin="4,0,0,0"
+                                Command="{Binding NextClientCommand}">
+                            <avalonia:MaterialIcon Kind="ChevronRight" Width="12" Height="12" />
+                        </Button>
+                    </Grid>
                     <ListBox Grid.Row="1" Grid.Column="0" AutoScrollToSelectedItem="True" x:Name="QsoBox"
                              ItemsSource="{Binding FilteredQsos}"
                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

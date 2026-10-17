@@ -120,6 +120,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
+        PreviousClientCommand = ReactiveCommand.Create(() => { });
+        NextClientCommand = ReactiveCommand.Create(() => { });
 
         I18NExtension.Culture = new CultureInfo("ja-JP");
 
@@ -186,6 +188,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);
         DeleteSelectedCommand = ReactiveCommand.Create(_deleteSelectedQsos);
+        PreviousClientCommand = ReactiveCommand.Create(() => StepClient(-1));
+        NextClientCommand = ReactiveCommand.Create(() => StepClient(1));
 
         this.WhenActivated(disposables =>
         {
@@ -250,6 +254,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
     public ReactiveCommand<Unit, Unit> IgnoreSelectedPermanentlyCommand { get; set; }
     public ReactiveCommand<RecordedCallsignDetail, Unit> ShowQSODetailCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> PreviousClientCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> NextClientCommand { get; set; }
 
     [Reactive] public bool TimeoutStatus { get; set; }
     [Reactive] public bool WaitFirstConn { get; set; }
@@ -390,6 +396,19 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         if (SelectedClientTab is null || !_clientTabs.Contains(SelectedClientTab))
             SelectedClientTab = _clientTabs.FirstOrDefault();
+    }
+
+    /// <summary>
+    ///     Cycle the selected client one step for the arrow-button selector, wrapping around at
+    ///     both ends. Runs on the UI thread (button command), the same thread that owns the tabs.
+    /// </summary>
+    private void StepClient(int delta)
+    {
+        var count = _clientTabs.Count;
+        if (count < 2) return;
+        var index = SelectedClientTab is null ? 0 : _clientTabs.IndexOf(SelectedClientTab);
+        if (index < 0) index = 0;
+        SelectedClientTab = _clientTabs[(index + delta + count) % count];
     }
 
     /// <summary>
