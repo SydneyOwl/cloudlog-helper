@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using System.Text;
 using CloudlogHelper.Models;
 using CloudlogHelper.Resources;
@@ -6,6 +8,19 @@ namespace CloudlogHelper.Utils;
 
 public class AdifUtil
 {
+    /// <summary>
+    ///     Builds the default file name for an ADIF export.
+    /// </summary>
+    /// <remarks>
+    ///     The stamp has to share the Gregorian calendar used by the QSO_DATE tokens inside the
+    ///     file: under th-TH the default calendar is Buddhist, so a culture-driven "yyyyMMdd"
+    ///     would name the export 25691017 while the records in it say 20261017.
+    /// </remarks>
+    public static string GenerateExportFileName(DateTime now)
+    {
+        return $"exported-{now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture)}.adi";
+    }
+
     public static string GenerateHeader()
     {
         var currentVersion = VersionInfo.Version;

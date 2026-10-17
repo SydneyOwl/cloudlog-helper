@@ -619,7 +619,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         var file = await _windowManagerService.OpenFileSaverAsync(new FilePickerSaveOptions
         {
             Title = "Adif export",
-            SuggestedFileName = $"exported-{DateTime.Now:yyyyMMdd-HHmmss}.adi",
+            SuggestedFileName = AdifUtil.GenerateExportFileName(DateTime.Now),
             DefaultExtension = "adi",
             FileTypeChoices = new[]
             {

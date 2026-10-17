@@ -179,6 +179,23 @@ public class CultureInvariantParsingTests
         Assert.Contains(@"\power2mW 0.35 7074000 FT8", command);
     }
 
+    [Theory]
+    [InlineData("en-US")]
+    [InlineData("de-DE")]
+    [InlineData("fr-FR")]
+    [InlineData("ru-RU")]
+    [InlineData("th-TH")]
+    public void AdifExportFileName_StaysGregorianUnderEveryCulture(string cultureName)
+    {
+        var stamped = new DateTime(2026, 10, 17, 4, 5, 6);
+
+        var fileName = RunInCulture(cultureName, () => AdifUtil.GenerateExportFileName(stamped));
+
+        // The QSO_DATE tokens inside the file are pinned to the Gregorian calendar, so the name
+        // must agree with them — th-TH would otherwise stamp the export 25691017.
+        Assert.Equal("exported-20261017-040506.adi", fileName);
+    }
+
     private static T RunInCulture<T>(string cultureName, Func<T> body)
     {
         var previousCulture = CultureInfo.CurrentCulture;
