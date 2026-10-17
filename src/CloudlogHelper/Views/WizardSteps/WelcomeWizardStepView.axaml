@@ -9,37 +9,32 @@
              d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.WizardSteps.WelcomeWizardStepView"
              x:DataType="stepVm:WelcomeWizardStepViewModel">
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
-        <Border Classes="highlight-card"
-                Padding="20"
-                VerticalAlignment="Top">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
-                <Border Width="76"
-                        Height="76"
-                        CornerRadius="22"
-                        Padding="16"
-                        Background="#142878B8"
-                        BorderBrush="#332878B8"
-                        BorderThickness="1">
-                    <Image Width="44"
-                           Height="44"
-                           Source="avares://CloudlogHelper/Assets/icon.png" />
-                </Border>
+    <Border Classes="highlight-card" Padding="20">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+            <Border Width="64"
+                    Height="64"
+                    CornerRadius="18"
+                    Padding="12"
+                    Background="#332878B8"
+                    VerticalAlignment="Top">
+                <Image Width="40"
+                       Height="40"
+                       Source="avares://CloudlogHelper/Assets/icon.png" />
+            </Border>
 
-                <StackPanel Grid.Column="1"
-                            MinWidth="0"
-                            Spacing="8"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch">
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardHiThere}}"
-                               Classes="section-title" />
-                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardWelcomeMessage}}"
-                               Classes="page-hint"
-                               HorizontalAlignment="Stretch"
-                               TextWrapping="Wrap"
-                               FontSize="15" />
-                </StackPanel>
-            </Grid>
-        </Border>
-    </Grid>
+            <StackPanel Grid.Column="1"
+                        MinWidth="0"
+                        Spacing="8"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch">
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardHiThere}}"
+                           Classes="section-title" />
+                <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardWelcomeMessage}}"
+                           Classes="page-hint"
+                           HorizontalAlignment="Stretch"
+                           TextWrapping="Wrap"
+                           FontSize="14" />
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>

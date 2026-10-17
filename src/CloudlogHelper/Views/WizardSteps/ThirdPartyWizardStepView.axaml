@@ -6,10 +6,12 @@
              xmlns:stepVm="clr-namespace:CloudlogHelper.ViewModels.WizardSteps"
              xmlns:userControls="clr-namespace:CloudlogHelper.Views.UserControls"
              mc:Ignorable="d"
+             d:DesignWidth="500"
+             d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.WizardSteps.ThirdPartyWizardStepView"
              x:DataType="stepVm:ThirdPartyWizardStepViewModel">
-    <StackPanel Spacing="14">
-        <Border Classes="highlight-card" Padding="16">
+    <StackPanel Spacing="16">
+        <Border Classes="highlight-card">
             <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyHint}}"
                        Classes="page-hint" />
         </Border>

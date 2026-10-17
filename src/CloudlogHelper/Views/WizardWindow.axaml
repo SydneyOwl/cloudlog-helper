@@ -11,6 +11,7 @@
         d:DesignWidth="900"
         d:DesignHeight="700"
         x:Class="CloudlogHelper.Views.WizardWindow"
+        x:Name="WizardRoot"
         x:DataType="viewModels:WizardWindowViewModel"
         Title="{I18N {x:Static resources:LangKeys.WizardTitle}}"
         Width="900"
@@ -22,69 +23,7 @@
         Icon="avares://CloudlogHelper/Assets/icon.png">
 
     <Window.Styles>
-        <!-- 侧边栏卡片 -->
-        <Style Selector="Border.sidebar-card">
-            <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="20" />
-            <Setter Property="Padding" Value="12" />
-        </Style>
-
-        <!-- 内容卡片 -->
-        <Style Selector="Border.content-card">
-            <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="20" />
-            <Setter Property="Padding" Value="24" />
-        </Style>
-
-        <Style Selector="TextBlock.action-caption">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-        </Style>
-
-        <Style Selector="TextBlock.action-title">
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="TextBlock.content-title">
-            <Setter Property="FontSize" Value="26" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="TextBlock.sidebar-title">
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <!-- 步骤计数芯片 - 使用系统强调色变体 -->
-        <Style Selector="Border.step-count-chip">
-            <Setter Property="Background" Value="{DynamicResource SystemChromeHighColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemChromeHighColor}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="999" />
-            <Setter Property="Padding" Value="14 7" />
-        </Style>
-
-        <Style Selector="Border.step-count-chip TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="Border.page-card">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="16" />
-            <Setter Property="Padding" Value="16" />
-        </Style>
-
+        <!-- ==================== 文本 ==================== -->
         <Style Selector="TextBlock.page-title">
             <Setter Property="FontSize" Value="22" />
             <Setter Property="FontWeight" Value="Bold" />
@@ -97,24 +36,126 @@
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
         </Style>
 
-        <Style Selector="TextBlock.field-label">
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="17" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0 0 0 4" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
-        <Style Selector="TextBox.input, ComboBox.input">
-            <Setter Property="MinWidth" Value="300" />
+        <Style Selector="TextBlock.subsection-title">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         </Style>
 
-        <!-- 主要导航按钮 - 使用系统强调色 -->
-        <Style Selector="Button.nav-primary">
-            <Setter Property="MinWidth" Value="126" />
-            <Setter Property="Padding" Value="18 10" />
+        <Style Selector="TextBlock.setting-label">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0 0 12 0" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="TextBox.setting-control, ComboBox.setting-control">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="MinWidth" Value="240" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <!-- ==================== 面板 ==================== -->
+        <!-- 特性提示（启用开关、欢迎语） -->
+        <Style Selector="Border.highlight-card">
+            <Setter Property="Background" Value="#182878B8" />
+            <Setter Property="BorderBrush" Value="#332878B8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <!-- 次级分组（日志系统卡片等），去掉外层卡片套卡片的层级 -->
+        <Style Selector="Border.subsection-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+
+        <!-- 警告提示（后端初始化失败） -->
+        <Style Selector="Border.notice-warning">
+            <Setter Property="Background" Value="#26FFC107" />
+            <Setter Property="BorderBrush" Value="#FFC107" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+
+        <Style Selector="Border.notice-warning TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}" />
+        </Style>
+
+        <!-- 检测到的实例小标签 -->
+        <Style Selector="Border.feature-chip">
+            <Setter Property="Background" Value="#182878B8" />
+            <Setter Property="BorderBrush" Value="#332878B8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Padding" Value="10 5" />
+        </Style>
+
+        <!-- 步骤计数 -->
+        <Style Selector="Border.step-chip">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Padding" Value="12 5" />
+        </Style>
+
+        <!-- ==================== 侧边栏步骤 ==================== -->
+        <Style Selector="Button.step-nav">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="MinHeight" Value="46" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+
+        <Style Selector="Button.step-nav:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
+        </Style>
+
+        <Style Selector="Button.step-nav:disabled">
+            <Setter Property="Opacity" Value="0.4" />
+        </Style>
+
+        <Style Selector="Border.step-badge">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="CornerRadius" Value="13" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Button.step-nav:pointerover Border.step-badge">
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+
+        <!-- ==================== 导航按钮 ==================== -->
+        <Style Selector="Button.nav-primary">
+            <Setter Property="MinWidth" Value="112" />
+            <Setter Property="Padding" Value="18 9" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
@@ -129,12 +170,12 @@
             <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark2}" />
         </Style>
 
-        <!-- 次要导航按钮 -->
         <Style Selector="Button.nav-secondary">
-            <Setter Property="MinWidth" Value="126" />
-            <Setter Property="Padding" Value="18 10" />
-            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="MinWidth" Value="112" />
+            <Setter Property="Padding" Value="18 9" />
+            <Setter Property="CornerRadius" Value="8" />
             <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
@@ -143,20 +184,13 @@
 
         <Style Selector="Button.nav-secondary:pointerover">
             <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
         </Style>
 
-        <Style Selector="Button.nav-secondary:pressed">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
-        </Style>
-
-        <!-- 页脚链接按钮 -->
         <Style Selector="Button.footer-link">
-            <Setter Property="Width" Value="42" />
-            <Setter Property="Height" Value="42" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="CornerRadius" Value="21" />
+            <Setter Property="CornerRadius" Value="20" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
             <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
@@ -164,415 +198,143 @@
         </Style>
 
         <Style Selector="Button.footer-link:pointerover">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
-        </Style>
-
-        <Style Selector="Button.footer-link:pressed">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorDark1}" />
-        </Style>
-
-        <!-- 子区域卡片 -->
-        <Style Selector="Border.subsection-card">
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-        </Style>
-
-        <!-- 高亮卡片 -->
-        <Style Selector="Border.highlight-card">
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Background" Value="{DynamicResource  SystemChromeMediumLowColor}" />
-        </Style>
-
-        <!-- 警告提示 -->
-        <Style Selector="Border.notice-warning">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="10" />
-        </Style>
-
-        <Style Selector="Border.notice-warning TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-        </Style>
-
-        <!-- 特性标签 -->
-        <Style Selector="Border.feature-chip">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="999" />
-            <Setter Property="Padding" Value="10 6" />
-        </Style>
-
-        <Style Selector="TextBlock.section-title">
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0 0 0 8" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="TextBlock.subsection-title">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Margin" Value="0 0 0 4" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="TextBlock.setting-label">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0 0 12 0" />
-            <Setter Property="MinWidth" Value="140" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="ComboBox.setting-control, TextBox.setting-control">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Width" Value="250" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <!-- 步骤导航按钮 -->
-        <Style Selector="Button.step-nav">
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="MinHeight" Value="56" />
-            <Setter Property="Padding" Value="10 10" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        </Style>
-
-        <Style Selector="Button.step-nav:pointerover">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-        </Style>
-
-        <Style Selector="Button.step-nav:pressed">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-        </Style>
-
-        <Style Selector="Button.step-nav:disabled">
-            <Setter Property="Opacity" Value="0.55" />
-        </Style>
-
-        <!-- 激活的步骤区域 -->
-        <Style Selector="Border.step-nav-active">
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="MinHeight" Value="56" />
-            <Setter Property="Padding" Value="10 10" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
-
-        <!-- 步骤徽章 -->
-        <Style Selector="Border.step-badge">
-            <Setter Property="Width" Value="30" />
-            <Setter Property="Height" Value="30" />
-            <Setter Property="CornerRadius" Value="15" />
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
-
-        <!-- 激活的步骤徽章 -->
-        <Style Selector="Border.step-badge-active">
             <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
-        </Style>
-
-        <Style Selector="TextBlock.step-nav-title">
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="TextWrapping" Value="NoWrap" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-        </Style>
-
-        <Style Selector="Border.step-nav-active TextBlock.step-nav-title">
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
     </Window.Styles>
 
-    <Grid Margin="24">
-        <Grid ColumnDefinitions="236,*" ColumnSpacing="20">
-            <Grid RowDefinitions="Auto,*">
-                <Border Classes="sidebar-card" VerticalAlignment="Top">
-                    <StackPanel Spacing="8">
-                        <Button Classes="step-nav"
-                                IsVisible="{Binding !ShowWelcomeStep}"
-                                IsEnabled="{Binding CanNavigateToWelcomeStep}"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="0">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge">
-                                    <avalonia:MaterialIcon Kind="Info"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Button>
-                        <Border Classes="step-nav-active" IsVisible="{Binding ShowWelcomeStep}">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge step-badge-active">
-                                    <avalonia:MaterialIcon Kind="Info"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardWelcomeTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Border>
+    <Grid Margin="20">
+        <Grid ColumnDefinitions="252,*" ColumnSpacing="24">
+            <!-- ==================== 左侧：步骤导航 ==================== -->
+            <Grid RowDefinitions="Auto,*,Auto">
+                <StackPanel Spacing="6" Margin="2,0,0,18">
+                    <Image Width="32" Height="32" Source="avares://CloudlogHelper/Assets/icon.png" />
+                    <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardTitle}}"
+                               Classes="section-title"
+                               FontSize="16" />
+                </StackPanel>
 
-                        <Button Classes="step-nav"
-                                IsVisible="{Binding !ShowBasicStep}"
-                                IsEnabled="{Binding CanNavigateToBasicStep}"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="1">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge">
-                                    <avalonia:MaterialIcon Kind="Settings"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Button>
-                        <Border Classes="step-nav-active" IsVisible="{Binding ShowBasicStep}">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge step-badge-active">
-                                    <avalonia:MaterialIcon Kind="Settings"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardBasicTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Border>
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding Steps}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Classes="step-nav"
+                                    IsEnabled="{Binding CanNavigate}"
+                                    Command="{Binding ElementName=WizardRoot, Path=DataContext.NavigateCommand}"
+                                    CommandParameter="{Binding Index}">
+                                <Panel>
+                                    <!-- 当前步骤：底色 + 左侧 accent 竖条。用叠层而非切换颜色，
+                                         避免模板内出现依赖否定绑定或主题假设的配色 -->
+                                    <Border CornerRadius="10"
+                                            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                            IsVisible="{Binding IsCurrent}" />
+                                    <Border Width="3" Height="18" CornerRadius="2"
+                                            Background="{DynamicResource SystemAccentColor}"
+                                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                                            Margin="0,0,8,0"
+                                            IsVisible="{Binding IsCurrent}" />
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10"
+                                          Margin="16,0,10,0">
+                                        <Border Classes="step-badge" VerticalAlignment="Center">
+                                            <avalonia:MaterialIcon Kind="{Binding IconKind}"
+                                                                   Width="13" Height="13"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock Grid.Column="1" Text="{Binding Title}"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   FontSize="13" />
+                                        <avalonia:MaterialIcon Grid.Column="2" Kind="Check"
+                                                               Width="14" Height="14"
+                                                               VerticalAlignment="Center"
+                                                               Opacity="0.6"
+                                                               IsVisible="{Binding IsVisited}" />
+                                    </Grid>
+                                </Panel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                        <Button Classes="step-nav"
-                                IsVisible="{Binding !ShowCloudlogStep}"
-                                IsEnabled="{Binding CanNavigateToCloudlogStep}"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="2">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge">
-                                    <avalonia:MaterialIcon Kind="CloudUpload"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Button>
-                        <Border Classes="step-nav-active" IsVisible="{Binding ShowCloudlogStep}">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge step-badge-active">
-                                    <avalonia:MaterialIcon Kind="CloudUpload"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Border>
-
-                        <Button Classes="step-nav"
-                                IsVisible="{Binding !ShowThirdPartyStep}"
-                                IsEnabled="{Binding CanNavigateToThirdPartyStep}"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="3">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge">
-                                    <avalonia:MaterialIcon Kind="FileUploadOutline"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Button>
-                        <Border Classes="step-nav-active" IsVisible="{Binding ShowThirdPartyStep}">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge step-badge-active">
-                                    <avalonia:MaterialIcon Kind="FileUploadOutline"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardThirdPartyTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Border>
-
-                        <Button Classes="step-nav"
-                                IsVisible="{Binding !ShowRigBackendStep}"
-                                IsEnabled="{Binding CanNavigateToRigBackendStep}"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="4">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge">
-                                    <avalonia:MaterialIcon Kind="Radio"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Button>
-                        <Border Classes="step-nav-active" IsVisible="{Binding ShowRigBackendStep}">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Classes="step-badge step-badge-active">
-                                    <avalonia:MaterialIcon Kind="Radio"
-                                                           Width="16"
-                                                           Height="16"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                                </Border>
-                                <TextBlock Grid.Column="1"
-                                           Text="{I18N {x:Static resources:LangKeys.WizardRigTitle}}"
-                                           Classes="step-nav-title" />
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-                <Button Grid.Row="1"
+                <Button Grid.Row="2"
                         Classes="footer-link"
-                        Command="{Binding OpenGithubProfileCommand}"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Margin="10 0 0 10">
-                    <avalonia:MaterialIcon Kind="MicrosoftGithub"
-                                           Width="22"
-                                           Height="22" />
+                        Margin="2,0,0,0"
+                        Command="{Binding OpenGithubProfileCommand}">
+                    <avalonia:MaterialIcon Kind="MicrosoftGithub" Width="20" Height="20" />
                 </Button>
             </Grid>
 
-            <Border Grid.Column="1" Classes="content-card">
-                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="22">
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-                        <StackPanel Spacing="3">
-                            <TextBlock Text="{Binding CurrentStepTitle}"
-                                       Classes="content-title" />
-                        </StackPanel>
-
-                        <Border Grid.Column="1" Classes="step-count-chip" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding StepIndicatorText}"
-                                       FontWeight="SemiBold" />
-                        </Border>
-                    </Grid>
-
-                    <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Auto"
-                                  HorizontalScrollBarVisibility="Disabled"
-                                  Padding="0 2 6 2">
-                        <ContentControl Content="{Binding CurrentStep}"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top">
-                            <ContentControl.DataTemplates>
-                                <DataTemplate DataType="stepVm:WelcomeWizardStepViewModel">
-                                    <stepViews:WelcomeWizardStepView />
-                                </DataTemplate>
-                                <DataTemplate DataType="stepVm:BasicWizardStepViewModel">
-                                    <stepViews:BasicWizardStepView />
-                                </DataTemplate>
-                                <DataTemplate DataType="stepVm:CloudlogWizardStepViewModel">
-                                    <stepViews:CloudlogWizardStepView />
-                                </DataTemplate>
-                                <DataTemplate DataType="stepVm:ThirdPartyWizardStepViewModel">
-                                    <stepViews:ThirdPartyWizardStepView />
-                                </DataTemplate>
-                                <DataTemplate DataType="stepVm:RigBackendWizardStepViewModel">
-                                    <stepViews:RigBackendWizardStepView />
-                                </DataTemplate>
-                            </ContentControl.DataTemplates>
-                        </ContentControl>
-                    </ScrollViewer>
-
-                    <Border Grid.Row="2"
-                            Padding="0 16 0 0"
-                            BorderBrush="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}"
-                            BorderThickness="0,1,0,0">
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    Spacing="10">
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardSkip}}"
-                                    HorizontalContentAlignment="Center"
-                                    IsVisible="{Binding ShowSkipButton}"
-                                    Command="{Binding SkipWizardCommand}"
-                                    Classes="nav-secondary" />
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardPrevious}}"
-                                    HorizontalContentAlignment="Center"
-                                    IsVisible="{Binding ShowPreviousButton}"
-                                    Command="{Binding PreviousCommand}"
-                                    Classes="nav-secondary" />
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardNext}}"
-                                    HorizontalContentAlignment="Center"
-                                    IsVisible="{Binding ShowNextButton}"
-                                    Command="{Binding NextCommand}"
-                                    Classes="nav-primary" />
-                            <Button Content="{I18N {x:Static resources:LangKeys.WizardFinish}}"
-                                    HorizontalContentAlignment="Center"
-                                    IsVisible="{Binding ShowFinishButton}"
-                                    Command="{Binding FinishCommand}"
-                                    Classes="nav-primary" />
-                        </StackPanel>
+            <!-- ==================== 右侧：内容 ==================== -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" RowSpacing="14">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding CurrentStepTitle}" Classes="page-title" />
+                        <TextBlock Text="{Binding CurrentStepDescription}" Classes="page-hint" />
+                    </StackPanel>
+                    <Border Grid.Column="1" Classes="step-chip" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding StepIndicatorText}"
+                                   FontWeight="SemiBold" FontSize="12" />
                     </Border>
                 </Grid>
-            </Border>
+
+                <ScrollViewer Grid.Row="1"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              Padding="0 2 6 2">
+                    <ContentControl Content="{Binding CurrentStep}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Top">
+                        <ContentControl.DataTemplates>
+                            <DataTemplate DataType="stepVm:WelcomeWizardStepViewModel">
+                                <stepViews:WelcomeWizardStepView />
+                            </DataTemplate>
+                            <DataTemplate DataType="stepVm:BasicWizardStepViewModel">
+                                <stepViews:BasicWizardStepView />
+                            </DataTemplate>
+                            <DataTemplate DataType="stepVm:CloudlogWizardStepViewModel">
+                                <stepViews:CloudlogWizardStepView />
+                            </DataTemplate>
+                            <DataTemplate DataType="stepVm:ThirdPartyWizardStepViewModel">
+                                <stepViews:ThirdPartyWizardStepView />
+                            </DataTemplate>
+                            <DataTemplate DataType="stepVm:RigBackendWizardStepViewModel">
+                                <stepViews:RigBackendWizardStepView />
+                            </DataTemplate>
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="2"
+                        Padding="0 14 0 0"
+                        BorderBrush="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}"
+                        BorderThickness="0,1,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                        <Button Content="{I18N {x:Static resources:LangKeys.WizardSkip}}"
+                                IsVisible="{Binding ShowSkipButton}"
+                                Command="{Binding SkipWizardCommand}"
+                                Classes="nav-secondary" />
+                        <Button Content="{I18N {x:Static resources:LangKeys.WizardPrevious}}"
+                                IsVisible="{Binding ShowPreviousButton}"
+                                Command="{Binding PreviousCommand}"
+                                Classes="nav-secondary" />
+                        <Button Content="{I18N {x:Static resources:LangKeys.WizardNext}}"
+                                IsVisible="{Binding ShowNextButton}"
+                                Command="{Binding NextCommand}"
+                                Classes="nav-primary" />
+                        <Button Content="{I18N {x:Static resources:LangKeys.WizardFinish}}"
+                                IsVisible="{Binding ShowFinishButton}"
+                                Command="{Binding FinishCommand}"
+                                Classes="nav-primary" />
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

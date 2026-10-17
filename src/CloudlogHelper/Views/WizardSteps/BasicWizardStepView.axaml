@@ -9,20 +9,19 @@
              d:DesignHeight="450"
              x:Class="CloudlogHelper.Views.WizardSteps.BasicWizardStepView"
              x:DataType="stepVm:BasicWizardStepViewModel">
-    <StackPanel Spacing="16">
-        <Border Classes="subsection-card" Padding="16">
-            <StackPanel Spacing="8">
-                <TextBlock Text="{I18N {x:Static resources:LangKeys.MyGrid}}"
-                           Classes="subsection-title" />
-                <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardBasicHint}}"
-                           Classes="page-hint" />
-                <TextBox Classes="input"
-                         Text="{Binding BasicSettings.MyMaidenheadGrid}"
-                         PlaceholderText="e.g. OM89" />
-            </StackPanel>
-        </Border>
+    <StackPanel Spacing="18">
+        <StackPanel Spacing="8">
+            <TextBlock Text="{I18N {x:Static resources:LangKeys.MyGrid}}"
+                       Classes="section-title" />
+            <TextBlock Text="{I18N {x:Static resources:LangKeys.WizardBasicHint}}"
+                       Classes="page-hint" />
+            <TextBox Width="220"
+                     HorizontalAlignment="Left"
+                     Text="{Binding BasicSettings.MyMaidenheadGrid}"
+                     PlaceholderText="e.g. OM89" />
+        </StackPanel>
 
-        <Border Classes="highlight-card" Padding="16">
+        <Border Classes="highlight-card">
             <StackPanel Spacing="8">
                 <CheckBox Content="{I18N {x:Static resources:LangKeys.WizardChartFeatureLabel}}"
                           IsChecked="{Binding EnableChartFeature}" />

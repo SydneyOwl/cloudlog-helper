@@ -11,7 +11,7 @@
              x:Class="CloudlogHelper.Views.WizardSteps.CloudlogWizardStepView"
              x:DataType="stepVm:CloudlogWizardStepViewModel">
     <StackPanel Spacing="16">
-        <Border Classes="highlight-card" Padding="16">
+        <Border Classes="highlight-card">
             <StackPanel Spacing="8">
                 <CheckBox Content="{I18N {x:Static resources:LangKeys.WizardCloudlogEnable}}"
                           IsChecked="{Binding ConnectCloudlog}" />
@@ -20,75 +20,70 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="subsection-card" Padding="16" IsVisible="{Binding ConnectCloudlog}">
-            <Grid ColumnDefinitions="Auto,Auto,*"
-                  RowDefinitions="Auto,Auto,Auto,Auto"
-                  ColumnSpacing="10"
-                  RowSpacing="10"
-                  IsEnabled="{Binding ConnectCloudlog}">
-                <TextBlock Grid.Row="0"
-                           VerticalAlignment="Center"
-                           Classes="setting-label"
-                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogUrl}}" />
-                <TextBox Grid.Row="0"
-                         Grid.Column="1"
-                         Classes="setting-control"
-                         Text="{Binding CloudlogSettings.CloudlogUrl}"
-                         PlaceholderText="{I18N {x:Static resources:LangKeys.UrlExample}}" />
+        <Grid ColumnDefinitions="180,*,Auto"
+              ColumnSpacing="10"
+              RowDefinitions="Auto,Auto,Auto"
+              RowSpacing="10"
+              IsVisible="{Binding ConnectCloudlog}"
+              IsEnabled="{Binding ConnectCloudlog}">
+            <TextBlock Grid.Row="0"
+                       VerticalAlignment="Center"
+                       Classes="setting-label"
+                       Text="{I18N {x:Static resources:LangKeys.WizardCloudlogUrl}}" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     Classes="setting-control"
+                     Text="{Binding CloudlogSettings.CloudlogUrl}"
+                     PlaceholderText="{I18N {x:Static resources:LangKeys.UrlExample}}" />
 
-                <TextBlock Grid.Row="1"
-                           Grid.Column="0"
-                           VerticalAlignment="Center"
-                           Classes="setting-label"
-                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogApiKey}}" />
-                <TextBox Grid.Row="1"
-                         Grid.Column="1"
-                         Classes="setting-control"
-                         Text="{Binding CloudlogSettings.CloudlogApiKey}" />
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Classes="setting-label"
+                       Text="{I18N {x:Static resources:LangKeys.WizardCloudlogApiKey}}" />
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     Classes="setting-control"
+                     Text="{Binding CloudlogSettings.CloudlogApiKey}" />
 
-                <userControls:TestButtonUserControl Grid.Row="0"
-                                                    Grid.Column="2"
-                                                    Grid.RowSpan="2"
-                                                    HorizontalAlignment="Left"
-                                                    Margin="4,0,0,0"
-                                                    DataContext="{Binding CloudlogTestButtonUserControl}" />
+            <userControls:TestButtonUserControl Grid.Row="0"
+                                                Grid.Column="2"
+                                                Grid.RowSpan="2"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top"
+                                                Margin="4,0,0,0"
+                                                DataContext="{Binding CloudlogTestButtonUserControl}" />
 
-                <TextBlock Grid.Row="2"
-                           Grid.Column="0"
-                           VerticalAlignment="Center"
-                           Classes="setting-label"
-                           Text="{I18N {x:Static resources:LangKeys.WizardCloudlogStation}}"
-                           IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
-                <ComboBox Grid.Row="2"
-                          Grid.Column="1"
-                          HorizontalAlignment="Left"
-                          Classes="setting-control"
-                          IsVisible="{Binding ShowCloudlogStationIdCombobox}"
-                          ItemsSource="{Binding CloudlogSettings.AvailableCloudlogStationInfo}"
-                          SelectedItem="{Binding CloudlogSettings.CloudlogStationInfo}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding StationId}" />
-                                <TextBlock Text="{Binding StationProfileName, StringFormat=' ({0})'}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Border Grid.Row="2"
-                        Grid.Column="2"
-                        Classes="feature-chip"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding ShowDetectedServerInstance}">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <!-- <TextBlock FontWeight="SemiBold" -->
-                        <!--            Text="{I18N {x:Static resources:LangKeys.WizardCloudlogDetectedInstance}}" /> -->
-                        <TextBlock FontWeight="SemiBold"
-                                   Text="{Binding DetectedServerInstanceDisplayName}" />
-                    </StackPanel>
-                </Border>
-            </Grid>
-        </Border>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Classes="setting-label"
+                       Text="{I18N {x:Static resources:LangKeys.WizardCloudlogStation}}"
+                       IsVisible="{Binding ShowCloudlogStationIdCombobox}" />
+            <ComboBox Grid.Row="2"
+                      Grid.Column="1"
+                      Classes="setting-control"
+                      IsVisible="{Binding ShowCloudlogStationIdCombobox}"
+                      ItemsSource="{Binding CloudlogSettings.AvailableCloudlogStationInfo}"
+                      SelectedItem="{Binding CloudlogSettings.CloudlogStationInfo}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding StationId}" />
+                            <TextBlock Text="{Binding StationProfileName, StringFormat=' ({0})'}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Border Grid.Row="2"
+                    Grid.Column="2"
+                    Classes="feature-chip"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding ShowDetectedServerInstance}">
+                <TextBlock FontWeight="SemiBold"
+                           Text="{Binding DetectedServerInstanceDisplayName}" />
+            </Border>
+        </Grid>
     </StackPanel>
 </UserControl>

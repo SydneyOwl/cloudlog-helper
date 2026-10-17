@@ -74,7 +74,13 @@ public class LogSystemCard : UserControl
         };
         stackPanel.Children.Add(title);
 
-        var itemsControl = new ItemsControl();
+        // Default ItemsPanel has no spacing and the cards carry no margin, so the per-service
+        // cards would stack edge to edge. The gap lives here, in the panel, as the single
+        // source of truth.
+        var itemsControl = new ItemsControl
+        {
+            ItemsPanel = new FuncTemplate<Panel?>(() => new StackPanel { Spacing = 16 })
+        };
         itemsControl.Bind(ItemsControl.ItemsSourceProperty, new Binding("LogSystems"));
         itemsControl.ItemTemplate = CreateItemTemplate();
 
@@ -90,8 +96,9 @@ public class LogSystemCard : UserControl
         var border = new Border
         {
             Classes = { "subsection-card" },
-            Padding = new Thickness(12),
-            Margin = new Thickness(5, 5, 5, 10)
+            Padding = new Thickness(14),
+            // The parent StackPanel already spaces the cards; margins here would double it.
+            Margin = new Thickness(0)
         };
 
         var innerStack = new StackPanel { Spacing = 10 };
@@ -117,9 +124,11 @@ public class LogSystemCard : UserControl
             ColumnDefinitions =
             {
                 new ColumnDefinition { Width = GridLength.Auto },
+                // Input column takes the remaining width so URL / API key fields can
+                // stretch with the card instead of being capped at a fixed 200px.
+                new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
                 new ColumnDefinition { Width = GridLength.Auto },
-                new ColumnDefinition { Width = GridLength.Auto },
-                new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+                new ColumnDefinition { Width = GridLength.Auto }
             },
             RowDefinitions = new RowDefinitions(),
             RowSpacing = 5
@@ -183,8 +192,8 @@ public class LogSystemCard : UserControl
         {
             Classes = { "setting-control" },
             DataContext = field,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            MaxWidth = 200,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            MinWidth = 240,
             [!TextBox.TextProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,
@@ -204,8 +213,6 @@ public class LogSystemCard : UserControl
         {
             Classes = { "setting-control" },
             DataContext = field,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            MaxWidth = 200,
             [!CheckBox.IsCheckedProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,
@@ -221,8 +228,8 @@ public class LogSystemCard : UserControl
             Classes = { "setting-control" },
             DataContext = field,
             ItemsSource = field.Selections,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            MaxWidth = 200,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            MinWidth = 240,
             [!SelectingItemsControl.SelectedValueProperty] = new Binding("Value")
             {
                 Mode = BindingMode.TwoWay,
