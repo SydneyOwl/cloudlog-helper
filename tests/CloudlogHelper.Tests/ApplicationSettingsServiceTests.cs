@@ -158,20 +158,57 @@ public class ApplicationSettingsServiceTests
     }
 
     [Fact]
-    public void ApplySettings_SharesTheDraftLogServiceInstanceWithCurrentSettings()
+    public void ApplySettings_ClonesLogServices_InsteadOfSharingDraftInstances()
     {
         var service = CreateService();
         var owner = new object();
 
         Assert.True(service.TryGetDraftSettings(owner, out var draft));
-        var draftService = new QRZThirdPartyLogService();
+        var draftService = new QRZThirdPartyLogService { ApiKey = "draft-key" };
         draft!.LogServices.Add(draftService);
+        var liveList = service.GetCurrentSettings().LogServices;
 
         service.ApplySettings(owner);
 
-        // The live settings and the settings window edit the same ThirdPartyLogService
-        // object, so credentials edited while an upload is in flight tear the request.
-        Assert.Same(draftService, service.GetCurrentSettings().LogServices[0]);
+        var liveServices = service.GetCurrentSettings().LogServices;
+        // The list object stays stable - rig reporting captured it at startup and never
+        // re-reads it.
+        Assert.Same(liveList, liveServices);
+        // The live settings hold a clone, not the draft's instance: credentials edited in
+        // the settings window (draft) must not tear in-flight uploads.
+        Assert.Single(liveServices);
+        Assert.IsType<QRZThirdPartyLogService>(liveServices[0]);
+        Assert.NotSame(draftService, liveServices[0]);
+        Assert.Equal("draft-key", ((QRZThirdPartyLogService)liveServices[0]).ApiKey);
+
+        draftService.ApiKey = "edited-in-draft";
+        Assert.Equal("draft-key", ((QRZThirdPartyLogService)liveServices[0]).ApiKey);
+    }
+
+    [Fact]
+    public void Mapper_KeepsComplexSectionMembersIsolated()
+    {
+        // RigInfo and StationInfo have registered same-type maps, so the in-place map
+        // copies their values instead of aliasing the draft's objects into the live
+        // settings - which is what the assignable path does for unmapped members (see
+        // Mapper_CopiesLogServiceInstancesByReference for the unmapped case).
+        var draft = new ApplicationSettings();
+        var current = new ApplicationSettings();
+        draft.HamlibSettings.SelectedRigInfo = new RigInfo { Id = "2" };
+        var draftStation = new StationInfo { StationId = "19" };
+        draft.CloudlogSettings.AvailableCloudlogStationInfo.Add(draftStation);
+        var currentRigInfo = current.HamlibSettings.SelectedRigInfo!;
+
+        CreateMapper().Map(draft, current);
+
+        // Complex scalar-carrying member: mapped in place, object identity preserved.
+        Assert.Same(currentRigInfo, current.HamlibSettings.SelectedRigInfo);
+        Assert.NotSame(draft.HamlibSettings.SelectedRigInfo, current.HamlibSettings.SelectedRigInfo);
+        Assert.Equal("2", current.HamlibSettings.SelectedRigInfo.Id);
+
+        // Collection of complex elements: rebuilt with new instances.
+        Assert.NotSame(draftStation, current.CloudlogSettings.AvailableCloudlogStationInfo[0]);
+        Assert.Equal("19", current.CloudlogSettings.AvailableCloudlogStationInfo[0].StationId);
     }
 
     [Fact]
@@ -214,6 +251,8 @@ public class ApplicationSettingsServiceTests
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
             cfg.CreateMap<BasicSettings, BasicSettings>();
+            cfg.CreateMap<RigInfo, RigInfo>();
+            cfg.CreateMap<StationInfo, StationInfo>();
             cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
         });
 

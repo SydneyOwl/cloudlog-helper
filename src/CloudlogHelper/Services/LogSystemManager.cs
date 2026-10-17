@@ -20,7 +20,7 @@ public class LogSystemManager : ILogSystemManager, IDisposable
 {
     private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
 
-    private static ThirdPartyLogService[]? _cachedLogServices;
+    private ThirdPartyLogService[]? _cachedLogServices;
 
     public LogSystemManager()
     {

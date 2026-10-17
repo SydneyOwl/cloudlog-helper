@@ -123,6 +123,8 @@ public static class ServiceCollectionExtensions
             typeof(UDPServerSettings),
             typeof(QsoSyncAssistantSettings),
             typeof(BasicSettings),
+            typeof(RigInfo),
+            typeof(StationInfo),
             typeof(ApplicationSettings)
         };
 

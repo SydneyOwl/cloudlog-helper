@@ -63,7 +63,17 @@ public class ApplicationSettingsService : IApplicationSettingsService
             ClassLogger.Trace($"Settings applied by {owner.GetType().FullName}");
 
             _oldSettings = _currentSettings.DeepClone();
+            // The in-place map below moves the draft's log service instances into the live
+            // settings by reference (AutoMapper cannot map the abstract element type), so
+            // unapplied draft edits would leak straight into the running services. Clone the
+            // service objects instead, and keep the live list object itself - rig reporting
+            // captured that list at startup and never re-reads it.
+            var clonedLogServices = _draftSettings!.LogServices.DeepClone()!;
+            var liveLogServices = _currentSettings!.LogServices ??= new List<ThirdPartyLogService>();
             _mapper.Map(_draftSettings, _currentSettings);
+            liveLogServices.Clear();
+            liveLogServices.AddRange(clonedLogServices);
+            _currentSettings.LogServices = liveLogServices;
             _applyLogServiceChanges(rawConfigs);
 
             // apply changes for log services here
