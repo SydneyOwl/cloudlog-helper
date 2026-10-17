@@ -97,6 +97,13 @@ public class DefaultConfigs
     public const string FLRigDefaultPort = "12345";
 
     /// <summary>
+    ///     Timeout (in seconds) for one flrig XML-RPC request. flrig talks HTTP, so without an
+    ///     explicit timeout an unresponsive daemon blocks a rig poll until HttpClient's own
+    ///     default (100s) expires.
+    /// </summary>
+    public const int FLRigRequestTimeout = 5;
+
+    /// <summary>
     ///     ProgID of OmniRig (Windows COM).
     /// </summary>
     public const string OmniRigEngineProgId = "OmniRig.OmniRigX";
