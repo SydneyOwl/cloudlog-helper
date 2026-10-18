@@ -72,6 +72,10 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;
 
+        // No auto-switch in this window: band/mode are never set automatically,
+        // the user picks them from the dropdowns.
+        AutoSwitchEnabled = false;
+
         Application.Current!.ActualThemeVariantChanged += (sender, args) => { UpdateChart(); };
 
         RefreshChart = ReactiveCommand.Create(UpdateChart);
