@@ -446,7 +446,7 @@
         <value>QSOを同期中...</value>
     </data>
     <data name="QsoSyncSucceeded" xml:space="preserve">
-        <value>QSOの同期が成功しました！</value>
+        <value>QSOの同期が成功しました！インポートしたQSOはアップロードキューに入りました。QSOリストでLOCALに切り替えると確認できます。</value>
     </data>
     <data name="QsoTemplate" xml:space="preserve">
         <value>• コールサイン: {0}

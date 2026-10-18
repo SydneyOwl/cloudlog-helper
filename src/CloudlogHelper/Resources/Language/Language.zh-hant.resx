@@ -448,7 +448,7 @@
         <value>正在同步QSO...</value>
     </data>
     <data name="QsoSyncSucceeded" xml:space="preserve">
-        <value>QSO同步成功！</value>
+        <value>QSO同步成功！匯入的QSO已加入上傳佇列，在QSO列表切換到LOCAL即可查看。</value>
     </data>
     <data name="QsoTemplate" xml:space="preserve">
         <value>• 呼號: {0}

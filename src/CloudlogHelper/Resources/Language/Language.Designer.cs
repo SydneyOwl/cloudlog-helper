@@ -85,7 +85,7 @@ namespace CloudlogHelper.Resources.Language {
                 return ResourceManager.GetString("AdvancedSettings", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Allow external control.
         /// </summary>
@@ -575,7 +575,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable PTT Control.
+        ///   Looks up a localized string similar to Disable RTS/DTR Lines.
         /// </summary>
         public static string DisablePtt {
             get {
@@ -584,7 +584,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In some Linux distributions, if rts/dtr is not disabled, it may prevent PTT from initializing correctly, manifesting as the PTT remaining in a triggered state..
+        ///   Looks up a localized string similar to Holds the serial RTS and DTR handshaking lines low so hamlib never asserts them. On some Linux distributions an asserted RTS/DTR keeps the radio busy and stops PTT from releasing..
         /// </summary>
         public static string DisablePttHelp {
             get {
@@ -608,7 +608,7 @@ namespace CloudlogHelper.Resources.Language {
         ///
         ///The developers assume no responsibility for any data loss, device damage, or other losses that may result from the use of this software.
         ///
-        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/ [rest of string was truncated]&quot;;.
+        ///By continuing, you acknowledge that you have read and agree to the above terms and the full disclaimer on the project homepage (https://github.com/sydneyowl/cloudl [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Disclaimer {
             get {
@@ -1447,7 +1447,7 @@ namespace CloudlogHelper.Resources.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to QSO Sync finished successfully..
+        ///   Looks up a localized string similar to QSO Sync finished successfully. Switch to the LOCAL client in the QSO list to review them..
         /// </summary>
         public static string QsoSyncSucceeded {
             get {

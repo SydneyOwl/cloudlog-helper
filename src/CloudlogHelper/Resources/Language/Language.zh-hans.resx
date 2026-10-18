@@ -439,7 +439,7 @@
         <value>QSO上传助手</value>
     </data>
     <data name="QsoSyncSucceeded" xml:space="preserve">
-        <value>QSO同步成功！</value>
+        <value>QSO同步成功！导入的QSO已加入上传队列，在QSO列表切换到LOCAL即可查看。</value>
     </data>
     <data name="NotificationTitleInfo" xml:space="preserve">
         <value>提示</value>

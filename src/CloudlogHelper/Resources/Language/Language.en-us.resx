@@ -439,7 +439,7 @@
         <value>QSO Assistant</value>
     </data>
     <data name="QsoSyncSucceeded" xml:space="preserve">
-        <value>QSO Sync finished successfully.</value>
+        <value>QSO Sync finished successfully. Switch to the LOCAL client in the QSO list to review them.</value>
     </data>
     <data name="NotificationTitleInfo" xml:space="preserve">
         <value>Info</value>
