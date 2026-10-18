@@ -10,6 +10,7 @@ using CloudlogHelper.Resources;
 using CloudlogHelper.Services.Interfaces;
 using CloudlogHelper.Utils;
 using CloudlogHelper.ViewModels.WizardSteps;
+using Material.Icons;
 using MsBox.Avalonia.Enums;
 using NLog;
 using ReactiveUI;
@@ -65,42 +66,52 @@ public class WizardWindowViewModel : ViewModelBase
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
 
-        DraftSettings = settings!;
-
-        _initializeLogSystems();
-
-        _welcomeStep = new WelcomeWizardStepViewModel();
-        _basicStep = new BasicWizardStepViewModel(DraftSettings.BasicSettings);
-        _cloudlogStep = new CloudlogWizardStepViewModel(DraftSettings.CloudlogSettings, _source.Token);
-        _thirdPartyStep = new ThirdPartyWizardStepViewModel(LogSystems, _handleLogSystemTestErrorAsync);
-        _rigBackendStep = new RigBackendWizardStepViewModel(DraftSettings, rigBackendManager);
-
-        NextCommand = ReactiveCommand.CreateFromTask(_goNextAsync);
-        PreviousCommand = ReactiveCommand.Create(_goPreviousStep);
-        NavigateCommand = ReactiveCommand.CreateFromTask<object?>(_navigateAsync);
-        OpenGithubProfileCommand = ReactiveCommand.CreateFromTask(_openGithubProfileAsync);
-        SkipWizardCommand = ReactiveCommand.CreateFromTask(_skipWizardAndPersistAsync);
-        FinishCommand = ReactiveCommand.CreateFromTask(_finishWizardAsync);
-
-        foreach (var command in new[]
-                 {
-                     NextCommand,
-                     OpenGithubProfileCommand,
-                     SkipWizardCommand,
-                     FinishCommand,
-                     _cloudlogStep.TestCloudlogConnectionCommand,
-                     _rigBackendStep.RefreshPortCommand
-                 })
+        // Everything below runs while this viewmodel owns the draft. A constructor that dies
+        // part-way has to hand the claim back, or the wizard can never be reopened.
+        try
         {
-            command.ThrownExceptions.Subscribe(ex =>
-            {
-                ClassLogger.Error(ex, "Wizard command failed.");
-                _ = _showErrorAsync(ex.Message);
-            });
-        }
+            DraftSettings = settings!;
 
-        _updateStepState(WelcomeStepIndex);
-        _ = _rigBackendStep.InitializeAsync();
+            _initializeLogSystems();
+
+            _welcomeStep = new WelcomeWizardStepViewModel();
+            _basicStep = new BasicWizardStepViewModel(DraftSettings.BasicSettings);
+            _cloudlogStep = new CloudlogWizardStepViewModel(DraftSettings.CloudlogSettings, _source.Token);
+            _thirdPartyStep = new ThirdPartyWizardStepViewModel(LogSystems, _handleLogSystemTestErrorAsync);
+            _rigBackendStep = new RigBackendWizardStepViewModel(DraftSettings, rigBackendManager);
+
+            NextCommand = ReactiveCommand.CreateFromTask(_goNextAsync);
+            PreviousCommand = ReactiveCommand.Create(_goPreviousStep);
+            NavigateCommand = ReactiveCommand.CreateFromTask<object?>(_navigateAsync);
+            OpenGithubProfileCommand = ReactiveCommand.CreateFromTask(_openGithubProfileAsync);
+            SkipWizardCommand = ReactiveCommand.CreateFromTask(_skipWizardAndPersistAsync);
+            FinishCommand = ReactiveCommand.CreateFromTask(_finishWizardAsync);
+
+            foreach (var command in new[]
+                     {
+                         NextCommand,
+                         OpenGithubProfileCommand,
+                         SkipWizardCommand,
+                         FinishCommand,
+                         _cloudlogStep.TestCloudlogConnectionCommand,
+                         _rigBackendStep.RefreshPortCommand
+                     })
+            {
+                command.ThrownExceptions.Subscribe(ex =>
+                {
+                    ClassLogger.Error(ex, "Wizard command failed.");
+                    _showErrorAsync(ex.Message).SafeFireAndForget();
+                });
+            }
+
+            _updateStepState(WelcomeStepIndex);
+            _rigBackendStep.InitializeAsync().SafeFireAndForget();
+        }
+        catch
+        {
+            _settingsService.RestoreSettings(this);
+            throw;
+        }
     }
 
     [Reactive] public ApplicationSettings DraftSettings { get; set; }
@@ -108,16 +119,6 @@ public class WizardWindowViewModel : ViewModelBase
     [Reactive] public int CurrentStepIndex { get; private set; } = WelcomeStepIndex;
     [Reactive] public int CurrentStepNumber { get; private set; } = 1;
     [Reactive] public double StepProgress { get; private set; } = 100d / TotalSteps;
-    [Reactive] public bool ShowWelcomeStep { get; private set; } = true;
-    [Reactive] public bool ShowBasicStep { get; private set; }
-    [Reactive] public bool ShowCloudlogStep { get; private set; }
-    [Reactive] public bool ShowThirdPartyStep { get; private set; }
-    [Reactive] public bool ShowRigBackendStep { get; private set; }
-    [Reactive] public bool CanNavigateToWelcomeStep { get; private set; } = true;
-    [Reactive] public bool CanNavigateToBasicStep { get; private set; }
-    [Reactive] public bool CanNavigateToCloudlogStep { get; private set; }
-    [Reactive] public bool CanNavigateToThirdPartyStep { get; private set; }
-    [Reactive] public bool CanNavigateToRigBackendStep { get; private set; }
     [Reactive] public bool ShowSkipButton { get; private set; } = true;
     [Reactive] public bool ShowPreviousButton { get; private set; }
     [Reactive] public bool ShowNextButton { get; private set; } = true;
@@ -130,6 +131,45 @@ public class WizardWindowViewModel : ViewModelBase
     public string CurrentStepDescription => _getStepDescription(CurrentStepIndex);
 
     public ObservableCollection<LogSystemConfig> LogSystems { get; } = new();
+
+    /// <summary>
+    ///     Sidebar entries, one per wizard step. Titles are resolved once at construction -
+    ///     the wizard is short-lived enough that a mid-session language switch is not worth
+    ///     re-resolving.
+    /// </summary>
+    public ObservableCollection<WizardStepItem> Steps { get; } = new()
+    {
+        new()
+        {
+            Index = WelcomeStepIndex,
+            Title = TranslationHelper.GetString(LangKeys.WizardWelcomeTitle),
+            IconKind = MaterialIconKind.Info
+        },
+        new()
+        {
+            Index = BasicStepIndex,
+            Title = TranslationHelper.GetString(LangKeys.WizardBasicTitle),
+            IconKind = MaterialIconKind.Settings
+        },
+        new()
+        {
+            Index = CloudlogStepIndex,
+            Title = TranslationHelper.GetString(LangKeys.WizardCloudlogTitle),
+            IconKind = MaterialIconKind.CloudUpload
+        },
+        new()
+        {
+            Index = ThirdPartyStepIndex,
+            Title = TranslationHelper.GetString(LangKeys.WizardThirdPartyTitle),
+            IconKind = MaterialIconKind.FileUploadOutline
+        },
+        new()
+        {
+            Index = RigBackendStepIndex,
+            Title = TranslationHelper.GetString(LangKeys.WizardRigTitle),
+            IconKind = MaterialIconKind.Radio
+        }
+    };
 
     public ReactiveCommand<Unit, Unit> NextCommand { get; }
     public ReactiveCommand<Unit, Unit> PreviousCommand { get; }
@@ -272,11 +312,6 @@ public class WizardWindowViewModel : ViewModelBase
         this.RaisePropertyChanged(nameof(CurrentStepTitle));
         this.RaisePropertyChanged(nameof(CurrentStepDescription));
 
-        ShowWelcomeStep = step == WelcomeStepIndex;
-        ShowBasicStep = step == BasicStepIndex;
-        ShowCloudlogStep = step == CloudlogStepIndex;
-        ShowThirdPartyStep = step == ThirdPartyStepIndex;
-        ShowRigBackendStep = step == RigBackendStepIndex;
         CurrentStep = step switch
         {
             WelcomeStepIndex => _welcomeStep,
@@ -292,11 +327,12 @@ public class WizardWindowViewModel : ViewModelBase
         ShowNextButton = step != RigBackendStepIndex;
         ShowFinishButton = step == RigBackendStepIndex;
 
-        CanNavigateToWelcomeStep = true;
-        CanNavigateToBasicStep = step >= BasicStepIndex;
-        CanNavigateToCloudlogStep = step >= CloudlogStepIndex;
-        CanNavigateToThirdPartyStep = step >= ThirdPartyStepIndex;
-        CanNavigateToRigBackendStep = step >= RigBackendStepIndex;
+        foreach (var wizardStep in Steps)
+        {
+            wizardStep.IsCurrent = wizardStep.Index == step;
+            wizardStep.IsVisited = wizardStep.Index < step;
+            wizardStep.CanNavigate = wizardStep.Index <= step;
+        }
     }
 
     private static string _getStepTitle(int step)

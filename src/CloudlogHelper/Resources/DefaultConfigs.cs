@@ -35,6 +35,13 @@ public class DefaultConfigs
     public const int DefaultForwardingRequestTimeout = 3;
 
     /// <summary>
+    ///     How many messages the HTTP forwarding path may keep queued. Decodes arrive far
+    ///     faster than a slow endpoint drains, so the queue drops the oldest instead of
+    ///     growing without bound.
+    /// </summary>
+    public const int DefaultForwardingQueueCapacity = 64;
+
+    /// <summary>
     ///     Default timeout (in seconds) for QSODownload HTTP(s) requests.
     /// </summary>
     public const int QSODownloadRequestTimeout = 30;
@@ -88,6 +95,13 @@ public class DefaultConfigs
     ///     Default host address for flrig.
     /// </summary>
     public const string FLRigDefaultPort = "12345";
+
+    /// <summary>
+    ///     Timeout (in seconds) for one flrig XML-RPC request. flrig talks HTTP, so without an
+    ///     explicit timeout an unresponsive daemon blocks a rig poll until HttpClient's own
+    ///     default (100s) expires.
+    /// </summary>
+    public const int FLRigRequestTimeout = 5;
 
     /// <summary>
     ///     ProgID of OmniRig (Windows COM).
@@ -241,21 +255,6 @@ public class DefaultConfigs
     public const string CloudlogLoginEndpoint = "/index.php/user/login";
 
     /// <summary>
-    ///     API endpoint for Cloudlog settings.
-    /// </summary>
-    public const string CloudlogDashboardEndpoint = "/index.php/dashboard";
-
-    /// <summary>
-    ///     API endpoint for Cloudlog settings.
-    /// </summary>
-    public const string CloudlogAdifFileUploadEndpoint = "/index.php/adif/import";
-
-    /// <summary>
-    ///     API endpoint for fetching recent qsos.
-    /// </summary>
-    public const string CloudlogQSOAdvancedEndpoint = "/index.php/logbookadvanced/search";
-
-    /// <summary>
     ///  Timeout of QSO Uploading.
     /// </summary>
     public const int QSOUploadTimeoutSec = 15;
@@ -390,20 +389,5 @@ public class DefaultConfigs
 
     public const int CoastlineOverlaySize = 1100;
     public const double EarthRadiusKm = 6371.0;
-
-    /// <summary>
-    ///     The default expiration time for the cached return values of the rigctld In seconds.
-    ///     This is calculated dynamically when jtdx sending requests.
-    /// </summary>
-    // public const int RigctldCacheExpirationTime = 8;
-
-    /// <summary>
-    ///     Default arguments passed to Rigctld when starting the process.
-    ///     I think it should be safe to disable RTS and DTR since they are typically used for PTT control,
-    ///     but this software only reads frequency and mode information. Additionally, on Linux, my radio defaults
-    ///     to accidentally triggering TX due to RTS/DTR signals, so I’ve disabled them in the default configuration.
-    /// </summary>
-    // public const string RigctldDefaultArgs =
-    //     $@"--set-conf=""rts_state=OFF"" --set-conf ""dtr_state=OFF"" -T {RigctldDefaultHost} -t {RigctldDefaultPort} -vvvvv";
 
 }

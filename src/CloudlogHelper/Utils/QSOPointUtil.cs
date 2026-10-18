@@ -87,7 +87,6 @@ public class QSOPointUtil
     // 范围
     public static double[,] ApplyValueCompression(double[,] data)
     {
-        var maxVal = data.Cast<double>().Max();
         var logData = new double[data.GetLength(0), data.GetLength(1)];
         for (var i = 0; i < data.GetLength(0); i++)
         for (var j = 0; j < data.GetLength(1); j++)
@@ -218,44 +217,91 @@ public class QSOPointUtil
         double distanceWeight = 1.0,
         double angleWeight = 1.0)
     {
-        var densities = new double[points.Length];
+        var n = points.Length;
+        var densities = new double[n];
+        if (n <= 1) return densities;
+
+        k = Math.Clamp(k, 1, n - 1);
         const double epsilon = 0.0001;
 
-        for (var i = 0; i < points.Length; i++)
+        // sqrt is monotonic, so the pair loop compares squared distances and only
+        // the surviving k-th value is square-rooted once per point; the divisions
+        // and weights are folded into two multipliers.
+        var w1 = distanceWeight / (maxDistance * maxDistance);
+        var w2 = angleWeight / (180.0 * 180.0);
+
+        // Row i of `best` keeps the k smallest squared distances to point i in
+        // ascending order, equal distances counted once (they come from decodes
+        // sharing exact coordinates, e.g. the same station or the same grid);
+        // counts[i] is the number of valid entries in row i.
+        var best = new double[n * k];
+        var counts = new int[n];
+
+        // The metric is symmetric, so each pair is evaluated once and fed to the
+        // top-k rows of both of its endpoints.
+        for (var i = 0; i < n; i++)
         {
-            var currentPoint = points[i];
-            var kNearestDistances = new SortedSet<double>();
+            var di = points[i].Distance;
+            var ai = points[i].Azimuth;
 
-            for (var j = 0; j < points.Length; j++)
+            for (var j = i + 1; j < n; j++)
             {
-                if (i == j) continue;
+                var dd = di - points[j].Distance;
+                var da = Math.Abs(ai - points[j].Azimuth);
+                if (da > 180) da = 360 - da;
 
-                var otherPoint = points[j];
+                var distSq = w1 * dd * dd + w2 * da * da;
 
-                var normDistanceDiff = Math.Abs(currentPoint.Distance - otherPoint.Distance) / maxDistance;
-                var angleDiff = Math.Abs(currentPoint.Azimuth - otherPoint.Azimuth);
-                angleDiff = Math.Min(angleDiff, 360 - angleDiff);
-                var normAngleDiff = angleDiff / 180.0;
-
-                var combinedDistance = Math.Sqrt(
-                    distanceWeight * normDistanceDiff * normDistanceDiff +
-                    angleWeight * normAngleDiff * normAngleDiff
-                );
-                if (kNearestDistances.Count < k)
-                {
-                    kNearestDistances.Add(combinedDistance);
-                }
-                else if (combinedDistance < kNearestDistances.Max)
-                {
-                    kNearestDistances.Remove(kNearestDistances.Max);
-                    kNearestDistances.Add(combinedDistance);
-                }
+                _tryInsert(best, counts, k, i, distSq);
+                _tryInsert(best, counts, k, j, distSq);
             }
-
-            densities[i] = 1.0 / (kNearestDistances.Max + epsilon);
         }
 
+        // A row always holds at least one entry: with n >= 2 every point
+        // participates in at least one pair. When the point has fewer than k
+        // neighbours the largest valid entry stands in for the k-th neighbour.
+        for (var i = 0; i < n; i++)
+            densities[i] = 1.0 / (Math.Sqrt(best[i * k + counts[i] - 1]) + epsilon);
+
         return densities;
+    }
+
+    private static void _tryInsert(double[] best, int[] counts, int k, int idx, double distSq)
+    {
+        var row = idx * k;
+        var count = counts[idx];
+
+        // Equal distances are one neighbour, not several: counting the same
+        // distance multiple times inflated cluster densities (decodes sharing
+        // exact coordinates produced near-zero k-th distances).
+        for (var i = 0; i < count; i++)
+            if (best[row + i] == distSq)
+                return;
+
+        if (count < k)
+        {
+            var pos = count;
+            while (pos > 0 && best[row + pos - 1] > distSq)
+            {
+                best[row + pos] = best[row + pos - 1];
+                pos--;
+            }
+
+            best[row + pos] = distSq;
+            counts[idx] = count + 1;
+            return;
+        }
+
+        if (distSq >= best[row + k - 1]) return;
+
+        var p = k - 1;
+        while (p > 0 && best[row + p - 1] > distSq)
+        {
+            best[row + p] = best[row + p - 1];
+            p--;
+        }
+
+        best[row + p] = distSq;
     }
 
     /// <summary>

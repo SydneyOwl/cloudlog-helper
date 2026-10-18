@@ -1,6 +1,18 @@
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using CloudlogHelper.Enums;
+using CloudlogHelper.Messages;
 using CloudlogHelper.Models;
 using CloudlogHelper.Services;
 using CloudlogHelper.Services.Interfaces;
+using CloudlogHelper.Utils;
+using WsjtxUtilsPatch.WsjtxMessages;
+using WsjtxUtilsPatch.WsjtxMessages.Messages;
+using WsjtxUtilsPatch.WsjtxUdpServer;
+using ReactiveUI;
 
 namespace CloudlogHelper.Tests;
 
@@ -68,10 +80,244 @@ public class UdpServerServiceTests
         var logs = new List<Microsoft.Extensions.Logging.LogLevel>();
         using var service = new UdpServerService(new FakeApplicationSettingsService(settings));
 
-        await service.InitializeAsync(_ => Task.CompletedTask, (level, _) => logs.Add(level));
+        await service.InitializeAsync((_, _) => Task.CompletedTask, (level, _) => logs.Add(level));
 
         Assert.False(service.IsUdpServerRunning());
         Assert.DoesNotContain(Microsoft.Extensions.Logging.LogLevel.Error, logs);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_CalledOnEveryActivation_RestartsTheSocketOnlyOnce()
+    {
+        // The view calls InitializeAsync from WhenActivated and the service is a singleton, so
+        // a subscription per activation would turn one settings change into N socket rebuilds
+        // racing for the same port. Every restart here fails on purpose, so the error count is
+        // a direct read of how many restarts ran.
+        var settings = new ApplicationSettings();
+        settings.UDPSettings.EnableUDPServer = true;
+        settings.UDPSettings.UDPPort = "not-a-port";
+        var restartCount = 0;
+
+        using var service = new UdpServerService(new FakeApplicationSettingsService(settings));
+        await service.InitializeAsync((_, _) => Task.CompletedTask, Count);
+        await service.InitializeAsync((_, _) => Task.CompletedTask, Count);
+        await service.InitializeAsync((_, _) => Task.CompletedTask, Count);
+        var afterInitialization = restartCount;
+
+        MessageBus.Current.SendMessage(new SettingsChanged { Part = ChangedPart.UDPServer });
+        await Task.Delay(1200);
+
+        Assert.Equal(afterInitialization + 1, restartCount);
+
+        void Count(Microsoft.Extensions.Logging.LogLevel level, string message)
+        {
+            if (level == Microsoft.Extensions.Logging.LogLevel.Error) Interlocked.Increment(ref restartCount);
+        }
+    }
+
+    [Fact]
+    public async Task Endpoint_ReachesTheAppCallback_ThroughARealDatagram()
+    {
+        // The library hands every handler a RemoteEndPoint; the app used to drop it. This goes
+        // through a real socket so the whole chain is covered, not just the delegate retyping:
+        // DefaultUDPMessageHandler -> _handlerWrapper -> the app callback.
+        // QsoLogged/Decode/Status only implement IWsjtxDirectionOut and so cannot be written
+        // back out; Clear implements both directions and carries a settable Id.
+        var port = GetFreeUdpPort();
+        var settings = new ApplicationSettings();
+        settings.UDPSettings.EnableUDPServer = true;
+        settings.UDPSettings.UDPPort = port.ToString();
+
+        using var service = new UdpServerService(new FakeApplicationSettingsService(settings));
+        using var client = new UdpClient();
+        client.Client.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+        var clientAddress = ((IPEndPoint)client.Client.LocalEndPoint!).Address.ToString();
+
+        EndPoint? captured = null;
+        var reached = new TaskCompletionSource();
+        await service.InitializeAsync((_, source) =>
+        {
+            captured = source;
+            reached.TrySetResult();
+            return Task.CompletedTask;
+        }, (_, _) => { });
+
+        var buffer = new byte[1500];
+        var written = new Clear(string.Empty, ClearWindow.BandActivity).WriteMessageTo(buffer);
+        await client.SendAsync(buffer, written, new IPEndPoint(IPAddress.Loopback, port));
+
+        var finished = await Task.WhenAny(reached.Task, Task.Delay(3000));
+        Assert.Same(reached.Task, finished);
+        Assert.Equal(clientAddress, ((IPEndPoint)captured!).Address.ToString());
+    }
+
+    [Fact]
+    public async Task Endpoint_FromARealDatagram_KeysARegistrySessionBySourceAddress()
+    {
+        // Same round trip as above, composed with the registry to prove the endpoint that
+        // survives the socket is the one that produces the fallback client key.
+        var port = GetFreeUdpPort();
+        var settings = new ApplicationSettings();
+        settings.UDPSettings.EnableUDPServer = true;
+        settings.UDPSettings.UDPPort = port.ToString();
+
+        using var service = new UdpServerService(new FakeApplicationSettingsService(settings));
+        using var client = new UdpClient();
+        client.Client.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+        var clientAddress = ((IPEndPoint)client.Client.LocalEndPoint!).Address.ToString();
+
+        var reached = new TaskCompletionSource<EndPoint>();
+        using var registry = new ClientRegistryService();
+        await service.InitializeAsync((message, source) =>
+        {
+            registry.Touch(message, source);
+            reached.TrySetResult(source);
+            return Task.CompletedTask;
+        }, (_, _) => { });
+
+        var buffer = new byte[1500];
+        var written = new Clear(string.Empty, ClearWindow.BandActivity).WriteMessageTo(buffer);
+        await client.SendAsync(buffer, written, new IPEndPoint(IPAddress.Loopback, port));
+
+        var finished = await Task.WhenAny(reached.Task, Task.Delay(3000));
+        Assert.Same(reached.Task, finished);
+
+        var session = Assert.Single(registry.Sessions);
+        Assert.Equal(clientAddress, session.Id);
+        Assert.Equal(clientAddress, session.SourceAddress);
+    }
+
+    [Fact]
+    public void EveryMessageHandler_ForwardsTheEndpointToTheAppCallback()
+    {
+        // One override dropping endPoint is invisible in production until someone looks for the
+        // IP, so call all of them directly and require each to hand the endpoint over.
+        var sentinel = new IPEndPoint(IPAddress.Parse("10.0.0.5"), 1234);
+        var forwarded = new List<EndPoint>();
+        var handler = DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(
+            (_, source) =>
+            {
+                forwarded.Add(source);
+                return Task.CompletedTask;
+            },
+            _ => Task.CompletedTask);
+
+        var token = CancellationToken.None;
+        var tasks = new[]
+        {
+            handler.HandleClearMessageAsync(null!, new Clear("id", ClearWindow.BandActivity), sentinel, token),
+            handler.HandleClosedMessageAsync(null!, new Close { Id = "id" }, sentinel, token),
+            handler.HandleDecodeMessageAsync(null!, new Decode { Id = "id" }, sentinel, token),
+            handler.HandleHeartbeatMessageAsync(null!, new Heartbeat("id", "1", "1"), sentinel, token),
+            handler.HandleLoggedAdifMessageAsync(null!, new LoggedAdif { Id = "id" }, sentinel, token),
+            handler.HandleQsoLoggedMessageAsync(null!, new QsoLogged { Id = "id" }, sentinel, token),
+            handler.HandleStatusMessageAsync(null!, new Status { Id = "id" }, sentinel, token),
+            handler.HandleWSPRDecodeMessageAsync(null!, new WSPRDecode { Id = "id" }, sentinel, token)
+        };
+
+        Task.WaitAll(tasks);
+
+        Assert.Equal(8, forwarded.Count);
+        Assert.All(forwarded, endpoint => Assert.Same(sentinel, endpoint));
+    }
+
+    [Fact]
+    public async Task ReceiveLoop_KeepsReadingWhileAHandlerHangs()
+    {
+        // Pins the library contract the whole UDP path leans on: the receive loop dispatches
+        // handlers without awaiting them. A later package update that awaits them would
+        // serialize decodes and turn every per-message await into a fixed cost per datagram.
+        const int hangMs = 1500;
+        const int datagrams = 3;
+        var port = GetFreeUdpPort();
+        var hangingTasks = new ConcurrentBag<Task>();
+        var entered = 0;
+
+        Task Handler(WsjtxMessage message, EndPoint source)
+        {
+            Interlocked.Increment(ref entered);
+            var task = Task.Delay(hangMs);
+            hangingTasks.Add(task);
+            return task;
+        }
+
+        var udpHandler = DefaultUDPMessageHandler.GenerateDefaultUDPMessageHandlerWithCallback(Handler,
+            _ => Task.CompletedTask);
+        using var server = new WsjtxUdpServer(udpHandler, IPAddress.Loopback, port);
+        server.Start(new CancellationTokenSource());
+        using var client = new UdpClient();
+        var endPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+        var elapsed = Stopwatch.StartNew();
+        for (var i = 0; i < datagrams; i++)
+        {
+            var buffer = new byte[1500];
+            var written = new Heartbeat("contract-probe", "1.0", "1").WriteMessageTo(buffer);
+            await client.SendAsync(buffer, written, endPoint);
+        }
+
+        while (Volatile.Read(ref entered) < datagrams && elapsed.ElapsedMilliseconds < 600)
+            await Task.Delay(20);
+
+        Assert.Equal(datagrams, Volatile.Read(ref entered));
+        Assert.True(elapsed.ElapsedMilliseconds < 600,
+            $"receive loop waited for the handlers: {elapsed.ElapsedMilliseconds}ms for {datagrams} datagrams");
+
+        await Task.WhenAll(hangingTasks);
+    }
+
+    [Fact]
+    public async Task AStalledForwardEndpoint_DoesNotFanOutOneRequestPerMessage()
+    {
+        // A listener that accepts and never answers, so each forwarded POST hangs until its
+        // timeout instead of failing fast. The in-flight request count is then a direct
+        // measurement of how the forwarding path was bounded.
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var inFlight = 0;
+        var sockets = new ConcurrentBag<TcpClient>();
+
+        _ = Task.Run(async () =>
+        {
+            while (true)
+            {
+                var socket = await listener.AcceptTcpClientAsync();
+                Interlocked.Increment(ref inFlight);
+                sockets.Add(socket);
+            }
+        });
+
+        var settings = new ApplicationSettings();
+        settings.UDPSettings.EnableUDPServer = true;
+        settings.UDPSettings.UDPPort = GetFreeUdpPort().ToString();
+        settings.UDPSettings.ForwardMessageToHttp = true;
+        settings.UDPSettings.ForwardHttpAddress =
+            $"http://127.0.0.1:{((IPEndPoint)listener.LocalEndpoint).Port}/forward";
+
+        using var service = new UdpServerService(new FakeApplicationSettingsService(settings));
+        var handled = 0;
+        await service.InitializeAsync((_, _) =>
+        {
+            Interlocked.Increment(ref handled);
+            return Task.CompletedTask;
+        }, (_, _) => { });
+
+        using var client = new UdpClient();
+        var endPoint = new IPEndPoint(IPAddress.Loopback, int.Parse(settings.UDPSettings.UDPPort));
+        for (var i = 0; i < 20; i++)
+        {
+            var buffer = new byte[1500];
+            var written = new Heartbeat("fanout", "1.0", "1").WriteMessageTo(buffer);
+            await client.SendAsync(buffer, written, endPoint);
+        }
+
+        await Task.Delay(500);
+
+        Assert.Equal(20, handled);
+        Assert.True(Volatile.Read(ref inFlight) <= 2,
+            $"{inFlight} forwards in flight for 20 messages - the endpoint stalled, not just slow");
+
+        foreach (var socket in sockets) socket.Dispose();
     }
 
     [Fact]
@@ -80,6 +326,12 @@ public class UdpServerServiceTests
         var service = new UdpServerService(new ThrowingApplicationSettingsService());
 
         Assert.Equal("?", service.GetUdpBindingAddress());
+    }
+
+    private static int GetFreeUdpPort()
+    {
+        using var probe = new UdpClient(0);
+        return ((IPEndPoint)probe.Client.LocalEndPoint!).Port;
     }
 
     private sealed class FakeApplicationSettingsService : IApplicationSettingsService

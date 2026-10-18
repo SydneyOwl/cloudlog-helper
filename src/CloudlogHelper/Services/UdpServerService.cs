@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Channels;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text.Json;
@@ -40,14 +41,34 @@ public class UdpServerService : IUdpServerService, IDisposable
     private UdpClient? _forwardedClient;
     private WsjtxUdpServer? _udpServer;
 
+    // InitializeAsync runs from the view's WhenActivated and this service is a singleton, so
+    // the settings subscription has to replace the previous one: one per activation would
+    // restart the socket N times per change and rewire it to a stale handler.
+    private IDisposable? _settingsSubscription;
+
+    // The receive loop dispatches handlers without awaiting them, so every forwarded message
+    // used to start its own HTTP POST with nothing bounding how many were in flight. One hung
+    // endpoint therefore stacked up a request per decode for as long as it stayed dead.
+    private readonly Channel<WsjtxMessage> _forwardChannel =
+        Channel.CreateBounded<WsjtxMessage>(
+            new BoundedChannelOptions(DefaultConfigs.DefaultForwardingQueueCapacity)
+            {
+                FullMode = BoundedChannelFullMode.DropOldest,
+                SingleReader = true
+            });
+
     private IApplicationSettingsService _applicationSettingsService;
+
     public UdpServerService(IApplicationSettingsService applicationSettingsService)
     {
         _applicationSettingsService = applicationSettingsService;
+        _ = Task.Run(_forwardMessagesAsync);
     }
 
     public void Dispose()
     {
+        _forwardChannel.Writer.TryComplete();
+        _settingsSubscription?.Dispose();
         _udpServer?.Dispose();
         _forwardedClient?.Dispose();
         _cts.Dispose();
@@ -105,22 +126,22 @@ public class UdpServerService : IUdpServerService, IDisposable
         return int.TryParse(_applicationSettingsService.GetCurrentSettings().UDPSettings.RetryCount, out var ret) ? ret : 1;
     }
 
-    private Func<WsjtxMessage, Task> _handlerWrapper(Func<WsjtxMessage, Task> handler)
+    private Func<WsjtxMessage, EndPoint, Task> _handlerWrapper(Func<WsjtxMessage, EndPoint, Task> handler)
     {
         return Wrapped;
 
-        async Task Wrapped(WsjtxMessage msg)
+        async Task Wrapped(WsjtxMessage msg, EndPoint source)
         {
             try
             {
-                await handler(msg).ConfigureAwait(false);
-        
+                await handler(msg, source).ConfigureAwait(false);
+
                 var udpSettings = _applicationSettingsService.GetCurrentSettings().UDPSettings;
                 if (udpSettings.ForwardMessageToHttp)
                 {
-                    await _forwardTCPMessageAsync(
-                        msg,
-                        udpSettings.ForwardHttpAddress).ConfigureAwait(false);
+                    // Queue only: a stalled endpoint costs us the oldest queued messages,
+                    // not one unbounded in-flight POST per decode.
+                    _forwardChannel.Writer.TryWrite(msg);
                 }
             }
             catch (Exception ex)
@@ -130,17 +151,36 @@ public class UdpServerService : IUdpServerService, IDisposable
         }
     }
 
-    public async Task InitializeAsync(Func<WsjtxMessage, Task> handler, Action<LogLevel, string> logger)
+    private async Task _forwardMessagesAsync()
+    {
+        await foreach (var message in _forwardChannel.Reader.ReadAllAsync().ConfigureAwait(false))
+        {
+            try
+            {
+                await _forwardTCPMessageAsync(message,
+                    _applicationSettingsService.GetCurrentSettings().UDPSettings.ForwardHttpAddress)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                // Every later forward depends on this loop surviving.
+                ClassLogger.Debug(ex, "Error while forwarding message. ignored.");
+            }
+        }
+    }
+
+    public async Task InitializeAsync(Func<WsjtxMessage, EndPoint, Task> handler, Action<LogLevel, string> logger)
     {
         await _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
-        
-        MessageBus.Current.Listen<SettingsChanged>()
+
+        _settingsSubscription?.Dispose();
+        _settingsSubscription = MessageBus.Current.Listen<SettingsChanged>()
             .Where(x => x.Part == ChangedPart.UDPServer)
             .Throttle(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ =>
             {
                 ClassLogger.Trace("UDP settings changed!");
-                _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger);
+                _restartUDPServerAsync(_handlerWrapper(handler), _rawHandler, logger).SafeFireAndForget();
             });
     }
 
@@ -196,7 +236,7 @@ public class UdpServerService : IUdpServerService, IDisposable
             throw new Exception($"Result does not return as expected: expect \"OK\" but we got {receiveString}");
     }
 
-    private async Task _restartUDPServerAsync(Func<WsjtxMessage, Task> handler,
+    private async Task _restartUDPServerAsync(Func<WsjtxMessage, EndPoint, Task> handler,
         Func<Memory<byte>, Task> rawhandler,
         Action<LogLevel, string>? udpLogger = null)
     {
@@ -211,7 +251,8 @@ public class UdpServerService : IUdpServerService, IDisposable
             
             // Small delay to ensure OS releases resources
             await Task.Delay(500);
-            
+
+            _cts.Dispose();
             _cts = new CancellationTokenSource();
             ClassLogger.Trace("Asking udpserver to start.");
 

@@ -26,6 +26,11 @@ public interface IRigBackendManager
 
     Task<string> GetServiceVersion();
 
+    /// <summary>
+    ///     Fetch rigctld version and supported rig models, sorted by model name.
+    /// </summary>
+    Task<(string Version, List<RigInfo> Models)> GetHamlibCatalogAsync();
+
     bool GetPollingAllowed();
     int GetPollingInterval();
 

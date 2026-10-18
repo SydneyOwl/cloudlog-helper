@@ -373,7 +373,7 @@
         <value>您使用的后端服务似乎是{replace01}而不是Cloudlog，因此软件部分功能可能不受支持。</value>
     </data>
     <data name="DisablePtt" xml:space="preserve">
-        <value>禁用PTT控制</value>
+        <value>禁用 RTS/DTR 信号线</value>
     </data>
     <data name="AllowExternalControl" xml:space="preserve">
         <value>允许外部控制</value>
@@ -382,7 +382,7 @@
         <value>如果此字段不为空，软件将使用填写的内容作为启动rigctld的默认参数，其他所有配置将被忽略。</value>
     </data>
     <data name="DisablePttHelp" xml:space="preserve">
-        <value>部分Linux发行版中如果不禁用rts/dtr可能导致PTT无法正确初始化，表现为PTT始终处于触发状态。</value>
+        <value>让 hamlib 始终将串口 RTS 与 DTR 握手线保持为低电平，不对其置位。部分 Linux 发行版中 RTS/DTR 被置位会导致电台持续处于忙状态，PTT 无法释放。</value>
     </data>
     <data name="AllowProxy" xml:space="preserve">
         <value>允许请求代理</value>
@@ -439,7 +439,7 @@
         <value>QSO上传助手</value>
     </data>
     <data name="QsoSyncSucceeded" xml:space="preserve">
-        <value>QSO同步成功！</value>
+        <value>QSO同步成功！导入的QSO已加入上传队列，在QSO列表切换到LOCAL即可查看。</value>
     </data>
     <data name="NotificationTitleInfo" xml:space="preserve">
         <value>提示</value>

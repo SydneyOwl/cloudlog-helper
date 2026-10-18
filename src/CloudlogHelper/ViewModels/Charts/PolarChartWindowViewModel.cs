@@ -47,7 +47,8 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
     public PolarChartWindowViewModel(IChartDataCacheService chartDataCacheService,
         IApplicationSettingsService applicationSettingsService,
-        IWindowManagerService windowManagerService)
+        IWindowManagerService windowManagerService,
+        IClientRegistryService clientRegistryService) : base(clientRegistryService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;
@@ -151,11 +152,13 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
             var cacheData = _chartDataCacheService.TakeLatestN(QSOSamples,
                     FilterDupeCallsign ? ChartQSOPoint.BandAndCallsignComparer : null,
                     point => point.Band == SelectedBand
-                             // && point.Mode == SelectedMode 
+                             && (string.IsNullOrWhiteSpace(SelectedMode)
+                                 || string.Equals(point.Mode, SelectedMode, StringComparison.OrdinalIgnoreCase))
                              && point.Client == SelectedClient && point.Distance >= 0)
                 .ToArray();
-            
-            ClassLogger.Trace($"DUPE FILTER: {FilterDupeCallsign}, SAMPLES: {cacheData.Length}, REQUEST {QSOSamples}");
+
+            ClassLogger.Trace(
+                $"DUPE FILTER: {FilterDupeCallsign}, SAMPLES: {cacheData.Length}, REQUEST {QSOSamples}, MODE {SelectedMode}");
 
             var maxDistance = QSOPointUtil.CalculateRobustMaxDistance(cacheData) + 500;
             ClassLogger.Trace($"Use maxDistance:{maxDistance}");
@@ -217,11 +220,11 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
         }
         finally
         {
+            IsExecutingChartUpdate = false;
             _refreshTheme();
             PlotControl.Plot.Axes.AutoScale();
             PlotControl.Refresh();
             LastDataUpdatedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
-            IsExecutingChartUpdate = false;
         }
     }
 
@@ -422,6 +425,9 @@ public class PolarChartWindowViewModel : ChartWindowViewModel
 
     private void _refreshTheme()
     {
+        // UpdatePolar can fail before the polar axis is created; there is nothing to style then.
+        if (_polarAxis is null) return;
+
         if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
             _setDarkTheme();
         else

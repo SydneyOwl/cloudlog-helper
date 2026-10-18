@@ -31,390 +31,6 @@ using UploadStatus = CloudlogHelper.Enums.UploadStatus;
 
 namespace CloudlogHelper.Services;
 
-public class PluginInfo : IDisposable
-{
-    private static readonly Logger ClassLogger = LogManager.GetCurrentClassLogger();
-
-    private readonly Func<PluginInfo, PipeEnvelope, CancellationToken, Task> _envelopeHandler;
-    private readonly Func<string, string, Task> _selfDeregister;
-    private readonly object _subscriptionLock = new();
-    private readonly Dictionary<string, string> _metadata = new();
-
-    private NamedPipeServerStream? _client;
-    private readonly SemaphoreSlim _cliLock = new(1, 1);
-
-    private Task? _messageLoopTask;
-    private CancellationTokenSource? _messageLoopCts;
-    private bool _disposed;
-    private long _lastHeartbeatTicks;
-    private long _receivedMessageCount;
-    private long _sentMessageCount;
-    private long _controlRequestCount;
-    private long _controlErrorCount;
-    private long _lastRoundtripMs;
-
-    private PipeEnvelopeTopic[]? _eventTopics;
-
-    public string Uuid { get; private set; } = string.Empty;
-    public string Name { get; private set; } = string.Empty;
-    public string Version { get; private set; } = string.Empty;
-    public string Description { get; private set; } = string.Empty;
-    public string SdkName { get; private set; } = string.Empty;
-    public string SdkVersion { get; private set; } = string.Empty;
-    public DateTime RegisteredAt { get; private set; }
-    public DateTime LastHeartbeat => new(Interlocked.Read(ref _lastHeartbeatTicks), DateTimeKind.Utc);
-    public IReadOnlyDictionary<string, string> Metadata => _metadata;
-
-    private PluginInfo(
-        Func<PluginInfo, PipeEnvelope, CancellationToken, Task> envelopeHandler,
-        Func<string, string, Task> selfDeregister)
-    {
-        _envelopeHandler = envelopeHandler;
-        _selfDeregister = selfDeregister;
-    }
-
-    private void UpdateHeartbeat()
-    {
-        Interlocked.Exchange(ref _lastHeartbeatTicks, DateTime.UtcNow.Ticks);
-    }
-
-    private void IncrementReceived()
-    {
-        Interlocked.Increment(ref _receivedMessageCount);
-    }
-
-    private void IncrementSent()
-    {
-        Interlocked.Increment(ref _sentMessageCount);
-    }
-
-    public void IncrementControlRequest()
-    {
-        Interlocked.Increment(ref _controlRequestCount);
-    }
-
-    public void IncrementControlError()
-    {
-        Interlocked.Increment(ref _controlErrorCount);
-    }
-
-    public void MarkRoundtrip(Timestamp? sourceTimestamp)
-    {
-        if (sourceTimestamp is null) return;
-        var delta = DateTime.UtcNow - sourceTimestamp.ToDateTime();
-        if (delta.TotalMilliseconds < 0) return;
-        Interlocked.Exchange(ref _lastRoundtripMs, (long)delta.TotalMilliseconds);
-    }
-
-    private async Task ReceiveClientMessagesAsync(CancellationToken token)
-    {
-        while (!token.IsCancellationRequested)
-        {
-            NamedPipeServerStream? client;
-
-            await _cliLock.WaitAsync(token);
-            try
-            {
-                if (_client is null || !_client.IsConnected)
-                    break;
-                client = _client;
-            }
-            finally
-            {
-                _cliLock.Release();
-            }
-
-            try
-            {
-                var anyMessage = await Any.Parser.ParseDelimitedFromAsync(client, token);
-                if (anyMessage is null)
-                {
-                    ClassLogger.Info($"{Name} disconnected from plugin pipe.");
-                    await _selfDeregister(Uuid, "disconnected from plugin pipe (nil message recv)");
-                    break;
-                }
-
-                IncrementReceived();
-
-                if (anyMessage.Is(PipeDeregisterPluginReq.Descriptor))
-                {
-                    var dereg = anyMessage.Unpack<PipeDeregisterPluginReq>();
-                    try
-                    {
-                        await SendMessage(new PipeDeregisterPluginResp
-                        {
-                            Success = true,
-                            Message = null,
-                            Timestamp = new Timestamp()
-                        }, token);
-                        ClassLogger.Info($"{Name} exited normally.");
-                    }
-                    catch
-                    {
-                        // ...
-                    }
-
-                    await _selfDeregister(Uuid,
-                        string.IsNullOrWhiteSpace(dereg.Reason) ? "Plugin exited normally." : dereg.Reason);
-                    break;
-                }
-
-                if (anyMessage.Is(PipeHeartbeat.Descriptor))
-                {
-                    var heartbeat = anyMessage.Unpack<PipeHeartbeat>();
-                    if (!string.IsNullOrWhiteSpace(heartbeat.Uuid) && heartbeat.Uuid != Uuid)
-                        ClassLogger.Warn(
-                            $"Heartbeat uuid mismatch for plugin {Name}. Expected {Uuid}, got {heartbeat.Uuid}");
-
-                    UpdateHeartbeat();
-                    continue;
-                }
-
-                if (anyMessage.Is(PipeEnvelope.Descriptor))
-                {
-                    var envelope = anyMessage.Unpack<PipeEnvelope>();
-                    if (envelope.Kind is PipeEnvelopeKind.Query or PipeEnvelopeKind.Command)
-                    {
-                        IncrementControlRequest();
-                        MarkRoundtrip(envelope.Timestamp);
-                    }
-
-                    await _envelopeHandler(this, envelope, token);
-                    continue;
-                }
-
-                ClassLogger.Warn($"Unknown plugin message received from {Name}: {anyMessage.TypeUrl}");
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch (IOException) when (!token.IsCancellationRequested)
-            {
-                ClassLogger.Info($"{Name} exited due to IO exception");
-                await _selfDeregister(Uuid, "exited due to IO exception");
-                break;
-            }
-            catch (Exception ex)
-            {
-                ClassLogger.Error(ex, $"Error receiving message from plugin {Name}");
-                // await Task.Delay(500, token);
-                await _selfDeregister(Uuid, $"Error receiving message: {ex.Message}");
-                break;
-            }
-        }
-    }
-
-    private void StartMessageLoop(CancellationToken token)
-    {
-        if (_disposed) return;
-
-        _cliLock.Wait(token);
-        try
-        {
-            if (_messageLoopTask != null || _client == null) return;
-            _messageLoopCts = CancellationTokenSource.CreateLinkedTokenSource(token);
-            _messageLoopTask = Task.Run(() => ReceiveClientMessagesAsync(_messageLoopCts.Token), token);
-        }
-        finally
-        {
-            _cliLock.Release();
-        }
-    }
-
-    private void StopAll(bool notify)
-    {
-        if (_disposed) return;
-
-        _disposed = true;
-
-        try
-        {
-            if (notify)
-                SendMessage(new PipeConnectionClosed
-                {
-                    Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
-                }, CancellationToken.None).GetAwaiter().GetResult();
-        }
-        catch
-        {
-            // ignored
-        }
-
-        _messageLoopCts?.Cancel();
-        _messageLoopCts?.Dispose();
-        _messageLoopCts = null;
-
-        _cliLock.Wait();
-        try
-        {
-            if (_client != null)
-                try
-                {
-                    _client.Close();
-                    _client.Dispose();
-                    _client = null;
-                }
-                catch (Exception ex)
-                {
-                    ClassLogger.Error(ex, $"Error closing pipe for {Name}");
-                }
-        }
-        finally
-        {
-            _cliLock.Release();
-        }
-    }
-
-    public static PluginInfo Create(
-        PipeRegisterPluginReq rpcRegisterPluginReq,
-        NamedPipeServerStream client,
-        CancellationToken token,
-        Func<PluginInfo, PipeEnvelope, CancellationToken, Task> envelopeHandler,
-        Func<string, string, Task> selfDeregister)
-    {
-        var pg = new PluginInfo(envelopeHandler, selfDeregister)
-        {
-            Uuid = rpcRegisterPluginReq.Uuid,
-            Name = rpcRegisterPluginReq.Name,
-            Version = rpcRegisterPluginReq.Version,
-            Description = rpcRegisterPluginReq.Description,
-            SdkName = rpcRegisterPluginReq.SdkName,
-            SdkVersion = rpcRegisterPluginReq.SdkVersion,
-            _client = client,
-            RegisteredAt = DateTime.UtcNow
-        };
-
-        foreach (var (key, value) in rpcRegisterPluginReq.Metadata)
-            pg._metadata[key] = value;
-
-        pg.UpdateEventSubscription(rpcRegisterPluginReq.EventSubscription);
-        pg.UpdateHeartbeat();
-        pg.StartMessageLoop(token);
-        return pg;
-    }
-
-    public void UpdateEventSubscription(PipeEventSubscription? subscription)
-    {
-        if (subscription is null) return;
-        lock (_subscriptionLock)
-        {
-            _eventTopics = subscription.Topics.Distinct().ToArray();
-        }
-    }
-
-    public PipeEventSubscription GetEventSubscriptionSnapshot()
-    {
-        var snapshot = new PipeEventSubscription();
-        lock (_subscriptionLock)
-        {
-            if (_eventTopics != null)
-                snapshot.Topics.Add(_eventTopics);
-        }
-
-        return snapshot;
-    }
-
-    public bool ShouldReceiveEventTopic(PipeEnvelopeTopic topic)
-    {
-        PipeEnvelopeTopic[]? topics;
-        lock (_subscriptionLock)
-        {
-            topics = _eventTopics;
-        }
-
-        if (topics is null || topics.Length == 0) return true;
-        return Array.IndexOf(topics, topic) >= 0;
-    }
-
-    public PipePluginTelemetry GetTelemetrySnapshot()
-    {
-        return new PipePluginTelemetry
-        {
-            PluginUuid = Uuid,
-            ReceivedMessageCount = (ulong)Interlocked.Read(ref _receivedMessageCount),
-            SentMessageCount = (ulong)Interlocked.Read(ref _sentMessageCount),
-            ControlRequestCount = (ulong)Interlocked.Read(ref _controlRequestCount),
-            ControlErrorCount = (ulong)Interlocked.Read(ref _controlErrorCount),
-            LastRoundtripMs = (uint)Math.Max(0, Interlocked.Read(ref _lastRoundtripMs)),
-            UpdatedAt = Timestamp.FromDateTime(DateTime.UtcNow)
-        };
-    }
-
-    public PipePluginInfo ToPipePluginInfo()
-    {
-        var info = new PipePluginInfo
-        {
-            Uuid = Uuid,
-            Name = Name,
-            Version = Version,
-            Description = Description,
-            RegisteredAt = Timestamp.FromDateTime(RegisteredAt),
-            LastHeartbeat = Timestamp.FromDateTime(LastHeartbeat),
-            EventSubscription = GetEventSubscriptionSnapshot(),
-            Telemetry = GetTelemetrySnapshot()
-        };
-
-        foreach (var (key, value) in _metadata)
-            info.Metadata[key] = value;
-
-        return info;
-    }
-
-    public async Task SendMessage<T>(T msg, CancellationToken token) where T : IMessage
-    {
-        switch (msg)
-        {
-            case PipeEnvelope envelope:
-                if (envelope.Kind == PipeEnvelopeKind.Event)
-                    if (!ShouldReceiveEventTopic(envelope.Topic))
-                        return;
-                break;
-            case PipeConnectionClosed:
-                break;
-            case PipeDeregisterPluginResp:
-                break;
-            default:
-                return;
-        }
-
-        try
-        {
-            var any = Any.Pack(msg);
-
-            await _cliLock.WaitAsync(token);
-            try
-            {
-                if (_client is null || !_client.IsConnected) return;
-                await any.WriteDelimitedToAsync(_client, token);
-                await _client.FlushAsync(token);
-                IncrementSent();
-            }
-            finally
-            {
-                _cliLock.Release();
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            // ignored
-        }
-        catch (Exception ex)
-        {
-            ClassLogger.Debug(ex, $"[ignored] Failed to send message to plugin {Name}");
-        }
-    }
-
-    public void Dispose()
-    {
-        Task.Run(() => StopAll(true)).GetAwaiter().GetResult();
-    }
-
-    public void DisposeWithoutNotify()
-    {
-        Task.Run(() => StopAll(false)).GetAwaiter().GetResult();
-    }
-}
 
 public class PluginService : IPluginService, IDisposable
 {
@@ -469,52 +85,28 @@ public class PluginService : IPluginService, IDisposable
             _wsjtxDecodeCache.ObserveCollectionChanges()
                 .Throttle(TimeSpan.FromSeconds(2))
                 .ObserveOn(RxSchedulers.TaskpoolScheduler)
-                .Subscribe(async void (changes) =>
-                {
-                    try
-                    {
-                        await HandleDecodeCacheChanged();
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Error handling decode cache changes");
-                    }
-                })
+                .Subscribe(changes => HandleDecodeCacheChanged()
+                    .SafeFireAndForget(nameof(HandleDecodeCacheChanged)))
         );
 
         // push settings'changed
         _disp.Add(MessageBus.Current
             .Listen<SettingsChanged>()
-            .Subscribe(async void (x) =>
-            {
-                try
-                {
-                    await HandleSettingsChange(x);
-                }
-                catch (Exception ex)
-                {
-                    ClassLogger.Error(ex, "Error handling plugin service settings change");
-                }
-            }));
+            .Subscribe(x => HandleSettingsChange(x)
+                .SafeFireAndForget(nameof(HandleSettingsChange))));
 
         // receive IMessage
         _disp.Add(
             MessageBus.Current
                 .Listen<PluginEvent>()
-                .Subscribe(async void (x) =>
+                .Subscribe(x =>
                 {
-                    try
-                    {
-                        if (x.Message is null) return;
-                        await BroadcastMessageAsync(x.Message, CancellationToken.None);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Error handling plugin service settings change");
-                    }
+                    if (x.Message is null) return;
+                    BroadcastMessageAsync(x.Message, CancellationToken.None)
+                        .SafeFireAndForget(nameof(BroadcastMessageAsync));
                 }));
 
-        if (_basicSettings.EnablePlugin) _ = StartPluginServiceAsync();
+        if (_basicSettings.EnablePlugin) StartPluginServiceAsync().SafeFireAndForget(nameof(StartPluginServiceAsync));
     }
 
     private async Task HandleDecodeCacheChanged()
@@ -987,8 +579,9 @@ public class PluginService : IPluginService, IDisposable
                     var tryParse = Enum.TryParse<PluginControllableWindow>(window, out var pCtWindow);
                     if (!tryParse) break;
 
-                    _ = Dispatcher.UIThread.InvokeAsync(async () =>
-                        await _windowManagerService.CreateAndShowWindowByVm(pCtWindow, null, dialog == "true"));
+                    Dispatcher.UIThread.InvokeAsync(async () =>
+                            await _windowManagerService.CreateAndShowWindowByVm(pCtWindow, null, dialog == "true"))
+                        .SafeFireAndForget(nameof(_windowManagerService.CreateAndShowWindowByVm));
 
                     response.Success = true;
                     response.Message = "window-opened";
@@ -1433,55 +1026,31 @@ public class PluginService : IPluginService, IDisposable
                 draft.BasicSettings.MyMaidenheadGrid = value;
                 break;
             case "basic.enable_plugin":
-                if (bool.TryParse(value, out var enablePlugin))
-                    draft.BasicSettings.EnablePlugin = enablePlugin;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.BasicSettings.EnablePlugin = v, errors);
                 break;
             case "basic.disable_all_charts":
-                if (bool.TryParse(value, out var disableCharts))
-                    draft.BasicSettings.DisableAllCharts = disableCharts;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.BasicSettings.DisableAllCharts = v, errors);
                 break;
             case "cloudlog.auto_qso_upload_enabled":
-                if (bool.TryParse(value, out var autoQso))
-                    draft.CloudlogSettings.AutoQSOUploadEnabled = autoQso;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.CloudlogSettings.AutoQSOUploadEnabled = v, errors);
                 break;
             case "cloudlog.auto_rig_upload_enabled":
-                if (bool.TryParse(value, out var autoRig))
-                    draft.CloudlogSettings.AutoRigUploadEnabled = autoRig;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.CloudlogSettings.AutoRigUploadEnabled = v, errors);
                 break;
             case "udp.enable_udp_server":
-                if (bool.TryParse(value, out var enableUdp))
-                    draft.UDPSettings.EnableUDPServer = enableUdp;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.EnableUDPServer = v, errors);
                 break;
             case "udp.enable_connection_from_outside":
-                if (bool.TryParse(value, out var allowOutside))
-                    draft.UDPSettings.EnableConnectionFromOutside = allowOutside;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.EnableConnectionFromOutside = v, errors);
                 break;
             case "udp.retry_count":
                 draft.UDPSettings.RetryCount = value;
                 break;
             case "udp.push_notification_on_qso_made":
-                if (bool.TryParse(value, out var notifyQsoMade))
-                    draft.UDPSettings.PushNotificationOnQSOMade = notifyQsoMade;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.PushNotificationOnQSOMade = v, errors);
                 break;
             case "udp.push_notification_on_qso_uploaded":
-                if (bool.TryParse(value, out var notifyQsoUploaded))
-                    draft.UDPSettings.PushNotificationOnQSOUploaded = notifyQsoUploaded;
-                else
-                    errors.Add($"invalid bool value for {key}");
+                ApplyBoolPatchValue(key, value, v => draft.UDPSettings.PushNotificationOnQSOUploaded = v, errors);
                 break;
             case "rig.enable_polling":
                 var raw = value.Split(";;;");
@@ -1491,31 +1060,10 @@ public class PluginService : IPluginService, IDisposable
                     break;
                 }
 
-                var backend = raw[1];
-
-                if (Enum.TryParse<RigBackendServiceEnum>(backend, out var backendService) &&
+                if (Enum.TryParse<RigBackendServiceEnum>(raw[1], out var backendService) &&
                     bool.TryParse(raw[0], out var enablePolling))
                 {
-                    draft.FLRigSettings.PollAllowed = false;
-                    draft.OmniRigSettings.PollAllowed = false;
-                    draft.HamlibSettings.PollAllowed = false;
-
-                    if (enablePolling)
-                        switch (backendService)
-                        {
-                            case RigBackendServiceEnum.Hamlib:
-                                draft.HamlibSettings.PollAllowed = true;
-                                break;
-                            case RigBackendServiceEnum.FLRig:
-                                draft.FLRigSettings.PollAllowed = true;
-                                break;
-                            case RigBackendServiceEnum.OmniRig:
-                                draft.OmniRigSettings.PollAllowed = true;
-                                break;
-                            default:
-                                errors.Add($"unsupported backend: {backendService}");
-                                break;
-                        }
+                    SetRigPollingPatch(draft, backendService, enablePolling, errors);
                 }
                 else
                 {
@@ -1526,25 +1074,7 @@ public class PluginService : IPluginService, IDisposable
             case "rig.backend":
                 if (Enum.TryParse<RigBackendServiceEnum>(value, out var rBackend))
                 {
-                    draft.FLRigSettings.PollAllowed = false;
-                    draft.OmniRigSettings.PollAllowed = false;
-                    draft.HamlibSettings.PollAllowed = false;
-
-                    switch (rBackend)
-                    {
-                        case RigBackendServiceEnum.Hamlib:
-                            draft.HamlibSettings.PollAllowed = true;
-                            break;
-                        case RigBackendServiceEnum.FLRig:
-                            draft.FLRigSettings.PollAllowed = true;
-                            break;
-                        case RigBackendServiceEnum.OmniRig:
-                            draft.OmniRigSettings.PollAllowed = true;
-                            break;
-                        default:
-                            errors.Add($"unsupported backend: {rBackend}");
-                            break;
-                    }
+                    SetRigPollingPatch(draft, rBackend, true, errors);
                 }
                 else
                 {
@@ -1554,6 +1084,45 @@ public class PluginService : IPluginService, IDisposable
                 break;
             default:
                 errors.Add($"unsupported patch key: {key}");
+                break;
+        }
+    }
+
+    private static void ApplyBoolPatchValue(
+        string key,
+        string value,
+        Action<bool> setter,
+        List<string> errors)
+    {
+        if (bool.TryParse(value, out var parsed))
+            setter(parsed);
+        else
+            errors.Add($"invalid bool value for {key}");
+    }
+
+    private static void SetRigPollingPatch(
+        ApplicationSettings draft,
+        RigBackendServiceEnum backend,
+        bool enablePolling,
+        List<string> errors)
+    {
+        draft.HamlibSettings.PollAllowed = false;
+        draft.FLRigSettings.PollAllowed = false;
+        draft.OmniRigSettings.PollAllowed = false;
+
+        switch (backend)
+        {
+            case RigBackendServiceEnum.Hamlib:
+                draft.HamlibSettings.PollAllowed = enablePolling;
+                break;
+            case RigBackendServiceEnum.FLRig:
+                draft.FLRigSettings.PollAllowed = enablePolling;
+                break;
+            case RigBackendServiceEnum.OmniRig:
+                draft.OmniRigSettings.PollAllowed = enablePolling;
+                break;
+            default:
+                errors.Add($"unsupported backend: {backend}");
                 break;
         }
     }

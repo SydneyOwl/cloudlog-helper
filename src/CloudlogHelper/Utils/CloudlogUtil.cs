@@ -109,6 +109,22 @@ public class CloudlogUtil
     }
 
     /// <summary>
+    ///     Test url+key, then fetch station list.
+    ///     Throws <see cref="Exception" /> with the test failure message when the connection check fails.
+    /// </summary>
+    /// <param name="url">URL of the cloudlog server.</param>
+    /// <param name="apiKey">API key.</param>
+    /// <param name="token">Cancellation token.</param>
+    /// <returns>List of stations on the server.</returns>
+    public static async Task<List<StationInfo>> TestConnectionAndGetStationInfoAsync(string url, string apiKey,
+        CancellationToken token)
+    {
+        var msg = await TestCloudlogConnectionAsync(url, apiKey, token).ConfigureAwait(false);
+        if (!string.IsNullOrEmpty(msg)) throw new Exception(msg);
+        return await GetStationInfoAsync(url, apiKey, token).ConfigureAwait(false);
+    }
+
+    /// <summary>
     ///     Fetch station info, including callsign, grid, id, etc.,
     /// </summary>
     /// <param name="url">url</param>
@@ -199,12 +215,5 @@ public class CloudlogUtil
                 Reason = e.Message
             };
         }
-    }
-
-    /// <summary>
-    ///     Just some tests.
-    /// </summary>
-    public static void Test()
-    {
     }
 }

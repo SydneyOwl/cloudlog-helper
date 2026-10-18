@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -297,17 +298,17 @@ public sealed class RigctldService : IRigService, IDisposable
             var powerRaw = await ExecuteCommand(ip, port, "l RFPOWER");
             var powerStr = powerRaw.Split('\n')[0];
             
-            if (!float.TryParse(powerStr, out var power) || power < 0)
+            if (!float.TryParse(powerStr, CultureInfo.InvariantCulture, out var power) || power < 0)
             {
                 ClassLogger.Debug($"Rigctld: Rig doesn't support RFPOWER reading: {powerStr}");
                 return;
             }
             
-            var powerMwRaw = await ExecuteCommand(ip, port, 
-                $"\\power2mW {power} {radioData.FrequencyTx} {radioData.ModeTx}");
+            var powerMwRaw = await ExecuteCommand(ip, port,
+                RigUtils.BuildPowerToMilliwattCommand(power, radioData.FrequencyTx, radioData.ModeTx));
             var powerMwStr = powerMwRaw.Split('\n')[0];
             
-            if (float.TryParse(powerMwStr, out var powerMw) && powerMw >= 0)
+            if (float.TryParse(powerMwStr, CultureInfo.InvariantCulture, out var powerMw) && powerMw >= 0)
                 radioData.Power = (float)Math.Round(powerMw / 1000, 2);
         }
         catch (Exception e)

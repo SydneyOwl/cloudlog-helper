@@ -66,10 +66,15 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
     }
 
     public StationStatisticsChartWindowViewModel(IChartDataCacheService chartDataCacheService,
-        IApplicationSettingsService applicationSettingsService)
+        IApplicationSettingsService applicationSettingsService,
+        IClientRegistryService clientRegistryService) : base(clientRegistryService)
     {
         _basicSettings = applicationSettingsService.GetCurrentSettings().BasicSettings;
         _chartDataCacheService = chartDataCacheService;
+
+        // No auto-switch in this window: band/mode are never set automatically,
+        // the user picks them from the dropdowns.
+        AutoSwitchEnabled = false;
 
         Application.Current!.ActualThemeVariantChanged += (sender, args) => { UpdateChart(); };
 
@@ -99,7 +104,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
                 .BindTo(this, x => x.ShouldShowLocationButton);
             
             this.WhenAnyValue(x => x.SelectedBand,
-                    x => x.SelectedClient,
                     x => x.SelectedMode,
                     x => x.UpdatePaused,
                     x => x.ShowLocation,
@@ -110,7 +114,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
                 .DisposeWith(disposable);
         });
 
-        // _ = _addFake();
         UpdateChart();
     }
 
@@ -178,7 +181,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (!orderedData.Any())
         {
-            plot1.Title($"Top 10 DXCCs - {SelectedBand} Band\n(No data available)");
+            plot1.Title($"Top 10 DXCCs - {_bandModeTitle()}\n(No data available)");
             return;
         }
 
@@ -208,7 +211,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             bar.LineWidth = 0;
         }
 
-        plot1.Title($"Top 10 DXCCs - {SelectedBand} Band");
+        plot1.Title($"Top 10 DXCCs - {_bandModeTitle()}");
         plot1.YLabel("Signal Count");
         plot1.Axes.Bottom.TickGenerator = new NumericManual(ticks.ToArray());
         plot1.Axes.Bottom.MajorTickStyle.Length = 0;
@@ -233,7 +236,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (bandData.Counts.Sum() == 0)
         {
-            plot2.Title($"Station Distance Distribution - {SelectedBand} Band\n(No data available)");
+            plot2.Title($"Station Distance Distribution - {_bandModeTitle()}\n(No data available)");
             return;
         }
 
@@ -245,7 +248,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             histogramBarsBar.LineColor = barColor;
         }
 
-        plot2.Title($"Station Distance Distribution - {SelectedBand} Band");
+        plot2.Title($"Station Distance Distribution - {_bandModeTitle()}");
         plot2.XLabel("Distance (km)");
         plot2.YLabel("Signal Count");
         plot2.Axes.Margins(bottom: 0, top: 0.15, left: 0.05, right: 0.05);
@@ -268,7 +271,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (bandData.Counts.Sum() == 0)
         {
-            plot3.Title($"Station Bearing Distribution - {SelectedBand} Band\n(No data available)");
+            plot3.Title($"Station Bearing Distribution - {_bandModeTitle()}\n(No data available)");
             return;
         }
 
@@ -282,7 +285,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
 
         plot3.Axes.Margins(bottom: 0, top: 0.18, left: 0.05, right: 0.1);
-        plot3.Title($"Station Bearing Distribution - {SelectedBand} Band");
+        plot3.Title($"Station Bearing Distribution - {_bandModeTitle()}");
         plot3.XLabel("Bearing (degrees)");
         plot3.YLabel("Signal Count");
 
@@ -318,7 +321,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         var plot4 = _plotCache[PlotType.WorldHeatmap];
         plot4.Clear();
 
-        plot4.Title($"World Heatmap - {SelectedBand} Band");
+        plot4.Title($"World Heatmap - {_bandModeTitle()}");
 
         plot4.XLabel("Longitude");
         plot4.YLabel("Latitude");
@@ -336,7 +339,7 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
 
         if (!TryLoadWorldMapImage())
         {
-            plot4.Title($"World heatmap(No map available) - {SelectedBand} Band");
+            plot4.Title($"World heatmap(No map available) - {_bandModeTitle()}");
             return;
         }
 
@@ -355,9 +358,9 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
 
         var gridStationCountByBand = chartData.GridStationCount;
-        if (gridStationCountByBand.Cast<double>().All(x => x == 0))
+        if (_isAllZero(gridStationCountByBand))
         {
-            plot4.Title($"World heatmap(No data available) - {SelectedBand} Band");
+            plot4.Title($"World heatmap(No data available) - {_bandModeTitle()}");
             return;
         }
 
@@ -371,6 +374,21 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         heatmap.Opacity = 0.35;
         heatmap.FlipVertically = true;
         heatmap.Smooth = true;
+    }
+
+    private string _bandModeTitle()
+    {
+        return string.IsNullOrWhiteSpace(SelectedMode)
+            ? $"{SelectedBand} Band"
+            : $"{SelectedBand} Band ({SelectedMode})";
+    }
+
+    private static bool _isAllZero(double[,] grid)
+    {
+        for (var y = 0; y < grid.GetLength(0); y++)
+        for (var x = 0; x < grid.GetLength(1); x++)
+            if (grid[y, x] != 0) return false;
+        return true;
     }
 
     private void ClearData()
@@ -402,8 +420,11 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
             ShowErrorMsg = false;
             IsExecutingChartUpdate = true;
             ClassLogger.Debug("Updating statistic");
+            // The statistics chart is a cross-client view of the selected band and mode:
+            // the accumulators never split by client, so every client's decodes on the
+            // band are aggregated together.
             var chartDataSnapshot =
-                _chartDataCacheService.GetStationChartDataSnapshotByBand(SelectedBand, FilterDupeCallsign);
+                _chartDataCacheService.GetStationChartDataSnapshot(SelectedBand, SelectedMode, FilterDupeCallsign);
             switch (SelectedChart)
             {
                 case 1:
@@ -443,36 +464,54 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
     }
 
+    private readonly record struct PlotThemeColors(
+        Color Theme,
+        Color FigureBg,
+        Color DataBg,
+        Color Grid,
+        Color LegendBg,
+        Color LegendFont,
+        Color LegendOutline);
+
+    private static readonly PlotThemeColors DarkPlotTheme = new(
+        Color.FromHex("#d7d7d7"),
+        Color.FromHex("#181818"),
+        Color.FromHex("#1f1f1f"),
+        Color.FromHex("#404040"),
+        Color.FromHex("#404040"),
+        Color.FromHex("#d7d7d7"),
+        Color.FromHex("#d7d7d7"));
+
+    private static readonly PlotThemeColors LightPlotTheme = new(
+        Color.FromHex("#34495E"),
+        Color.FromHex("#FDFDFD"),
+        Color.FromHex("#F5F7FA"),
+        Color.FromHex("#E3E8ED"),
+        Color.FromHex("#FFFFFF"),
+        Color.FromHex("#2C3E50"),
+        Color.FromHex("#BDC3C7"));
+
     private void _refreshTheme()
     {
-        if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark)
-            _setDarkTheme();
-        else
-            _setLightTheme();
+        _applyPlotTheme(Application.Current!.ActualThemeVariant == ThemeVariant.Dark
+            ? DarkPlotTheme
+            : LightPlotTheme);
     }
 
-    private void _setDarkTheme()
+    private void _applyPlotTheme(PlotThemeColors theme)
     {
-        var themeColor = Color.FromHex("#d7d7d7");
-        var figureBgColor = Color.FromHex("#181818");
-        var dataBgColor = Color.FromHex("#1f1f1f");
-        var gridColor = Color.FromHex("#404040");
-        var legendBgColor = Color.FromHex("#404040");
-        var legendFontColor = Color.FromHex("#d7d7d7");
-        var legendOutlineColor = Color.FromHex("#d7d7d7");
-
         for (var i = 0; i < PlotControl.Multiplot.GetPlots().Length; i++)
         {
             var plot = PlotControl.Multiplot.GetPlot(i);
-            plot.FigureBackground.Color = figureBgColor;
-            plot.DataBackground.Color = dataBgColor;
-            plot.Axes.Color(themeColor);
-            plot.Grid.MajorLineColor = gridColor;
-            plot.Grid.MinorLineColor = gridColor.WithAlpha(0.3);
+            plot.FigureBackground.Color = theme.FigureBg;
+            plot.DataBackground.Color = theme.DataBg;
+            plot.Axes.Color(theme.Theme);
+            plot.Grid.MajorLineColor = theme.Grid;
+            plot.Grid.MinorLineColor = theme.Grid.WithAlpha(0.3);
 
-            plot.Legend.BackgroundColor = legendBgColor;
-            plot.Legend.FontColor = legendFontColor;
-            plot.Legend.OutlineColor = legendOutlineColor;
+            plot.Legend.BackgroundColor = theme.LegendBg;
+            plot.Legend.FontColor = theme.LegendFont;
+            plot.Legend.OutlineColor = theme.LegendOutline;
 
             plot.Axes.Title.Label.FontSize = 14;
             plot.Axes.Left.Label.FontSize = 11;
@@ -480,67 +519,6 @@ public class StationStatisticsChartWindowViewModel : ChartWindowViewModel
         }
     }
 
-    private void _setLightTheme()
-    {
-        var themeColor = Color.FromHex("#34495E");
-        var figureBgColor = Color.FromHex("#FDFDFD");
-        var dataBgColor = Color.FromHex("#F5F7FA");
-        var gridColor = Color.FromHex("#E3E8ED");
-        var legendBgColor = Color.FromHex("#FFFFFF");
-        var legendFontColor = Color.FromHex("#2C3E50");
-        var legendOutlineColor = Color.FromHex("#BDC3C7");
-
-        for (var i = 0; i < PlotControl.Multiplot.GetPlots().Length; i++)
-        {
-            var plot = PlotControl.Multiplot.GetPlot(i);
-            plot.FigureBackground.Color = figureBgColor;
-            plot.DataBackground.Color = dataBgColor;
-            plot.Axes.Color(themeColor);
-            plot.Grid.MajorLineColor = gridColor;
-            plot.Grid.MinorLineColor = gridColor.WithAlpha(0.3);
-
-            plot.Legend.BackgroundColor = legendBgColor;
-            plot.Legend.FontColor = legendFontColor;
-            plot.Legend.OutlineColor = legendOutlineColor;
-
-            plot.Axes.Title.Label.FontSize = 14;
-            plot.Axes.Left.Label.FontSize = 11;
-            plot.Axes.Bottom.Label.FontSize = 11;
-        }
-    }
-
-    private async Task _addFake()
-    {
-        var ranBand = new[] { "6m", "10m", "15m", "20m", "40m" };
-        var ranDxcc = new[]
-            { "BY", "JA", "K", "P5", "VK", "VE", "PY", "DL", "G", "F", "I", "EA" };
-
-        try
-        {
-            for (;;)
-            {
-                _chartDataCacheService.Add(new ChartQSOPoint
-                {
-                    DxCallsign = null,
-                    DXCC = ranDxcc[new Random().Next(0, ranDxcc.Length)],
-                    Azimuth = new Random().NextDouble() * 360,
-                    Distance = new Random().NextDouble() * 20000,
-                    Mode = "FT8",
-                    Snr = new Random().Next(-20, 10),
-                    Latitude = new Random().NextDouble() * 180 - 90, // 纬度范围：-90 到 90
-                    Longitude = new Random().NextDouble() * 360 - 180, // 经度范围：-180 到 180
-                    Band = "10m",
-                    Client = "TEST"
-                });
-                await Task.Delay(TimeSpan.FromMilliseconds(1));
-            }
-        }
-        catch (Exception e)
-        {
-            ClassLogger.Error(e, "Error adding fake data");
-        }
-    }
-    
     private bool TryLoadWorldMapImage()
     {
         if (_worldMapImage is not null) return true;

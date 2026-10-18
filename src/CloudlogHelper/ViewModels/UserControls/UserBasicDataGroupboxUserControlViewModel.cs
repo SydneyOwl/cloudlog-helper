@@ -73,26 +73,30 @@ public class UserBasicDataGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     Observable.Return(Unit.Default)
                         .Delay(TimeSpan.FromMilliseconds(500))
+                        // Delay delivers on the thread pool; the command writes bound properties.
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .InvokeCommand(_pollCommand)
                         .DisposeWith(disposables);
                     
-                    _ = _refreshBackendType();
+                    _refreshBackendType().SafeFireAndForget();
                 })
                 .DisposeWith(disposables);
 
-            _pollCommand.ThrownExceptions.Subscribe(async void (err) =>
+            _pollCommand.ThrownExceptions.Subscribe(err =>
                 {
                     _setStatusToUnknown();
-                    await _inAppNotification.SendErrorNotificationAsync(err.Message);
+                    _inAppNotification.SendErrorNotificationAsync(err.Message).SafeFireAndForget();
                 })
                 .DisposeWith(disposables);
 
             Observable.Timer(TimeSpan.FromSeconds(1), interval)
                 .Select(_ => Unit.Default)
+                // InvokeCommand does not marshal; the command writes bound properties.
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .InvokeCommand(this, x => x._pollCommand)
                 .DisposeWith(disposables);
             
-            _ = _refreshBackendType();
+            _refreshBackendType().SafeFireAndForget();
         });
     }
 

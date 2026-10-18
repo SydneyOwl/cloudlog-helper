@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.Json.Serialization;
 using CloudlogHelper.Resources;
 using CloudlogHelper.Utils;
@@ -51,12 +50,6 @@ public class FLRigSettings : ReactiveValidationObject
             SettingsValidation.CheckInt,
             TranslationHelper.GetString(LangKeys.PollIntervalRequired)
         );
-    }
-
-
-    private bool IsPropertyHasErrors(string propertyName)
-    {
-        return GetErrors(propertyName).Cast<string>().Any();
     }
 
     public bool IsFLRigHasErrors()

@@ -86,20 +86,22 @@
                     Background="DarkOrange"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
 
-            <CheckBox Content="{I18N {x:Static resources:LangKeys.AutoSelect}}" IsChecked="{Binding AutoSwitchEnabled}"
-                      VerticalAlignment="Center" Margin="20,0,5,0" />
-
             <CheckBox Content="{I18N {x:Static resources:LangKeys.FilterDuplicatesByCallsign}}"
                       IsChecked="{Binding FilterDupeCallsign}"
                       VerticalAlignment="Center" Margin="0,0,5,0" />
 
             <ComboBox ItemsSource="{Binding Bands}"
                       SelectedValue="{Binding SelectedBand}"
-                      VerticalAlignment="Center" Width="80" />
-            
-            <ComboBox ItemsSource="{Binding Clients}"
-                      SelectedValue="{Binding SelectedClient}"
-                      VerticalAlignment="Center" Width="100" />
+                      PlaceholderText="{I18N {x:Static resources:LangKeys.PleaseSelect}}"
+                      VerticalAlignment="Center" Width="120" />
+
+            <!-- The statistics chart is a cross-client band view, so there is no
+                 per-client selector here; the client registry only feeds the
+                 dropdown item lists, band/mode are picked manually. -->
+            <ComboBox ItemsSource="{Binding Modes}"
+                      SelectedValue="{Binding SelectedMode}"
+                      PlaceholderText="{I18N {x:Static resources:LangKeys.PleaseSelect}}"
+                      VerticalAlignment="Center" Width="120" />
 
             <!-- <TextBlock Margin="10,0,0,0" -->
             <!--            Text="{I18N {x:Static resources:LangKeys.SampleCount}}" -->

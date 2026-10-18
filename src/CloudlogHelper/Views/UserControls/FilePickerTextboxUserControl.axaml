@@ -11,10 +11,15 @@
         <userControls1:FilePickerTextboxUserControlViewModel />
     </Design.DataContext>
     <Grid ColumnDefinitions="*,Auto">
-        <TextBox Grid.Column="0" Name="FilePathTextBox" Height="30" MaxWidth="200"
+        <TextBox Grid.Column="0" Name="FilePathTextBox"
                  PlaceholderText="Select a file..." Text="{Binding SelectedFilePath}" />
+        <!-- Unsized icon-only buttons keep FluentTheme's default padding; fixing the size
+             here keeps the textbox from being pushed in from the sibling inputs. -->
         <Button Grid.Column="1"
                 Click="FilePickerButton_OnClick"
-                Margin="10,0,0,0" Content="{avalonia:MaterialIconExt Kind=FolderOpen}" />
+                Width="38" Height="32"
+                Margin="10,0,0,0">
+            <avalonia:MaterialIcon Kind="FolderOpen" Width="18" Height="18" />
+        </Button>
     </Grid>
 </UserControl>

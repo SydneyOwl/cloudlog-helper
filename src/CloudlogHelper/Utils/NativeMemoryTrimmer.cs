@@ -18,7 +18,7 @@ internal static class NativeMemoryTrimmer
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
         if (Environment.GetEnvironmentVariable("DISABLE_MALLOC_TRIM_AFTER_WINDOW_CLOSED") == "1") return;
 
-        _ = Task.Run(async () =>
+        Task.Run(async () =>
         {
             if (!await TrimLock.WaitAsync(0).ConfigureAwait(false)) return;
 
@@ -51,7 +51,7 @@ internal static class NativeMemoryTrimmer
             {
                 TrimLock.Release();
             }
-        });
+        }).SafeFireAndForget();
     }
 
     [DllImport("libc", EntryPoint = "malloc_trim", SetLastError = false)]

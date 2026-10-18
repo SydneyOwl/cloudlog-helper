@@ -82,20 +82,19 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     private async Task StopAllServices()
     {
         ClassLogger.Debug("Stopping all rig services now");
-        var tasks = new List<Task>();
-        
-        // if (!_appSettings.HamlibSettings.PollAllowed)
-            tasks.Add(_services[RigBackendServiceEnum.Hamlib].StopService(_getNewCancellationProcessToken()));
-        
-        // if (!_appSettings.FLRigSettings.PollAllowed)
-            tasks.Add(_services[RigBackendServiceEnum.FLRig].StopService(_getNewCancellationProcessToken()));
-        
-        // if (!_appSettings.OmniRigSettings.PollAllowed && 
-            if (_services.TryGetValue(RigBackendServiceEnum.OmniRig, out var omniRigService))
+
+        using var stopCts = _newProcessTimeoutCts();
+        var tasks = new List<Task>
         {
-            tasks.Add(omniRigService.StopService(_getNewCancellationProcessToken()));
+            _services[RigBackendServiceEnum.Hamlib].StopService(stopCts.Token),
+            _services[RigBackendServiceEnum.FLRig].StopService(stopCts.Token)
+        };
+
+        if (_services.TryGetValue(RigBackendServiceEnum.OmniRig, out var omniRigService))
+        {
+            tasks.Add(omniRigService.StopService(stopCts.Token));
         }
-        
+
         await Task.WhenAll(tasks);
     }
 
@@ -120,7 +119,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         ClassLogger.Info("omnirig service started.");
         if (_appSettings.OmniRigSettings.PollAllowed)
         {
-            await _currentService.StartService(_getNewCancellationProcessToken(), _appSettings.OmniRigSettings.SelectedRig);
+            using var cts = _newProcessTimeoutCts();
+            await _currentService.StartService(cts.Token, _appSettings.OmniRigSettings.SelectedRig);
         }
     }
 
@@ -128,17 +128,16 @@ public class RigBackendManager : IRigBackendManager, IDisposable
     {
         if (_currentService != null)
         {
-            await _currentService.StopService(_getNewCancellationProcessToken());
+            using var cts = _newProcessTimeoutCts();
+            await _currentService.StopService(cts.Token);
         }
     }
 
     public void Dispose()
     {
-        _appSettings.Dispose();
-        
         _syncRigInfoAddr.Clear();
         _services.Clear();
-        
+
         GC.SuppressFinalize(this);
     }
 
@@ -165,7 +164,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             if (_appSettings.OmniRigSettings.PollAllowed)
             {
                 _currentService = _services[RigBackendServiceEnum.OmniRig];
-                await _currentService.StartService(_getNewCancellationProcessToken(), _appSettings.OmniRigSettings.SelectedRig);
+                using var cts = _newProcessTimeoutCts();
+                await _currentService.StartService(cts.Token, _appSettings.OmniRigSettings.SelectedRig);
             }
         }
         catch (Exception ex)
@@ -230,7 +230,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
 
     public async Task StopService()
     {
-        await _currentService.StopService(_getNewCancellationProcessToken());
+        using var cts = _newProcessTimeoutCts();
+        await _currentService.StopService(cts.Token);
     }
 
     public async Task StartService()
@@ -240,14 +241,16 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             await _startRigctld();
             return;
         }
-        
+
         if (GetServiceType() == RigBackendServiceEnum.OmniRig)
         {
-            await _currentService.StartService(_getNewCancellationProcessToken(), _appSettings.OmniRigSettings.SelectedRig);
+            using var cts = _newProcessTimeoutCts();
+            await _currentService.StartService(cts.Token, _appSettings.OmniRigSettings.SelectedRig);
             return;
         }
 
-        await _currentService.StartService(_getNewCancellationProcessToken());
+        using var startCts = _newProcessTimeoutCts();
+        await _currentService.StartService(startCts.Token);
     }
 
     public async Task<RigInfo[]> GetSupportedRigModels()
@@ -360,6 +363,14 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         return await _currentService.GetServiceVersion();
     }
 
+    public async Task<(string Version, List<RigInfo> Models)> GetHamlibCatalogAsync()
+    {
+        var hamlib = GetServiceByName(RigBackendServiceEnum.Hamlib);
+        var version = await hamlib.GetServiceVersion();
+        var models = (await hamlib.GetSupportedRigModels()).OrderBy(x => x.Model).ToList();
+        return (version, models);
+    }
+
     public int GetPollingInterval()
     {
         var settingsCache = GetSettingsCache();
@@ -400,7 +411,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                 if (draftSettings.HamlibSettings is { UseExternalRigctld: false, SelectedRigInfo.Id: not null })
                 {
                     // local rigctld
-                    await service.StopService(_getNewCancellationProcessToken());
+                    using var stopCts = _newProcessTimeoutCts();
+                    await service.StopService(stopCts.Token);
                     await _startRigctld(draftSettings.HamlibSettings);
                 }
 
@@ -408,8 +420,11 @@ public class RigBackendManager : IRigBackendManager, IDisposable
                     draftSettings.HamlibSettings.ReportSplitInfo, token, ip, port);
 
                 if (!_appSettings.HamlibSettings.PollAllowed)
+                {
                     // stop if polling is not enabled
-                    await service.StopService(_getNewCancellationProcessToken());
+                    using var stopCts = _newProcessTimeoutCts();
+                    await service.StopService(stopCts.Token);
+                }
                 return;
             }
 
@@ -422,7 +437,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             
             if (backendServiceEnum == RigBackendServiceEnum.OmniRig)
             {
-                await service.StartService(_getNewCancellationProcessToken(), draftSettings.OmniRigSettings.SelectedRig);
+                using var cts = _newProcessTimeoutCts();
+                await service.StartService(cts.Token, draftSettings.OmniRigSettings.SelectedRig);
                 await service.GetAllRigInfo(false, false, token);
                 return;
             }
@@ -434,11 +450,11 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         }
     }
 
-    private CancellationToken _getNewCancellationProcessToken()
+    private CancellationTokenSource _newProcessTimeoutCts()
     {
         return new CancellationTokenSource(
             TimeSpan.FromSeconds(DefaultConfigs.DefaultProcessTPStartStopTimeout)
-        ).Token;
+        );
     }
 
     private IRigService _getCurrentRigService()
@@ -454,7 +470,8 @@ public class RigBackendManager : IRigBackendManager, IDisposable
         var hamlibSettings = overrideSettings ?? _appSettings.HamlibSettings;
         if (hamlibSettings.IsHamlibHasErrors())
         {
-            await _currentService.StopService(_getNewCancellationProcessToken());
+            using var stopCts = _newProcessTimeoutCts();
+            await _currentService.StopService(stopCts.Token);
             throw new ArgumentException(TranslationHelper.GetString(LangKeys.ConfigureHamlibFirst));
         }
 
@@ -466,13 +483,14 @@ public class RigBackendManager : IRigBackendManager, IDisposable
             if (string.IsNullOrEmpty(hamlibSettings.OverrideCommandlineArg))
                 defaultArgs = RigUtils.GenerateRigctldCmdArgs(hamlibSettings.SelectedRigInfo.Id!,
                     hamlibSettings.SelectedPort,
-                    hamlibSettings.DisablePTT,
+                    hamlibSettings.DisablePTT, // keeps RTS/DTR low; name is historical, see HamlibSettings.DisablePTT
                     hamlibSettings.AllowExternalControl);
             else
                 defaultArgs = hamlibSettings.OverrideCommandlineArg;
         }
 
-        await _currentService.StartService(_getNewCancellationProcessToken(), defaultArgs);
+        using var startCts = _newProcessTimeoutCts();
+        await _currentService.StartService(startCts.Token, defaultArgs);
     }
 
     private (string, int) _getRigctldIpAndPort(HamlibSettings? overrideSettings = null)

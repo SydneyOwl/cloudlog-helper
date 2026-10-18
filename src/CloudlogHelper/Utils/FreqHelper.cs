@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace CloudlogHelper.Utils;
 
@@ -17,7 +18,7 @@ public static class FreqHelper
     public static string GetFrequencyStr(long freq, bool addMHz = true)
     {
         var mhzValue = freq / 1_000_000.0;
-        var mhz = mhzValue.ToString("0.00000"); // 固定5位小数，自动补零
+        var mhz = mhzValue.ToString("0.00000", CultureInfo.InvariantCulture); // 固定5位小数，自动补零
         // var mhz = $"{freq / 1000000}.{freq % 1000000 / 10:D3}";
         if (addMHz) mhz = $"{mhz}MHz";
         return mhz;
@@ -26,7 +27,7 @@ public static class FreqHelper
     public static string GetFrequencyStr(ulong freq, bool addMHz = true)
     {
         var mhzValue = freq / 1_000_000.0;
-        var mhz = mhzValue.ToString("0.00000"); // 固定5位小数，自动补零
+        var mhz = mhzValue.ToString("0.00000", CultureInfo.InvariantCulture); // 固定5位小数，自动补零
         // var mhz = $"{freq / 1000000}.{freq % 1000000 / 10:D3}";
         if (addMHz) mhz = $"{mhz}MHz";
         return mhz;

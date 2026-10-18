@@ -1,4 +1,5 @@
 using AutoMapper;
+using System.IO;
 using CloudlogHelper.Enums;
 using CloudlogHelper.LogService;
 using CloudlogHelper.Messages;
@@ -11,6 +12,10 @@ namespace CloudlogHelper.Tests;
 
 public class ApplicationSettingsServiceTests
 {
+    // Fixed path, not a unique one per test: the tests in this class run sequentially, and this
+    // way a test run leaves at most one file behind in temp instead of one per test.
+    private static readonly string TestSettingsFile =
+        Path.Combine(Path.GetTempPath(), "clh-test-settings-ApplicationSettingsService.json");
     [Fact]
     public void TryGetDraftSettings_AllowsOnlyOneOwner_UntilRestore()
     {
@@ -26,6 +31,31 @@ public class ApplicationSettingsServiceTests
 
         Assert.True(service.TryGetDraftSettings(secondOwner, out _));
         service.RestoreSettings(secondOwner);
+    }
+
+    [Fact]
+    public void TryGetDraftSettings_WhenRuleReinitThrows_HandsTheDraftBack()
+    {
+        // The semaphore is taken before ReinitRules runs, so a failure in there used to leave
+        // the draft claimed forever and every settings window dead until restart.
+        var service = CreateService();
+        service.InjectMockSettings(BrokenSettings());
+
+        Assert.Throws<NullReferenceException>(() => service.TryGetDraftSettings(new object(), out _));
+
+        // If the claim had not been handed back this would still be refused.
+        service.InjectMockSettings(new ApplicationSettings());
+
+        Assert.True(service.TryGetDraftSettings(new object(), out var reclaimed));
+        Assert.NotNull(reclaimed);
+    }
+
+    private static ApplicationSettings BrokenSettings()
+    {
+        var settings = new ApplicationSettings();
+        // A partially deserialized config can leave a section null
+        settings.CloudlogSettings = null!;
+        return settings;
     }
 
     [Fact]
@@ -94,7 +124,8 @@ public class ApplicationSettingsServiceTests
             logSystemManager,
             reinit: true,
             version: new Version(0, 0, 0),
-            CreateMapper());
+            CreateMapper(),
+            TestSettingsFile);
         var owner = new object();
         var rawConfigs = new List<LogSystemConfig> { new() };
 
@@ -103,6 +134,81 @@ public class ApplicationSettingsServiceTests
 
         Assert.Equal(2, logSystemManager.ApplyLogServiceChangesCallCount);
         Assert.All(logSystemManager.AppliedRawConfigs, configs => Assert.Same(rawConfigs, configs));
+    }
+
+    [Fact]
+    public void Mapper_CopiesLogServiceInstancesByReference()
+    {
+        var draft = new ApplicationSettings();
+        var current = new ApplicationSettings();
+        var draftService = new QRZThirdPartyLogService();
+        draft.LogServices.Add(draftService);
+        var currentBasicSettings = current.BasicSettings;
+        draft.BasicSettings.InstanceName = "draft-instance";
+
+        CreateMapper().Map(draft, current);
+
+        // AutoMapper cannot construct the abstract element type, so it moves the very same
+        // service object into the destination list. Nested members that *do* have a map
+        // (BasicSettings, CloudlogSettings) are mapped in place instead.
+        Assert.NotSame(draft.LogServices, current.LogServices);
+        Assert.Same(draftService, current.LogServices[0]);
+        Assert.Same(currentBasicSettings, current.BasicSettings);
+        Assert.Equal("draft-instance", current.BasicSettings.InstanceName);
+    }
+
+    [Fact]
+    public void ApplySettings_ClonesLogServices_InsteadOfSharingDraftInstances()
+    {
+        var service = CreateService();
+        var owner = new object();
+
+        Assert.True(service.TryGetDraftSettings(owner, out var draft));
+        var draftService = new QRZThirdPartyLogService { ApiKey = "draft-key" };
+        draft!.LogServices.Add(draftService);
+        var liveList = service.GetCurrentSettings().LogServices;
+
+        service.ApplySettings(owner);
+
+        var liveServices = service.GetCurrentSettings().LogServices;
+        // The list object stays stable - rig reporting captured it at startup and never
+        // re-reads it.
+        Assert.Same(liveList, liveServices);
+        // The live settings hold a clone, not the draft's instance: credentials edited in
+        // the settings window (draft) must not tear in-flight uploads.
+        Assert.Single(liveServices);
+        Assert.IsType<QRZThirdPartyLogService>(liveServices[0]);
+        Assert.NotSame(draftService, liveServices[0]);
+        Assert.Equal("draft-key", ((QRZThirdPartyLogService)liveServices[0]).ApiKey);
+
+        draftService.ApiKey = "edited-in-draft";
+        Assert.Equal("draft-key", ((QRZThirdPartyLogService)liveServices[0]).ApiKey);
+    }
+
+    [Fact]
+    public void Mapper_KeepsComplexSectionMembersIsolated()
+    {
+        // RigInfo and StationInfo have registered same-type maps, so the in-place map
+        // copies their values instead of aliasing the draft's objects into the live
+        // settings - which is what the assignable path does for unmapped members (see
+        // Mapper_CopiesLogServiceInstancesByReference for the unmapped case).
+        var draft = new ApplicationSettings();
+        var current = new ApplicationSettings();
+        draft.HamlibSettings.SelectedRigInfo = new RigInfo { Id = "2" };
+        var draftStation = new StationInfo { StationId = "19" };
+        draft.CloudlogSettings.AvailableCloudlogStationInfo.Add(draftStation);
+        var currentRigInfo = current.HamlibSettings.SelectedRigInfo!;
+
+        CreateMapper().Map(draft, current);
+
+        // Complex scalar-carrying member: mapped in place, object identity preserved.
+        Assert.Same(currentRigInfo, current.HamlibSettings.SelectedRigInfo);
+        Assert.NotSame(draft.HamlibSettings.SelectedRigInfo, current.HamlibSettings.SelectedRigInfo);
+        Assert.Equal("2", current.HamlibSettings.SelectedRigInfo.Id);
+
+        // Collection of complex elements: rebuilt with new instances.
+        Assert.NotSame(draftStation, current.CloudlogSettings.AvailableCloudlogStationInfo[0]);
+        Assert.Equal("19", current.CloudlogSettings.AvailableCloudlogStationInfo[0].StationId);
     }
 
     [Fact]
@@ -124,11 +230,14 @@ public class ApplicationSettingsServiceTests
 
     private static ApplicationSettingsService CreateService()
     {
+        // Without a path of its own, ApplySettings writes to the developer's real settings.json
+        // and turns SkipWizard off - the wizard then comes back after every test run.
         return ApplicationSettingsService.GenerateApplicationSettingsService(
             new FakeLogSystemManager(),
             reinit: true,
             version: new Version(0, 0, 0),
-            CreateMapper());
+            CreateMapper(),
+            TestSettingsFile);
     }
 
     private static IMapper CreateMapper()
@@ -142,6 +251,8 @@ public class ApplicationSettingsServiceTests
             cfg.CreateMap<UDPServerSettings, UDPServerSettings>();
             cfg.CreateMap<QsoSyncAssistantSettings, QsoSyncAssistantSettings>();
             cfg.CreateMap<BasicSettings, BasicSettings>();
+            cfg.CreateMap<RigInfo, RigInfo>();
+            cfg.CreateMap<StationInfo, StationInfo>();
             cfg.CreateMap<ApplicationSettings, ApplicationSettings>();
         });
 

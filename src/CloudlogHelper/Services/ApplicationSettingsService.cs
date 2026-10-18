@@ -42,6 +42,11 @@ public class ApplicationSettingsService : IApplicationSettingsService
     
     private ApplicationSettings? _oldSettings;
 
+    /// <summary>
+    ///     Where settings are persisted. Injectable so tests cannot overwrite the real file.
+    /// </summary>
+    private string _settingsFilePath = DefaultConfigs.DefaultSettingsFile;
+
     public void InjectMockSettings(ApplicationSettings settings)
     {
         _currentSettings = settings;
@@ -58,7 +63,17 @@ public class ApplicationSettingsService : IApplicationSettingsService
             ClassLogger.Trace($"Settings applied by {owner.GetType().FullName}");
 
             _oldSettings = _currentSettings.DeepClone();
+            // The in-place map below moves the draft's log service instances into the live
+            // settings by reference (AutoMapper cannot map the abstract element type), so
+            // unapplied draft edits would leak straight into the running services. Clone the
+            // service objects instead, and keep the live list object itself - rig reporting
+            // captured that list at startup and never re-reads it.
+            var clonedLogServices = _draftSettings!.LogServices.DeepClone()!;
+            var liveLogServices = _currentSettings!.LogServices ??= new List<ThirdPartyLogService>();
             _mapper.Map(_draftSettings, _currentSettings);
+            liveLogServices.Clear();
+            liveLogServices.AddRange(clonedLogServices);
+            _currentSettings.LogServices = liveLogServices;
             _applyLogServiceChanges(rawConfigs);
 
             // apply changes for log services here
@@ -147,17 +162,35 @@ public class ApplicationSettingsService : IApplicationSettingsService
             return false;
         }
 
-        // We own the draft now
-        _draftOwner = owner;
+        // The semaphore is already held from here on, so a failure below has to hand it back:
+        // otherwise _draftOwner stays set and every settings window is dead until restart.
+        try
+        {
+            _draftOwner = owner;
 
-        _draftSettings!.CloudlogSettings.ReinitRules();
-        _draftSettings!.HamlibSettings.ReinitRules();
-        _draftSettings!.FLRigSettings.ReinitRules();
-        _draftSettings!.OmniRigSettings.ReinitRules();
-        _draftSettings!.UDPSettings.ReinitRules();
-        _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
-        draftSettings = _draftSettings;
-        return true;
+            _draftSettings!.CloudlogSettings.ReinitRules();
+            _draftSettings!.HamlibSettings.ReinitRules();
+            _draftSettings!.FLRigSettings.ReinitRules();
+            _draftSettings!.OmniRigSettings.ReinitRules();
+            _draftSettings!.UDPSettings.ReinitRules();
+            _draftSettings!.QsoSyncAssistantSettings.ReinitRules();
+            draftSettings = _draftSettings;
+            return true;
+        }
+        catch
+        {
+            _draftOwner = null;
+            try
+            {
+                _draftSemaphore.Release();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            throw;
+        }
     }
 
 
@@ -174,9 +207,12 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
     public static ApplicationSettingsService GenerateApplicationSettingsService(ILogSystemManager logSystemManager,
         bool reinit, Version version,
-        IMapper mapper)
+        IMapper mapper, string? settingsFilePath = null)
     {
-        var applicationSettingsService = new ApplicationSettingsService();
+        var applicationSettingsService = new ApplicationSettingsService
+        {
+            _settingsFilePath = settingsFilePath ?? DefaultConfigs.DefaultSettingsFile
+        };
         applicationSettingsService._mapper = mapper;
         applicationSettingsService._logSystemManager = logSystemManager;
         var spLogServices = logSystemManager.GetEmptySupportedLogServices();
@@ -189,7 +225,7 @@ public class ApplicationSettingsService : IApplicationSettingsService
 
         try
         {
-            var defaultConf = File.ReadAllText(DefaultConfigs.DefaultSettingsFile);
+            var defaultConf = File.ReadAllText(applicationSettingsService._settingsFilePath);
 
             ClassLogger.Debug($"Got current version {version}");
             if (version != Version.Parse("0.0.0"))
@@ -244,50 +280,49 @@ public class ApplicationSettingsService : IApplicationSettingsService
         finally
         {
             _ = logSystemManager.PreInitLogSystem(applicationSettingsService._draftSettings!.LogServices);
-            _writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
+            applicationSettingsService._writeCurrentSettingsToFile(applicationSettingsService._currentSettings!);
         }
 
         return applicationSettingsService;
     }
     
     /// <summary>
+    ///     Check if a settings section differs between the last saved and the current settings.
+    /// </summary>
+    private bool IsSectionChanged(Func<ApplicationSettings, object?> section)
+    {
+        if (_oldSettings is null) return false;
+        return !Equals(section(_oldSettings), section(_currentSettings!));
+    }
+
+    /// <summary>
     ///     Check if basic configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsBasicConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.BasicSettings;
-        var newI = _currentSettings!.BasicSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsBasicConfChanged() => IsSectionChanged(s => s.BasicSettings);
 
     /// <summary>
     ///     Check if cloudlog configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsCloudlogConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.CloudlogSettings;
-        var newI = _currentSettings!.CloudlogSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsCloudlogConfChanged() => IsSectionChanged(s => s.CloudlogSettings);
 
     /// <summary>
     ///     Check if hamlib configs has been changed.
     /// </summary>
     /// <returns></returns>
+    // NOTE: intentionally flag-based (draft touched) rather than old-vs-current comparison, see IsConfOnceChanged.
     public bool IsHamlibConfChanged()
     {
         if (_oldSettings is null) return false;
         return _draftSettings!.HamlibSettings.IsConfOnceChanged();
     }
-    
+
     /// <summary>
     ///     Check if omnirig configs has been changed.
     /// </summary>
     /// <returns></returns>
+    // NOTE: intentionally flag-based (draft touched) rather than old-vs-current comparison, see IsConfOnceChanged.
     public bool IsOmniRigConfChanged()
     {
         if (_oldSettings is null) return false;
@@ -298,37 +333,25 @@ public class ApplicationSettingsService : IApplicationSettingsService
     ///     Check if firig configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsFlrigConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.FLRigSettings;
-        var newI = _currentSettings!.FLRigSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsFlrigConfChanged() => IsSectionChanged(s => s.FLRigSettings);
 
     /// <summary>
     ///     Check if udp server configs has been changed.
     /// </summary>
     /// <returns></returns>
-    public bool IsUDPConfChanged()
-    {
-        if (_oldSettings is null) return false;
-        var oldI = _oldSettings.UDPSettings;
-        var newI = _currentSettings!.UDPSettings;
-        return !oldI.Equals(newI);
-    }
+    public bool IsUDPConfChanged() => IsSectionChanged(s => s.UDPSettings);
 
     /// <summary>
     ///     write settings to default position.
     /// </summary>
-    private static void _writeCurrentSettingsToFile(ApplicationSettings settings)
+    private void _writeCurrentSettingsToFile(ApplicationSettings settings)
     {
         try
         {
-            File.WriteAllText(DefaultConfigs.DefaultSettingsFile,
+            File.WriteAllText(_settingsFilePath,
                 JsonSerializer.Serialize(settings, AppJsonSerializerOptions.Settings));
             ClassLogger.Trace(
-                $"_writeCurrentSettingsToFile successfully: {DefaultConfigs.DefaultSettingsFile}");
+                $"_writeCurrentSettingsToFile successfully: {_settingsFilePath}");
         }
         catch (Exception e1)
         {

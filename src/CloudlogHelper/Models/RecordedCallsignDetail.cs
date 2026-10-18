@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
+using System.Threading;
 using AdifParser;
 using Avalonia.Media;
 using CloudlogHelper.Database;
@@ -16,10 +19,11 @@ namespace CloudlogHelper.Models;
 public class RecordedCallsignDetail : ReactiveObject
 {
     /// <summary>
-    ///     Upload status of log services.
+    ///     Upload status of log services. Concurrent: written by the upload thread and read from the
+    ///     plugin pipe thread and the UI.
     /// </summary>
-    public Dictionary<string, bool> UploadedServices = new();
-    public Dictionary<string, string> UploadedServicesErrorMessage = new();
+    public ConcurrentDictionary<string, bool> UploadedServices = new();
+    public ConcurrentDictionary<string, string> UploadedServicesErrorMessage = new();
     
     public string Uuid { get; set; }
     
@@ -164,6 +168,13 @@ public class RecordedCallsignDetail : ReactiveObject
     public string ClientId { get; set; }
 
     /// <summary>
+    ///     IP address this QSO was received from over UDP. Falls back to the client key when the
+    ///     client sent no Id; null for QSOs that did not arrive over UDP (imported ADIF, the
+    ///     QSO sync assistant) - <see cref="Parse" /> leaving this null is deliberate.
+    /// </summary>
+    public string? SourceAddress { get; set; }
+
+    /// <summary>
     ///     Flag of dxcall
     /// </summary>
     [Reactive] 
@@ -192,11 +203,25 @@ public class RecordedCallsignDetail : ReactiveObject
     [Reactive]
     public UploadStatus UploadStatus { get; set; } = UploadStatus.Pending;
 
+    private int _inUploadQueueFlag;
+
     /// <summary>
-    ///     Whether this QSO is in upload queue or not.
+    ///     Atomically claims this QSO for the upload queue. Returns false when another caller already
+    ///     holds the claim, so concurrent enqueues cannot double-upload the same QSO.
     /// </summary>
-    public bool IsInUploadQueue = false;
-    
+    public bool TryMarkInUploadQueue()
+    {
+        return Interlocked.CompareExchange(ref _inUploadQueueFlag, 1, 0) == 0;
+    }
+
+    /// <summary>
+    ///     Releases the upload-queue claim after the item is processed, or when the enqueue fails.
+    /// </summary>
+    public void ClearInUploadQueue()
+    {
+        Interlocked.Exchange(ref _inUploadQueueFlag, 0);
+    }
+
     /// <summary>
     ///     Whether this QSO is marked as calceled.
     /// </summary>
@@ -212,8 +237,14 @@ public class RecordedCallsignDetail : ReactiveObject
     /// </summary>
     /// <param name="cdb"></param>
     /// <param name="qlo"></param>
+    /// <param name="source">
+    ///     UDP endpoint the message arrived from. Required so the compiler forbids building a QSO
+    ///     whose <see cref="ClientId" /> could disagree with the registry key - both come from
+    ///     <see cref="WsjtxMessageUtil.GetClientKey(string?, System.Net.EndPoint?)" />.
+    /// </param>
     /// <returns></returns>
-    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo)
+    public static RecordedCallsignDetail GenerateCallsignDetail(CountryDatabase cdb, QsoLogged qlo,
+        EndPoint? source)
     {
         var latLonByDxGrid = MaidenheadGridUtil.GridToLatLng(qlo.DXGrid);
         var lat = cdb.Latitude;
@@ -253,9 +284,8 @@ public class RecordedCallsignDetail : ReactiveObject
             ExchangeSent = qlo.ExchangeSent,
             ExchangeReceived = qlo.ExchangeReceived,
             AdifPropagationMode = qlo.AdifPropagationMode,
-            ClientId = string.IsNullOrEmpty(qlo.Id)
-                ? string.Empty
-                : qlo.Id[..(qlo.Id.Length > 6 ? 6 : qlo.Id.Length)],
+            ClientId = WsjtxMessageUtil.GetClientKey(qlo.Id, source),
+            SourceAddress = WsjtxMessageUtil.GetSourceAddress(source),
             UploadStatus = UploadStatus.Pending
         };
     }
@@ -263,7 +293,8 @@ public class RecordedCallsignDetail : ReactiveObject
     public static RecordedCallsignDetail Parse(AdifLog info, string sourceIdentifier)
     {
         ulong hzValue = 0;
-        if (double.TryParse(info.Freq, out var mhzValue)) hzValue = (ulong)(mhzValue * 1_000_000);
+        if (double.TryParse(info.Freq, CultureInfo.InvariantCulture, out var mhzValue))
+            hzValue = (ulong)(mhzValue * 1_000_000);
         return new RecordedCallsignDetail
         {
             Uuid = Guid.NewGuid().ToString(),
@@ -277,7 +308,7 @@ public class RecordedCallsignDetail : ReactiveObject
             DateTimeOn = DateTime.ParseExact($"{info.QsoDate} {info.TimeOn}", "yyyyMMdd HHmmss",
                 CultureInfo.InvariantCulture),
             Mode = string.IsNullOrEmpty(info.SubMode) ? info.Mode : info.SubMode,
-            ClientId = "LOCAL",
+            ClientId = WsjtxMessageUtil.LocalClient,
             RawData = info.RawData,
             FailReason = null,
             Checked = false,
@@ -303,12 +334,14 @@ public class RecordedCallsignDetail : ReactiveObject
                 SubMode = string.IsNullOrEmpty(rcd.ParentMode) ? string.Empty : rcd.Mode,
                 RstSent = rcd.ReportSent,
                 RstRcvd = rcd.ReportReceived,
-                QsoDate = rcd.DateTimeOn.ToString("yyyyMMdd"),
-                TimeOn = rcd.DateTimeOn.ToString("HHmmss"),
-                QsoDateOff = rcd.DateTimeOff.ToString("yyyyMMdd"),
-                TimeOff = rcd.DateTimeOff.ToString("HHmmss"),
+                QsoDate = rcd.DateTimeOn.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
+                TimeOn = rcd.DateTimeOn.ToString("HHmmss", CultureInfo.InvariantCulture),
+                QsoDateOff = rcd.DateTimeOff.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
+                TimeOff = rcd.DateTimeOff.ToString("HHmmss", CultureInfo.InvariantCulture),
                 Band = rcd.TXFrequencyInMeters,
-                Freq = (rcd.TXFrequencyInHz / 1_000_000.0).ToString("0.000000"),
+                // ADIF fields are consumed by Cloudlog/LoTW/eQSL, not read back by this UI, so a
+                // culture-dependent comma here would produce a malformed FREQ token.
+                Freq = (rcd.TXFrequencyInHz / 1_000_000.0).ToString("0.000000", CultureInfo.InvariantCulture),
                 StationCallsign = rcd.MyCall,
                 MyGridSquare = rcd.MyGrid,
                 Comment = rcd.Comments
@@ -324,7 +357,7 @@ public class RecordedCallsignDetail : ReactiveObject
     public override string ToString()
     {
         return
-            $"{nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(DateTimeOff)}: {DateTimeOff}, {nameof(DXCall)}: {DXCall}, {nameof(DXGrid)}: {DXGrid}, {nameof(TXFrequencyInHz)}: {TXFrequencyInHz}, {nameof(TXFrequencyInMeters)}: {TXFrequencyInMeters}, {nameof(Mode)}: {Mode}, {nameof(ParentMode)}: {ParentMode}, {nameof(ReportSent)}: {ReportSent}, {nameof(ReportReceived)}: {ReportReceived}, {nameof(TXPower)}: {TXPower}, {nameof(Comments)}: {Comments}, {nameof(Name)}: {Name}, {nameof(DateTimeOn)}: {DateTimeOn}, {nameof(OperatorCall)}: {OperatorCall}, {nameof(MyCall)}: {MyCall}, {nameof(MyGrid)}: {MyGrid}, {nameof(ExchangeSent)}: {ExchangeSent}, {nameof(ExchangeReceived)}: {ExchangeReceived}, {nameof(AdifPropagationMode)}: {AdifPropagationMode}, {nameof(ClientId)}: {ClientId}, {nameof(Checked)}: {Checked}, {nameof(UploadStatus)}: {UploadStatus}";
+            $"{nameof(CqZone)}: {CqZone}, {nameof(ItuZone)}: {ItuZone}, {nameof(Continent)}: {Continent}, {nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}, {nameof(GmtOffset)}: {GmtOffset}, {nameof(Dxcc)}: {Dxcc}, {nameof(DateTimeOff)}: {DateTimeOff}, {nameof(DXCall)}: {DXCall}, {nameof(DXGrid)}: {DXGrid}, {nameof(TXFrequencyInHz)}: {TXFrequencyInHz}, {nameof(TXFrequencyInMeters)}: {TXFrequencyInMeters}, {nameof(Mode)}: {Mode}, {nameof(ParentMode)}: {ParentMode}, {nameof(ReportSent)}: {ReportSent}, {nameof(ReportReceived)}: {ReportReceived}, {nameof(TXPower)}: {TXPower}, {nameof(Comments)}: {Comments}, {nameof(Name)}: {Name}, {nameof(DateTimeOn)}: {DateTimeOn}, {nameof(OperatorCall)}: {OperatorCall}, {nameof(MyCall)}: {MyCall}, {nameof(MyGrid)}: {MyGrid}, {nameof(ExchangeSent)}: {ExchangeSent}, {nameof(ExchangeReceived)}: {ExchangeReceived}, {nameof(AdifPropagationMode)}: {AdifPropagationMode}, {nameof(ClientId)}: {ClientId}, {nameof(SourceAddress)}: {SourceAddress ?? "N/A"}, {nameof(Checked)}: {Checked}, {nameof(UploadStatus)}: {UploadStatus}";
     }
 
     protected bool Equals(RecordedCallsignDetail other)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -158,7 +159,7 @@ public class DatabaseService : IDatabaseService, IDisposable
     {
         try
         {
-            if (!await GetIsQsoIgnoredAsync(ignoredQso).ConfigureAwait(false))
+            if (!await IsQsoIgnored(ignoredQso).ConfigureAwait(false))
             {
                 ignoredQso.UpdatedAt = DateTime.Now;
                 await _connection!.InsertAsync(ignoredQso).ConfigureAwait(false);
@@ -230,26 +231,6 @@ public class DatabaseService : IDatabaseService, IDisposable
         catch (Exception ex)
         {
             _logger.Warn(ex, "Failed to get grid by callsign");
-            return null;
-        }
-    }
-
-    public async Task<List<IgnoredQsoDatabase>?> FindIgnoredQso(IgnoredQsoDatabase ignoredQso)
-    {
-        try
-        {
-            return await _connection!.Table<IgnoredQsoDatabase>()
-                .Where(x => x.De == ignoredQso.De &&
-                           x.Dx == ignoredQso.Dx &&
-                           x.FinalMode == ignoredQso.FinalMode &&
-                           x.RstSent == ignoredQso.RstSent &&
-                           x.RstRecv == ignoredQso.RstRecv)
-                .ToListAsync()
-                .ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.Warn(ex, "Failed to find ignored QSO");
             return null;
         }
     }
@@ -380,14 +361,8 @@ public class DatabaseService : IDatabaseService, IDisposable
         parsedA = 0;
         parsedB = 0;
         
-        return float.TryParse(freqA, out parsedA) && 
-               float.TryParse(freqB, out parsedB);
-    }
-
-    private async Task<bool> GetIsQsoIgnoredAsync(IgnoredQsoDatabase ignoredQso)
-    {
-        var existingEntries = await FindIgnoredQsoAsync(ignoredQso).ConfigureAwait(false);
-        return existingEntries?.Any(entry => IsSimilarIgnoredQso(entry, ignoredQso)) ?? false;
+        return float.TryParse(freqA, CultureInfo.InvariantCulture, out parsedA) &&
+               float.TryParse(freqB, CultureInfo.InvariantCulture, out parsedB);
     }
 
     private async Task<List<IgnoredQsoDatabase>?> FindIgnoredQsoAsync(IgnoredQsoDatabase ignoredQso)

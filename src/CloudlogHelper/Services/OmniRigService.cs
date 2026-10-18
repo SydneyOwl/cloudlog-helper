@@ -20,18 +20,20 @@ public class OmniRigService : IRigService, IDisposable
 
     private int _version = 0x00;
     
-    private static readonly Mutex _mutex = new Mutex();
-    
+    // SemaphoreSlim, not Mutex: the guard is held across await Task.Run, and Mutex is
+    // thread-affine, so releasing it from the continuation thread throws.
+    private static readonly SemaphoreSlim _serviceLock = new(1, 1);
+
     public RigBackendServiceEnum GetServiceType()
     {
         return RigBackendServiceEnum.OmniRig;
     }
-    
+
     public async Task StartService(CancellationToken token, params object[] args)
     {
+        await _serviceLock.WaitAsync(token).ConfigureAwait(false);
         try
         {
-            _mutex.WaitOne();
             ClassLogger.Info("OmniRig service started.");
             if (_omniRigEngine is null)
             {
@@ -64,22 +66,22 @@ public class OmniRigService : IRigService, IDisposable
         }
         finally
         {
-            _mutex.ReleaseMutex();
+            _serviceLock.Release();
         }
-       
+
     }
 
     public async Task StopService(CancellationToken token)
     {
+        await _serviceLock.WaitAsync(token).ConfigureAwait(false);
         try
         {
-            _mutex.WaitOne();
             ClassLogger.Info("OmniRig service stopped");
             await Task.Run(ReleaseUnmanagedResources, token);
         }
         finally
         {
-            _mutex.ReleaseMutex();
+            _serviceLock.Release();
         }
     }
 

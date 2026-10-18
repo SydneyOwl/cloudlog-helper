@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reactive;
@@ -27,14 +28,20 @@ internal enum CallsignLocationSource
 
 internal readonly struct ParsedDecodeData
 {
-    public ParsedDecodeData(Decode decode, string? callsign, string? gridSquare)
+    public ParsedDecodeData(Decode decode, string clientKey, string? callsign, string? gridSquare)
     {
         Decode = decode;
+        ClientKey = clientKey;
         Callsign = callsign;
         GridSquare = gridSquare;
     }
 
     public Decode Decode { get; }
+
+    /// <summary>
+    ///     Client key derived at enqueue time, identical to the registry key and the tab key.
+    /// </summary>
+    public string ClientKey { get; }
     public string? Callsign { get; }
     public string? GridSquare { get; }
 }
@@ -79,7 +86,7 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
     private readonly IDatabaseService _databaseService;
 
     private readonly IChartDataCacheService _dataCacheService;
-    private readonly ConcurrentQueue<Decode> _decodedQueue = new();
+    private readonly ConcurrentQueue<(Decode Decode, string ClientKey)> _decodedQueue = new();
     private readonly Subject<Unit> _decodedSignal = new();
     private readonly CompositeDisposable _compDisp = new ();
     private readonly SemaphoreSlim _batchProcessingLock = new(1, 1);
@@ -106,17 +113,22 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
             .DisposeWith(_compDisp);
     }
 
-    public void ProcessDecoded(Decode decode)
+    public void ProcessDecoded(Decode decode, EndPoint? source)
     {
         if (_disposed || _basicSettings.DisableAllCharts) return;
-        _decodedQueue.Enqueue(decode);
+        _decodedQueue.Enqueue((decode, WsjtxMessageUtil.GetClientKey(decode.Id, source)));
         _decodedSignal.OnNext(Unit.Default);
     }
 
-    public void UpdateClientBand(string clientId, string band)
+    public void UpdateClientBand(string clientId, string band, EndPoint? source)
     {
-        if (_disposed || string.IsNullOrWhiteSpace(clientId)) return;
-        _currentClientBand[clientId] = band;
+        if (_disposed) return;
+
+        // Guard the derived key, not the raw id: a blank id plus an endpoint is a legitimate
+        // client, and rejecting it here would leave that client's band empty on the chart.
+        var key = WsjtxMessageUtil.GetClientKey(clientId, source);
+        if (string.IsNullOrWhiteSpace(key)) return;
+        _currentClientBand[key] = band;
     }
 
     public void Dispose()
@@ -161,9 +173,9 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
         }
     }
 
-    private List<Decode> _drainDecodedQueue()
+    private List<(Decode Decode, string ClientKey)> _drainDecodedQueue()
     {
-        var decodes = new List<Decode>();
+        var decodes = new List<(Decode, string)>();
         while (_decodedQueue.TryDequeue(out var decode))
             decodes.Add(decode);
 
@@ -186,15 +198,16 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
             _myGrid = currentGrid;
     }
 
-    private static List<ParsedDecodeData> _parseDecodes(IEnumerable<Decode> decodes)
+    private static List<ParsedDecodeData> _parseDecodes(
+        IEnumerable<(Decode Decode, string ClientKey)> decodes)
     {
         var parsed = new List<ParsedDecodeData>();
-        foreach (var decode in decodes)
+        foreach (var decodedData in decodes)
         {
-            var message = decode.Message ?? string.Empty;
+            var message = decodedData.Decode.Message ?? string.Empty;
             var callsign = WsjtxMessageUtil.ExtractDeFromMessage(message);
             var grid = WsjtxMessageUtil.ExtractGridFromMessage(message);
-            parsed.Add(new ParsedDecodeData(decode, callsign, grid));
+            parsed.Add(new ParsedDecodeData(decodedData.Decode, decodedData.ClientKey, callsign, grid));
         }
 
         return parsed;
@@ -230,7 +243,9 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
 
     private ChartQSOPoint _buildBaseChartQsoPoint(in ParsedDecodeData decodedData, string callsign)
     {
-        var clientId = decodedData.Decode.Id ?? string.Empty;
+        // The registry key, not the raw Id: a blank Id is keyed by source address, and this is
+        // what the chart filter compares against the selected tab.
+        var clientId = decodedData.ClientKey;
         var band = _currentClientBand.TryGetValue(clientId, out var cachedBand)
             ? cachedBand ?? string.Empty
             : string.Empty;
@@ -240,8 +255,6 @@ public class DecodedDataProcessorService : IDecodedDataProcessorService, IDispos
             DxCallsign = callsign,
             Band = band,
             Client = clientId,
-            // there's some bug here; for example ft4 messages will be recognized as q65 here;
-            // so we just simply cancel filter of modes...
             Mode = decodedData.Decode.DecodeModeNotationsToString(),
             Snr = decodedData.Decode.Snr
         };

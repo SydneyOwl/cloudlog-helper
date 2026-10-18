@@ -101,15 +101,6 @@ public class CloudlogSettings : ReactiveValidationObject
                !string.IsNullOrEmpty(SettingsValidation.ValidateNotEmpty(CloudlogApiKey)) ||
                !string.IsNullOrEmpty(SettingsValidation.ValidateSpace(CloudlogApiKey)) ||
                (checkStationId && string.IsNullOrEmpty(CloudlogStationInfo?.StationId));
-        // string.IsNullOrEmpty(CloudlogStationId);
-        // return IsPropertyHasErrors(nameof(CloudlogUrl)) || IsPropertyHasErrors(nameof(CloudlogApiKey)) ||
-        //        IsPropertyHasErrors(nameof(CloudlogStationId));
-    }
-
-
-    private bool IsPropertyHasErrors(string propertyName)
-    {
-        return GetErrors(propertyName).Cast<string>().Any();
     }
 
     protected bool Equals(CloudlogSettings other)

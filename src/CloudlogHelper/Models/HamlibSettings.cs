@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -31,6 +29,12 @@ public class HamlibSettings : ReactiveValidationObject
 
     [Reactive] public bool UseRigAdvanced { get; set; }
 
+    /// <summary>
+    ///     Holds rigctld's rts_state/dtr_state OFF. Historical name: on some Linux distros an
+    ///     asserted RTS/DTR keeps the radio busy and shows up as PTT that never releases.
+    ///     Not renamed because the property name is the persisted settings.json key and the
+    ///     settings window's draft diffing compares it by name.
+    /// </summary>
     [Reactive] public bool DisablePTT { get; set; }
 
     [Reactive] public bool AllowExternalControl { get; set; }
@@ -120,11 +124,6 @@ public class HamlibSettings : ReactiveValidationObject
         }).DisposeWith(_disposable);;
     }
 
-
-    private bool IsPropertyHasErrors(string propertyName)
-    {
-        return GetErrors(propertyName).Cast<string>().Any();
-    }
 
     public bool IsHamlibHasErrors()
     {

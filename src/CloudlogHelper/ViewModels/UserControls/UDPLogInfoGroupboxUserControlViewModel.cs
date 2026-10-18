@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -46,6 +47,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly ObservableCollectionExtended<RecordedCallsignDetail> _designFilteredQsos = new();
     private readonly IDatabaseService _databaseService;
     private readonly IDecodedDataProcessorService _decodedDataProcessorService;
+    private readonly IClientRegistryService _clientRegistryService;
     private readonly Subject<Unit> _heartbeatSubject = new();
     private readonly IInAppNotificationService _inAppNotification;
     private readonly IMessageBoxManagerService _messageBoxManagerService;
@@ -56,6 +58,9 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     private readonly IWindowManagerService _windowManagerService;
 
     private readonly ConcurrentQueue<DateTime> _qsoTimestamps = new();
+
+    private readonly Dictionary<string, ClientTabItem> _clientTabsById = new();
+    private readonly ObservableCollection<ClientTabItem> _clientTabs = new();
 
     private void _appendTestData()
     {
@@ -115,10 +120,26 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         ExportSelectedToAdiCommand = ReactiveCommand.Create(() => { });
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.Create(() => { });
         DeleteSelectedCommand = ReactiveCommand.Create(() => { });
+        PreviousClientCommand = ReactiveCommand.Create(() => { });
+        NextClientCommand = ReactiveCommand.Create(() => { });
+        SelectClientCommand = ReactiveCommand.Create<ClientTabItem, Unit>(_ => Unit.Default);
 
         I18NExtension.Culture = new CultureInfo("ja-JP");
 
         _appendTestData();
+
+        var designClientTab = new ClientTabItem { Key = "WSJT-X 50MHZ", Label = "WSJT-X 50MHZ" };
+        var designTxClientTab = new ClientTabItem { Key = "WSJT-X 144MHZ", Label = "WSJT-X 144MHZ" };
+        _clientTabsById["WSJT-X 50MHZ"] = designClientTab;
+        _clientTabsById["WSJT-X 144MHZ"] = designTxClientTab;
+        _clientTabs.Add(designClientTab);
+        _clientTabs.Add(designTxClientTab);
+
+        ShowClientTabs = true;
+        SelectedClientTab = designClientTab;
+        // No subscription keeps these flags in design mode - seed them for the preview.
+        designClientTab.IsSelected = true;
+        designTxClientTab.Transmitting = true;
     }
 
     public UDPLogInfoGroupboxUserControlViewModel(
@@ -131,10 +152,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         IQSOUploadService qu,
         IQsoQueueStore qsoQueueStore,
         INotificationManager nativeNotificationManager,
-        IDecodedDataProcessorService decodedDataProcessorService)
+        IDecodedDataProcessorService decodedDataProcessorService,
+        IClientRegistryService clientRegistryService)
     {
         var clipboardService1 = clipboardService;
         _decodedDataProcessorService = decodedDataProcessorService;
+        _clientRegistryService = clientRegistryService;
         _nativeNotificationManager = nativeNotificationManager;
         _qsoUploadService = qu;
         _qsoQueueStore = qsoQueueStore;
@@ -146,7 +169,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         WaitFirstConn = _udpServerService.IsUdpServerEnabled();
 
-        _ = _qsoUploadService.StartAsync();
+        _qsoUploadService.StartAsync().SafeFireAndForget();
 
         ShowQSODetailCommand = ReactiveCommand.CreateFromTask<RecordedCallsignDetail, Unit>(async callDet =>
         {
@@ -172,6 +195,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         ExportSelectedToAdiCommand = ReactiveCommand.CreateFromTask(_createAdifFromCheckedQSO);
         IgnoreSelectedPermanentlyCommand = ReactiveCommand.CreateFromTask(_ignoreSelectedQSO);
         DeleteSelectedCommand = ReactiveCommand.Create(_deleteSelectedQsos);
+        PreviousClientCommand = ReactiveCommand.Create(() => StepClient(-1));
+        NextClientCommand = ReactiveCommand.Create(() => StepClient(1));
+        SelectClientCommand = ReactiveCommand.Create<ClientTabItem, Unit>(tab =>
+        {
+            SelectedClientTab = tab;
+            return Unit.Default;
+        });
 
         this.WhenActivated(disposables =>
         {
@@ -185,12 +215,33 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
                 {
                     if (!_udpServerService.IsUdpServerEnabled() || WaitFirstConn) return;
                     TimeoutStatus = true;
-                    TxStatus = false;
+                    UpdateTxStatusCore();
+                })
+                .DisposeWith(compositeDisposable);
+
+            // hmmmmm not that elegant
+            // A client that goes silent is expired by the registry without any further UDP message,
+            // so nothing would otherwise re-run the transmit recompute. Poll once a second on the UI
+            // thread to clear a stuck dot / banner once its session is no longer alive.
+            Observable.Interval(TimeSpan.FromSeconds(1))
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ => UpdateTxStatusCore())
+                .DisposeWith(compositeDisposable);
+
+            // The banner shows the selected client's message, so recompute on tab switch
+            // instead of waiting for the next poll. Selection changes also move the pill
+            // in the dot row.
+            this.WhenAnyValue(x => x.SelectedClientTab)
+                .Subscribe(_ =>
+                {
+                    SyncClientTabSelection();
+                    UpdateTxStatusCore();
                 })
                 .DisposeWith(compositeDisposable);
 
             SetupQsoRateCalculation(compositeDisposable);
             SetupQsoList(compositeDisposable);
+            SetupClientTabs(compositeDisposable);
             SetupFilteringAndSorting(compositeDisposable);
 
             this.WhenAnyValue(
@@ -203,17 +254,26 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             SetupErrorHandling(compositeDisposable);
             SetupMessageBusListeners(compositeDisposable);
 
-            _ = _udpServerService.InitializeAsync(_wsjtxMsgHandler, _wsjtxMsgLogger);
+            _udpServerService.InitializeAsync(_wsjtxMsgHandler, _wsjtxMsgLogger).SafeFireAndForget();
         });
     }
 
     public ReadOnlyObservableCollection<RecordedCallsignDetail> FilteredQsos => _filteredQsosView;
+
+    /// <summary>
+    ///     Tabs shown above the QSO list, one per known client plus a leading "all" tab.
+    /// </summary>
+    public ObservableCollection<ClientTabItem> ClientTabs => _clientTabs;
+
     public ReactiveCommand<Unit, Unit> SelectAllCommand { get; set; }
     public ReactiveCommand<Unit, Unit> DeleteSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ReuploadSelectedCommand { get; set; }
     public ReactiveCommand<Unit, Unit> ExportSelectedToAdiCommand { get; set; }
     public ReactiveCommand<Unit, Unit> IgnoreSelectedPermanentlyCommand { get; set; }
     public ReactiveCommand<RecordedCallsignDetail, Unit> ShowQSODetailCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> PreviousClientCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> NextClientCommand { get; set; }
+    public ReactiveCommand<ClientTabItem, Unit> SelectClientCommand { get; set; }
 
     [Reactive] public bool TimeoutStatus { get; set; }
     [Reactive] public bool WaitFirstConn { get; set; }
@@ -227,6 +287,12 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     [Reactive] public long UploadedQsosCount { get; set; }
     [Reactive] public bool SelectAll { get; set; }
     [Reactive] public bool ShowFailedOnly { get; set; }
+    [Reactive] public ClientTabItem? SelectedClientTab { get; set; }
+
+    /// <summary>
+    ///     The tab strip only shows with two or more known clients.
+    /// </summary>
+    [Reactive] public bool ShowClientTabs { get; set; }
 
     private void SetupQsoRateCalculation(CompositeDisposable disposables)
     {
@@ -253,16 +319,18 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
     {
         _qsoQueueStore.Connect()
             .WhenPropertyChanged(p => p.UploadStatus)
-            .Subscribe(async void (x) =>
+            // UploadStatus is written by the QSO upload consumer thread; marshal the
+            // notification (and the bound-counter update below) to the UI thread.
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(x =>
             {
                 try
                 {
-
                     MessageBus.Current.SendMessage(new PluginEvent()
                     {
                         Message = PbMsgConverter.ToPbQSOUploadStatusChanged(x.Sender),
                     });
-                    
+
                     if (x.Value == UploadStatus.Success) UploadedQsosCount += 1;
                 }
                 catch (Exception ex)
@@ -273,7 +341,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
 
         _qsoQueueStore.Connect()
-            .OnItemAdded(async void (x) =>
+            .OnItemAdded(x =>
             {
                 try
                 {
@@ -291,15 +359,137 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
     }
 
+    private void SetupClientTabs(CompositeDisposable disposables)
+    {
+        _clientRegistryService.Connect()
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => RebuildClientTabs())
+            .DisposeWith(disposables);
+
+        _qsoQueueStore.Connect()
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => RebuildClientTabs())
+            .DisposeWith(disposables);
+
+        RebuildClientTabs();
+    }
+
+    private void RebuildClientTabs()
+    {
+        var layout = ClientTabLayout.Compute(
+            _clientRegistryService.Sessions.Select(session => session.Id),
+            _qsoQueueStore.Items.Select(qso => qso.ClientId));
+
+        // The tab strip only shows with two or more known clients.
+        ShowClientTabs = layout.ShouldShowStrip;
+
+        // Drop tabs whose client is gone (local logs).
+        var stale = _clientTabsById.Keys
+            .Where(k => !layout.Keys.Contains(k))
+            .ToList();
+        foreach (var key in stale)
+        {
+            _clientTabs.Remove(_clientTabsById[key]);
+            _clientTabsById.Remove(key);
+        }
+
+        var desired = new List<ClientTabItem>();
+        foreach (var id in layout.Keys)
+        {
+            if (!_clientTabsById.TryGetValue(id, out var tab))
+            {
+                tab = new ClientTabItem { Key = id, Label = WsjtxMessageUtil.GetClientDisplayName(id) };
+                _clientTabsById[id] = tab;
+            }
+
+            desired.Add(tab);
+        }
+
+        for (var i = 0; i < desired.Count; i++)
+        {
+            var current = _clientTabs.IndexOf(desired[i]);
+            if (current < 0) _clientTabs.Insert(i, desired[i]);
+            else if (current != i) _clientTabs.Move(current, i);
+        }
+
+        if (SelectedClientTab is null || !_clientTabs.Contains(SelectedClientTab))
+            SelectedClientTab = _clientTabs.FirstOrDefault();
+    }
+
+    /// <summary>
+    ///     Cycle the selected client one step for the arrow-button selector, wrapping around at
+    ///     both ends. Runs on the UI thread (button command), the same thread that owns the tabs.
+    /// </summary>
+    private void StepClient(int delta)
+    {
+        var count = _clientTabs.Count;
+        if (count < 2) return;
+        var index = SelectedClientTab is null ? 0 : _clientTabs.IndexOf(SelectedClientTab);
+        if (index < 0) index = 0;
+        SelectedClientTab = _clientTabs[(index + delta + count) % count];
+    }
+
+    /// <summary>
+    ///     Push the current selection into the tab items so the dot row can render the selected
+    ///     client as the pill. Runs on the UI thread - the same thread that owns the tabs.
+    /// </summary>
+    private void SyncClientTabSelection()
+    {
+        foreach (var tab in _clientTabs) tab.IsSelected = ReferenceEquals(tab, SelectedClientTab);
+    }
+
+    /// <summary>
+    ///     Recompute which clients are currently transmitting, so each client tab can light up
+    ///     independently. The banner follows the selected tab: it shows only that client's message.
+    ///     Safe to call from any thread; the work is marshalled to the UI thread because it
+    ///     mutates bound tab state and reads the tab lookup dictionary that the UI thread owns.
+    /// </summary>
+    private void UpdateTxStatus()
+    {
+        RxSchedulers.MainThreadScheduler.Schedule(UpdateTxStatusCore);
+    }
+
+    private void UpdateTxStatusCore()
+    {
+        var transmitting = _clientRegistryService.Sessions
+            .Where(session => session.IsAlive && session.Transmitting)
+            .ToList();
+
+        foreach (var (id, tab) in _clientTabsById)
+            tab.Transmitting = transmitting.Any(session => session.Id == id);
+
+        // No selection (empty strip) matches no session id, hiding the banner.
+        var selected = transmitting.FirstOrDefault(session => session.Id == SelectedClientTab?.Key);
+        TxStatus = selected is not null;
+        MsgSending = selected is null ? string.Empty : _formatTxMessage(selected);
+    }
+
+    private static string _formatTxMessage(ClientSession session)
+    {
+        return string.IsNullOrEmpty(session.TXMessage)
+            ? TranslationHelper.GetString(LangKeys.Transmitting)
+            : session.TXMessage;
+    }
+
     private void SetupFilteringAndSorting(CompositeDisposable disposables)
     {
-        var filterObservable = this.WhenAnyValue(x => x.ShowFailedOnly)
+        var filterObservable = this.WhenAnyValue(
+                x => x.ShowFailedOnly,
+                x => x.SelectedClientTab)
             .Throttle(TimeSpan.FromMilliseconds(200))
-            .Select(showFailed => (Func<RecordedCallsignDetail, bool>)(detail =>
-                !showFailed || detail.UploadStatus != UploadStatus.Success));
+            .Select(selector =>
+            {
+                var (showFailedOnly, selectedTab) = selector;
+                var clientKey = selectedTab?.Key;
+                return (Func<RecordedCallsignDetail, bool>)(detail =>
+                    (!showFailedOnly || detail.UploadStatus != UploadStatus.Success) &&
+                    (clientKey is null || detail.ClientId == clientKey));
+            });
 
         _qsoQueueStore.Connect()
             .Filter(filterObservable)
+            // Downstream of Filter so predicate-driven re-emissions are marshalled too.
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SortAndBind(out ReadOnlyObservableCollection<RecordedCallsignDetail> filteredQsosView, SortExpressionComparer<RecordedCallsignDetail>
                 .Ascending(x => x.DateTimeOff))
             .Subscribe()
@@ -323,8 +513,8 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         foreach (var command in commands)
         {
             command.ThrownExceptions
-                .Subscribe(async err => 
-                    await _inAppNotification.SendErrorNotificationAsync(err.Message))
+                .Subscribe(err =>
+                    _inAppNotification.SendErrorNotificationAsync(err.Message).SafeFireAndForget())
                 .DisposeWith(disposables);
         }
     }
@@ -341,24 +531,43 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
             .DisposeWith(disposables);
 
         MessageBus.Current.Listen<QsoUploadRequested>()
-            .Subscribe(async x =>
-            {
-                _qsoQueueStore.AddRange(x.QsoData);
-                
-                foreach (var rcd in x.QsoData)
-                {
-                    try
-                    {
-                        rcd.CountryFlagAvares = FlagImageUtil.GetLogFlagImage();
-                        await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
-                    }
-                }
-            })
+            .Subscribe(x => _handleQsoUploadRequestedAsync(x)
+                .SafeFireAndForget(nameof(_handleQsoUploadRequestedAsync)))
             .DisposeWith(disposables);
+    }
+
+    private async Task _handleQsoUploadRequestedAsync(QsoUploadRequested request)
+    {
+        try
+        {
+            _qsoQueueStore.AddRange(request.QsoData);
+
+            foreach (var rcd in request.QsoData)
+            {
+                try
+                {
+                    rcd.CountryFlagAvares = FlagImageUtil.GetLogFlagImage();
+                }
+                catch (Exception ex)
+                {
+                    // cosmetic only: a missing flag must not cost us the upload itself
+                    ClassLogger.Warn(ex, "Failed to load the log flag image. Ignored.");
+                }
+
+                try
+                {
+                    await _qsoUploadService.EnqueueQSOForUploadAsync(rcd);
+                }
+                catch (Exception ex)
+                {
+                    ClassLogger.Error(ex, "Failed to enqueue QSO for upload");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to handle QSO upload request.");
+        }
     }
 
     private void UpdateSelectionState()
@@ -459,7 +668,7 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         var file = await _windowManagerService.OpenFileSaverAsync(new FilePickerSaveOptions
         {
             Title = "Adif export",
-            SuggestedFileName = $"exported-{DateTime.Now:yyyyMMdd-HHmmss}.adi",
+            SuggestedFileName = AdifUtil.GenerateExportFileName(DateTime.Now),
             DefaultExtension = "adi",
             FileTypeChoices = new[]
             {
@@ -473,24 +682,26 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         await writer.WriteAsync(adif.ToString());
     }
 
-    private async Task _wsjtxMsgHandler(WsjtxMessage message)
+    private async Task _wsjtxMsgHandler(WsjtxMessage message, EndPoint source)
     {
         try
         {
+            _clientRegistryService.Touch(message, source);
+            UpdateTxStatus();
+
             switch (message.MessageType)
             {
                 case MessageType.QSOLogged:
-                    AllDecodedCount += 1;
-                    await HandleQsoLogged((QsoLogged)message);
+                    await HandleQsoLogged((QsoLogged)message, source);
                     break;
                     
                 case MessageType.Decode:
                     AllDecodedCount += 1;
-                    await HandleDecode((Decode)message);
+                    await HandleDecode((Decode)message, source);
                     break;
                     
                 case MessageType.Status:
-                    await HandleStatusMessage((Status)message);
+                    await HandleStatusMessage((Status)message, source);
                     break;
                 
                 case MessageType.WSPRDecode:
@@ -516,13 +727,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
         }
     }
 
-    private async Task HandleQsoLogged(QsoLogged message)
+    private async Task HandleQsoLogged(QsoLogged message, EndPoint source)
     {
         RecordedQsosCount += 1;
         _qsoTimestamps.Enqueue(DateTime.UtcNow);
 
         var cty = await _databaseService.GetCallsignDetailAsync(message.DXCall).ConfigureAwait(false);
-        var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, message);
+        var rcd = RecordedCallsignDetail.GenerateCallsignDetail(cty, message, source);
         
         rcd.CountryFlagAvares = FlagImageUtil.GetFlagImage(cty.FlagImg);
             
@@ -540,15 +751,15 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
 
         if (_udpServerService.IsNotifyOnQsoMade())
         {
-            _ = _nativeNotificationManager.ShowNotificationAsync($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
-                rcd.FormatToReadableContent(true));
+            _nativeNotificationManager.ShowNotificationAsync($"{TranslationHelper.GetString(LangKeys.QsoMade)} - {rcd.DXCall}",
+                rcd.FormatToReadableContent(true)).SafeFireAndForget();
         }
     }
 
 
-    private async Task HandleDecode(Decode message)
+    private async Task HandleDecode(Decode message, EndPoint source)
     {
-        _decodedDataProcessorService.ProcessDecoded(message);
+        _decodedDataProcessorService.ProcessDecoded(message, source);
     }
     
     private async Task HandleWSPRDecode(WSPRDecode message)
@@ -556,22 +767,13 @@ public class UDPLogInfoGroupboxUserControlViewModel : FloatableViewModelBase
        // todo...
     }
 
-    private async Task HandleStatusMessage(Status status)
+    private async Task HandleStatusMessage(Status status, EndPoint source)
     {
-        TxStatus = status.Transmitting;
-        MsgSending = string.IsNullOrEmpty(status.TXMessage)
-            ? TranslationHelper.GetString(LangKeys.Transmitting)
-            : status.TXMessage;
-            
         _decodedDataProcessorService.UpdateClientBand(
             status.Id,
-            FreqHelper.GetMeterFromFreq(status.DialFrequencyInHz));
-            
-        MessageBus.Current.SendMessage(new ClientStatusChanged
-        {
-            CurrStatus = status
-        });
-        
+            FreqHelper.GetMeterFromFreq(status.DialFrequencyInHz),
+            source);
+
         ClassLogger.Trace(
             $"Status changed: {status.DialFrequencyInHz} {status.ConfigurationName} {status.Mode}");
     }

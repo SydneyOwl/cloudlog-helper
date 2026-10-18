@@ -38,15 +38,40 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
     private readonly Subject<ChartQSOPoint> _itemAddedSubject = new();
     private readonly object _lock = new();
 
-    // band aggregates for statistics chart
-    private readonly Dictionary<string, BandChartAccumulators> _accumulatedChartDataByBand =
-        new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, BandChartAccumulators> _dedupChartDataByBand =
-        new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    ///     Aggregation key of the statistics accumulators. Mode is part of the key so the
+    ///     statistics chart can be filtered per mode; client is deliberately not, because
+    ///     the statistics chart is a cross-client band view.
+    /// </summary>
+    private readonly record struct BandModeKey(string Band, string Mode);
 
-    // <Band, <Callsign, latest point>>
-    private readonly Dictionary<string, Dictionary<string, ChartQSOPoint>> _latestStationPointByBandAndCallsign =
-        new(StringComparer.OrdinalIgnoreCase);
+    private sealed class BandModeKeyComparer : IEqualityComparer<BandModeKey>
+    {
+        public bool Equals(BandModeKey x, BandModeKey y)
+        {
+            return string.Equals(x.Band, y.Band, StringComparison.OrdinalIgnoreCase)
+                   && string.Equals(x.Mode, y.Mode, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public int GetHashCode(BandModeKey obj)
+        {
+            return HashCode.Combine(
+                StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Band ?? string.Empty),
+                StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Mode ?? string.Empty));
+        }
+    }
+
+    private static readonly BandModeKeyComparer KeyComparer = new();
+
+    // (band, mode) aggregates for statistics chart
+    private readonly Dictionary<BandModeKey, BandChartAccumulators> _accumulatedChartDataByBandAndMode =
+        new(KeyComparer);
+    private readonly Dictionary<BandModeKey, BandChartAccumulators> _dedupChartDataByBandAndMode =
+        new(KeyComparer);
+
+    // <(band, mode), <Callsign, latest point>>
+    private readonly Dictionary<BandModeKey, Dictionary<string, ChartQSOPoint>> _latestStationPointByBandModeAndCallsign =
+        new(KeyComparer);
 
     // polar
     private ChartQSOPoint[] _buffer = new ChartQSOPoint[DefaultConfigs.DefaultChartDataCacheNumber];
@@ -70,17 +95,17 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             try
             {
                 _appendToPolarBuffer(item);
-                _applyPointToBandAccumulators(_accumulatedChartDataByBand, item, 1);
+                _applyPointToBandAccumulators(_accumulatedChartDataByBandAndMode, item, 1);
 
-                if (!string.IsNullOrWhiteSpace(item.DxCallsign))
+                if (!string.IsNullOrWhiteSpace(item.DxCallsign) && !string.IsNullOrWhiteSpace(item.Band))
                 {
-                    var dedupeCache = _getOrCreateLatestPointByCallsign(item.Band);
+                    var dedupeCache = _getOrCreateLatestPointByCallsign(_keyOf(item));
 
                     if (dedupeCache.TryGetValue(item.DxCallsign, out var oldPoint))
-                        _applyPointToBandAccumulators(_dedupChartDataByBand, oldPoint, -1);
+                        _applyPointToBandAccumulators(_dedupChartDataByBandAndMode, oldPoint, -1);
 
                     dedupeCache[item.DxCallsign] = item;
-                    _applyPointToBandAccumulators(_dedupChartDataByBand, item, 1);
+                    _applyPointToBandAccumulators(_dedupChartDataByBandAndMode, item, 1);
                 }
             }
             catch (Exception e)
@@ -113,57 +138,35 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
     {
         lock (_lock)
         {
-            _accumulatedChartDataByBand.Clear();
-            _latestStationPointByBandAndCallsign.Clear();
-            _dedupChartDataByBand.Clear();
+            _accumulatedChartDataByBandAndMode.Clear();
+            _latestStationPointByBandModeAndCallsign.Clear();
+            _dedupChartDataByBandAndMode.Clear();
         }
     }
 
-    public double[,]? GetGridStationCountByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.GridStationCount;
-        }
-    }
-
-    public Histogram? GetDistanceHistogramByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.DistanceHistogram;
-        }
-    }
-
-    public Histogram? GetBearingHistogramByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.BearingHistogram;
-        }
-    }
-
-    public Dictionary<string, double?>? GetStationCountByBand(string? band)
-    {
-        lock (_lock)
-        {
-            if (band is null) return null;
-            return _accumulatedChartDataByBand.GetValueOrDefault(band)?.StationCountByDxcc;
-        }
-    }
-
-    public StationChartDataSnapshot GetStationChartDataSnapshotByBand(string? band, bool filterDupeByCallsign = false)
+    public StationChartDataSnapshot GetStationChartDataSnapshot(string? band, string? mode,
+        bool filterDupeByCallsign = false)
     {
         lock (_lock)
         {
             if (string.IsNullOrWhiteSpace(band)) return _buildEmptyStationChartDataSnapshot();
 
-            return _buildSnapshotByBand(
-                filterDupeByCallsign ? _dedupChartDataByBand : _accumulatedChartDataByBand,
-                band);
+            var source = filterDupeByCallsign ? _dedupChartDataByBandAndMode : _accumulatedChartDataByBandAndMode;
+
+            // A selected mode narrows the view to that single bucket; an empty mode
+            // merges every bucket of the band instead.
+            var buckets = new List<BandChartAccumulators>();
+            foreach (var kv in source)
+            {
+                if (!string.Equals(kv.Key.Band, band, StringComparison.OrdinalIgnoreCase)) continue;
+                if (!string.IsNullOrWhiteSpace(mode) &&
+                    !string.Equals(kv.Key.Mode, mode, StringComparison.OrdinalIgnoreCase)) continue;
+                buckets.Add(kv.Value);
+            }
+
+            if (buckets.Count == 0) return _buildEmptyStationChartDataSnapshot();
+            if (buckets.Count == 1) return _buildSnapshotFromBucket(buckets[0]);
+            return _buildSnapshotFromBuckets(buckets);
         }
     }
 
@@ -222,15 +225,10 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
             new double[DefaultConfigs.WorldHeatmapHeight, DefaultConfigs.WorldHeatmapWidth]);
     }
 
-    private StationChartDataSnapshot _buildSnapshotByBand(Dictionary<string, BandChartAccumulators> source, string band)
+    private StationChartDataSnapshot _buildSnapshotFromBucket(BandChartAccumulators bandData)
     {
-        var bandData = source.GetValueOrDefault(band);
-        if (bandData is null) return _buildEmptyStationChartDataSnapshot();
-
-        var stationCountSource = bandData.StationCountByDxcc;
-        var stationCount = stationCountSource is null
-            ? new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase)
-            : new Dictionary<string, double?>(stationCountSource, StringComparer.OrdinalIgnoreCase);
+        var stationCount = new Dictionary<string, double?>(bandData.StationCountByDxcc,
+            StringComparer.OrdinalIgnoreCase);
 
         var distanceSource = bandData.DistanceHistogram ?? _createDistanceHistogram();
         var distanceHistogram = _cloneDistanceHistogram(distanceSource);
@@ -246,35 +244,82 @@ public class ChartDataCacheService : IChartDataCacheService, IDisposable
         return new StationChartDataSnapshot(stationCount, distanceHistogram, bearingHistogram, grid);
     }
 
-    private Dictionary<string, ChartQSOPoint> _getOrCreateLatestPointByCallsign(string band)
+    private StationChartDataSnapshot _buildSnapshotFromBuckets(List<BandChartAccumulators> buckets)
     {
-        if (_latestStationPointByBandAndCallsign.TryGetValue(band, out var latestByCallsign))
+        var snapshot = _buildSnapshotFromBucket(buckets[0]);
+
+        for (var i = 1; i < buckets.Count; i++)
+        {
+            var bucket = buckets[i];
+            _mergeStationCounts(snapshot.StationCountByDxcc, bucket.StationCountByDxcc);
+            _mergeHistogramCounts(snapshot.DistanceHistogram, bucket.DistanceHistogram);
+            _mergeHistogramCounts(snapshot.BearingHistogram, bucket.BearingHistogram);
+            _mergeGridCounts(snapshot.GridStationCount, bucket.GridStationCount);
+        }
+
+        return snapshot;
+    }
+
+    private static void _mergeStationCounts(Dictionary<string, double?> target, Dictionary<string, double?> source)
+    {
+        foreach (var kv in source)
+            target[kv.Key] = (target.TryGetValue(kv.Key, out var existing) ? existing ?? 0 : 0) + (kv.Value ?? 0);
+    }
+
+    private static void _mergeHistogramCounts(Histogram target, Histogram? source)
+    {
+        if (source is null) return;
+
+        var targetCounts = target.Counts;
+        var sourceCounts = source.Counts;
+        var len = Math.Min(targetCounts.Length, sourceCounts.Length);
+        for (var i = 0; i < len; i++)
+            targetCounts[i] += sourceCounts[i];
+    }
+
+    private static void _mergeGridCounts(double[,] target, double[,]? source)
+    {
+        if (source is null) return;
+
+        for (var y = 0; y < target.GetLength(0); y++)
+        for (var x = 0; x < target.GetLength(1); x++)
+            target[y, x] += source[y, x];
+    }
+
+    private Dictionary<string, ChartQSOPoint> _getOrCreateLatestPointByCallsign(BandModeKey key)
+    {
+        if (_latestStationPointByBandModeAndCallsign.TryGetValue(key, out var latestByCallsign))
             return latestByCallsign;
 
         latestByCallsign = new Dictionary<string, ChartQSOPoint>(StringComparer.OrdinalIgnoreCase);
-        _latestStationPointByBandAndCallsign[band] = latestByCallsign;
+        _latestStationPointByBandModeAndCallsign[key] = latestByCallsign;
         return latestByCallsign;
     }
 
-    private static BandChartAccumulators _getOrCreateBandAccumulators(
-        Dictionary<string, BandChartAccumulators> chartDataByBand,
-        string band)
+    private static BandModeKey _keyOf(ChartQSOPoint point)
     {
-        if (chartDataByBand.TryGetValue(band, out var bandAccumulators)) return bandAccumulators;
+        return new BandModeKey(point.Band ?? string.Empty, point.Mode ?? string.Empty);
+    }
+
+    private static BandChartAccumulators _getOrCreateBandAccumulators(
+        Dictionary<BandModeKey, BandChartAccumulators> chartDataByBand,
+        BandModeKey key)
+    {
+        if (chartDataByBand.TryGetValue(key, out var bandAccumulators)) return bandAccumulators;
 
         bandAccumulators = new BandChartAccumulators();
-        chartDataByBand[band] = bandAccumulators;
+        chartDataByBand[key] = bandAccumulators;
         return bandAccumulators;
     }
 
     private void _applyPointToBandAccumulators(
-        Dictionary<string, BandChartAccumulators> chartDataByBand,
+        Dictionary<BandModeKey, BandChartAccumulators> chartDataByBand,
         ChartQSOPoint point,
         int delta)
     {
         if (delta == 0 || string.IsNullOrWhiteSpace(point.Band)) return;
 
-        var bandAccumulators = _getOrCreateBandAccumulators(chartDataByBand, point.Band);
+        var bandAccumulators = _getOrCreateBandAccumulators(chartDataByBand, _keyOf(point));
         _applyStationCountDelta(bandAccumulators.StationCountByDxcc, point.DXCC ?? string.Empty, delta);
 
         if (!point.IsAccurate) return;

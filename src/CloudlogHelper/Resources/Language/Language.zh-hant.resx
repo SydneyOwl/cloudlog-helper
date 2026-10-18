@@ -172,10 +172,10 @@
         <value>禁用圖表功能（僅低效能裝置）</value>
     </data>
     <data name="DisablePtt" xml:space="preserve">
-        <value>禁用PTT控制</value>
+        <value>停用 RTS/DTR 訊號線</value>
     </data>
     <data name="DisablePttHelp" xml:space="preserve">
-        <value>部分Linux發行版中如果不禁用rts/dtr可能導致PTT無法正確初始化，表現為PTT始終處於觸發狀態。</value>
+        <value>讓 hamlib 始終將串口 RTS 與 DTR 握手線保持為低電位，不對其置位。部分 Linux 發行版中 RTS/DTR 被置位會導致電臺持續處於忙狀態，PTT 無法釋放。</value>
     </data>
     <data name="Discard" xml:space="preserve">
         <value>取消</value>
@@ -448,7 +448,7 @@
         <value>正在同步QSO...</value>
     </data>
     <data name="QsoSyncSucceeded" xml:space="preserve">
-        <value>QSO同步成功！</value>
+        <value>QSO同步成功！匯入的QSO已加入上傳佇列，在QSO列表切換到LOCAL即可查看。</value>
     </data>
     <data name="QsoTemplate" xml:space="preserve">
         <value>• 呼號: {0}

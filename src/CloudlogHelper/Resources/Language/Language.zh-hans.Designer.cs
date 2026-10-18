@@ -85,7 +85,7 @@ namespace CloudlogHelper.Resources.Language {
                 return ResourceManager.GetString("AdvancedSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to 允许外部控制.
         /// </summary>

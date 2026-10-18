@@ -19,6 +19,20 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
 
     private const string ClublogTestEndpoint = "https://clublog.org/getadif.php";
 
+    /// <summary>
+    ///     Shared client with TLS 1.2 pinned - clublog.org has dropped TLS 1.1 support.
+    ///     Lives for the whole process, no disposal needed.
+    /// </summary>
+    private static readonly FlurlClient ClublogClient = CreateTls12Client();
+
+    private static FlurlClient CreateTls12Client()
+    {
+        var handler = new HttpClientHandler
+        {
+            SslProtocols = SslProtocols.Tls12
+        };
+        return new FlurlClient(new HttpClient(handler));
+    }
 
     [UserInput(nameof(LangKeys.Callsign), Description = "Enter your callsign registered at clublog.")]
     public string Callsign { get; set; }
@@ -31,14 +45,7 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
 
     public override async Task TestConnectionAsync(CancellationToken token)
     {
-        var handler = new HttpClientHandler {
-            SslProtocols = SslProtocols.Tls12
-        };
-        
-        var client = new FlurlClient(new HttpClient(handler));
-        
-        // using tls11 will fail here - seems like clublog server has dropped support of tls1.1?
-        var result = await client.Request(ClublogTestEndpoint)
+        var result = await ClublogClient.Request(ClublogTestEndpoint)
             .AllowHttpStatus(200, 400, 500, 403)
             .PostUrlEncodedAsync(new
             {
@@ -62,15 +69,8 @@ public class ClublogThirdPartyLogService : ThirdPartyLogService
         // https://clublog.org/software.php
         var adifWithHeader = new StringBuilder(AdifUtil.GenerateHeader());
         adifWithHeader.AppendLine(adif);
-        
-        // using tls11 will fail here - seems like clublog server has dropped support of tls1.1?
-        var handler = new HttpClientHandler {
-            SslProtocols = SslProtocols.Tls12
-        };
-        
-        var client = new FlurlClient(new HttpClient(handler));
-        
-        var result = await client.Request(ClublogQsoUploadEndpoint)
+
+        var result = await ClublogClient.Request(ClublogQsoUploadEndpoint)
             .AllowHttpStatus(200, 400, 500, 403)
             .PostUrlEncodedAsync(new
             {

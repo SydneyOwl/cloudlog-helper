@@ -111,7 +111,6 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
             LastRoundtripMs = 35,
             RemovePlugin = ReactiveCommand.Create(()=>{})
         });
-        // InitializeLogSystems();
     }
 
     public SettingsWindowViewModel(CommandLineOptions cmd,
@@ -133,42 +132,61 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         
         if (!_settingsService.TryGetDraftSettings(this, out var settings))
             throw new Exception("Draft setting instance is held by another viewmodel!");
-        DraftSettings = settings!;
-        LogSystemCard = new LogSystemCardViewModel(LogSystems, _handleLogSystemTestErrorAsync);
-        
-        var hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
-        HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
 
-        var flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
-        FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
+        // hoisted out of the try below because WhenActivated closes over them
+        ReactiveCommand<Unit, Unit>? hamlibCmd = null;
+        ReactiveCommand<Unit, Unit>? flrigCmd = null;
+        ReactiveCommand<Unit, Unit>? omniCmd = null;
+        ReactiveCommand<Unit, Unit>? cloudCmd = null;
 
-        var omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
-        OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
+        // Everything below runs while this viewmodel owns the draft. A constructor that dies
+        // part-way has to hand the claim back, or the settings window is dead until restart.
+        try
+        {
+            DraftSettings = settings!;
+            LogSystemCard = new LogSystemCardViewModel(LogSystems, _handleLogSystemTestErrorAsync);
 
-        var cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection, DraftSettings.CloudlogSettings.IsCloudlogValid);
-        CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
-        hamlibCmd.DisposeWith(_disposables);
-        flrigCmd.DisposeWith(_disposables);
-        omniCmd.DisposeWith(_disposables);
-        cloudCmd.DisposeWith(_disposables);
-        
-        RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
-        DiscardConf = ReactiveCommand.Create(_discardConf);
-        SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
-        OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
-        OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
-        UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
-        RefreshPort.DisposeWith(_disposables);
-        DiscardConf.DisposeWith(_disposables);
-        SaveAndApplyConf.DisposeWith(_disposables);
-        OpenConfDir.DisposeWith(_disposables);
-        OpenTempDir.DisposeWith(_disposables);
-        UpdateBigCty.DisposeWith(_disposables);
+            hamlibCmd = ReactiveCommand.CreateFromTask(_testHamlib, DraftSettings.HamlibSettings.IsHamlibValid);
+            HamlibTestButtonUserControl = new TestButtonUserControlViewModel(hamlibCmd);
 
-        _initSkipped = cmd.AutoUdpLogUploadOnly;
-        _source = new CancellationTokenSource();
-        ShowCloudlogStationIdCombobox = DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
-        LanguageInfos.AddRange(TranslationHelper.GetSupportedLanguageInfos());
+            flrigCmd = ReactiveCommand.CreateFromTask(_testFLRig, DraftSettings.FLRigSettings.IsFLRigValid);
+            FLRigTestButtonUserControl = new TestButtonUserControlViewModel(flrigCmd);
+
+            omniCmd = ReactiveCommand.CreateFromTask(_testOmniRig, DraftSettings.OmniRigSettings.IsOmniRigValid);
+            OmniRigTestButtonUserControl = new TestButtonUserControlViewModel(omniCmd);
+
+            cloudCmd = ReactiveCommand.CreateFromTask(_testCloudlogConnection,
+                DraftSettings.CloudlogSettings.IsCloudlogValid);
+            CloudlogTestButtonUserControl = new TestButtonUserControlViewModel(cloudCmd);
+            hamlibCmd.DisposeWith(_disposables);
+            flrigCmd.DisposeWith(_disposables);
+            omniCmd.DisposeWith(_disposables);
+            cloudCmd.DisposeWith(_disposables);
+
+            RefreshPort = ReactiveCommand.CreateFromTask(_refreshPort);
+            DiscardConf = ReactiveCommand.Create(_discardConf);
+            SaveAndApplyConf = ReactiveCommand.Create(_saveAndApplyConf);
+            OpenConfDir = ReactiveCommand.CreateFromTask(_openConf);
+            OpenTempDir = ReactiveCommand.CreateFromTask(_openTemp);
+            UpdateBigCty = ReactiveCommand.CreateFromTask(_updateBigCty);
+            RefreshPort.DisposeWith(_disposables);
+            DiscardConf.DisposeWith(_disposables);
+            SaveAndApplyConf.DisposeWith(_disposables);
+            OpenConfDir.DisposeWith(_disposables);
+            OpenTempDir.DisposeWith(_disposables);
+            UpdateBigCty.DisposeWith(_disposables);
+
+            _initSkipped = cmd.AutoUdpLogUploadOnly;
+            _source = new CancellationTokenSource();
+            ShowCloudlogStationIdCombobox =
+                DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Count > 0;
+            LanguageInfos.AddRange(TranslationHelper.GetSupportedLanguageInfos());
+        }
+        catch
+        {
+            _settingsService.RestoreSettings(this);
+            throw;
+        }
 
         this.WhenActivated(disposables =>
         {
@@ -251,19 +269,31 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
 
         FullyInitialized = false;
 
-        Task.WhenAll(_initializeLogSystemsAsync(), _initializeHamlibAsync(), _initializeOmniRigAsync())
-            .ContinueWith((async task =>
-            { 
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    FullyInitialized = true;
-                });
+        _initializeSettingsAsync().SafeFireAndForget();
+    }
 
-                MessageBus.Current.SendMessage(new SettingsChanged
-                {
-                    Part = ChangedPart.NothingJustOpened
-                });
-            }));
+    /// <summary>
+    ///     Runs all settings-page initializers, then flags the page as fully initialized.
+    ///     Initialization faults are logged and the page is still flagged, mirroring the
+    ///     previous ContinueWith(run-on-any-completion) behavior.
+    /// </summary>
+    private async Task _initializeSettingsAsync()
+    {
+        try
+        {
+            await Task.WhenAll(_initializeLogSystemsAsync(), _initializeHamlibAsync(), _initializeOmniRigAsync());
+        }
+        catch (Exception ex)
+        {
+            ClassLogger.Error(ex, "Failed to initialize settings page.");
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() => { FullyInitialized = true; });
+
+        MessageBus.Current.SendMessage(new SettingsChanged
+        {
+            Part = ChangedPart.NothingJustOpened
+        });
     }
 
     public void Dispose()
@@ -305,19 +335,10 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         {
             if (_initSkipped) return;
 
-            if (!OperatingSystem.IsWindows())
+            if (!RigUtils.IsOmniRigPlatformAvailable())
             {
                 OmniRigInited = false;
                 return;
-                // throw new Exception("OmniRig is only supported on Windows.");
-            }
-
-            var omniRigType = Type.GetTypeFromProgID(DefaultConfigs.OmniRigEngineProgId);
-            if (omniRigType is null)
-            {
-                OmniRigInited = false;
-                return;
-                // throw new Exception("OmniRig COM not found!");
             }
         }
         catch (Exception e)
@@ -333,16 +354,9 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
         try
         {
             if (_initSkipped) return;
-            var output = await _rigBackendManager
-                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetServiceVersion();
-            HamlibVersion = output;
-
-            var opt = await _rigBackendManager
-                .GetServiceByName(RigBackendServiceEnum.Hamlib).GetSupportedRigModels();
-
-            SupportedModels = opt
-                .OrderBy(x => x.Model)
-                .ToList();
+            var (version, models) = await _rigBackendManager.GetHamlibCatalogAsync();
+            HamlibVersion = version;
+            SupportedModels = models;
 
             var selection = DraftSettings.HamlibSettings.SelectedRigInfo;
             DraftSettings.HamlibSettings.SelectedRigInfo = null;
@@ -361,13 +375,10 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            var msg = await CloudlogUtil.TestCloudlogConnectionAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
+            var stationInfo = await CloudlogUtil.TestConnectionAndGetStationInfoAsync(
+                DraftSettings.CloudlogSettings.CloudlogUrl,
                 DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
 
-            if (!string.IsNullOrEmpty(msg)) throw new Exception(msg);
-
-            var stationInfo = await CloudlogUtil.GetStationInfoAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
-                DraftSettings.CloudlogSettings.CloudlogApiKey, _source.Token);
             if (stationInfo.Count == 0)
             {
                 DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
@@ -376,18 +387,16 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
                 throw new Exception(TranslationHelper.GetString(LangKeys.FailedStationInfo));
             }
 
-
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.Clear();
             DraftSettings.CloudlogSettings.AvailableCloudlogStationInfo.AddRange(stationInfo);
             ShowCloudlogStationIdCombobox = true;
-            
+
             var instType =
                 await CloudlogUtil.GetCurrentServerInstanceTypeAsync(DraftSettings.CloudlogSettings.CloudlogUrl,
                     _source.Token);
             ClassLogger.Info($"Detected instance {instType}");
         }
-        catch (FlurlHttpException ex) when (ex.InnerException is TaskCanceledException &&
-                                            _source.IsCancellationRequested)
+        catch (FlurlHttpException ex) when (ex.IsCancelledByUser(_source.Token))
         {
             ClassLogger.Trace("User closed setting page; test cloudlog cancelled.");
         }
@@ -411,13 +420,6 @@ public class SettingsWindowViewModel : ViewModelBase, IDisposable
     private async Task _refreshPort()
     {
         Ports = SerialPort.GetPortNames().ToList();
-        // var tmp = DraftSettings.HamlibSettings.SelectedPort;
-        // if (!string.IsNullOrEmpty(tmp) && !Ports.Contains(tmp)) tmp = string.Empty;
-        // if (string.IsNullOrEmpty(DraftSettings.HamlibSettings.SelectedPort))
-        //     DraftSettings.HamlibSettings.SelectedPort = SerialUtil.PreSelectSerialByName();
-        // reset port name
-        // DraftSettings.HamlibSettings.SelectedPort = "";
-        // DraftSettings.HamlibSettings.SelectedPort = tmp;
     }
 
     private async Task<Unit> _refreshConnectedPluginsAsync()

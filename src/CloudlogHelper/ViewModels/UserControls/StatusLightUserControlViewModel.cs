@@ -110,15 +110,20 @@ public class StatusLightUserControlViewModel : ViewModelBase
             MessageBus.Current.Listen<SettingsChanged>()
                 .Where(x => x.Part == ChangedPart.NothingJustClosed)
                 .Delay(TimeSpan.FromMilliseconds(100))
+                // Delay delivers on the thread pool; the command writes bound properties.
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(res =>
                 { Observable.Return(Unit.Default).InvokeCommand(StatusUpdateCommand).DisposeWith(disposables); })
                 .DisposeWith(disposables);
 
-            Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(5)).Subscribe(_ =>
-            {
-                if (_applingSettings) return;
-                Observable.Return(Unit.Default).InvokeCommand(StatusUpdateCommand).DisposeWith(disposables);
-            }).DisposeWith(disposables);
+            Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(5))
+                // InvokeCommand does not marshal; the command writes bound properties.
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ =>
+                {
+                    if (_applingSettings) return;
+                    Observable.Return(Unit.Default).InvokeCommand(StatusUpdateCommand).DisposeWith(disposables);
+                }).DisposeWith(disposables);
         });
     }
 

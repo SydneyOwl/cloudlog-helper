@@ -91,6 +91,9 @@ public class App : Application
                 })
                 .ConfigureInnerHandler(handler =>
                 {
+                    // deliberately accepts any TLS certificate (user request): this bypasses
+                    // server certificate validation for ALL Flurl HTTP traffic, so a MITM can
+                    // intercept Cloudlog credentials. Keep only if self-signed certs must work.
                     handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
                 })
         );
@@ -305,7 +308,7 @@ public class App : Application
     {
         TaskScheduler.UnobservedTaskException += (sender, e) =>
         {
-            ClassLogger.Error($"Unobserved Task Exception occurred! Ignoring it sliently: {e.Exception.Message} - {e.Exception.StackTrace}");   
+            ClassLogger.Error(e.Exception, "Unobserved Task Exception occurred! Ignoring it silently.");
             e.SetObserved();
         };
         
