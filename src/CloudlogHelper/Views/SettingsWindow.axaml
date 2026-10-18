@@ -426,9 +426,8 @@
                                                     <TextBox Classes="setting-control" Grid.Row="0" Grid.Column="1"
                                                              Text="{Binding DraftSettings.HamlibSettings.OverrideCommandlineArg}" />
 
-                                                    <CheckBox Grid.Row="1"
+                                                    <CheckBox Grid.Row="1" Grid.Column="0"
                                                               Content="{I18N {x:Static resources:LangKeys.DisablePtt}}"
-                                                              Grid.ColumnSpan="2" Grid.Column="0"
                                                               IsChecked="{Binding DraftSettings.HamlibSettings.DisablePTT}" />
 
                                                     <CheckBox Grid.Row="1" Grid.Column="1"
