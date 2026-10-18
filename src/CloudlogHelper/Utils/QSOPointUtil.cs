@@ -231,8 +231,9 @@ public class QSOPointUtil
         var w2 = angleWeight / (180.0 * 180.0);
 
         // Row i of `best` keeps the k smallest squared distances to point i in
-        // ascending order, duplicates included (equal distances are distinct
-        // neighbours); counts[i] is the number of valid entries in row i.
+        // ascending order, equal distances counted once (they come from decodes
+        // sharing exact coordinates, e.g. the same station or the same grid);
+        // counts[i] is the number of valid entries in row i.
         var best = new double[n * k];
         var counts = new int[n];
 
@@ -269,6 +270,13 @@ public class QSOPointUtil
     {
         var row = idx * k;
         var count = counts[idx];
+
+        // Equal distances are one neighbour, not several: counting the same
+        // distance multiple times inflated cluster densities (decodes sharing
+        // exact coordinates produced near-zero k-th distances).
+        for (var i = 0; i < count; i++)
+            if (best[row + i] == distSq)
+                return;
 
         if (count < k)
         {

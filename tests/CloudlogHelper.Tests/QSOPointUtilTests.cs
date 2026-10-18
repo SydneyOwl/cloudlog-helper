@@ -79,12 +79,12 @@ public class QSOPointUtilTests
     }
 
     [Fact]
-    public void CalculateDensitiesKNN_TreatsDuplicateDistancesAsDistinctNeighbours()
+    public void CalculateDensitiesKNN_TreatsEqualDistancesAsSingleNeighbour()
     {
-        // C (5000/0) has A and B at equal distance plus a farther E; with k=2 its
-        // 2nd nearest neighbour is that equal distance. R (5000/90) has F at the
-        // same distance and a closer G, so its 2nd nearest is also that distance
-        // via two distinct values. Both points must end up with equal density.
+        // C (5000/0) has A and B at equal distance plus a farther E; with k=2 the
+        // equal distance counts once, so its 2nd nearest distinct neighbour is E.
+        // R (5000/90) has a closer G and an F, two distinct distances, so its 2nd
+        // nearest is nearer than C's and it must end up denser.
         var points = new[]
         {
             new ChartQSOPoint { Distance = 5000, Azimuth = 0 },
@@ -99,7 +99,7 @@ public class QSOPointUtilTests
         var densities = QSOPointUtil.CalculateDensitiesKNN(points, maxDistance: 20000, k: 2);
 
         Assert.True(densities[0] > 0);
-        Assert.Equal(densities[4], densities[0]);
+        Assert.True(densities[4] > densities[0]);
     }
 
     [Fact]
