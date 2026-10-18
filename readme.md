@@ -94,9 +94,9 @@ Enter your call sign/password or other configuration information in the correspo
 
 > [!NOTE]
 >
-> If you don't need automatic radio data upload functionality, you can skip this step directly.
+> + If you don't need automatic radio data upload functionality, you can skip this step directly.
 > 
-> `Hamlib` backend support is still **experimental** and may behave unstably on some radios or configurations. Using `FLRig` backend is recommended in most cases.
+> + `Hamlib` backend support is still **experimental** and may behave unstably on some radios or configurations. Using `FLRig` backend is recommended in most cases.
 
 > [!WARNING]
 >
@@ -361,9 +361,11 @@ Besides reporting to Cloudlog, you can also push real-time radio data (frequency
 In the "Third-Party Logging System" section of Settings, you will find the "Custom API" option where you can input your custom backend endpoint. After completing a QSO or retrieving radio information,
 the application will automatically push relevant data to the address you provided. Please note that the entered address must begin with either **http** or **https**, e.g. https://a.com/radio.
 
-> **About configuring multiple endpoints**: the endpoint field accepts several addresses separated by semicolons (`;`), and the application pushes to all of them **concurrently**. Note that the endpoints are currently treated as a single upload: if **any one endpoint** fails, the whole QSO is marked as failed, and a subsequent retry is **re-sent to every endpoint**, including the ones that already succeeded. So an unstable endpoint can cause QSOs already recorded elsewhere to be pushed again.
+> [!IMPORTANT]
 >
-> Prefer a single stable endpoint; if you really need several, make your server idempotent (deduplicate by `timestamp` / ADIF content) to avoid duplicate records.
+> **About configuring multiple endpoints**: the endpoint field accepts several addresses separated by semicolons (`;`), and the application pushes to all of them **concurrently**.
+> Note that the endpoints are currently treated as a single upload. if **any one endpoint** fails, the whole QSO is marked as failed, and a subsequent retry is **re-sent to every endpoint**,
+> including the ones that already succeeded. So if you really need several endpoints, make your server idempotent (deduplicate by `timestamp` / ADIF content) to avoid duplicate records.
 
 The relevant data structure is defined below:
 
